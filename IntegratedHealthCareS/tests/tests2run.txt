@@ -1,0 +1,2 @@
+#instance name | max time | seed 
+S5-N75	1	1074999
