@@ -1,2 +1,2 @@
-#instance name | max time | seed 
-S5-N75	1	1074999
+#instance name | max time | seed      | working time| walking duration 2 jobs | Detour between pickup and delivery  |  Cumulative walking pickup and delivery  |  Cumulative waiting between each delivery and pickup  
+S5-N75				1		1074999   	    600  	 		10  					 15  								 20 												15

@@ -22,7 +22,12 @@ public class TestsReader {
                     String instanceName = s; // e.g.: A-n32-k5
                     int maxTime = in.nextInt();
                     long seed = in.nextLong();
-                    Test aTest = new Test(instanceName, maxTime, seed);
+                    double workingTime=in.nextDouble();
+                    double walking2jobs=in.nextDouble();
+                    double detour=in.nextDouble();
+                    double cumulativeWalkingTime=in.nextDouble();
+                    double cumulativeWaitingTime=in.nextDouble();
+                    Test aTest = new Test(instanceName, maxTime, seed,workingTime, walking2jobs,  detour,  cumulativeWalkingTime, cumulativeWaitingTime);
                     list.add(aTest);
                 }
             }

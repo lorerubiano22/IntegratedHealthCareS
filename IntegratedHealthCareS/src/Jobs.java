@@ -9,12 +9,13 @@ public class Jobs {
 	private final int startTime; // node x coordinate ||final removed for preprocessing test
 	private final int endTime; // node y coordinate || final removed for preprocessing test
 	private final int reqQualification;
-	private final int reqTime; //final removed for preprocessing test
-	private final List<Jobs> formedBy;
+	private final int startServiceTime=0; // time when the service start
+	private int serviceTime; //final removed for preprocessing test
+	private final List<Jobs> jobSet;
 	public final static Jobs DEPOT_NODE = new Jobs(0, 0, 0, 0, 0);
 
 	private boolean isServerd = false;
-	private int eventTime; // time at which a new nurse is activated
+	
 
 	/* SET METHODS */
 
@@ -24,6 +25,9 @@ public class Jobs {
 
 	public void setServerd(boolean isServerd) {
 		this.isServerd = isServerd;
+	}
+	public void setserviceTime(int B) {
+		this.serviceTime = B;
 	}
 
 	public Jobs(int id, int startTime, int endTime, int reqQualification,
@@ -37,14 +41,13 @@ public class Jobs {
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.reqQualification = reqQualification;
-		this.reqTime = reqTime;
-		this.formedBy = formedBy;
-		this.eventTime = startTime;
+		this.serviceTime = reqTime;
+		this.jobSet = formedBy;
 	}
 
 	public Jobs getDupe()
 	{
-		Jobs dupe = new Jobs(id,startTime,endTime,reqQualification,reqTime,formedBy);
+		Jobs dupe = new Jobs(id,startTime,endTime,reqQualification,serviceTime,jobSet);
 		dupe.isServerd = isServerd;
 		return dupe;
 	}
@@ -55,10 +58,14 @@ public class Jobs {
 		return id;
 	}
 
+	public int getstartServiceTime() {
+		return startServiceTime;
+	}
+
 	public int getStartTime() {
 		return startTime;
 	}
-
+	
 	public int getEndTime() {
 		return endTime;
 	}
@@ -68,29 +75,11 @@ public class Jobs {
 	}
 
 	public int getReqTime() {
-		return reqTime;
+		return serviceTime;
 	}
 
 	public String extendedData() {
-		return String.format("(id = %d , RQ = %d\n ST: %d,  RT: %d, ET: %d + [PB: %d])",id,reqQualification,startTime,reqTime,endTime,endTime - reqTime);
-	}
-
-	@Override
-	public String toString() {
-		return String.format("(id=%d, RQ=%d, ST=%d, ET=%d, RT=%d)", id,reqQualification,startTime, endTime, reqTime);
-		//		return "Node [id=" + id + ", startTime=" + startTime + ", endTime="
-		//				+ endTime + ", reqQualification=" + reqQualification
-		//				+ ", reqTime=" + reqTime + "]"
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((formedBy == null) ? 0 : formedBy.hashCode());
-		result = prime * result + id;
-		return result;
+		return String.format("(id = %d , RQ = %d\n ST: %d,  RT: %d, ET: %d + [PB: %d])",id,reqQualification,startTime,serviceTime,endTime,endTime - serviceTime);
 	}
 
 	public static Comparator<Jobs> SORT_BY_ENDTW = new Comparator<Jobs>() {
@@ -102,39 +91,10 @@ public class Jobs {
 
 	};
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Jobs other = (Jobs) obj;
-		if (formedBy == null) {
-			if (other.formedBy != null)
-				return false;
-		} else if (!formedBy.equals(other.formedBy))
-			return false;
-		if (id != other.id)
-			return false;
-		return true;
-	}
+
 
 	public int getTW() { return endTime-startTime; }
 
-	/**
-	 * @return the eventTime
-	 */
-	public int getEventTime() {
-		return eventTime;
-	}
 
-	/**
-	 * @param eventTime the eventTime to set
-	 */
-	public void setEventTime(int eventTime) {
-		this.eventTime = eventTime;
-	}
 
 }
