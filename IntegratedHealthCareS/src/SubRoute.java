@@ -29,8 +29,8 @@ public class SubRoute {
 	public void setEdges(LinkedList<Edge> edges) {
 		this.edges = edges;
 	}
-	public void addJobSequence(Jobs i) {
-		jobSequence.add(i);
+	public void addJobSequence(Jobs i, int jobPosition) {
+		jobSequence.add(jobPosition, i);
 		jobList.put(i.getId(),i);
 	}
 
