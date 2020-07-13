@@ -1,2 +1,2 @@
 #Paramedics Capacity
-2	5
+25	5

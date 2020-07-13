@@ -15,20 +15,24 @@ public class WalkingRoutes {
 
 	private double totalTravelTime = 0.0; // route total travel time
 	private float totalServiceTime = 0.0F; // route total service time in the route
+	private double slack=0;
 	private LinkedList<SubRoute> jobSlots; // list of subroutes which describe the job sequence respecting all restrictions
 	private ArrayList<Jobs> jobList;
 	private ArrayList<Jobs> noServedJobs;
 	private Inputs inp; // input problem
 	private Test test; // input problem
-
+	
+	
+	// Methods
 	public WalkingRoutes(Inputs input, Random r, Test t, List<Jobs> nodes) {
 		jobList= new ArrayList<Jobs>();
 		noServedJobs= new ArrayList<Jobs>();
 		inp=input;
 		test=t;
 		for(Jobs i: nodes) {
+			if(i.getReqQualification()!=0) {
 			i.setserviceTime(i.getEndTime());
-			jobList.add(i);
+			jobList.add(i);}
 		}
 		jobList.sort(Jobs.TWSIZE_Early);
 		jobSlots= new LinkedList<SubRoute>();
@@ -162,6 +166,7 @@ public class WalkingRoutes {
 
 
 	private void evaluateTheInsertion(Jobs i, SubRoute wr) {
+		// When the work is inserted before the other jobs it is 
 		checkIfTheJobIsTheEarliestJob(i,wr);  // try to insert the job before everything
 		if(!wr.getJobList().containsKey(i.getId())) {
 			checkIfTheJobIsTheLatesestJob(i,wr);  // try to insert the job after everything
@@ -169,8 +174,13 @@ public class WalkingRoutes {
 	}
 
 	private void checkIfTheJobIsTheLatesestJob(Jobs i, SubRoute wr) {
-		Jobs lastJob=wr.getJobSequence().getLast();
-
+		Jobs firstJob=wr.getJobSequence().getFirst();
+		// 1. Assuming that the job could be assigned as the first job in the sequence and it could start the latest time
+		int estimatedB= firstJob.getstartServiceTime()+firstJob.getReqTime()+inp.getWalkCost().getCost(firstJob.getId(),i.getId());
+		//if(estimatedB>=i.getStartTime() && estimatedB<=i.getSt)) { // The estimated time start for the service
+			wr.addJobSequence(i,wr.getJobSequence().size());
+			i.setserviceTime(i.getEndTime());
+		//}
 	}
 
 
@@ -185,21 +195,23 @@ public class WalkingRoutes {
 		 */
 		Jobs firstJob=wr.getJobSequence().getFirst();
 		// 1. Assuming that the job could be assigned as the first job in the sequence and it could start the latest time
-		if(i.getEndTime()+i.getReqTime()+inp.getWalkCost().getCost(i.getId(),wr.getJobSequence().getLast().getId())<firstJob.getstartServiceTime()) {
+		if(i.getEndTime()+i.getReqTime()+inp.getWalkCost().getCost(i.getId(),wr.getJobSequence().getLast().getId())<=firstJob.getstartServiceTime()) {
 			wr.addJobSequence(i,0);
 			i.setserviceTime(i.getEndTime());
 		}
 		else {
 			// 2. Assuming that the job could be assigned as the first job in the sequence and it could start the earliest time
-			if(i.getStartTime()+i.getReqTime()+inp.getWalkCost().getCost(i.getId(),wr.getJobSequence().getLast().getId())<firstJob.getstartServiceTime()) {
+			if(i.getStartTime()+i.getReqTime()+inp.getWalkCost().getCost(i.getId(),wr.getJobSequence().getLast().getId())<=firstJob.getstartServiceTime()) {
 				wr.addJobSequence(i,0);
 				i.setserviceTime(i.getStartTime());
 			}
 			// 3. Check if there is a hour a long the TW that allows to reach the job which is already inserted
 			else {
-			 int estimatedB=wr.getJobSequence().getLast().getReqTime();
-				if() {
-					
+				int referenceTime=wr.getJobSequence().getFirst().getReqTime();
+				int adjustedB=referenceTime-inp.getWalkCost().getCost(i.getId(),wr.getJobSequence().getLast().getId())-i.getReqTime();
+				if(i.getStartTime()<=adjustedB && adjustedB<=i.getEndTime()) {
+					wr.addJobSequence(i,0);
+					i.setserviceTime(adjustedB);
 				}
 			}
 		}
@@ -260,6 +272,15 @@ public class WalkingRoutes {
 			else {}
 		}
 	}
+
+	
+	
+	// Getters
+
+	public double getTotalTravelTime() { return totalTravelTime;}
+	public float getTotalServiceTime() {return totalServiceTime;}
+	public double getSlack() {return slack;}
+	public ArrayList<Jobs> getNoServedJobs() {return noServedJobs;}
 
 
 }

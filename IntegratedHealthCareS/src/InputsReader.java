@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 
 public class InputsReader {
-	private static final String SERVICES_INPUT = "Time.txt";
+	private static final String SERVICES_INPUT = "Jobs.txt";
 	private static final String CAR_INPUT = "ODcar.txt";
 	private static final String WALK_INPUT = "ODwalk.txt";
 	private static final String VEHICLES_INPUT = "Vehicles.txt";
