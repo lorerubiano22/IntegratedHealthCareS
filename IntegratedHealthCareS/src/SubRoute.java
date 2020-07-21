@@ -9,7 +9,9 @@ public class SubRoute {
 	// walking time
 	// pick-up Node
 	// drop-off node
-	private int slotID=-1;
+	
+
+	private int slotID=0;
 	private Jobs dropOffNode;  // pick-up Node
 	private Jobs pickUpNode; // drop-off node
 	private double totalTravelTime = 0.0; // route total travel time
@@ -18,20 +20,31 @@ public class SubRoute {
 	private HashMap<Integer,Jobs> jobList;
 	private LinkedList<Edge> edges; // list of edges in the walking route
 	private double durationWalkingRoute=0; // service time + walking time
+	private double startServiceTime=0;
+	private int reqQualification=-1;
 
-	public SubRoute(){   
+
+	public SubRoute(){ 
 		edges = new LinkedList<Edge>();  
 		jobSequence = new LinkedList<Jobs>();
 		jobList= new HashMap<>();
 	}
 
 	// Setters
+
+	
 	public void setEdges(LinkedList<Edge> edges) {
 		this.edges = edges;
 	}
-	public void addJobSequence(Jobs i, int jobPosition) {
-		jobSequence.add(jobPosition, i);
+	
+	public void addJobSequence(Jobs i, int jobPosition, int serviceStartTime) {
+		if(this.reqQualification<i.getReqQualification()) {
+			this.reqQualification=i.getReqQualification();
+		}
+		Jobs jobToInsert= new Jobs(i,serviceStartTime);
+		jobSequence.add(jobPosition, jobToInsert);
 		jobList.put(i.getId(),i);
+		this.startServiceTime=this.getJobSequence().getFirst().getstartServiceTime();
 	}
 
 	public void setDropOffNode(Jobs dropOffNode) {
@@ -48,7 +61,7 @@ public class SubRoute {
 	public void setTotalTravelTime(double totalTravelTime) {
 		this.totalTravelTime = totalTravelTime;
 	}
-	
+
 	public void setTotalServiceTime(double serviceTime) {
 		this.totalServiceTime = serviceTime;
 	}
@@ -58,7 +71,7 @@ public class SubRoute {
 	public HashMap<Integer,Jobs> getJobList() {
 		return jobList;
 	}
-	
+
 	public int getSlotID() {
 		return slotID;
 	}
@@ -88,11 +101,13 @@ public class SubRoute {
 	public double getdurationWalkingRoute() {
 		return durationWalkingRoute;
 	}
+	
+	public int getSkill() {return reqQualification;}
 
 	// Auxiliar methods
-	
+
 	public void updateInfWalkingRoute(Inputs inp) {
-	double cumulativeWalkingDistance=0;
+		double cumulativeWalkingDistance=0;
 		double serviceTime=0;
 		if(this.getJobSequence().size()>1) {
 			for(int i=0;i<this.getJobSequence().size()-1;i++) {
@@ -105,22 +120,33 @@ public class SubRoute {
 			this.setTotalTravelTime(cumulativeWalkingDistance);
 			this.setdurationWalkingRoute(serviceTime+cumulativeWalkingDistance);
 		}
-		
-		// TO DO: CREATE EDGES <- MISSING 
+
+		// TO DO: CREATE EDGES - BIG JOB TO DRIVING ROUTES <- MISSING 
 	}
-	
-	
-	
+
+
+
 	@Override
 	public String toString() 
 	{   String s = "";
+	s = s.concat("\nID route: " + this.slotID);
+	s = s.concat("\nRequired Qualification: " + this.reqQualification);
 	s = s.concat("\nEdge cumulative walking time: " + this.totalTravelTime);
 	s = s.concat("\nEdge cumulative service time: " + this.totalServiceTime);
+	s=s.concat("\nEdge start service time: " + this.startServiceTime);
 	s = s.concat("\nEdge total of job in the walking route: " + (this.getJobSequence().size()));
+	s = s.concat("\n List of jobs: ");
+	for(Jobs j:this.getJobSequence()) {
+		s = s.concat(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");	
+	}
+	s = s.concat("\n Information Jobs: ");
+	for(Jobs j:this.getJobSequence()) {
+		s = s.concat("\n"+j.toString());	
+	}
 	s = s.concat("\nEdge route duration (service+ walking time): " + (this.durationWalkingRoute));
 	return s;
 	}
 
-	
+
 
 }
