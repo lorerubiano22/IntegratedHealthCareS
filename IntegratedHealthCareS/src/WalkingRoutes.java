@@ -21,6 +21,7 @@ public class WalkingRoutes {
 	private ArrayList<Jobs> noServedJobs;
 	private Inputs inp; // input problem
 	private Test test; // input problem
+	private Random rn;
 
 
 	// Methods
@@ -38,24 +39,47 @@ public class WalkingRoutes {
 		}
 		jobList.sort(Jobs.TWSIZE_Early);
 		jobSlots= new LinkedList<SubRoute>();
-		// Assignment of all jobs asking for nurses with skill 3
-		dummyWalkroute();// one walking route per job
-	
-		jobsInsertion();
+
+		//
+		String[] serviceStartTime= new String[3]; //Criteria for setting the service start time
+		serviceStartTime[0] = "E"; // earliest time
+		serviceStartTime[1] = "L";  // latest time
+		serviceStartTime[2] = "R";  // random time
+		for(int i=0;i<serviceStartTime.length;i++) {
+			dummyWalkroute(serviceStartTime[i]);// one walking route per job
+			jobsInsertion(serviceStartTime[i]);
+		}
+		for(SubRoute wr:jobSlots) {
+			if(wr.getJobSequence().size()>=1) {
+				if(wr.getTotalTravelTime()==0) {
+					wr.setTotalTravelTime(50);
+					//wr.setTotalTravelTime(Double.MAX_VALUE);
+				}
+			}
+		}
 		System.out.println("Final slots");
+		for(SubRoute wr:jobSlots) {
+			System.out.print("\n Slot_Cost_ "+ wr.getTotalTravelTime());
+			for(Jobs j:wr.getJobSequence()) {
+				System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");
+			}
+			System.out.print("\n");
+		}
 		ExactAllocation improveSlots= new ExactAllocation(test,inp);
 		for(SubRoute wr:jobSlots) {
-			//improveSlots.solving(wr);
-			System.out.println(wr.toString());
+			System.out.print("\n Slot_Cost_ "+ wr.getTotalTravelTime());
+			for(Jobs j:wr.getJobSequence()) {
+				System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");
+			}
+			System.out.print("\n");
 		}
-		
+
 		//checkSequenceWalkingRoutes(); // remove repeated walking routes. If there two routes with the same jobs sequence the shortest one is selected
 		improveSlots.selectionWalkingRoutes(jobSlots);
 		walkingRouteToJob(); // fix the pick-up and drop-off nodes for each walking route
-
-		for(SubRoute wr:jobSlots) {
-			System.out.println(wr.toString());
-		}
+//		for(SubRoute wr:jobSlots) {
+//			System.out.println(wr.toString());
+//		}
 	}
 
 
@@ -131,10 +155,10 @@ public class WalkingRoutes {
 
 
 
-	private void jobsInsertion() {
+	private void jobsInsertion(String serviceStartTime) {
 		for(Jobs i:jobList) {
 			for(SubRoute wr:jobSlots) {
-				insertionJob(i,wr);
+				insertionJob(i,wr,serviceStartTime);
 				wr.updateInfWalkingRoute(inp);
 				System.out.println(wr.toString());
 			}
@@ -146,10 +170,63 @@ public class WalkingRoutes {
 
 
 
-	private void insertionJob(Jobs i, SubRoute wr) {
+	private void insertionJob(Jobs i, SubRoute wr, String serviceStartTime) {
 		if(feasibleInsertion(i,wr)) { // it determines if the current route doesn't exceeds the maximum walking duration between two jobs
 			// maximum walking duration between drop-off and delivery <- it is the route length
-			evaluateTheInsertion(i,wr); // it evaluates and inserts the route if the insertion is feasible 
+			if(serviceStartTime.equals("E")) {
+				evaluateTheInsertionEarly(i,wr); // it evaluates and inserts the route if the insertion is feasible 
+			}
+			else {
+				if(serviceStartTime.equals("L")) {
+					evaluateTheInsertionLatest(i,wr); // it evaluates and inserts the route if the insertion is feasible 
+				}
+			}
+		}
+	}
+
+
+
+	private void evaluateTheInsertionLatest(Jobs i, SubRoute wr) {
+		if(!wr.getJobList().containsKey(i.getId())) {
+			checkIfTheJobIsTheIntermediateJob(i,wr);  // try to insert the job before or after everything
+		}
+	}
+
+
+
+	private void checkIfTheJobIsTheIntermediateJob(Jobs i, SubRoute wr) { // wr: {h,i,j,...}
+		// Checking if is possible to insert before
+		int estimatedB=0;
+		int jobSequence=-1;
+		for(Jobs j:wr.getJobSequence()) { // reading the list of jobs in the slot
+			jobSequence++;
+			if(wr.getJobSequence().getFirst().equals(j)) { // first job in the list
+				estimatedB=j.getstartServiceTime()-i.getReqTime()-inp.getWalkCost().getCost(i.getId(),j.getId());
+				if(estimatedB<=i.getEndTime() && estimatedB>=i.getStartTime()) {// check if it is possible insert the job before all jobs
+					wr.addJobSequence(i,0,estimatedB);
+				}
+			}
+			else {// in case that the job i could be an intermediate job or the last job
+				if(!wr.getJobSequence().getLast().equals(j)) {// // in case that the job i could be an intermediate job
+					int h=jobSequence-1;
+					Jobs job_h=wr.getJobSequence().get(h); // calling the job h
+					estimatedB=job_h.getstartServiceTime()+job_h.getReqTime()+inp.getWalkCost().getCost(job_h.getId(),i.getId());
+					if(estimatedB>=i.getStartTime() && estimatedB<=i.getEndTime()){ // checking if from job j the new job i could be reachable
+						if(estimatedB+i.getReqTime()+inp.getWalkCost().getCost(i.getId(),j.getId())<j.getstartServiceTime()) {
+							wr.addJobSequence(i,jobSequence,estimatedB);
+							System.out.println(wr.toString());
+						}
+					}	
+				}
+				else {// in case that the job i could be the final job
+					if(wr.getJobSequence().getLast().equals(j)) {
+						checkIfTheJobIsTheLatesestJob(i,wr);  // try to insert the job after everything
+					}
+				}
+			}
+			if(wr.getJobList().containsKey(i.getId())) {
+				break;
+			}
 		}
 	}
 
@@ -161,10 +238,10 @@ public class WalkingRoutes {
 		if (isNewJob) {
 			int slotSkill=wr.getSkill();
 			if(slotSkill>=i.getReqQualification()) {
-			// 1. Maximum working time (nurse)
-			// 2. Maximum walking duration between two jobs
-			// 3. Maximum walking duration between drop-off and delivery
-			feasibility=checkWalkingDuration(i,wr);
+				// 1. Maximum working time (nurse)
+				// 2. Maximum walking duration between two jobs
+				// 3. Maximum walking duration between drop-off and delivery
+				feasibility=checkWalkingDuration(i,wr);
 			}
 		}	
 		return feasibility;
@@ -172,13 +249,12 @@ public class WalkingRoutes {
 
 
 
-	private void evaluateTheInsertion(Jobs i, SubRoute wr) {
+	private void evaluateTheInsertionEarly(Jobs i, SubRoute wr) {
 		// When the work is inserted before the other jobs it is 
 		checkIfTheJobIsTheEarliestJob(i,wr);  // try to insert the job before everything
 		if(!wr.getJobList().containsKey(i.getId())) {
 			checkIfTheJobIsTheLatesestJob(i,wr);  // try to insert the job after everything
 		}
-		
 	}
 
 	private void checkIfTheJobIsTheLatesestJob(Jobs i, SubRoute wr) {
@@ -186,8 +262,8 @@ public class WalkingRoutes {
 		// 1. Assuming that the job could be assigned as the first job in the sequence and it could start the latest time
 		int estimatedB= firstJob.getstartServiceTime()+firstJob.getReqTime()+inp.getWalkCost().getCost(firstJob.getId(),i.getId());
 		if(estimatedB<=i.getEndTime()) { // The estimated time start for the service
-		wr.addJobSequence(i,wr.getJobSequence().size(),estimatedB);
-		System.out.println(wr.toString());
+			wr.addJobSequence(i,wr.getJobSequence().size(),estimatedB);
+			System.out.println(wr.toString());
 		}
 	}
 
@@ -230,14 +306,14 @@ public class WalkingRoutes {
 
 
 
-	private void dummyWalkroute() {
+	private void dummyWalkroute(String serviceStartTime) {
 		int jobPosition =0;
-		int slotId=-1;
+		int slotId=jobSlots.size()-1;
 		for(Jobs i:jobList) {
 			SubRoute slot = new SubRoute();
 			slotId++;
 			slot.setSlotID(slotId);
-			preliminarStartServiceTime(i,slot,jobPosition);
+			preliminarStartServiceTime(i,slot,jobPosition,serviceStartTime);
 			slot.addJobSequence(i,jobPosition,i.getstartServiceTime());
 			jobSlots.add(slot);
 		}
@@ -245,19 +321,26 @@ public class WalkingRoutes {
 
 
 
-	private void preliminarStartServiceTime(Jobs i, SubRoute slot, int jobPosition) {
-
+	private void preliminarStartServiceTime(Jobs i, SubRoute slot, int jobPosition, String serviceStartTime) {
 		if(slot.getJobList().isEmpty()) {
 			// assuming that the service will start in the latest time
-			i.setStartServiceTime(i.getStartTime());
+			if(serviceStartTime.equals("E")) {
+				i.setStartServiceTime(i.getStartTime());
 			}
-		else {
-			// the service time, for the node which will be inserted, is defined according to the next job, the next job is the reference node (before OR after).
-			if(jobPosition==0) { // the new job is the first node in the jobs sequence
-
+			else {
+				if(serviceStartTime.equals("L")) {
+					i.setStartServiceTime(i.getEndTime());
+				}
+				else {// random start service time
+					rn = new Random(this.test.getSeed()); 
+					int min=i.getStartTime();
+					int max=i.getEndTime();
+					int randomTime=rn.nextInt(max - min + 1) + min ;
+					i.setStartServiceTime(randomTime);
+				}
 			}
-			else {}
 		}
+		
 	}
 
 
