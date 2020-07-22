@@ -18,7 +18,7 @@ public class WalkingRoutes {
 	private double slack=0;
 	private LinkedList<SubRoute> jobSlots; // list of subroutes which describe the job sequence respecting all restrictions
 	private ArrayList<Jobs> jobList;
-	private ArrayList<Jobs> noServedJobs;
+	private HashMap<Integer, Jobs> ServedJobs=new HashMap<> ();
 	private Inputs inp; // input problem
 	private Test test; // input problem
 	private Random rn;
@@ -27,7 +27,6 @@ public class WalkingRoutes {
 	// Methods
 	public WalkingRoutes(Inputs input, Random r, Test t, List<Jobs> nodes) {
 		jobList= new ArrayList<Jobs>();
-		noServedJobs= new ArrayList<Jobs>();
 		inp=input;
 		test=t;
 		for(Jobs i: nodes) {
@@ -37,23 +36,25 @@ public class WalkingRoutes {
 				jobList.add(i);
 			}
 		}
-		jobList.sort(Jobs.TWSIZE_Early);
+
+		jobList.sort(Jobs.TWSIZE_Early); // sorting list of jobs according the earliest time and the size of the TW
 		jobSlots= new LinkedList<SubRoute>();
 
-		//
 		String[] serviceStartTime= new String[3]; //Criteria for setting the service start time
 		serviceStartTime[0] = "E"; // earliest time
 		serviceStartTime[1] = "L";  // latest time
 		serviceStartTime[2] = "R";  // random time
-		for(int i=0;i<serviceStartTime.length;i++) {
-			dummyWalkroute(serviceStartTime[i]);// one walking route per job
-			jobsInsertion(serviceStartTime[i]);
-		}
+
+	
+		creatingMultipleSlots(serviceStartTime);
+		completingIndividualRoutes();
+		//creatingOnlyOneSlotsSet(serviceStartTime);
+		
+		
 		for(SubRoute wr:jobSlots) {
 			if(wr.getJobSequence().size()>=1) {
 				if(wr.getTotalTravelTime()==0) {
-					wr.setTotalTravelTime(50);
-					//wr.setTotalTravelTime(Double.MAX_VALUE);
+					wr.setTotalTravelTime(Double.MAX_VALUE); // High cost for slots with justn one job
 				}
 			}
 		}
@@ -66,6 +67,9 @@ public class WalkingRoutes {
 			System.out.print("\n");
 		}
 		ExactAllocation improveSlots= new ExactAllocation(test,inp);
+		
+		ExactAllocationDummyExample improveSlots1= new ExactAllocationDummyExample(test,inp);
+		
 		for(SubRoute wr:jobSlots) {
 			System.out.print("\n Slot_Cost_ "+ wr.getTotalTravelTime());
 			for(Jobs j:wr.getJobSequence()) {
@@ -76,10 +80,78 @@ public class WalkingRoutes {
 
 		//checkSequenceWalkingRoutes(); // remove repeated walking routes. If there two routes with the same jobs sequence the shortest one is selected
 		improveSlots.selectionWalkingRoutes(jobSlots);
+		improveSlots1.selectionWalkingRoutes(jobSlots);
 		walkingRouteToJob(); // fix the pick-up and drop-off nodes for each walking route
-//		for(SubRoute wr:jobSlots) {
-//			System.out.println(wr.toString());
+		//		for(SubRoute wr:jobSlots) {
+		//			System.out.println(wr.toString());
+		//		}
+	}
+
+
+
+private void completingIndividualRoutes() {
+	for(Jobs j:this.inp.getclients()) {
+		this.ServedJobs.put(j.getId(),j);	
+	}
+		for(SubRoute slot:this.jobSlots) {
+			if(slot.getJobSequence().size()==1) {
+				if(ServedJobs.containsKey(slot.getJobSequence().getFirst().getId())) {
+					ServedJobs.remove(slot.getJobSequence().getFirst().getId());
+				}
+			}
+		}
+		int slotId=jobSlots.size()-1;
+		for(Jobs i:ServedJobs.values()) {
+			SubRoute slot = new SubRoute();
+			slotId++;
+			slot.setSlotID(slotId);
+			slot.addJobSequence(i,0,i.getstartServiceTime());
+			jobSlots.add(slot);
+		}
+		
+	}
+
+
+
+//	private void creatingOnlyOneSlotsSet(String[] serviceStartTime) {
+//		for(int b=0;b<serviceStartTime.length;b++) {
+//			SubRoute wr = new SubRoute();
+//			for(Jobs i:jobList) {
+//				insertSequentially(i,wr,serviceStartTime[b]);
+//				wr.updateInfWalkingRoute(inp);
+//				System.out.println(wr.toString());
+//			}
+//			slotId++;
+//			slot.setSlotID(slotId);
+//			preliminarStartServiceTime(i,slot,jobPosition,serviceStartTime);
+//			slot.addJobSequence(i,jobPosition,i.getstartServiceTime());
+//			
+//			
+//		this.jobList
+//		slotId++;
+//		slot.setSlotID(slotId);
+//		preliminarStartServiceTime(i,slot,jobPosition,serviceStartTime);
+//		slot.addJobSequence(i,jobPosition,i.getstartServiceTime());
+//		jobSlots.add(slot);
+//			dummyWalkroute(serviceStartTime[i]);// one walking route per job
+//			jobsInsertion(serviceStartTime[i]);
 //		}
+//	}
+
+
+
+	private void insertSequentially(Jobs i, SubRoute wr, String string) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	private void creatingMultipleSlots(String[] serviceStartTime) {
+		for(int i=0;i<serviceStartTime.length;i++) {
+			dummyWalkroute(serviceStartTime[i]);// one walking route per job
+			jobsInsertion(serviceStartTime[i]);
+		}
 	}
 
 
@@ -129,7 +201,6 @@ public class WalkingRoutes {
 
 
 	private void removeLongerRoute(SubRoute wr0, SubRoute wr1, HashMap<Integer, SubRoute> jobSlotsCOPY) {
-
 		if(wr0.getdurationWalkingRoute()>wr1.getdurationWalkingRoute()) {
 			jobSlotsCOPY.remove(wr0.getSlotID());
 		}
@@ -177,9 +248,7 @@ public class WalkingRoutes {
 				evaluateTheInsertionEarly(i,wr); // it evaluates and inserts the route if the insertion is feasible 
 			}
 			else {
-				if(serviceStartTime.equals("L")) {
 					evaluateTheInsertionLatest(i,wr); // it evaluates and inserts the route if the insertion is feasible 
-				}
 			}
 		}
 	}
@@ -309,6 +378,7 @@ public class WalkingRoutes {
 	private void dummyWalkroute(String serviceStartTime) {
 		int jobPosition =0;
 		int slotId=jobSlots.size()-1;
+
 		for(Jobs i:jobList) {
 			SubRoute slot = new SubRoute();
 			slotId++;
@@ -340,7 +410,7 @@ public class WalkingRoutes {
 				}
 			}
 		}
-		
+
 	}
 
 
@@ -350,7 +420,7 @@ public class WalkingRoutes {
 	public double getTotalTravelTime() { return totalTravelTime;}
 	public float getTotalServiceTime() {return totalServiceTime;}
 	public double getSlack() {return slack;}
-	public ArrayList<Jobs> getNoServedJobs() {return noServedJobs;}
+	public HashMap<Integer,Jobs> getServedJobs() {return ServedJobs;}
 
 
 }
