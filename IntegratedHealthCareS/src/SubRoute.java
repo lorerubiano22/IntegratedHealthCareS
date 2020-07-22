@@ -51,6 +51,8 @@ public class SubRoute {
 		this.dropOffNode = dropOffNode;
 	}
 
+	
+	
 	public void setPickUpNode(Jobs pickUpNode) {
 		this.pickUpNode = pickUpNode;
 	}
@@ -65,6 +67,13 @@ public class SubRoute {
 	public void setTotalServiceTime(double serviceTime) {
 		this.totalServiceTime = serviceTime;
 	}
+	
+	
+	
+	public void setDurationWalkingRoute(double durationWR) {
+		this.durationWalkingRoute = durationWR;
+	}
+	
 	public void setSlotID(int slotID) { this.slotID = slotID; }
 
 	// Getters
@@ -98,9 +107,13 @@ public class SubRoute {
 	public double getTotalServiceTime() {
 		return totalServiceTime;
 	}
-	public double getdurationWalkingRoute() {
+	
+	public double getDurationWalkingRoute() {
 		return durationWalkingRoute;
 	}
+	
+	
+	
 	
 	public int getSkill() {return reqQualification;}
 
