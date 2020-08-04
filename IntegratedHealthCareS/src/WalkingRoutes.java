@@ -23,7 +23,7 @@ public class WalkingRoutes {
 	private Test test; // input problem
 	private Random rn;
 	private LinkedList<SubRoute> walkingRoutes; // list of selected walking routes
-	private ArrayList<SubJobs> subJobList = new ArrayList<SubJobs>();
+	private ArrayList<SubJobs> subJobList = new ArrayList<SubJobs>(); // this list contains 
 
 
 	// Methods
@@ -55,14 +55,7 @@ public class WalkingRoutes {
 		completingIndividualRoutes();
 
 		// 5. To Do: Improvement for slots   Method to improve the slots
-		System.out.println("Final slots");
-		for(SubRoute wr:jobSlots) {
-			System.out.print("\n Slot_Cost_ "+ wr.getTotalTravelTime());
-			for(Jobs j:wr.getJobSequence()) {
-				System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");
-			}
-			System.out.print("\n");
-		}
+
 
 		// 6.1 Computing walking cost
 		for(SubRoute wr:jobSlots) {
@@ -82,7 +75,15 @@ public class WalkingRoutes {
 		ExactAllocation improveSlots= new ExactAllocation(test,inp);
 		improveSlots.selectionWalkingRoutes(jobSlots);
 		walkingRoutes=improveSlots.getWalkingRoutes();
-
+		System.out.println("Final WR");
+		for(SubRoute wr:walkingRoutes) {
+			if(wr.getJobSequence().size()>1) {
+			System.out.print("\n WR_Cost_ "+ wr.getTotalTravelTime());
+			for(Jobs j:wr.getJobSequence()) {
+				System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");
+			}
+			System.out.print("\n");}
+		}
 
 		// 8. Making walking routes into big tasks 
 		walkingRouteToJob(); // fix the pick-up and drop-off nodes for each walking route
@@ -169,8 +170,11 @@ public class WalkingRoutes {
 
 	private void walkingRouteToJob() {
 		for(SubRoute wr:jobSlots) {
+			
+			
 			if(wr.getJobSequence().size()>1) {// only for real walking routes
 				wr.setDropOffNode(wr.getJobSequence().getFirst());
+				
 				wr.setPickUpNode(wr.getJobSequence().getLast());
 				
 				/*

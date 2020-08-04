@@ -37,11 +37,11 @@ public class InputsReader {
                     in.nextLine(); // skip comment lines
                 else // number | x-coord | y-coord | demand
                 {   
-                    int startTime = Integer.parseInt(s);
+                   // 1. if the TW <> 0 the it is a job (it could be a patient or client job)
+                	int startTime = Integer.parseInt(s);
                     int endTime = in.nextInt();
                     int reqQualification = in.nextInt();
                     int reqTime = in.nextInt();
-                    
                     Jobs aNode = nodeFactory.getNode(startTime, endTime, reqQualification, reqTime);
                     nodes.add(aNode);
                 }

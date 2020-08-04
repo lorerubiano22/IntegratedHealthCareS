@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,14 +18,31 @@ public class Jobs {
 	private int sortLTWSizeCriterion; // sort criterion the size of time window and the latest time
 	private boolean isServerd = false;
 	private double waitingTime=0;
-	private Jobs subJobPair;
-	
+	private Jobs subJobPair; // it is the near future task asociated to this job
+	private boolean isPatient;// type of job in the system- patient job at patient home
+	private boolean isMedicalCentre;// type of job in the system- patient job at medical centre home
+	private boolean isClient;// type of job in the system- patient job at client home
+	private ArrayList<Jobs> assignedJob= new ArrayList<Jobs>();
 	
 	/* SET METHODS */
 	public boolean isServerd() {
 		return isServerd;
 	}
 
+	public boolean isPatient() {
+		return isPatient;
+	}
+	public boolean isMedicalCentre() {
+		return isMedicalCentre;
+	}
+	public boolean isClient() {
+		return isClient;
+	}	
+		
+	public void setAssignedJobToMedicalCentre(ArrayList<Jobs> jobs) {
+		this.assignedJob = jobs;
+	}
+	
 	public void setServerd(boolean isServerd) {
 		this.isServerd = isServerd;
 	}
@@ -43,7 +61,14 @@ public class Jobs {
 		this.serviceTime = B;
 	}
 	
+	public void setPatient(boolean patient) {
+		this.isPatient = patient;
+	}
 	
+	public void setMedicalCentre(boolean mc) {
+		this.isMedicalCentre = mc;
+	}
+
 	public void setReqQualification(int qualification) {
 		reqQualification = qualification;
 	}
@@ -157,6 +182,11 @@ public class Jobs {
 	}
 	public Jobs getsubJobPair() {
 		return subJobPair;
+	}
+	
+	
+	public ArrayList<Jobs> getAssignedJobToMedicalCentre() {
+		return assignedJob;
 	}
 	
 
