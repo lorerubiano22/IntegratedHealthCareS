@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 
@@ -21,22 +22,30 @@ public class Algorithm {
 
 
 	private void udateListJobs() {
+		// stage 0: set the jobs which are not in a walking route
+		HashMap<Integer,Jobs> jobsInWalkingRoutes= new HashMap<>();
+		for(SubRoute r:subroutes.getWalkingRoutes()) {
+			for(Jobs j:r.getJobSequence()) {
+				jobsInWalkingRoutes.put(j.getId(), j);
+			}
+		}
+
 		// stage 1: convert walking route in big jobs
 		for(SubRoute r:subroutes.getWalkingRoutes()) {
 			if(r.getPickUpNode()==null) {
 				System.out.println("stop ID "+r.getSlotID());
 			}
-		// definition of the couples
+			// definition of the couples
 			Jobs pickUp=r.getPickUpNode();
 			Jobs dropOff=r.getPickUpNode();
 			pickUp.setPair(dropOff);
-				}
-		
-		
+		}
+
+
 		for(Jobs j:input.getNodes()) {
 			if(j.getsubJobPair()!=null) {
-			Couple separateJobs= new Couple(j,j.getsubJobPair());
-			subJobsList.add(separateJobs);}
+				Couple separateJobs= new Couple(j,j.getsubJobPair());
+				subJobsList.add(separateJobs);}
 			else {
 				// when the current job is a medical centre it doesnt have a pair
 				Couple separateJobs= new Couple(j,j);

@@ -68,16 +68,28 @@ public class WalkingRoutes {
 
 
 		// 6.2 To Do: Computing walking time duration: Method to determine the start time for each job in the walking route - apply PERT method for each slot
-		computingWalkingTimeDuration(); // computing the travel time for each slot walking time + waiting time
+		computingWalkingTimeDuration(jobSlots); // computing the travel time for each slot walking time + waiting time
 
-
+		System.out.println("potential WR");
+		for(SubRoute wr:jobSlots) {
+			if(wr.getJobSequence().size()>1) {
+			System.out.print("\n WR_Cost_ "+ wr.getTotalTravelTime());
+			for(Jobs j:wr.getJobSequence()) {
+				System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");
+			}
+			System.out.print("\n");}
+		}
 		// 7. Solving set partitioning problem
 		ExactAllocation improveSlots= new ExactAllocation(test,inp);
 		improveSlots.selectionWalkingRoutes(jobSlots);
 		walkingRoutes=improveSlots.getWalkingRoutes();
+		
+		
 		System.out.println("Final WR");
+	
 		for(SubRoute wr:walkingRoutes) {
 			if(wr.getJobSequence().size()>1) {
+				wr.updateInfWalkingRoute(inp);
 			System.out.print("\n WR_Cost_ "+ wr.getTotalTravelTime());
 			for(Jobs j:wr.getJobSequence()) {
 				System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");
@@ -91,9 +103,9 @@ public class WalkingRoutes {
 
 
 
-	private void computingWalkingTimeDuration() {
+	private void computingWalkingTimeDuration(LinkedList<SubRoute> jobSlots2) {
 		//1 Computing the waiting time for each job in each slot
-		for(SubRoute wr:this.jobSlots) {
+		for(SubRoute wr:jobSlots2) {
 			double waitingTime=0;
 			for(Jobs j: wr.getJobSequence()) {
 				j.setWaitingTime(j.getStartTime(), j.getstartServiceTime());
