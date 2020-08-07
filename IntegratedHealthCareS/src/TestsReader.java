@@ -24,10 +24,13 @@ public class TestsReader {
                     long seed = in.nextLong();
                     double workingTime=in.nextDouble();
                     double walking2jobs=in.nextDouble();
-                    double detour=in.nextDouble();
+                    double detour=1-in.nextDouble();
                     double cumulativeWalkingTime=in.nextDouble();
-                    double cumulativeWaitingTime=in.nextDouble();
-                    Test aTest = new Test(instanceName, maxTime, seed,workingTime, walking2jobs,  detour,  cumulativeWalkingTime, cumulativeWaitingTime);
+                    int cumulativeWaitingTime=in.nextInt();
+                    int loadPatient= in.nextInt();
+                    int loadHomeCare= in.nextInt();
+                    int patientRegistrationTime=in.nextInt();
+                    Test aTest = new Test(instanceName, maxTime, seed,workingTime, walking2jobs,  detour,  cumulativeWalkingTime, cumulativeWaitingTime,loadPatient, loadHomeCare , patientRegistrationTime);
                     list.add(aTest);
                 }
             }

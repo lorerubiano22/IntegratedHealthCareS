@@ -73,28 +73,35 @@ public class WalkingRoutes {
 		System.out.println("potential WR");
 		for(SubRoute wr:jobSlots) {
 			if(wr.getJobSequence().size()>1) {
-			System.out.print("\n WR_Cost_ "+ wr.getTotalTravelTime());
-			for(Jobs j:wr.getJobSequence()) {
-				System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");
+				System.out.print("\n WR_Cost_ "+ wr.getTotalTravelTime());  // to remove
+				for(Jobs j:wr.getJobSequence()) {
+					System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") "); // to remove
+				}
+				System.out.print("\n");
 			}
-			System.out.print("\n");}
 		}
 		// 7. Solving set partitioning problem
 		ExactAllocation improveSlots= new ExactAllocation(test,inp);
 		improveSlots.selectionWalkingRoutes(jobSlots);
 		walkingRoutes=improveSlots.getWalkingRoutes();
-		
-		
-		System.out.println("Final WR");
-	
+
+
+		System.out.println("\n Final WR");
+
 		for(SubRoute wr:walkingRoutes) {
 			if(wr.getJobSequence().size()>1) {
+				Jobs dropOff=wr.getJobSequence().getFirst();
+				Jobs pickUp=wr.getJobSequence().getLast();
+				dropOff.setPair(pickUp);  // presentJob.setPair(futureJob); 
+				wr.setDropOffNode(dropOff);
+				wr.setPickUpNode(pickUp);
 				wr.updateInfWalkingRoute(inp);
-			System.out.print("\n WR_Cost_ "+ wr.getTotalTravelTime());
-			for(Jobs j:wr.getJobSequence()) {
-				System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");
+				System.out.print("\n WR_Cost_ "+ wr.getTotalTravelTime());
+				for(Jobs j:wr.getJobSequence()) {
+					System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");
+				}
+				System.out.print("\n");
 			}
-			System.out.print("\n");}
 		}
 
 		// 8. Making walking routes into big tasks 
@@ -141,35 +148,6 @@ public class WalkingRoutes {
 
 
 
-	//	private void creatingOnlyOneSlotsSet(String[] serviceStartTime) {
-	//		for(int b=0;b<serviceStartTime.length;b++) {
-	//			SubRoute wr = new SubRoute();
-	//			for(Jobs i:jobList) {
-	//				insertSequentially(i,wr,serviceStartTime[b]);
-	//				wr.updateInfWalkingRoute(inp);
-	//				System.out.println(wr.toString());
-	//			}
-	//			slotId++;
-	//			slot.setSlotID(slotId);
-	//			preliminarStartServiceTime(i,slot,jobPosition,serviceStartTime);
-	//			slot.addJobSequence(i,jobPosition,i.getstartServiceTime());
-	//			
-	//			
-	//		this.jobList
-	//		slotId++;
-	//		slot.setSlotID(slotId);
-	//		preliminarStartServiceTime(i,slot,jobPosition,serviceStartTime);
-	//		slot.addJobSequence(i,jobPosition,i.getstartServiceTime());
-	//		jobSlots.add(slot);
-	//			dummyWalkroute(serviceStartTime[i]);// one walking route per job
-	//			jobsInsertion(serviceStartTime[i]);
-	//		}
-	//	}
-
-
-
-
-
 
 	private void creatingMultipleSlots(String[] serviceStartTime) {
 		for(int i=0;i<serviceStartTime.length;i++) {
@@ -182,13 +160,13 @@ public class WalkingRoutes {
 
 	private void walkingRouteToJob() {
 		for(SubRoute wr:jobSlots) {
-			
-			
+
+
 			if(wr.getJobSequence().size()>1) {// only for real walking routes
 				wr.setDropOffNode(wr.getJobSequence().getFirst());
-				
+
 				wr.setPickUpNode(wr.getJobSequence().getLast());
-				
+
 				/*
 				 *  Present job
 				 */
@@ -201,7 +179,7 @@ public class WalkingRoutes {
 				presentbigJob.setserviceTime((int)wr.getDurationWalkingRoute());
 				// 3. Setting qualification of the nurse
 				presentbigJob.setReqQualification(wr.getSkill());
-				
+
 				/*
 				 *  Future job
 				 */
@@ -217,67 +195,6 @@ public class WalkingRoutes {
 			}
 		}
 	}
-
-
-
-//	private void checkSequenceWalkingRoutes() {
-//		HashMap<Integer,SubRoute> jobSlotsCOPY=new HashMap<> ();
-//		int route=-1;
-//		for(SubRoute wr:jobSlots) {
-//			if(wr.getJobSequence().size()>1) {
-//				route++;
-//				wr.setSlotID(route);
-//				jobSlotsCOPY.put(wr.getSlotID(), wr);}
-//		}
-//
-//		for(SubRoute wr0:jobSlots) {
-//			for(SubRoute wr1:jobSlots) {
-//				if(jobSlotsCOPY.containsValue(wr0) && jobSlotsCOPY.containsValue(wr1)) {
-//					if(!wr0.equals(wr1)) {
-//						boolean StartEndJob= areTheyTheSameJob(wr0,wr1);
-//						if(StartEndJob) {
-//							removeLongerRoute(wr0,wr1,jobSlotsCOPY);
-//							// TO DO: check the route with the tighter TW
-//						}
-//					}
-//				}
-//			}	
-//		}
-//		jobSlots.clear();
-//		for(SubRoute wr:jobSlots) {
-//			System.out.println(wr.toString());
-//		}
-//		for(SubRoute wr:jobSlotsCOPY.values()) {
-//			jobSlots.add(wr);
-//			wr.updateInfWalkingRoute(inp);
-//		}
-//	}
-
-
-
-//	private void removeLongerRoute(SubRoute wr0, SubRoute wr1, HashMap<Integer, SubRoute> jobSlotsCOPY) {
-//		if(wr0.getDurationWalkingRoute()>wr1.getDurationWalkingRoute()) {
-//			jobSlotsCOPY.remove(wr0.getSlotID());
-//		}
-//		else {
-//			if(wr0.getDurationWalkingRoute()<wr1.getDurationWalkingRoute()) {
-//				jobSlotsCOPY.remove(wr1.getSlotID());
-//			}
-//			else { // are the same job sequence
-//				jobSlotsCOPY.remove(wr0.getSlotID());
-//			}
-//		}
-//	}
-
-
-
-//	private boolean areTheyTheSameJob(SubRoute wr0, SubRoute wr1) {
-//		boolean equalStartEndJob=true;
-//		if(wr0.getJobSequence().getFirst().equals(wr1.getJobSequence().getFirst())) {
-//			equalStartEndJob=true;
-//		}
-//		return equalStartEndJob;
-//	}
 
 
 

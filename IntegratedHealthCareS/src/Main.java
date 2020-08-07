@@ -33,8 +33,12 @@ public class Main {
                     currentTest.getInstanceName() + "_" + currentTest.getSeed() +  sufixFileOutput;
             // 2.2. USE THE MULTI-START ALGORITHM TO SOLVE THE INSTANCE
            Algorithm algorithm = new Algorithm(currentTest, inputs, rng);
+           Outputs output = new Outputs(algorithm);
+           Double endTime=(System.nanoTime() - t) / Math.pow(10, 6);
+           output.sendToFile(outputsFilePath,endTime);
+        
            // algorithm.solve(outputsFilePath);
-            System.out.println("Taked:"+(System.nanoTime() - t) / Math.pow(10, 6));
+            System.out.println("Taked:"+endTime);
         }
 
         /* 3. END OF PROGRAM */

@@ -5,6 +5,9 @@ import java.util.List;
 
 public class Jobs {
 	/* INSTANCE FIELDS & CONSTRUCTOR */
+	
+	// - 1: a sub-Job which represents that a person is leaving the vehicle
+	// 1 : a sub-Job which represents that a person is boarding the vehicle
 
 	private final int id; // node ID (depotID = 0)
 	private int hardstartTime; // input data early time window 
@@ -16,6 +19,8 @@ public class Jobs {
 	private int serviceTime; // required service time
 	private int sortETWSizeCriterion; // sort criterion the size of time window and the earliest time
 	private int sortLTWSizeCriterion; // sort criterion the size of time window and the latest time
+	private int totalPeople=0; // people involven in the service:
+								// - 1  es una persona menos en el vehículo + 1 una plaza ocupada en el vehículo + 2 dos plazas ocupadas en el vehículo 
 	private boolean isServerd = false;
 	private double waitingTime=0;
 	private Jobs subJobPair; // it is the near future task asociated to this job
@@ -23,6 +28,7 @@ public class Jobs {
 	private boolean isMedicalCentre;// type of job in the system- patient job at medical centre home
 	private boolean isClient;// type of job in the system- patient job at client home
 	private ArrayList<Jobs> assignedJob= new ArrayList<Jobs>();
+	private int surplusTime=0; // it is computed to avoid waiting times
 	
 	/* SET METHODS */
 	public boolean isServerd() {
@@ -38,14 +44,31 @@ public class Jobs {
 	public boolean isClient() {
 		return isClient;
 	}	
-		
+	public void computeSurplusTime(int additionalTime) {
+		surplusTime=additionalTime;
+	}		
+	
+	
 	public void setAssignedJobToMedicalCentre(ArrayList<Jobs> jobs) {
 		this.assignedJob = jobs;
 	}
 	
+	public void setReqserviceTime(int serviceTime) {
+		this.serviceTime = serviceTime;
+	}
+	
+	
 	public void setServerd(boolean isServerd) {
 		this.isServerd = isServerd;
 	}
+	
+
+	public void setTotalPeople(int i) {
+		this.totalPeople = i;
+	}
+	
+	
+	
 
 	public void setStartServiceTime(int B) {
 		this.startServiceTime = B;
@@ -144,6 +167,10 @@ public class Jobs {
 	public int getstartServiceTime() {
 		return startServiceTime;
 	}
+	
+	public int getSurplusTime() {
+				return surplusTime;
+	}
 
 	public int getStartTime() {
 		return hardstartTime;
@@ -176,6 +203,11 @@ public class Jobs {
 		return serviceTime;
 	}
 
+	public int getTotalPeople() {
+		return totalPeople;
+	}
+
+	
 	
 	public double getWaitingTime() {
 		return waitingTime;
@@ -275,7 +307,20 @@ public class Jobs {
 		s = s.concat("\nreqQualification: " + (this.reqQualification));
 		s = s.concat("\nstartServiceTime: " + (this.startServiceTime));
 		s = s.concat("\nserviceTime: " + (this.serviceTime));
+		s = s.concat("\npeople on board: " + this.totalPeople);
 		return s;
+	}
+
+	public void setTimeWindowsDropOffMedicalCentre(int registrationTime) {
+		int startTime=this.getStartTime();
+		this.setStartTime(startTime-registrationTime);
+		this.setEndTime(startTime-registrationTime);
+	}
+
+	public void setTimeWindowsPickUpMedicalCentre(int startTime, int maxDetourDirectConnection, int cumulativeWaitingTime) {
+		this.setEndTime(startTime-maxDetourDirectConnection);
+		// aca se considera el waiting time pensando en el tiempo max permitido que el paciente puede estar en el centro médico
+		this.setStartTime(this.getEndTime()-cumulativeWaitingTime);
 	}
 
 	
