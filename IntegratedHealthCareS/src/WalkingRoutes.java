@@ -114,11 +114,15 @@ public class WalkingRoutes {
 		//1 Computing the waiting time for each job in each slot
 		for(SubRoute wr:jobSlots2) {
 			double waitingTime=0;
+			double serviceTime=0;
 			for(Jobs j: wr.getJobSequence()) {
 				j.setWaitingTime(j.getStartTime(), j.getstartServiceTime());
 				waitingTime+=j.getWaitingTime();
+				serviceTime+=j.getReqTime();
 			}
-			wr.setDurationWalkingRoute(waitingTime+wr.getTotalTravelTime());
+			wr.setwaitingTimeRoute(waitingTime);
+			wr.setTotalServiceTime(serviceTime);
+			wr.setDurationWalkingRoute(waitingTime+wr.getTotalTravelTime()+wr.getTotalServiceTime());
 		}
 	}
 
@@ -174,7 +178,7 @@ public class WalkingRoutes {
 				// 1. Setting the TW and start service time
 				presentbigJob.setStartTime(wr.getDropOffNode().getStartTime());
 				presentbigJob.setEndTime(wr.getDropOffNode().getEndTime());
-				presentbigJob.setStartServiceTime(wr.getDropOffNode().getstartServiceTime());
+				presentbigJob.setStartServiceTime((int)wr.getDropOffNode().getstartServiceTime());
 				// 2. Setting the duration of the jobs
 				presentbigJob.setserviceTime((int)wr.getDurationWalkingRoute());
 				// 3. Setting qualification of the nurse
@@ -185,7 +189,7 @@ public class WalkingRoutes {
 				 */
 				Jobs futurebigJob=new Jobs(wr.getPickUpNode());		
 				// 1. Setting the TW and start service time
-				futurebigJob.setStartTime((int)wr.getPickUpNode().getstartServiceTime()+ wr.getPickUpNode().getReqTime());
+				futurebigJob.setStartTime((int)wr.getPickUpNode().getstartServiceTime()+ (int)wr.getPickUpNode().getReqTime());
 				futurebigJob.setEndTime((int)futurebigJob.getStartTime()+ (int)this.test.getCumulativeWaitingTime());
 				// 2. Setting the duration of the jobs
 				futurebigJob.setserviceTime(0);
@@ -237,7 +241,7 @@ public class WalkingRoutes {
 
 	private void checkIfTheJobIsTheIntermediateJob(Jobs i, SubRoute wr) { // wr: {h,i,j,...}
 		// Checking if is possible to insert before
-		int estimatedB=0;
+		double estimatedB=0;
 		int jobSequence=-1;
 		for(Jobs j:wr.getJobSequence()) { // reading the list of jobs in the slot
 			jobSequence++;
@@ -301,7 +305,7 @@ public class WalkingRoutes {
 	private void checkIfTheJobIsTheLatesestJob(Jobs i, SubRoute wr) {
 		Jobs firstJob=wr.getJobSequence().getLast();
 		// 1. Assuming that the job could be assigned as the first job in the sequence and it could start the latest time
-		int estimatedB= firstJob.getstartServiceTime()+firstJob.getReqTime()+inp.getWalkCost().getCost(firstJob.getId(),i.getId());
+		double estimatedB= firstJob.getstartServiceTime()+firstJob.getReqTime()+inp.getWalkCost().getCost(firstJob.getId(),i.getId());
 		if(estimatedB<=i.getEndTime()) { // The estimated time start for the service
 			wr.addJobSequence(i,wr.getJobSequence().size(),estimatedB);
 			System.out.println(wr.toString());
@@ -375,9 +379,9 @@ public class WalkingRoutes {
 				}
 				else {// random start service time
 					rn = new Random(this.test.getSeed()); 
-					int min=i.getStartTime();
-					int max=i.getEndTime();
-					int randomTime=rn.nextInt(max - min + 1) + min ;
+					double min=i.getStartTime();
+					double max=i.getEndTime();
+					double randomTime=rn.nextInt((int)max - (int)min + 1) + min ;
 					i.setStartServiceTime(randomTime);
 				}
 			}
