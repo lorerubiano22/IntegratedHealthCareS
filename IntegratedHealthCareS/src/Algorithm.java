@@ -41,13 +41,6 @@ public class Algorithm {
 		ArrayList<Couple> patientJobs= createPatientsJobs();
 		// creating the list of subJobs <- each subjob could be also considered as a stop
 		creatingSubjobsList(clientJobs,patientJobs);
-
-		System.out.println("Couple"); // To remove
-		for(Couple j:subJobsList) {
-			System.out.println(j.toString());
-		}
-
-		System.out.println("End");
 	}
 
 	private void creatingSubjobsList(ArrayList<Couple> clientJobs, ArrayList<Couple> patientJobs) {
