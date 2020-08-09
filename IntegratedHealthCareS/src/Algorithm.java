@@ -51,14 +51,19 @@ public class Algorithm {
 	}
 
 	private void creatingSubjobsList(ArrayList<Couple> clientJobs, ArrayList<Couple> patientJobs) {
+		int i=-1;
 		for(Couple j:clientJobs) {
+			i++;
 			System.out.println(j.toString());
+			j.setIdCouple(i);
 			subJobsList.add(j);
 
 		}
 
 		for(Couple j:patientJobs) {
+			i++;
 			System.out.println(j.toString());
+			j.setIdCouple(i);
 			subJobsList.add(j);
 		}	
 
@@ -242,23 +247,14 @@ public class Algorithm {
 	private ArrayList<Couple> createClientJobs() {
 		ArrayList<Couple> coupleFromWalkingRoutes= new ArrayList<Couple>();
 		HashMap<Integer,Jobs> jobsInWalkingRoutes= clientInWalkingRoutes(); // store the list of job in the walking routes
-
 		// 1. WALKING ROUTES-- Convert walking route in big jobs
 		convertingWalkingRoutesInOneTask(coupleFromWalkingRoutes);
-
-
-
-		// 1. Ignoring the jobs which are already in a walking route
-
-
-
-
-		// REMAINING JOBS
+		// Individual client JOBS
 		for(Jobs j: input.getclients()) {
 			// Creating the request for picking up the nurse
 			if(!jobsInWalkingRoutes.containsKey(j.getId())) { // only jobs which are not in a walking route	
 				Jobs presentJob= new Jobs(j);
-				Jobs futureJob= new Jobs(j.getsubJobPair()); 
+				Jobs futureJob= creatingSubPairJOb(j);
 				//0. creation of couple
 				Couple pickUpDropOff= creatingCoupleforIndividualJobs(presentJob,futureJob); // individula jobs <- not walking routes
 				// 1. fixing time windows
@@ -274,6 +270,20 @@ public class Algorithm {
 		// create in the class Couple a constructor for setting the walking routes
 		return coupleFromWalkingRoutes;
 	}
+
+
+
+	private Jobs creatingSubPairJOb(Jobs j) {
+		double pickUpTimeEarly=j.getstartServiceTime()+j.getReqTime();
+		double pickUpTimeLate=j.getstartServiceTime()+j.getReqTime()+test.getCumulativeWaitingTime();
+		Jobs futureJob= new Jobs(j.getId(),pickUpTimeEarly,pickUpTimeLate,j.getReqQualification(),test.getloadTimeHomeCareStaff()); 
+		j.setPair(futureJob);
+		return futureJob;
+	}
+
+
+
+
 
 
 
