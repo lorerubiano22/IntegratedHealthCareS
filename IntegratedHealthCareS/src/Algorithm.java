@@ -38,10 +38,9 @@ public class Algorithm {
 	private void updateListJobs() {
 		// stage 0: set the jobs which are not in a walking route
 		ArrayList<Couple> clientJobs= createClientJobs(); // TO DO
-		ArrayList<Couple> patientJobs= createPatientsJobs(); // TO DO
+		ArrayList<Couple> patientJobs= createPatientsJobs();
 		// creating the list of subJobs <- each subjob could be also considered as a stop
 		creatingSubjobsList(clientJobs,patientJobs);
-
 
 		System.out.println("Couple"); // To remove
 		for(Couple j:subJobsList) {
@@ -145,14 +144,13 @@ public class Algorithm {
 
 	private void settingPeopleInSubJob(Couple pairPatientMedicalCentre, int i, int j) {
 		pairPatientMedicalCentre.getPresent().setTotalPeople(i); // 1 persona porque se recoge sólo al paciente
-		pairPatientMedicalCentre.getFuture().setTotalPeople(-j); // setting el numero de personas en el servicio // es un dos porque es el paramedico y el pacnete al mismo tiempo	
+		pairPatientMedicalCentre.getFuture().setTotalPeople(j); // setting el numero de personas en el servicio // es un dos porque es el paramedico y el pacnete al mismo tiempo	
 	}
 
 
 
 	private void computingTimeWindowPatientMedicalCentreSubJob(Couple pairPatientMedicalCentre, Jobs j) {
 		// Time window
-
 		// 1. Future Job: drop-off patient and paramedic at medical centre
 		// required time before the service starts
 		int previousTime=test.getRegistrationTime()+test.getloadTimePatient();
@@ -199,9 +197,6 @@ public class Algorithm {
 	private Couple creatingPairMedicalCentrePatient(Jobs presentJob, Jobs futureJob, int directConnectionDistance) {
 
 		// 1. Calculate the time for piking up the patient and paramedic
-		double maxDetourDuration = (int) directConnectionDistance*(test.getDetour()); // dynamic according to the direct connections
-		int directConection= Math.max((int)maxDetourDuration,directConnectionDistance);
-
 		// DEFINITION OF FUTURE TASK<- DROP-OFF PATIENT AND PARAMEDIC AT MEDICAL CENTRE
 		// the time for the future task is modified to consider the registration time
 		// start time= doctor appointment - registration time
@@ -209,7 +204,7 @@ public class Algorithm {
 
 		// DEFINITION OF PRESENT TASK<- PICK UP PATIENT AT MEDICAL CENTRE
 		// 2. Set the time for pick up patient at the patient home = doctor appointment time  - max(detour, direct connection) - load time - tiempo de registro
-		double fixedTime=futureJob.getStartTime()-directConection- test.getloadTimePatient(); // doctor appointment
+		double fixedTime=futureJob.getStartTime()-directConnectionDistance- test.getloadTimePatient(); // doctor appointment
 		presentJob.setStartTime(fixedTime);
 
 
@@ -224,8 +219,6 @@ public class Algorithm {
 
 	private Couple creatingPairPatientMedicalCentre(Jobs presentJob, Jobs futureJob, int directConnectionDistance) {
 		// 1. Calculate the time for piking up the patient
-		double maxDetourDuration =  directConnectionDistance*(test.getDetour()); // dynamic according to the direct connections
-		int directConection= Math.max((int)maxDetourDuration,directConnectionDistance);
 		// DEFINITION OF FUTURE TASK<- DROP-OFF PATIENT AND PARAMEDIC AT MEDICAL CENTRE
 		// the time for the future task is modified to consider the registration time
 		// start time= doctor appointment - registration time
@@ -233,7 +226,7 @@ public class Algorithm {
 
 		// DEFINITION OF PRESENT TASK<- PICK UP PATIENT AT MEDICAL CENTRE
 		// 2. Set the time for pick up patient at the patient home = doctor appointment time  - max(detour, direct connection) - load time - tiempo de registro
-		presentJob.setTimeWindowsPickUpMedicalCentre(futureJob.getStartTime(),directConection,test.getCumulativeWaitingTime());
+		presentJob.setTimeWindowsPickUpMedicalCentre(futureJob.getStartTime(),directConnectionDistance,test.getCumulativeWaitingTime());
 
 
 		// DEFINITION OF A COUPLE
@@ -249,11 +242,12 @@ public class Algorithm {
 	private ArrayList<Couple> createClientJobs() {
 		ArrayList<Couple> coupleFromWalkingRoutes= new ArrayList<Couple>();
 		HashMap<Integer,Jobs> jobsInWalkingRoutes= clientInWalkingRoutes(); // store the list of job in the walking routes
+
 		// 1. WALKING ROUTES-- Convert walking route in big jobs
 		convertingWalkingRoutesInOneTask(coupleFromWalkingRoutes);
 
-		
-		
+
+
 		// 1. Ignoring the jobs which are already in a walking route
 
 
@@ -264,12 +258,17 @@ public class Algorithm {
 			// Creating the request for picking up the nurse
 			if(!jobsInWalkingRoutes.containsKey(j.getId())) { // only jobs which are not in a walking route	
 				Jobs presentJob= new Jobs(j);
-				presentJob.setTotalPeople(-1);
-				Jobs futureJob= creatingTheFeatureJob(j); // this a copy of the current job
-				futureJob.setTotalPeople(1);
-				int directConnectionDistance= input.getCarCost().getCost(presentJob.getId(), futureJob.getId());
-				presentJob.setPair(futureJob);
-				coupleFromWalkingRoutes.add(new Couple(presentJob,futureJob, directConnectionDistance,test.getDetour()));
+				Jobs futureJob= new Jobs(j.getsubJobPair()); 
+				//0. creation of couple
+				Couple pickUpDropOff= creatingCoupleforIndividualJobs(presentJob,futureJob); // individula jobs <- not walking routes
+				// 1. fixing time windows
+				computingTimeatClientHomeSubJob(pickUpDropOff,j); // considering the load un loading time
+				// 2. fixing number of people involved
+				settingPeopleInSubJob(pickUpDropOff, -1,+1); //- drop-off #personas + pick up #personas
+				// 3. checking information
+				System.out.println(pickUpDropOff.toString());
+				// 4. adding couple
+				coupleFromWalkingRoutes.add(pickUpDropOff);
 			}
 		}
 		// create in the class Couple a constructor for setting the walking routes
@@ -278,26 +277,82 @@ public class Algorithm {
 
 
 
+	private void computingTimeatClientHomeSubJob(Couple DropOffpickUp, Jobs j) {
+		// 1. Calculate the time for drop-Off home care staff at client home
+		double dropOffTimeEarly=DropOffpickUp.getPresent().getStartTime()-test.getloadTimeHomeCareStaff();
+		double dropOffTimeLate=DropOffpickUp.getPresent().getEndTime()-test.getloadTimeHomeCareStaff();
+		DropOffpickUp.getPresent().setStartTime(dropOffTimeEarly);
+		DropOffpickUp.getPresent().setEndTime(dropOffTimeLate);
+		// 2. Calculate the time for pick-Up home care staff at client home
+		double pickUpTimeEarly=DropOffpickUp.getFuture().getstartServiceTime()+DropOffpickUp.getFuture().getReqTime();
+		double pickUpTimeLate=DropOffpickUp.getFuture().getstartServiceTime()+DropOffpickUp.getFuture().getReqTime()+test.getCumulativeWaitingTime();
+		DropOffpickUp.getFuture().setStartTime(pickUpTimeEarly);
+		DropOffpickUp.getFuture().setEndTime(pickUpTimeLate);
+	}
+
+
+
+
+
+
+
+	private Couple creatingCoupleforIndividualJobs(Jobs presentJob, Jobs futureJob) {
+		presentJob.setPair(futureJob);
+		Couple presentCouple= new Couple(presentJob,futureJob);
+		return presentCouple;
+	}
+
+
+
+
+
+
+
 	private void convertingWalkingRoutesInOneTask(ArrayList<Couple> coupleFromWalkingRoutes) {
 		for(SubRoute r:subroutes.getWalkingRoutes()) {
 			if(r.getDropOffNode()!=null && r.getPickUpNode()!=null) {
 				double walkingRouteLength=r.getDurationWalkingRoute();
+
+				// 0. creation of subjobs and fixing time windows 
 				Jobs present=creatinngPresentJobFromWR(r.getDropOffNode(),walkingRouteLength);
-				
-				
-				
-				
-				present.setTotalPeople(-1); // drop-off home care staff
-				Jobs future=creatinngFutureJobFromWR(r.getPickUpNode());
-				int directConnectionDistance= input.getCarCost().getCost(present.getId(), future.getId());
-				future.setTotalPeople(1); // pick-up home care staff
-				present.setPair(future);
-				coupleFromWalkingRoutes.add(new Couple(present,future, r, directConnectionDistance,test.getDetour()));
+				Jobs future=creatinngFutureJobFromWR(present, r.getPickUpNode());
+				//1. creation of couple
+				Couple pairPickUpDropOffHCS=creatingCoupleClientHome(present,future); 
+
+				// 2. fixing number of people involved
+				settingPeopleInSubJob(pairPickUpDropOffHCS, -1,+1); //- drop-off #personas + pick up #personas
+
+				// 4. adding couple
+				coupleFromWalkingRoutes.add(pairPickUpDropOffHCS);
 				// 3. checking information
-				System.out.println((new Couple(present,future, r, directConnectionDistance,test.getDetour())).toString());
+				System.out.println(pairPickUpDropOffHCS.toString());
 
 			}
 		}
+	}
+
+
+
+
+
+
+
+	private Couple creatingCoupleClientHome(Jobs presentJob, Jobs futureJob) {
+		presentJob.setPair(futureJob);
+		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId(), futureJob.getId()); // setting the time for picking up the patient at home patient
+		Couple pairPatientMedicalCentre=creatingPairPickUpDeliveryHCS(presentJob,futureJob, directConnectionDistance);
+		return pairPatientMedicalCentre;
+	}
+
+
+
+
+
+
+
+	private Couple creatingPairPickUpDeliveryHCS(Jobs presentJob, Jobs futureJob, int directConnectionDistance) {
+		Couple presentCouple= new Couple(presentJob,futureJob, directConnectionDistance, test.getDetour());
+		return presentCouple;
 	}
 
 
@@ -309,8 +364,10 @@ public class Algorithm {
 	private HashMap<Integer, Jobs> clientInWalkingRoutes() {
 		HashMap<Integer,Jobs> jobsInWalkingRoutes= new HashMap<Integer,Jobs>();
 		for(SubRoute r:subroutes.getWalkingRoutes()) {
-			for(Jobs j:r.getJobSequence()) {
-				jobsInWalkingRoutes.put(j.getId(), j); // storing the job in the walking route
+			if(r.getJobSequence().size()>1) {
+				for(Jobs j:r.getJobSequence()) {
+					jobsInWalkingRoutes.put(j.getId(), j); // storing the job in the walking route
+				}
 			}
 		}
 		return jobsInWalkingRoutes;
@@ -322,26 +379,25 @@ public class Algorithm {
 
 
 
-	private Jobs creatinngFutureJobFromWR(Jobs pickUpNode) {
-		double startTime= pickUpNode.getstartServiceTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
-		double endTime= pickUpNode.getstartServiceTime()+(int)pickUpNode.getWaitingTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
-		Jobs future= new Jobs(pickUpNode.getId(),startTime,endTime ,pickUpNode.getReqQualification(), 0); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
+	private Jobs creatinngFutureJobFromWR(Jobs present,Jobs pickUpNode) {
+		double startTime= pickUpNode.getstartServiceTime()+pickUpNode.getReqTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
+		double endTime = startTime+ test.getCumulativeWaitingTime();
+		Jobs future= new Jobs(pickUpNode.getId(),startTime,endTime ,pickUpNode.getReqQualification(), test.getloadTimeHomeCareStaff()); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
 		return future;
 	}
 
 
 
 	private Jobs creatinngPresentJobFromWR(Jobs dropOffNode, double walkingRouteLength) {
-		int startTime= (int)dropOffNode.getstartServiceTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
-		int endTime= (int)dropOffNode.getstartServiceTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
-		Jobs present= new Jobs(dropOffNode.getId(),startTime,endTime ,dropOffNode.getReqQualification(), walkingRouteLength); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
+		// start when the service
+		double previousTime= dropOffNode.getstartServiceTime()-test.getloadTimeHomeCareStaff(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
+		Jobs present= new Jobs(dropOffNode.getId(),previousTime,previousTime ,dropOffNode.getReqQualification(), walkingRouteLength); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
 		return present;
 	}
 
 
 
 	private Jobs creatingTheFeatureJob(Jobs j) {
-
 		int startTime= (int)j.getstartServiceTime()+(int)j.getReqTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
 		int endTime= (int)j.getstartServiceTime()+(int)j.getReqTime()+test.getCumulativeWaitingTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
 		Jobs future= new Jobs(j.getId(),startTime,endTime ,j.getReqQualification(), 0); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)

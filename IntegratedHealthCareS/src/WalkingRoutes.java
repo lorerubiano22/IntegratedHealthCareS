@@ -55,13 +55,13 @@ public class WalkingRoutes {
 		completingIndividualRoutes();
 
 		// 5. To Do: Improvement for slots   Method to improve the slots
-
+		//??? PERT!!
 
 		// 6.1 Computing walking cost
 		for(SubRoute wr:jobSlots) {
 			if(wr.getJobSequence().size()>=1) {
 				if(wr.getTotalTravelTime()==0) {
-					wr.setTotalTravelTime(1000000); // High cost for slots with justn one job
+					wr.setDurationWalkingRoute(1000000); // High cost for slots with justn one job
 				}
 			}
 		}
@@ -103,9 +103,32 @@ public class WalkingRoutes {
 				System.out.print("\n");
 			}
 		}
-
+		// checkSolutionQuality <- each job is once in the set of solutions
+		boolean goodSolution = checkWalkingRouteSet();
+		System.out.print("\n good Solution" + goodSolution);
 		// 8. Making walking routes into big tasks 
 		walkingRouteToJob(); // fix the pick-up and drop-off nodes for each walking route
+	}
+
+
+
+	private boolean checkWalkingRouteSet() {
+		boolean goodSolution= true;
+		HashMap<Integer,Jobs> validation = new HashMap<Integer,Jobs>();
+		for(SubRoute wr:walkingRoutes) {
+			for(Jobs j:wr.getJobSequence()) {
+				if(!validation.containsKey(j.getId())) {
+					validation.put(j.getId(), j);
+				}
+				else {
+					goodSolution=false;
+				}
+			}
+			if(!goodSolution) {
+				break;
+			}
+		}
+		return goodSolution;
 	}
 
 
@@ -132,15 +155,16 @@ public class WalkingRoutes {
 		for(Jobs j:this.inp.getclients()) {
 			this.ServedJobs.put(j.getId(),j);	
 		}
-		for(SubRoute slot:this.jobSlots) {
-			if(slot.getJobSequence().size()==1) {
-				if(ServedJobs.containsKey(slot.getJobSequence().getFirst().getId())) {
-					ServedJobs.remove(slot.getJobSequence().getFirst().getId());
-				}
-			}
-		}
+		//		for(SubRoute slot:this.jobSlots) {
+		//			if(slot.getJobSequence().size()==1) {
+		//				if(ServedJobs.containsKey(slot.getJobSequence().getFirst().getId())) {
+		//					ServedJobs.remove(slot.getJobSequence().getFirst().getId());
+		//				}
+		//			}
+		//		}
 		int slotId=jobSlots.size()-1;
-		for(Jobs i:ServedJobs.values()) {
+		for(Jobs job:this.inp.getclients()) {
+			Jobs i=new Jobs(job);
 			SubRoute slot = new SubRoute();
 			slotId++;
 			slot.setSlotID(slotId);
@@ -164,8 +188,6 @@ public class WalkingRoutes {
 
 	private void walkingRouteToJob() {
 		for(SubRoute wr:jobSlots) {
-
-
 			if(wr.getJobSequence().size()>1) {// only for real walking routes
 				wr.setDropOffNode(wr.getJobSequence().getFirst());
 
@@ -176,11 +198,12 @@ public class WalkingRoutes {
 				 */
 				Jobs presentbigJob=new Jobs(wr.getDropOffNode());
 				// 1. Setting the TW and start service time
-				presentbigJob.setStartTime(wr.getDropOffNode().getStartTime());
-				presentbigJob.setEndTime(wr.getDropOffNode().getEndTime());
-				presentbigJob.setStartServiceTime((int)wr.getDropOffNode().getstartServiceTime());
+				double startTime=wr.getDropOffNode().getStartTime()-test.getloadTimeHomeCareStaff(); // considering the unloading of the home health care staff
+				presentbigJob.setStartTime(startTime);
+				presentbigJob.setEndTime(startTime);
+				presentbigJob.setStartServiceTime(wr.getDropOffNode().getstartServiceTime());
 				// 2. Setting the duration of the jobs
-				presentbigJob.setserviceTime((int)wr.getDurationWalkingRoute());
+				presentbigJob.setserviceTime((int)wr.getDurationWalkingRoute()); 
 				// 3. Setting qualification of the nurse
 				presentbigJob.setReqQualification(wr.getSkill());
 
@@ -192,7 +215,7 @@ public class WalkingRoutes {
 				futurebigJob.setStartTime((int)wr.getPickUpNode().getstartServiceTime()+ (int)wr.getPickUpNode().getReqTime());
 				futurebigJob.setEndTime((int)futurebigJob.getStartTime()+ (int)this.test.getCumulativeWaitingTime());
 				// 2. Setting the duration of the jobs
-				futurebigJob.setserviceTime(0);
+				futurebigJob.setserviceTime(test.getloadTimeHomeCareStaff());
 				// 3. Setting qualification of the nurse
 				SubJobs separateJobs= new SubJobs(presentbigJob,futurebigJob,wr);
 				this.subJobList.add(separateJobs);
@@ -203,8 +226,13 @@ public class WalkingRoutes {
 
 
 	private void jobsInsertion(String serviceStartTime) {
-		for(Jobs i:jobList) {
+		for(Jobs job:jobList) {
+			Jobs i=new Jobs(job);
 			for(SubRoute wr:jobSlots) {
+				if(wr.getJobSequence().getFirst().getId()==20) {
+					if(i.getId()==20 || i.getId()==19) {	
+						System.out.println("Stop "+ wr.getJobSequence().getFirst().getId());}
+				}
 				insertionJob(i,wr,serviceStartTime);
 				wr.updateInfWalkingRoute(inp);
 				System.out.println(wr.toString());
@@ -220,22 +248,43 @@ public class WalkingRoutes {
 	private void insertionJob(Jobs i, SubRoute wr, String serviceStartTime) {
 		if(feasibleInsertion(i,wr)) { // it determines if the current route doesn't exceeds the maximum walking duration between two jobs
 			// maximum walking duration between drop-off and delivery <- it is the route length
-			if(serviceStartTime.equals("E")) {
-				evaluateTheInsertionEarly(i,wr); // it evaluates and inserts the route if the insertion is feasible 
+			if(feasibleTWAndWorkingTime(i,wr)) {
+				wr.getJobSequence().add(i);; // append job at the end of the sequence	
 			}
-			else {
-				evaluateTheInsertionLatest(i,wr); // it evaluates and inserts the route if the insertion is feasible 
-			}
+
 		}
 	}
 
 
 
-	private void evaluateTheInsertionLatest(Jobs i, SubRoute wr) {
-		if(!wr.getJobList().containsKey(i.getId())) {
-			checkIfTheJobIsTheIntermediateJob(i,wr);  // try to insert the job before or after everything
+
+
+
+
+
+	private boolean feasibleTWAndWorkingTime(Jobs i, SubRoute wr) {
+		boolean reacheable=false;
+		Jobs lastJob=wr.getJobSequence().getLast();
+		double travelTime=inp.getWalkCost().getCost(lastJob.getId(), i.getId());
+		double timeAtLastJob=lastJob.getstartServiceTime()+lastJob.getReqTime();
+		double possibleArrivalTime= timeAtLastJob+travelTime ;
+		//if(possibleArrivalTime>=i.getStartTime() && possibleArrivalTime<=i.getEndTime()) {
+		if(possibleArrivalTime<=i.getEndTime()) {
+			double waitingTime=0;
+			if(possibleArrivalTime<i.getStartTime()) { // there is a waiting time
+				waitingTime=i.getStartTime()-possibleArrivalTime;
+			}
+			double newJobTime=travelTime+waitingTime+i.getReqTime(); //1. Compute the time which involves the new inserted job: ArrivalTime+ tiemeReq + waiting time
+			if(wr.getDurationWalkingRoute()+newJobTime<test.getWorkingTime()) { // if the new job doesn´t exceed the maximum working hours
+				reacheable=true; // job i will be inserted in the Route wr
+				i.setStartServiceTime(possibleArrivalTime);
+			}
 		}
+		return reacheable;
 	}
+
+
+
 
 
 
@@ -294,13 +343,7 @@ public class WalkingRoutes {
 
 
 
-	private void evaluateTheInsertionEarly(Jobs i, SubRoute wr) {
-		// When the work is inserted before the other jobs it is 
-		checkIfTheJobIsTheEarliestJob(i,wr);  // try to insert the job before everything
-		if(!wr.getJobList().containsKey(i.getId())) {
-			checkIfTheJobIsTheLatesestJob(i,wr);  // try to insert the job after everything
-		}
-	}
+
 
 	private void checkIfTheJobIsTheLatesestJob(Jobs i, SubRoute wr) {
 		Jobs firstJob=wr.getJobSequence().getLast();
@@ -329,7 +372,8 @@ public class WalkingRoutes {
 		boolean walkingDuration=false;
 		Jobs lastJob=wr.getJobSequence().getLast();
 		double travelTime=inp.getWalkCost().getCost(lastJob.getId(), i.getId());
-		if(travelTime<=test.getWalking2jobs() && wr.getTotalTravelTime()<test.getCumulativeWalkingTime() && wr.getTotalTravelTime()<=test.getWorkingTime()) {
+		System.out.print("Travel Time" + wr.getTotalTravelTime());
+		if(travelTime<=test.getWalking2jobs() && wr.getTotalTravelTime()+travelTime<test.getCumulativeWalkingTime()) {
 			walkingDuration=true;
 		}
 		return walkingDuration;
@@ -343,7 +387,7 @@ public class WalkingRoutes {
 
 	private boolean checkIsAnInsertedJob(Jobs i, SubRoute wr) {
 		boolean isNewJob=false;
-		if(!wr.getJobList().containsValue(i)) {
+		if(!wr.getJobList().containsKey(i.getId())) {
 			isNewJob=true;
 		}
 		return isNewJob;
@@ -355,7 +399,8 @@ public class WalkingRoutes {
 		int jobPosition =0;
 		int slotId=jobSlots.size()-1;
 
-		for(Jobs i:jobList) {
+		for(Jobs job:jobList) {
+			Jobs i= new Jobs(job);
 			SubRoute slot = new SubRoute();
 			slotId++;
 			slot.setSlotID(slotId);

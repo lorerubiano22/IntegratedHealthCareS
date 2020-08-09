@@ -125,20 +125,26 @@ public class SubRoute {
 		double cumulativeWalkingDistance=0;
 		double serviceTime=0;
 		double waitingTime=0;
-		if(this.getJobSequence().size()>1) {
-			for(int i=0;i<this.getJobSequence().size()-1;i++) {
+		
+			for(int i=0;i<this.getJobSequence().size();i++) {
+				if(i+1<this.getJobSequence().size()) {
 				double travelTime=inp.getWalkCost().getCost(this.getJobSequence().get(i).getId(), this.getJobSequence().get(i+1).getId());
 				serviceTime+=this.getJobSequence().get(i).getReqTime();
 				cumulativeWalkingDistance+=travelTime;
 				waitingTime+=this.getJobSequence().get(i).getWaitingTime();
-			}
+				//Inserting the list of jobs
+				this.jobList.put(this.getJobSequence().get(i).getId(), this.getJobSequence().get(i));
+				this.jobList.put(this.getJobSequence().get(i+1).getId(), this.getJobSequence().get(i+1));
+			}}
 			waitingTimeRoute+=waitingTime;
 			serviceTime+=this.getJobSequence().getLast().getReqTime();
 			this.setTotalServiceTime(serviceTime);
 			this.setTotalTravelTime(cumulativeWalkingDistance);
 			this.setwaitingTimeRoute(waitingTime);
 			this.setDurationWalkingRoute(serviceTime+cumulativeWalkingDistance+waitingTime);
-		}
+	
+			
+		
 
 		// TO DO: CREATE EDGES - BIG JOB TO DRIVING ROUTES <- MISSING 
 	}
