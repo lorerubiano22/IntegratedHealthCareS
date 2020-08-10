@@ -79,44 +79,15 @@ public class SubRoute {
 	public void setSlotID(int slotID) { this.slotID = slotID; }
 
 	// Getters
-	public HashMap<Integer,Jobs> getJobList() {
-		return jobList;
-	}
-
-	public int getSlotID() {
-		return slotID;
-	}
-
-	public LinkedList<Edge> getEdges() {
-		return edges;
-	}
-	public LinkedList<Jobs> getJobSequence() {
-		return jobSequence;
-	}
-
-	public Jobs getDropOffNode() {
-		return dropOffNode;
-	}
-
-	public Jobs getPickUpNode() {
-		return pickUpNode;
-	}
-
-	public double getTotalTravelTime() {
-		return totalTravelTime;
-	}
-
-	public double getTotalServiceTime() {
-		return totalServiceTime;
-	}
-	
-	public double getDurationWalkingRoute() {
-		return durationWalkingRoute;
-	}
-	
-	
-	
-	
+	public HashMap<Integer,Jobs> getJobList() {return jobList;}
+	public int getSlotID() {return slotID;}
+	public LinkedList<Edge> getEdges() {return edges;}
+	public LinkedList<Jobs> getJobSequence() {return jobSequence;}
+	public Jobs getDropOffNode() {return dropOffNode;}
+	public Jobs getPickUpNode() {return pickUpNode;}
+	public double getTotalTravelTime() {return totalTravelTime;}
+	public double getTotalServiceTime() {return totalServiceTime;}
+	public double getDurationWalkingRoute() {return durationWalkingRoute;}
 	public int getSkill() {return reqQualification;}
 
 	// Auxiliar methods

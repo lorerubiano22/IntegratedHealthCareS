@@ -19,6 +19,7 @@ public class Inputs {
 	private final List<AttributeNurse> nurses;
 	private final List<AttributeParamedics> paramedics;
 	private final List<VehicleBase> vehicles; 
+	private int maxQualificationLevel; 
 
 
 
@@ -30,9 +31,13 @@ public class Inputs {
 		this.nurses = nurse;
 		this.paramedics = paramedic;
 		this.vehicles = vehicles;
+		maxQualificationLevel= Integer.MIN_VALUE;
 		for(Jobs j:nodes) {
 			if(j.getReqQualification()>0) {
 				clients.add(j);
+				if(maxQualificationLevel<j.getReqQualification()) {
+					maxQualificationLevel=j.getReqQualification();
+				}
 			}
 			else { // patients <- it considers location of the medical centre. Beacause there is a drop-off and pick-up job
 				if(j.getSoftStartTime()!=0) {
@@ -86,7 +91,13 @@ public class Inputs {
 	public TimeMatrix getCarCost() {
 		return drivingTime;
 	}
-
+	
+	
+	public int getMaxQualificationLevel() {
+		return maxQualificationLevel;
+	}
+	
+	
 	public List<AttributeNurse> getNurse() {
 		return nurses;
 	}

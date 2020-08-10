@@ -24,6 +24,7 @@ public class Algorithm {
 		subroutes = new WalkingRoutes(input, r, t, i.getNodes()); // stage 1: Creation of walking routes
 		updateListJobs();// jobs couple - class SubJobs
 		routes = new DrivingRoutes(input, r, t,subJobsList); // stage 2: Creation of driving routes
+		routes.generateAfeasibleSolution();
 		Interaction stages= new Interaction(routes,subJobsList, input, r, t);// Iteration between stage 1 und stage 2: from the current walking routes split and define new ones
 		routes= stages.getBestRoutes();
 		subroutes= stages.getBestWalkingRoutes();
