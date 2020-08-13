@@ -9,7 +9,7 @@ public class SubRoute {
 	// walking time
 	// pick-up Node
 	// drop-off node
-	
+
 
 	private int slotID=0;
 	private Jobs dropOffNode;  // pick-up Node
@@ -33,11 +33,11 @@ public class SubRoute {
 
 	// Setters
 
-	
+
 	public void setEdges(LinkedList<Edge> edges) {
 		this.edges = edges;
 	}
-	
+
 	public void addJobSequence(Jobs i, int jobPosition, double serviceStartTime) {
 		if(this.reqQualification<i.getReqQualification()) {
 			this.reqQualification=i.getReqQualification();
@@ -52,8 +52,8 @@ public class SubRoute {
 		this.dropOffNode = dropOffNode;
 	}
 
-	
-	
+
+
 	public void setPickUpNode(Jobs pickUpNode) {
 		this.pickUpNode = pickUpNode;
 	}
@@ -65,13 +65,13 @@ public class SubRoute {
 	public void setTotalServiceTime(double serviceTime) {
 		this.totalServiceTime = serviceTime;
 	}
-	
-	
-	
+
+
+
 	public void setDurationWalkingRoute(double durationWR) {
 		this.durationWalkingRoute = durationWR;
 	}
-	
+
 	public void setwaitingTimeRoute(double WWR) {
 		this.waitingTimeRoute = WWR;
 	}
@@ -92,31 +92,40 @@ public class SubRoute {
 
 	// Auxiliar methods
 
-	public void updateInfWalkingRoute(Inputs inp) {
+	public void updateInfWalkingRoute(Test test, Inputs inp) {
 		double cumulativeWalkingDistance=0;
 		double serviceTime=0;
 		double waitingTime=0;
-		
-			for(int i=0;i<this.getJobSequence().size();i++) {
-				if(i+1<this.getJobSequence().size()) {
+		for(int i=0;i<this.getJobSequence().size();i++) {
+			if(i+1<this.getJobSequence().size()) {
 				double travelTime=inp.getWalkCost().getCost(this.getJobSequence().get(i).getId(), this.getJobSequence().get(i+1).getId());
-				serviceTime+=this.getJobSequence().get(i).getReqTime();
-				cumulativeWalkingDistance+=travelTime;
-				waitingTime+=this.getJobSequence().get(i).getWaitingTime();
+				if(i==0) {
+					this.getJobSequence().get(i).setStartServiceTime(this.getJobSequence().get(i).getEndTime());
+					//double previousTime=test.getloadTimeHomeCareStaff();
+					double arrivalTime=this.getJobSequence().get(i).getstartServiceTime(); // the arrival time have to be within the time window
+					this.getJobSequence().get(i).setarrivalTime(arrivalTime);
+				}
+				double arrivalTime=this.getJobSequence().get(i).getstartServiceTime()+this.getJobSequence().get(i).getReqTime()+travelTime;
+				this.getJobSequence().get(i+1).setarrivalTime(arrivalTime);
+				double startTime=Math.max(this.getJobSequence().get(i+1).getStartTime(), this.getJobSequence().get(i+1).getArrivalTime()); // at the nodo i
+				this.getJobSequence().get(i+1).setStartServiceTime(startTime);
+				if(this.getJobSequence().get(i).getEndTime()<this.getJobSequence().get(i).getArrivalTime()) {
+					System.out.println("ERROR current");
+				}				
+				if(this.getJobSequence().get(i+1).getEndTime()<this.getJobSequence().get(i+1).getArrivalTime()) {
+					System.out.println("ERROR next");
+				}		
 				//Inserting the list of jobs
 				this.jobList.put(this.getJobSequence().get(i).getId(), this.getJobSequence().get(i));
 				this.jobList.put(this.getJobSequence().get(i+1).getId(), this.getJobSequence().get(i+1));
-			}}
-			waitingTimeRoute+=waitingTime;
-			serviceTime+=this.getJobSequence().getLast().getReqTime();
-			this.setTotalServiceTime(serviceTime);
-			this.setTotalTravelTime(cumulativeWalkingDistance);
-			this.setwaitingTimeRoute(waitingTime);
-			this.setDurationWalkingRoute(serviceTime+cumulativeWalkingDistance+waitingTime);
-	
-			
-		
-
+			}
+		}
+		waitingTimeRoute+=waitingTime;
+		serviceTime+=this.getJobSequence().getLast().getReqTime();
+		this.setTotalServiceTime(serviceTime);
+		this.setTotalTravelTime(cumulativeWalkingDistance);
+		this.setwaitingTimeRoute(waitingTime);
+		this.setDurationWalkingRoute(serviceTime+cumulativeWalkingDistance+waitingTime);
 		// TO DO: CREATE EDGES - BIG JOB TO DRIVING ROUTES <- MISSING 
 	}
 
@@ -143,6 +152,8 @@ public class SubRoute {
 	s = s.concat("\nEdge route duration (service+ walking time): " + (this.durationWalkingRoute));
 	return s;
 	}
+
+
 
 
 

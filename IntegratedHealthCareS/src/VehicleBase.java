@@ -1,7 +1,7 @@
 
 public class VehicleBase {
 	private final int id;
-	private final int maxCapacity;
+	private final int maxCapacity; // passenger
 	private final int quantity;
 	
 	public VehicleBase(int id, int quantity, int maxCapacity) {

@@ -33,20 +33,21 @@ public class Inputs {
 		this.vehicles = vehicles;
 		maxQualificationLevel= Integer.MIN_VALUE;
 		for(Jobs j:nodes) {
-			if(j.getReqQualification()>0) {
+			if(j.getReqQualification()>0 && j.getId()!=1) {
 				clients.add(j);
 				if(maxQualificationLevel<j.getReqQualification()) {
 					maxQualificationLevel=j.getReqQualification();
 				}
 			}
 			else { // patients <- it considers location of the medical centre. Beacause there is a drop-off and pick-up job
-				if(j.getSoftStartTime()!=0) {
+				if(j.getSoftStartTime()!=0 && j.getId()!=1) {
 					j.setPatient(true);
 					patients.add(j);
 				}
 				else {
+					if(j.getId()!=1) {
 					j.setMedicalCentre(true);
-					medicalCentre.add(j);
+					medicalCentre.add(j);}
 				}
 			}
 		}
