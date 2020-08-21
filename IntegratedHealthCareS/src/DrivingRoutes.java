@@ -10,18 +10,15 @@ public class DrivingRoutes {
 	private Random rn;
 	private  ArrayList<Route> routeList= new ArrayList<Route>();
 	private  HashMap<Integer, Jobs> subJobs= new HashMap<>();
-	private  HashMap<Integer, Jobs> assignedSubJobs= new HashMap<>();
-	private  HashMap<Integer, Couple> assignedCouples= new HashMap<>();
 	private  ArrayList<Couple> subJobsList= new ArrayList<Couple>();
 	private  ArrayList<Couple> subJobsHighestQualification= new ArrayList<Couple>();
 	private  ArrayList<Couple> subJobsMediumQualification= new ArrayList<Couple>();
 	private  ArrayList<Couple> subJobsLowestQualification= new ArrayList<Couple>();
 	private  ArrayList<Couple> subJobspatients= new ArrayList<Couple>();
 	private HashMap<Integer, Jobs>assignedJobs=new HashMap<Integer, Jobs>();
-	HashMap<Integer, Jobs>downgradingsTo1=new HashMap<Integer, Jobs>();
-	HashMap<Integer, Jobs>downgradingsTo3=new HashMap<Integer, Jobs>();
-	
-	
+	ArrayList<ArrayList<Jobs>> schift= new ArrayList<>();
+
+
 	public DrivingRoutes(Inputs i, Random r, Test t, ArrayList<Couple> subJobsList) {
 		inp=i;
 		test=t;
@@ -47,39 +44,102 @@ public class DrivingRoutes {
 		ArrayList<ArrayList<Couple>> clasification= clasificationjob();
 		settingStartServiceTime(); // late time
 		settingAssigmentSchift(clasification);
-
 		iteratedInsertion(clasification);
-
 		return initialSol;
 	}
 
 	private void settingAssigmentSchift(ArrayList<ArrayList<Couple>> clasification) {
 		// list of jobs
-
 		ArrayList<Jobs> clasification3 = creationJobs(clasification.get(0));
 		ArrayList<Jobs> clasification2 = creationJobs(clasification.get(1));
 		ArrayList<Jobs> clasification1 = creationJobs(clasification.get(2));
 		List<AttributeNurse> homeCareStaff= inp.getNurse(); // homeCareStaff 3 qualification level
 		// crear arrays
 		int q3= homeCareStaff.get(2).getQuantity();
-	
+
 		ArrayList<ArrayList<Jobs>> qualification3= assigmentHighQualification(q3,clasification3);
+		//checkingWorkingTime(qualification3);
 		downgradings(clasification2,qualification3);
 		downgradings(clasification1,qualification3);
-		
+
 		//Qualification level =2
 		int q2= homeCareStaff.get(1).getQuantity();
 		clasification2 = creationJobs(clasification.get(1));
 		clasification1 = creationJobs(clasification.get(2));
 		ArrayList<ArrayList<Jobs>> qualification2= assigmentHighQualification(q2,clasification2);
 		downgradings(clasification1,qualification2);
-		
+
 		//Qualification level =1
 		int q1= homeCareStaff.get(0).getQuantity();
 		clasification1 = creationJobs(clasification.get(2));
 		ArrayList<ArrayList<Jobs>> qualification1= assigmentHighQualification(q1,clasification1);
-		//downgradings(downgradingsTo1,clasification1,qualification1);
 
+
+
+		//Storing schifts
+		for(ArrayList<Jobs> schifts:qualification1) {
+			if(!schifts.isEmpty()) {
+				schift.add(schifts);
+			}
+		}
+
+		for(ArrayList<Jobs> schifts:qualification2) {
+			if(!schifts.isEmpty()) {
+				schift.add(schifts);
+			}
+		}
+		for(ArrayList<Jobs> schifts:qualification3) {
+			if(!schifts.isEmpty()) {
+				schift.add(schifts);
+			}
+		}
+	}
+
+	private void checkingWorkingTime(ArrayList<ArrayList<Jobs>> qualification3) {
+		ArrayList<ArrayList<Jobs>> jobsListCopy= copyJobsList(qualification3);
+		qualification3.clear();;
+		double serviceTimeDuration=0;
+		double waitingTime=0;
+		double travelTimeDuration=0;
+		ArrayList<Jobs> newSchift= new ArrayList<Jobs>();
+		qualification3.add(newSchift);
+		for(ArrayList<Jobs> list:jobsListCopy) {	
+			for(int j=0; j<list.size();j++) {
+				Jobs jNode=list.get(j);
+				double serviceTime=jNode.getReqTime();// service time
+				double waitTime=jNode.getWaitingTime();// waiting time
+				double travelTime=0;// travel time
+				serviceTimeDuration+=serviceTime;
+				waitingTime+=waitTime;
+				if(j!=list.size()-1 && jNode.getId()!=0) { // travel time
+					Jobs kNode=list.get(j+1);
+					travelTime=inp.getCarCost().getCost(jNode.getId(), kNode.getId());
+					travelTimeDuration+=travelTime;
+				}
+				double duration=serviceTimeDuration+waitingTime+travelTimeDuration;
+				if(duration<=296) {
+				//if(duration<=test.getWorkingTime()) {
+					newSchift.add(jNode);
+				}
+				else {
+					
+					newSchift= new ArrayList<Jobs>();
+					newSchift.add(jNode);
+					qualification3.add(newSchift);
+					serviceTimeDuration=serviceTime;
+					waitingTime=waitTime;
+					travelTimeDuration=travelTime;
+				}
+			}
+		}
+	}
+
+	private ArrayList<ArrayList<Jobs>> copyJobsList(ArrayList<ArrayList<Jobs>> qualification3) {
+		ArrayList<ArrayList<Jobs>> jobsListCopy= new ArrayList<ArrayList<Jobs>>();
+		for(ArrayList<Jobs> list:qualification3) {
+			jobsListCopy.add(list);
+		}
+		return jobsListCopy;
 	}
 
 	private ArrayList<Jobs> creationJobs(ArrayList<Couple> qualification) {
@@ -87,7 +147,7 @@ public class DrivingRoutes {
 
 		for(Couple c:qualification) {
 			if(!assignedJobs.containsKey(c.getPresent().getId())) {
-			clasification.add(c.getPresent());}
+				clasification.add(c.getPresent());}
 		}
 		clasification.sort(Jobs.SORT_BY_STARTW);
 		return clasification;
@@ -98,15 +158,15 @@ public class DrivingRoutes {
 		for(Jobs j:clasification2) { // iterate over jobs
 			for(ArrayList<Jobs> homeCare:qualification3) {
 				if(!homeCare.isEmpty()) {
-				boolean insertion=possibleInsertion(j,homeCare);
-				
-				if(insertion) {
-					homeCare.add(j);
-					assignedJobs.put(j.getId(), j);
-					break;
+					boolean insertion=possibleInsertion(j,homeCare);
+
+					if(insertion) {
+						homeCare.add(j);
+						assignedJobs.put(j.getId(), j);
+						break;
+					}
 				}
 			}
-		}
 		}
 		System.out.println("Stop");
 	}
@@ -120,16 +180,16 @@ public class DrivingRoutes {
 
 		for(Jobs j:clasification3) { // iterate over jobs
 			if(!assignedJobs.containsKey(j.getId())) {
-			for(ArrayList<Jobs> homeCare:qualification3) {
-				boolean insertion=possibleInsertion(j,homeCare);
-				if(insertion) {
-					assignedJobs.put(j.getId(), j);
-					homeCare.add(j);
-					break;
-				}
+				for(ArrayList<Jobs> homeCare:qualification3) {
+					boolean insertion=possibleInsertion(j,homeCare);
+					if(insertion) {
+						assignedJobs.put(j.getId(), j);
+						homeCare.add(j);
+						break;
+					}
 
-			}
-		}}
+				}
+			}}
 		System.out.println("Stop");
 		return qualification3;
 	}
@@ -137,7 +197,7 @@ public class DrivingRoutes {
 	private boolean possibleInsertion(Jobs j, ArrayList<Jobs> homeCare) {
 		boolean inserted=false;
 		if(homeCare.isEmpty()) {
-		inserted=true;
+			inserted=true;
 		}
 		else {
 			inserted=iterateOverSchift(j,homeCare);
@@ -250,7 +310,7 @@ public class DrivingRoutes {
 		for(int i=0;i<clasification.size()-1;i++) {
 			jobReq3Qualification(clasification.get(i)); // job with a qualification equal to 3
 		}
-		
+
 		System.out.println("Stop");
 	}
 
@@ -283,10 +343,10 @@ public class DrivingRoutes {
 		}
 		else{
 			//for(int n=0;n<r.getSubJobsList().size();n++) {
-				//if(n==0 || n==r.getSubJobsList().size()-1) {
-				Jobs j=r.getSubJobsList().getLast(); // append at the end
-				checkPossibleInsertion(j,toInsert,r);
-				//}
+			//if(n==0 || n==r.getSubJobsList().size()-1) {
+			Jobs j=r.getSubJobsList().getLast(); // append at the end
+			checkPossibleInsertion(j,toInsert,r);
+			//}
 
 			//}
 		}
@@ -353,209 +413,6 @@ public class DrivingRoutes {
 	}
 
 
-	private void checkInsertion(Jobs job, Route r) {
-		r.getSubJobsList().add(job);
-		Jobs origin=job;
-		Jobs end=job.getsubJobPair();
-		assignedSubJobs.put(origin.getId(), origin);
-		// set arrival time
-		origin.setarrivalTime(origin.getstartServiceTime()-test.getloadTimeHomeCareStaff());
-		double possibleArrivalTimeFutureJob=origin.getstartServiceTime()+origin.getReqTime()+test.getloadTimeHomeCareStaff();// arrival time <- considera el load time
-		r.getSubJobsList().add(end);
-		assignedSubJobs.put(end.getId(), end);
-		int directConnection=inp.getCarCost().getCost(origin.getId()-1, end.getId()-1);
-		System.out.println("direct Connection"+directConnection);
-	}
-
-	private boolean isPickUpJob(Jobs job) {
-		boolean pickUp=false;
-		if(job.getTotalPeople()<0) {
-			pickUp=true;
-		}
-		return pickUp;
-	}
-
-	private void insertionCoupleTest(Couple c, Route r) {
-		destruccionProcedure(c,r);
-		//construccionProcedure(c,r);
-	}
-
-	private void construccionProcedure(Couple c, Route r) {
-		// para cada trabajo mirar si se puede insertar antes o despues de cada trabajo	
-	}
-
-	private void destruccionProcedure(Couple c, Route r) {
-		Jobs present=c.getPresent();
-		Jobs future=c.getFuture();
-		if(r.getSubJobsList().isEmpty()) {
-			r.addCouple(c);
-		}
-		else {
-
-			//if(enoughVehicleCapacity(r,c)) {
-			checkingJobByJob(r,c);
-			//}
-
-		}
-	}
-
-
-
-	private void checkingJobByJob(Route r, Couple c) {
-		Route newRoute= copyRoute(r);
-		int i=-1;
-		for(Jobs j:r.getSubJobsList()) { // se recorre la lista de trabajos y se intenta insertar el trabajo presente
-			i++;
-			boolean earlyInsertion=isBeforeJ(j,c);
-			if(earlyInsertion) {
-				double arrivalTimePresentJob=computePossiblearrivalTime(c.getPresent(),j);
-				if(arrivalTimePresentJob<=j.getstartServiceTime()) {
-					c.getPresent().setarrivalTime(arrivalTimePresentJob);
-					newRoute.getSubJobsList().add(i,c.getPresent());
-					updateRouteCost(newRoute); // update Travel time, waiting time and service time
-					boolean isFutureJobInserted= insertingFutureJob(newRoute,c);
-					if(!isFutureJobInserted) {
-						earlyInsertion=false;
-					}
-					else {
-						// insert the list of jobs
-						r=replaceRoute(r,newRoute); // the couples in the route are no eliminated
-						// insert the couple
-						r.getJobsList().add(c);		
-						// check the information of the couple vs the information of the job
-						boolean correctInf= checkInfSolution(r);
-						System.out.println("\nCorrect information__"+correctInf);
-					}
-				}
-			}
-			if(!earlyInsertion && i+1<r.getSubJobsList().size()) {
-				if(isAfterJ(j,c,r.getSubJobsList().get(i+1))) {
-					double arrivalTimePresentJob=computePossiblearrivalTimeAfter(c.getPresent(),j);
-					if(arrivalTimePresentJob<=c.getPresent().getstartServiceTime()) {
-						c.getPresent().setarrivalTime(arrivalTimePresentJob);
-						if(i+1<r.getSubJobsList().size()) {
-							newRoute.getSubJobsList().add(i+1,c.getPresent());}
-						else {
-							newRoute.getSubJobsList().add(c.getPresent());}
-						updateRouteCost(newRoute); // update Travel time, waiting time and service time
-					}
-				}
-			}
-		}
-
-	}
-
-	private Route copyRoute(Route r) {
-		Route newRoute= new Route();
-		for(Couple c:r.getJobsList()) {
-			newRoute.addCouple(c);
-		}
-		return newRoute;
-	}
-
-	private Route replaceRoute(Route toClean, Route newRoute) {
-		toClean.getSubJobsList().clear();
-		for(Jobs j:newRoute.getSubJobsList()) {
-			toClean.getSubJobsList().add(j);
-		}
-		updateRouteCost(toClean);
-		return toClean;
-	}
-
-	private void updateRouteCost(Route newRoute) {
-		double durationRoute=0;
-		double travelTime=0; // update Travel time
-		double serviceTime=0; //Start with the first service. service time
-		// TO DO. waitingTime+=first job; // falta determinar la información del primer nodo en cada ruta
-		double waitingTime=newRoute.getSubJobsList().getFirst().getWaitingTime(); //waiting time 
-		for(int i=0;i<newRoute.getSubJobsList().size()-1;i++) {
-			// se calculan los datos de la ruta tomando como referencia el nodo i 
-			// pero se establece la infomación para el nodo i+1
-			Jobs iJob=newRoute.getSubJobsList().get(i);
-			Jobs jJob=newRoute.getSubJobsList().get(i+1);
-			double doubleDirectConnection= inp.getCarCost().getCost(iJob.getId(), jJob.getId());
-			double loadTimeJobJ=0;
-			if(jJob.isClient()) {
-				loadTimeJobJ=test.getloadTimeHomeCareStaff();
-			}
-			else {
-				loadTimeJobJ=test.getloadTimePatient();
-			}
-			double serviceTimeHJobI=newRoute.getSubJobsList().get(i).getReqTime();
-			double arrivalTimeJobj=iJob.getstartServiceTime()+serviceTimeHJobI+doubleDirectConnection+loadTimeJobJ;
-			jJob.setarrivalTime(arrivalTimeJobj);
-			travelTime+=doubleDirectConnection; //travel time
-			serviceTime+=serviceTimeHJobI; //Start with the first service. service time
-			waitingTime+=jJob.getWaitingTime();  // update Travel time
-
-
-		}
-		serviceTime+=newRoute.getSubJobsList().getLast().getReqTime();
-		newRoute.setServiceTime(serviceTime);
-		newRoute.setWaitingTime(waitingTime);
-		newRoute.setTravelTime(travelTime);
-		durationRoute=travelTime+serviceTime+waitingTime;
-		newRoute.setDurationRoute(durationRoute);
-	}
-
-	private double computePossiblearrivalTimeAfter(Jobs toInsert, Jobs inRoute) {
-		double arrivalTime=0;
-		double loadUnloadTime=0;
-		if(toInsert.isClient()) {
-			loadUnloadTime=test.getloadTimeHomeCareStaff();
-		}
-		else {
-			loadUnloadTime=test.getloadTimePatient();
-		}
-		double travelTime= inp.getCarCost().getCost(inRoute.getId(),toInsert.getId());
-		int previousUser=0;
-		if(inRoute.isClient()) {
-			previousUser=test.getloadTimeHomeCareStaff();
-		}
-		else {
-			previousUser=test.getloadTimePatient();
-		}	
-		double timeAtPreviousNode=inRoute.getstartServiceTime()+inRoute.getReqTime()+previousUser;
-		double previousTime=timeAtPreviousNode+travelTime+loadUnloadTime;
-		arrivalTime=inRoute.getstartServiceTime()+previousTime;
-		return arrivalTime;
-	}
-
-	private boolean checkInfSolution(Route r) {
-		boolean correctInformation=false;
-		int i=-1;
-		for(Couple c:r.getJobsList()) {
-			i++;
-			if(c.getPresent()==r.getSubJobsList().get(i)) {
-				i++;
-				if(c.getFuture()==r.getSubJobsList().get(i)) {
-					correctInformation=true;
-					System.out.println("\nCouples Information" + c.toString());
-					System.out.println("\nJob Information");
-					System.out.println("\nJob Present" + c.getPresent());
-					System.out.println("\nJob Future" + c.getFuture());
-				}	
-			}
-
-		}
-		return correctInformation;
-	}
-
-
-
-
-	private boolean insertingFutureJob(Route newRoute, Couple c) {
-		boolean inserted= false;
-		int sizeRoute=newRoute.getSubJobsList().size();
-		for(int i=sizeRoute-1;i>=0;i--) { // checking backward Route
-			Jobs jobI=newRoute.getSubJobsList().get(i);	
-			if(lastJobFeasible(c,jobI)) { // last job
-				newRoute.getSubJobsList().add(c.getFuture());
-				inserted=checkReaminingRoute(newRoute); // the solution is repaired 
-			}
-		}
-		return inserted;
-	}
 
 	private boolean checkReaminingRoute(Route newRoute) {
 		// 1. Time windows
@@ -569,59 +426,6 @@ public class DrivingRoutes {
 		return false;
 	}
 
-	private boolean lastJobFeasible(Couple c, Jobs jobI) {
-		boolean insertion=false;
-		double directConnection = inp.getCarCost().getCost(jobI.getId(), c.getFuture().getId());
-		double loadTime=0;
-		if(jobI.isClient()) {
-			loadTime=test.getloadTimeHomeCareStaff();
-		}
-		double possibelArrivalTime=jobI.getstartServiceTime()+jobI.getReqTime()+loadTime+directConnection;
-		if(possibelArrivalTime>=c.getFuture().getStartTime() && possibelArrivalTime<=c.getFuture().getEndTime()) { // TW
-			if(possibelArrivalTime-c.getPresent().getArrivalTime()<=test.getDetour()) { // Max detour duration
-				c.getFuture().setarrivalTime(possibelArrivalTime);
-				insertion=true;	
-			}
-		}
-		return insertion;
-	}
-
-	private double computePossiblearrivalTime(Jobs toInsert, Jobs inRoute) {
-		double arrivalTime=0;
-		double loadUnloadTime=0;
-		if(toInsert.isClient()) {
-			loadUnloadTime=test.getloadTimeHomeCareStaff();
-		}
-		else {
-			loadUnloadTime=test.getloadTimePatient();
-		}
-		double tarvelTime= inp.getCarCost().getCost(toInsert.getId(), inRoute.getId());
-		double previousTime=loadUnloadTime+tarvelTime;
-		arrivalTime=toInsert.getstartServiceTime()+previousTime;
-		return arrivalTime;
-	}
-
-
-	private boolean isAfterJ(Jobs j, Couple c, Jobs l) {
-		boolean lateJob=false;
-		//if(c.getPresent().getstartServiceTime()>j.getstartServiceTime() && c.getPresent().getstartServiceTime()<l.getstartServiceTime()) {
-		if(c.getPresent().getstartServiceTime()>j.getstartServiceTime() ) {
-
-			lateJob=true;
-		}
-		return lateJob;
-
-	}
-
-	private boolean isBeforeJ(Jobs j, Couple c) {
-		boolean earlyJob=false;
-		System.out.print("\nJob to insert "+c.getPresent().getstartServiceTime());
-		System.out.print("\nJob in route "+j.getstartServiceTime());
-		if(c.getPresent().getstartServiceTime()<j.getstartServiceTime()) {
-			earlyJob=true;
-		}
-		return earlyJob;
-	}
 
 	private void creationRoutes() {
 		for(int i=0;i<inp.getVehicles().size();i++) {
@@ -635,7 +439,6 @@ public class DrivingRoutes {
 	private  ArrayList<ArrayList<Couple>> clasificationjob() {
 		ArrayList<ArrayList<Couple>> clasification= new ArrayList<ArrayList<Couple>>();
 		// 0.classified couples according the req qualification
-
 		int i=-1;
 		for(Couple c:subJobsList) {
 			i++;
@@ -647,6 +450,7 @@ public class DrivingRoutes {
 				System.out.print("Error");	
 			}
 		}
+		
 		for(int qualification=0;qualification<=inp.getMaxQualificationLevel();qualification++) {
 			for(Couple c:subJobsList) {
 				if(c.getQualification()==qualification && qualification==0) {
