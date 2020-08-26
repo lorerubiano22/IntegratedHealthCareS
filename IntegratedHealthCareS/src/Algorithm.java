@@ -23,7 +23,6 @@ public class Algorithm {
 		input = i;
 		subroutes = new WalkingRoutes(input, r, t, i.getNodes()); // stage 1: Creation of walking routes
 		//updateHomeCareStaffJobs();
-
 		updateListJobs();// jobs couple - class SubJobs
 		routes = new DrivingRoutes(input, r, t,subJobsList); // stage 2: Creation of driving routes
 		routes.generateAfeasibleSolution();
@@ -161,7 +160,9 @@ public class Algorithm {
 		// j - location: Patient home
 
 		Jobs presentJob= new Jobs(j.getsubJobPair().getId(), j.getStartTime(),j.getEndTime(), j.getReqQualification(), j.getReqTime());// medical centre - pick up
+		presentJob.setMedicalCentre(true);
 		Jobs futureJob= new Jobs(j); // patient home - drop off
+		futureJob.setPatient(true);
 		presentJob.setPair(futureJob);
 		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1); // setting the time for picking up the patient and paramedic at medical centre
 		Couple pairMedicalCentrePatient=creatingPairMedicalCentrePatient(presentJob,futureJob, directConnectionDistance);
@@ -208,7 +209,9 @@ public class Algorithm {
 		// j- location: Patiente home
 		// j.getsubJobPair()- location: Medical centre
 		Jobs presentJob= new Jobs(j);// Patient home - pick up
+		presentJob.setPatient(true);
 		Jobs futureJob= new Jobs(j.getsubJobPair().getId(), j.getStartTime(),j.getEndTime(), j.getReqQualification(), j.getReqTime()); // medical centre - drop-off 
+		futureJob.setMedicalCentre(true);
 		presentJob.setPair(futureJob);
 		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1); // setting the time for picking up the patient at home patient
 		Couple pairPatientMedicalCentre=creatingPairPatientMedicalCentre(presentJob,futureJob, directConnectionDistance);
@@ -277,6 +280,7 @@ public class Algorithm {
 			// Creating the request for picking up the nurse
 			if(!jobsInWalkingRoutes.containsKey(j.getId())) { // only jobs which are not in a walking route	
 				Jobs presentJob= new Jobs(j);
+				presentJob.setClient(true);
 				Jobs futureJob= creatingSubPairJOb(j);
 				//0. creation of couple
 				Couple pickUpDropOff= creatingCoupleforIndividualJobs(presentJob,futureJob); // individula jobs <- not walking routes
@@ -300,6 +304,7 @@ public class Algorithm {
 		double pickUpTimeEarly=j.getstartServiceTime()+j.getReqTime();
 		double pickUpTimeLate=j.getstartServiceTime()+j.getReqTime()+test.getCumulativeWaitingTime();
 		Jobs futureJob= new Jobs(j.getId(),pickUpTimeEarly,pickUpTimeLate,j.getReqQualification(),test.getloadTimeHomeCareStaff()); 
+		futureJob.setClient(true);
 		j.setPair(futureJob);
 		return futureJob;
 	}

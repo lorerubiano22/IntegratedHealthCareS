@@ -5,10 +5,10 @@ import java.util.List;
 
 public class Jobs {
 	/* INSTANCE FIELDS & CONSTRUCTOR */
-	
+
 	// - 1: a sub-Job which represents that a person is leaving the vehicle
 	// 1 : a sub-Job which represents that a person is boarding the vehicle
-
+	private int idUser;
 	private final int id; // node ID (depotID = 0)
 	private double hardstartTime; // input data early time window 
 	private double hardendTime; // input data end time window
@@ -16,11 +16,12 @@ public class Jobs {
 	private double softendTime; // estimated end soft time window 
 	private int reqQualification;
 	private double startServiceTime; // time when the service start
+	private double endServiceTime; // time when the service start
 	private double serviceTime; // required service time
 	private double sortETWSizeCriterion; // sort criterion the size of time window and the earliest time
 	private double sortLTWSizeCriterion; // sort criterion the size of time window and the latest time
 	private int totalPeople=0; // people involven in the service:
-								// - 1  es una persona menos en el vehículo + 1 una plaza ocupada en el vehículo + 2 dos plazas ocupadas en el vehículo 
+	// - 1  es una persona menos en el vehículo + 1 una plaza ocupada en el vehículo + 2 dos plazas ocupadas en el vehículo 
 	private double arrivalTime=0;
 	private boolean isServerd = false;
 	private double waitingTime=0;
@@ -30,9 +31,9 @@ public class Jobs {
 	private boolean isClient;// type of job in the system- patient job at client home
 	private ArrayList<Jobs> assignedJob= new ArrayList<Jobs>();
 	private int idCouple=0;
-	
+
 	// Constructors
-	
+
 	public Jobs(int id, double startTime, double endTime, int reqQualification,
 			double reqTime) {
 		this(id,startTime,endTime,reqQualification,reqTime,new LinkedList<Jobs>());
@@ -64,6 +65,11 @@ public class Jobs {
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
 		this.sortLTWSizeCriterion=(hardendTime)*(sizeTW);
 		this.startServiceTime=serviceStartTime;
+		isPatient=i.isPatient();// type of job in the system- patient job at patient home
+		isMedicalCentre=i.isMedicalCentre;// type of job in the system- patient job at medical centre home
+		isClient=i.isClient;// type of job in the system- patient job at client home
+		idUser=i.idUser;
+		endServiceTime=i.endServiceTime;
 	}
 
 	public Jobs(Jobs i) {
@@ -79,25 +85,31 @@ public class Jobs {
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
 		this.sortLTWSizeCriterion=(hardendTime)*(sizeTW);
 		this.startServiceTime=0;
+		isPatient=i.isPatient();// type of job in the system- patient job at patient home
+		isMedicalCentre=i.isMedicalCentre;// type of job in the system- patient job at medical centre home
+		isClient=i.isClient;// type of job in the system- patient job at client home
+		endServiceTime=i.endServiceTime;
 	}
 
 	/* SET METHODS */
-	
+
 	public void setAssignedJobToMedicalCentre(ArrayList<Jobs> jobs) {this.assignedJob = jobs;}
 	public void setServerd(boolean isServerd) {this.isServerd = isServerd;}
 	public void setTotalPeople(int i) {	this.totalPeople = i;}
 	public void setStartServiceTime(double B) {this.startServiceTime = B;}
+	public void setEndServiceTime(double B) {this.endServiceTime = B;}
 	public void setStartTime(double B) {this.hardstartTime = B;}
 	public void setEndTime(double B) {	this.hardendTime = B;}
 	public void setserviceTime(double B) {	this.serviceTime = B;}
+	public void setClient(boolean client) {isClient= client;}
 	public void setPatient(boolean patient) {this.isPatient = patient;}
 	public void setMedicalCentre(boolean mc) {this.isMedicalCentre = mc;}
 	public void setReqQualification(int qualification) {reqQualification = qualification;}
 	public void setarrivalTime(double arrival) {arrivalTime=arrival;}
 	public void setIDcouple(int couple) {idCouple=couple;}
-	public void setWaitingTime(double startTW, double startService ) {
-		if(startTW>startService) {
-			this.waitingTime = startTW-startService;	
+	public void setWaitingTime(double arrivalTime, double startService ) {
+		if(arrivalTime<startService) {
+			this.waitingTime = startService-arrivalTime;	
 		}
 	}
 
@@ -110,29 +122,21 @@ public class Jobs {
 	public boolean isClient() {return isClient;}	
 	public int getId() { return id;}
 	public double getstartServiceTime() {return startServiceTime;}
+	public double getendServiceTime() {return endServiceTime;}
 	public double getStartTime() {return hardstartTime;}
 	public double getArrivalTime() {return arrivalTime;}
 	public int getIDcouple() {return idCouple;}
 	public double getEndTime() {return hardendTime;}
 
-	public double getSoftStartTime() {
-		return this.softstartTime;
+	public double getSoftStartTime() {return this.softstartTime;}
+
+	public double getSoftEndTime() {return this.softendTime;}
+	public double getsortETWSizeCriterion() {return sortETWSizeCriterion;}
+
+	public double getsortLTWSizeCriterion() {return this.sortLTWSizeCriterion;
 	}
 
-	public double getSoftEndTime() {
-		return this.softendTime;
-	}
-	public double getsortETWSizeCriterion() {
-		return this.sortETWSizeCriterion;
-	}
-
-	public double getsortLTWSizeCriterion() {
-		return this.sortLTWSizeCriterion;
-	}
-
-	public int getReqQualification() {
-		return reqQualification;
-	}
+	public int getReqQualification() {return reqQualification;}
 
 	public double getReqTime() {
 		return serviceTime;
@@ -142,23 +146,23 @@ public class Jobs {
 		return totalPeople;
 	}
 
-	
-	
+
+
 	public double getWaitingTime() {
 		return waitingTime;
 	}
 	public Jobs getsubJobPair() {
 		return subJobPair;
 	}
-	
-	
+	public int getIdUser() {return idUser;}
+
 	public ArrayList<Jobs> getAssignedJobToMedicalCentre() {
 		return assignedJob;
 	}
-	
+
 	public double getTW() { return hardendTime-hardstartTime; }
-	
-	
+
+
 	// Setters
 	public void setTimeWindowsDropOffMedicalCentre(int registrationTime) {
 		double startTime=this.getStartTime();
@@ -171,11 +175,16 @@ public class Jobs {
 		// aca se considera el waiting time pensando en el tiempo max permitido que el paciente puede estar en el centro médico
 		this.setStartTime(this.getEndTime()-cumulativeWaitingTime);
 	}
-
-	public void setPair(Jobs pickUp) {
-		this.subJobPair=pickUp;
+	public void setIdUser(int id) {idUser= id;}
+	public void setPair(Jobs pickUp) {this.subJobPair=pickUp;
+	if(pickUp.isMedicalCentre) {
+		pickUp.setIdUser(this.id);
 	}
-	
+	else {
+		pickUp.setIdUser(pickUp.getId());
+	}
+	}
+
 
 	public String extendedData() {
 		return String.format("(id = %d , RQ = %d\n ST: %d,  RT: %d, ET: %d + [PB: %d])",id,reqQualification,hardstartTime,serviceTime,hardendTime,hardendTime - serviceTime);
@@ -244,7 +253,7 @@ public class Jobs {
 
 
 
-	
+
 	@Override
 	public String toString() {
 		String s = "";
@@ -262,7 +271,7 @@ public class Jobs {
 		return s;
 	}
 
-	
-	
+
+
 
 }
