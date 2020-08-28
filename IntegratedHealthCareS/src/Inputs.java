@@ -34,6 +34,7 @@ public class Inputs {
 		maxQualificationLevel= Integer.MIN_VALUE;
 		for(Jobs j:nodes) {
 			if(j.getReqQualification()>0 && j.getId()!=1) {
+				j.setClient(true);
 				clients.add(j);
 				if(maxQualificationLevel<j.getReqQualification()) {
 					maxQualificationLevel=j.getReqQualification();
