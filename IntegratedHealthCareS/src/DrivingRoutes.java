@@ -82,7 +82,7 @@ public class DrivingRoutes {
 	private void asignmentPastJobs() {
 		boolean insertedJobs=false;
 		ArrayList<Route> copyrouteList= copyListRoute();
-		
+
 		for(Route r:copyrouteList) {
 			if(!r.getSubJobsList().isEmpty()) {
 				for(Jobs jobsInRoute:r.getSubJobsList()) {
@@ -90,12 +90,12 @@ public class DrivingRoutes {
 					if(!checkedFutureJobs.containsValue(jobsInRoute) && pair!=null) {
 						for(Route route:this.routeList){
 							if(!jobsVehicle.containsValue(pair)) {
-							insertedJobs=insertingPair(pair,route);
-							if(jobsVehicle.containsValue(pair)) {
-								checkedFutureJobs.put(jobsInRoute.getId(), jobsInRoute);
-							}	
+								insertedJobs=insertingPair(pair,route);
+								if(jobsVehicle.containsValue(pair)) {
+									checkedFutureJobs.put(jobsInRoute.getId(), jobsInRoute);
+								}	
+							}
 						}
-					}
 					}
 				}
 			}	
@@ -105,8 +105,8 @@ public class DrivingRoutes {
 	private ArrayList<Route> copyListRoute() {
 		ArrayList<Route> copyrouteList= new ArrayList<Route>();
 		for(Route r:routeList) {
-Route newCopy=copyRoute(r);	
-copyrouteList.add(newCopy);
+			Route newCopy=copyRoute(r);	
+			copyrouteList.add(newCopy);
 		}
 		return copyrouteList;
 	}
@@ -275,7 +275,7 @@ copyrouteList.add(newCopy);
 			}
 		}
 	}
-	
+
 	private void insertFutureClient(Jobs j, Route r) {
 		if(r.getSubJobsList().isEmpty()) {
 			r.getSubJobsList().add(j);
@@ -336,6 +336,7 @@ copyrouteList.add(newCopy);
 		pickUpHome.setTotalPeople(2);
 		j.setserviceTime(pickUpHome.getReqTime());
 		pickUpHome.setserviceTime(0);
+		pickUpHome.setPair(j);
 		settingPickUpTime(pickUpHome, j);
 		r.getSubJobsList().add(pickUpHome);
 		// j<- drop off patient at medical centre
@@ -687,7 +688,7 @@ copyrouteList.add(newCopy);
 		}
 		System.out.println(r.toString());
 	}
-	
+
 	private void updateRouteTimes(Route r) {
 		double arrivalTime=0;
 		double travelTime=0;
@@ -752,7 +753,7 @@ copyrouteList.add(newCopy);
 			}}
 		return inserted;
 	}
-	
+
 	private boolean iterateOverRouteClient(Jobs j, Route r) {
 		boolean inserted=false;
 		if(enoughCapacityForNewJob(r,j)) {
@@ -842,7 +843,7 @@ copyrouteList.add(newCopy);
 						}
 					}
 					if(inserted) {
-					r.updatingJobsFutureList(r,j);}
+						r.updatingJobsFutureList(r,j);}
 				}
 			}}
 		return inserted;
@@ -1198,16 +1199,25 @@ copyrouteList.add(newCopy);
 		for(int qualification=0;qualification<=inp.getMaxQualificationLevel();qualification++) {
 			for(Couple c:subJobsList) {
 				if(c.getQualification()==qualification && qualification==0) {
-
+					if(inp.getpatients().containsKey(c.getFuture().getId())) {
+					c.getFuture().setPatient(true);}
+					if(inp.getMedicalCentre().containsKey(c.getFuture().getId())) {
+					c.getPresent().setMedicalCentre(true);}
 					subJobspatients.add(c);
 				}
 				if(c.getQualification()==qualification && qualification==1) {
+					c.getFuture().setClient(true);
+					c.getPresent().setClient(true);
 					subJobsLowestQualification.add(c);
 				}
 				if(c.getQualification()==qualification && qualification==2) {
+					c.getFuture().setClient(true);
+					c.getPresent().setClient(true);
 					this.subJobsMediumQualification.add(c);
 				}
 				if(c.getQualification()==qualification && qualification==3) {
+					c.getFuture().setClient(true);
+					c.getPresent().setClient(true);
 					this.subJobsHighestQualification.add(c);
 				}
 			}

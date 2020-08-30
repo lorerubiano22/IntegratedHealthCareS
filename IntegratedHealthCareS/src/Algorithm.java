@@ -33,31 +33,6 @@ public class Algorithm {
 
 
 
-
-
-
-
-	private void updateHomeCareStaffJobs() {
-		ArrayList<Jobs> presentJobs= new ArrayList<Jobs>();
-		HashMap<Integer,Jobs> jobsInWalkingRoutes= clientInWalkingRoutes(); // store the list of job in the walking routes
-		for(SubRoute r:subroutes.getWalkingRoutes()) {
-			double walkingRouteLength=r.getDurationWalkingRoute();
-			Jobs present=creatinngPresentJobFromWR(r.getDropOffNode(),walkingRouteLength);
-			presentJobs.add(present);
-		}
-		for(Jobs j:input.getclients()) {
-			if(!jobsInWalkingRoutes.containsKey(j.getId())) {
-				presentJobs.add(j);
-			}
-			
-		}
-		System.out.println("Set of jobs"+presentJobs.size());
-
-	}
-
-
-
-
 	private void updateListJobs() {
 		// stage 0: set the jobs which are not in a walking route
 		ArrayList<Couple> clientJobs= createClientJobs(); // TO DO
@@ -96,7 +71,7 @@ public class Algorithm {
 	private ArrayList<Couple> createPatientsJobs() {
 		// Los pacientes estan vinculados con el centro médico // 1
 		ArrayList<Couple> coupleFromPatientsRequest= new ArrayList<Couple>();
-		for(Jobs j: input.getpatients()) {
+		for(Jobs j: input.getpatients().values()) {
 
 			// patient home -----going ----> Medical centre
 			//0. creation of couple
@@ -276,7 +251,7 @@ public class Algorithm {
 		// 1. WALKING ROUTES-- Convert walking route in big jobs
 		convertingWalkingRoutesInOneTask(coupleFromWalkingRoutes);
 		// Individual client JOBS
-		for(Jobs j: input.getclients()) {
+		for(Jobs j: input.getclients().values()) {
 			// Creating the request for picking up the nurse
 			if(!jobsInWalkingRoutes.containsKey(j.getId())) { // only jobs which are not in a walking route	
 				Jobs presentJob= new Jobs(j);

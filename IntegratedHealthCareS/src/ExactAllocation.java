@@ -149,7 +149,7 @@ public class ExactAllocation {
 		for (int i = 0; i < dummy.size(); i++) {
 			jobsList[dummy.get(i).getId()-1] = 0;
 		}
-		for(Jobs j:input.getclients()) {
+		for(Jobs j:input.getclients().values()) {
 			int index=j.getId()-1;
 			jobsList[index] = 1;
 		}

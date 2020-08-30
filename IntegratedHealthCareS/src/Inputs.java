@@ -10,9 +10,9 @@ public class Inputs {
 
 	private final List<Jobs> nodes; // array of all nodes (node 0 is
 	// depot)
-	private final List<Jobs> clients=new LinkedList<Jobs>(); // clients job
-	private final List<Jobs> patients=new LinkedList<Jobs>(); // patients job at patient home
-	private final List<Jobs> medicalCentre=new LinkedList<Jobs>(); // patients job at medical centre
+	private final HashMap<Integer,Jobs> clients=new HashMap<Integer,Jobs> (); // clients job
+	private final HashMap<Integer,Jobs>  patients=new HashMap<Integer,Jobs> (); // patients job at patient home
+	private final HashMap<Integer,Jobs>  medicalCentre=new HashMap<Integer,Jobs> (); // patients job at medical centre
 
 	private final TimeMatrix walkTravelTime;
 	private final TimeMatrix drivingTime;
@@ -35,7 +35,7 @@ public class Inputs {
 		for(Jobs j:nodes) {
 			if(j.getReqQualification()>0 && j.getId()!=1) {
 				j.setClient(true);
-				clients.add(j);
+				clients.put(j.getId(),j);
 				if(maxQualificationLevel<j.getReqQualification()) {
 					maxQualificationLevel=j.getReqQualification();
 				}
@@ -43,12 +43,12 @@ public class Inputs {
 			else { // patients <- it considers location of the medical centre. Beacause there is a drop-off and pick-up job
 				if(j.getSoftStartTime()!=0 && j.getId()!=1) {
 					j.setPatient(true);
-					patients.add(j);
+					patients.put(j.getId(),j);
 				}
 				else {
 					if(j.getId()!=1) {
 					j.setMedicalCentre(true);
-					medicalCentre.add(j);}
+					medicalCentre.put(j.getId(),j);}
 				}
 			}
 		}
@@ -57,10 +57,8 @@ public class Inputs {
 	private void assigmentMedicalCentre() {
 		HashMap<Integer, Jobs> asssigmentPatients=new HashMap<>();
 		while(asssigmentPatients.size()<patients.size()) {
-			for(int i=0; i<medicalCentre.size();i++) {
-				Jobs medicalCentreLocation=medicalCentre.get(i);
-				for(int j=asssigmentPatients.size();j<patients.size();j++) { 
-					Jobs patient=patients.get(j);
+			for(Jobs medicalCentreLocation:medicalCentre.values()) {
+				for(Jobs patient:patients.values()) { 
 					if(!asssigmentPatients.containsKey(patient.getId())) {
 						patient.setPair(medicalCentreLocation);
 						medicalCentreLocation.getAssignedJobToMedicalCentre().add(patient);
@@ -76,11 +74,14 @@ public class Inputs {
 
 	/* GET METHODS */
 
-	public List<Jobs> getclients() {
+	public HashMap<Integer,Jobs> getclients() {
 		return clients;
 	}
-	public List<Jobs> getpatients() {
+	public HashMap<Integer,Jobs> getpatients() {
 		return patients;
+	}
+	public HashMap<Integer,Jobs> getMedicalCentre() {
+		return medicalCentre;
 	}
 	public List<Jobs> getNodes() {
 		return Collections.unmodifiableList(nodes);

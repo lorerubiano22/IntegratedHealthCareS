@@ -33,7 +33,7 @@ public class WalkingRoutes {
 		jobList= new ArrayList<Jobs>();
 		inp=input;
 		test=t;
-		for(Jobs i: inp.getclients()) {// List a client jobs
+		for(Jobs i: inp.getclients().values()) {// List a client jobs
 			if(i.getReqQualification()!=0) {
 				i.setStartServiceTime(i.getStartTime()); // the start time of the service  is fixed as the earliest time
 				jobList.add(i);
@@ -166,7 +166,7 @@ public class WalkingRoutes {
 
 
 	private void completingIndividualRoutes() {
-		for(Jobs j:this.inp.getclients()) {
+		for(Jobs j:this.inp.getclients().values()) {
 			this.ServedJobs.put(j.getId(),j);	
 		}
 		//		for(SubRoute slot:this.jobSlots) {
@@ -177,7 +177,7 @@ public class WalkingRoutes {
 		//			}
 		//		}
 		int slotId=jobSlots.size()-1;
-		for(Jobs job:this.inp.getclients()) {
+		for(Jobs job:this.inp.getclients().values()) {
 			Jobs i=new Jobs(job);
 			SubRoute slot = new SubRoute();
 			slot.setTotalServiceTime(i.getReqTime());
