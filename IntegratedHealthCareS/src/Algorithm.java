@@ -9,10 +9,25 @@ import java.util.Random;
  *
  */
 public class Algorithm {
+	private int iterations=-1;
 	private final Test test;
 	private final Inputs input;
 	private WalkingRoutes subroutes;
 	private DrivingRoutes routes;
+	private Solution initialSolution=null;
+	public Solution getInitialSolution() {
+		return initialSolution;
+	}
+
+
+
+	public void setInitialSolution(Solution initialSolution) {
+		this.initialSolution = initialSolution;
+		initialSolution.setId(iterations);
+	}
+
+
+
 	private  ArrayList<Couple> subJobsList= new ArrayList<Couple>();
 
 
@@ -26,9 +41,12 @@ public class Algorithm {
 		updateListJobs();// jobs couple - class SubJobs
 		routes = new DrivingRoutes(input, r, t,subJobsList); // stage 2: Creation of driving routes
 		routes.generateAfeasibleSolution();
-		Interaction stages= new Interaction(routes,subJobsList, input, r, t);// Iteration between stage 1 und stage 2: from the current walking routes split and define new ones
-		routes= stages.getBestRoutes();
-		subroutes= stages.getBestWalkingRoutes();
+		iterations++;
+		setInitialSolution(routes.getInitialSol());
+		initialSolution.computeMetricsSolution();
+		//Interaction stages= new Interaction(routes,subJobsList, input, r, t);// Iteration between stage 1 und stage 2: from the current walking routes split and define new ones
+		//routes= stages.getBestRoutes();
+		//subroutes= stages.getBestWalkingRoutes();
 	}
 
 
@@ -242,9 +260,6 @@ public class Algorithm {
 	}
 
 
-
-
-
 	private ArrayList<Couple> createClientJobs() {
 		ArrayList<Couple> coupleFromWalkingRoutes= new ArrayList<Couple>();
 		HashMap<Integer,Jobs> jobsInWalkingRoutes= clientInWalkingRoutes(); // store the list of job in the walking routes
@@ -285,11 +300,6 @@ public class Algorithm {
 	}
 
 
-
-
-
-
-
 	private void computingTimeatClientHomeSubJob(Couple DropOffpickUp, Jobs j) {
 		// 1. Calculate the time for drop-Off home care staff at client home
 		double dropOffTimeEarly=DropOffpickUp.getPresent().getStartTime()-test.getloadTimeHomeCareStaff();
@@ -304,20 +314,11 @@ public class Algorithm {
 	}
 
 
-
-
-
-
-
 	private Couple creatingCoupleforIndividualJobs(Jobs presentJob, Jobs futureJob) {
 		presentJob.setPair(futureJob);
 		Couple presentCouple= new Couple(presentJob,futureJob);
 		return presentCouple;
 	}
-
-
-
-
 
 
 
@@ -345,33 +346,17 @@ public class Algorithm {
 		}
 	}
 
-
-
-
-
-
-
 	private Couple creatingCoupleClientHome(Jobs presentJob, Jobs futureJob) {
 		presentJob.setPair(futureJob);
 		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId(), futureJob.getId()); // setting the time for picking up the patient at home patient
 		Couple pairPatientMedicalCentre=creatingPairPickUpDeliveryHCS(presentJob,futureJob, directConnectionDistance);
 		return pairPatientMedicalCentre;
 	}
-
-
-
-
-
-
-
+	
 	private Couple creatingPairPickUpDeliveryHCS(Jobs presentJob, Jobs futureJob, int directConnectionDistance) {
 		Couple presentCouple= new Couple(presentJob,futureJob, directConnectionDistance, test.getDetour());
 		return presentCouple;
 	}
-
-
-
-
 
 
 

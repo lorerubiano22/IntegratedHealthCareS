@@ -175,6 +175,36 @@ public class Route {
 	}
 
 
+	public void updateInformationRoute() {
+		// variables a actualizar
+		//		private double travelTime = 0.0; // travel time
+		//		private double serviceTime = 0.0; // travel time
+		//		private double waitingTime = 0.0; // travel time
+		//		private double durationRoute = 0.0; // route total costs
+		//		private int passengers = 0; // route total demand
+		//		private LinkedList<Edge> edges; // edges list
+		//		private LinkedList<Couple> jobsList= new LinkedList<Couple>(); // subjobs list (pick up and delivary)
+		//		private LinkedList<Jobs> subJobsList=new LinkedList<Jobs>(); // subjobs list (pick up and delivary)
+		//		private HashMap<Integer, Jobs> positionJobs=new HashMap<Integer, Jobs>();
+		//		private HashMap<Integer, Jobs>  futureSubJobsList=new HashMap<Integer, Jobs> (); 
+		
+		// 1 Compute the start service time
+for(int i=this.subJobsList) {
+	
+}
+
+		// 2. Compute the end service time
+
+		// 3. Compute the arrival time
+
+		// 4. Compute the waiting time
+
+		// 5. Compute service time in the route
+
+		// 6. Computing waiting time in the route
+
+	}
+
 	public String toString() 
 	{   String s = "";
 	s = s.concat("\nRute duration: " + (this.getDurationRoute()));
@@ -189,8 +219,11 @@ public class Route {
 
 	public void updatingJobsFutureList(Route r, Jobs j) {
 		r.getSubFutureJobsList().put(j.getId(), j);
-		
+
 	}
+
+
+
 
 
 }

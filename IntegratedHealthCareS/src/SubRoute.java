@@ -129,8 +129,6 @@ public class SubRoute {
 		// TO DO: CREATE EDGES - BIG JOB TO DRIVING ROUTES <- MISSING 
 	}
 
-
-
 	@Override
 	public String toString() 
 	{   String s = "";
@@ -145,10 +143,10 @@ public class SubRoute {
 	for(Jobs j:this.getJobSequence()) {
 		s = s.concat(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");	
 	}
-	s = s.concat("\n Information Jobs: ");
-	for(Jobs j:this.getJobSequence()) {
-		s = s.concat("\n"+j.toString());	
-	}
+//	s = s.concat("\n Information Jobs: ");
+//	for(Jobs j:this.getJobSequence()) {
+//		s = s.concat("\n"+j.toString());	
+//	}
 	s = s.concat("\nEdge route duration (service+ walking time): " + (this.durationWalkingRoute));
 	return s;
 	}

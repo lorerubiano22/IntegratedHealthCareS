@@ -96,11 +96,11 @@ public class Jobs {
 	public void setAssignedJobToMedicalCentre(ArrayList<Jobs> jobs) {this.assignedJob = jobs;}
 	public void setServerd(boolean isServerd) {this.isServerd = isServerd;}
 	public void setTotalPeople(int i) {	this.totalPeople = i;}
-	public void setStartServiceTime(double B) {this.startServiceTime = B;}
+	public void setStartServiceTime(double B) {this.startServiceTime = (int) Math.ceil(B);}
 	public void setEndServiceTime(double B) {this.endServiceTime = B;}
-	public void setStartTime(double B) {this.hardstartTime = B;}
-	public void setEndTime(double B) {	this.hardendTime = B;}
-	public void setserviceTime(double B) {	this.serviceTime = B;}
+	public void setStartTime(double B) {this.hardstartTime = (int) Math.ceil(B);}
+	public void setEndTime(double B) {	this.hardendTime = (int) Math.ceil(B);}
+	public void setserviceTime(double B) {	this.serviceTime = (int) Math.ceil(B);}
 	public void setClient(boolean client) {isClient= client;}
 	public void setPatient(boolean patient) {this.isPatient = patient;}
 	public void setMedicalCentre(boolean mc) {this.isMedicalCentre = mc;}

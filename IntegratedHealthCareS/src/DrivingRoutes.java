@@ -20,7 +20,11 @@ public class DrivingRoutes {
 	private HashMap<Integer, Jobs>jobsVehicle=new HashMap<Integer, Jobs>();
 	private HashMap<Integer, Jobs>checkedFutureJobs=new HashMap<Integer, Jobs>();
 	ArrayList<ArrayList<Jobs>> schift= new ArrayList<>();
+	private Solution initialSol=null;
 
+	public Solution getInitialSol() {
+		return initialSol;
+	}
 
 	public DrivingRoutes(Inputs i, Random r, Test t, ArrayList<Couple> subJobsList) {
 		inp=i;
@@ -31,7 +35,7 @@ public class DrivingRoutes {
 
 	public void generateAfeasibleSolution() {
 		// 1. Initial feasible solution
-		Solution initialSol= createInitialSolution();
+		initialSol= createInitialSolution();
 		// a solution is a set of routes
 		// 2. VNS
 		// Local search
@@ -52,7 +56,13 @@ public class DrivingRoutes {
 		clientVehicleAssigmentTW();
 		adjustArrivalTime(); // adjusting time window and time when the service ends
 		asignmentPastJobs(); // FUTURE JOBS!!
-		iteratedInsertion(clasification);
+		System.out.println("\nSolution so far\n");
+		for(Route r:routeList ) {
+			if(!r.getSubJobsList().isEmpty()) {
+				initialSol.getRoutes().add(r);
+				System.out.println(r.toString());
+			}
+		}
 		return initialSol;
 	}
 
@@ -82,24 +92,139 @@ public class DrivingRoutes {
 	private void asignmentPastJobs() {
 		boolean insertedJobs=false;
 		ArrayList<Route> copyrouteList= copyListRoute();
-
 		for(Route r:copyrouteList) {
 			if(!r.getSubJobsList().isEmpty()) {
 				for(Jobs jobsInRoute:r.getSubJobsList()) {
 					Jobs pair=extractingJobInformationClient(r,jobsInRoute);
-					if(!checkedFutureJobs.containsValue(jobsInRoute) && pair!=null) {
-						for(Route route:this.routeList){
-							if(!jobsVehicle.containsValue(pair)) {
-								insertedJobs=insertingPair(pair,route);
-								if(jobsVehicle.containsValue(pair)) {
-									checkedFutureJobs.put(jobsInRoute.getId(), jobsInRoute);
-								}	
+					if(pair!=null) {
+						if(jobsInRoute.isMedicalCentre() || jobsInRoute.isPatient()) {
+							patientProcedure(jobsInRoute,insertedJobs,pair);
+						}
+						else {
+							if(jobsInRoute.isClient()) {
+								clientProcedure(jobsInRoute,insertedJobs,pair);
 							}
 						}
 					}
 				}
 			}	
 		}
+	}
+
+	private void clientProcedure(Jobs jobsInRoute, boolean insertedJobs,Jobs pair) {
+		if(!checkedFutureJobs.containsValue(jobsInRoute) && pair!=null) {
+			for(Route route:this.routeList){
+				if(!jobsVehicle.containsValue(pair)) {
+					System.out.println("\nRoute "+route.toString());
+					Jobs pickUp=new Jobs(pair);
+					settingPickHCSUp(pickUp,jobsInRoute);
+					if(!checkedFutureJobs.containsKey(pickUp.getId())) {
+						insertedJobs=insertingPair(pickUp,route);
+						if(jobsVehicle.containsValue(pickUp)) {
+							checkedFutureJobs.put(pickUp.getId(), pickUp);
+						}	}
+				}
+				if(insertedJobs) {
+					break;
+				}
+			}
+		}
+	}
+
+	private void settingPickHCSUp(Jobs pickUp, Jobs jobsInRoute) {
+		pickUp.setTotalPeople(1);
+		// Time window
+		double earlyTime=0;
+		double laterTime=0;
+		if(jobsInRoute.isPatient() || jobsInRoute.isMedicalCentre()) {
+			earlyTime=jobsInRoute.getstartServiceTime()+test.getloadTimePatient();
+			laterTime=earlyTime+test.getCumulativeWaitingTime()+test.getloadTimePatient();
+		}
+		else {
+			earlyTime=jobsInRoute.getstartServiceTime()+test.getloadTimeHomeCareStaff();
+			laterTime=earlyTime+test.getCumulativeWaitingTime()+test.getloadTimeHomeCareStaff();
+		}
+		pickUp.setStartTime(earlyTime);
+		pickUp.setEndTime(laterTime);
+		pickUp.setStartServiceTime(laterTime);
+		pickUp.setserviceTime(0);
+	}
+
+	private boolean insertingPair(Jobs pickUp, Route r) {
+		boolean insertedJobs=false;
+		Route copy=copyRoute(r);
+		if(pickUp!=null) {
+			// 3. call and try to insert task
+			insertedJobs=insertFutureClient(pickUp,copy);
+			copy.updateRoute(inp);
+			System.out.print(copy.toString());
+			if(insertedJobs) {
+				r.getSubJobsList().clear();
+				for(Jobs j:copy.getSubJobsList()) {
+					r.getSubJobsList().add(j);
+				}
+				r.updateRoute(inp);
+				System.out.print("\nRoute "+r.toString());
+			}
+		}
+		return insertedJobs;
+
+	}
+
+	private void patientProcedure(Jobs jobsInRoute, boolean insertedJobs,Jobs pair) {
+		if(!checkedFutureJobs.containsValue(jobsInRoute) && pair!=null) {
+			for(Route route:this.routeList){
+				if(!jobsVehicle.containsValue(pair)) {
+					System.out.println("\nRoute "+route.toString());
+					Jobs pickUp=new Jobs(jobsInRoute);
+					Jobs dropOff=new Jobs(pair);
+					settingPickUp(pickUp);
+					settingDropOff(pickUp,dropOff);
+					if(!checkedFutureJobs.containsKey(dropOff.getId())) {
+						insertedJobs=insertingPair(pickUp, dropOff,route);
+						if(jobsVehicle.containsValue(dropOff)) {
+							checkedFutureJobs.put(pickUp.getId(), pickUp);
+							checkedFutureJobs.put(dropOff.getId(), dropOff);
+						}	}
+				}
+				if(insertedJobs) {
+					break;
+				}
+			}
+		}
+
+	}
+
+	private void settingDropOff(Jobs jobsInRoute,Jobs dropOff) {
+		dropOff.setTotalPeople(-1);
+		double tv=inp.getCarCost().getCost(jobsInRoute.getId()-1, dropOff.getId()-1)*test.getDetour();
+		// Time window
+		double earlyTime=0;
+		double laterTime=0;
+		if(dropOff.isPatient() || dropOff.isMedicalCentre()) {
+			earlyTime=jobsInRoute.getstartServiceTime()+tv+test.getloadTimePatient();
+			laterTime=earlyTime+test.getCumulativeWaitingTime()+test.getloadTimePatient();
+		}
+		else {
+			earlyTime=jobsInRoute.getstartServiceTime()+tv+test.getloadTimeHomeCareStaff();
+			laterTime=earlyTime+test.getCumulativeWaitingTime()+test.getloadTimeHomeCareStaff();
+		}
+		dropOff.setStartTime(earlyTime);
+		dropOff.setEndTime(laterTime);
+		dropOff.setStartServiceTime(laterTime);
+		dropOff.setserviceTime(0);
+	}
+
+	private void settingPickUp(Jobs pickUp) {
+		// 3. how many people involve the service // time window // preliminary service start time
+		pickUp.setTotalPeople(2);
+		// Time window
+		double earlyTime=pickUp.getendServiceTime();
+		double laterTime=earlyTime+test.getCumulativeWaitingTime();
+		pickUp.setStartTime(earlyTime);
+		pickUp.setEndTime(laterTime);
+		pickUp.setStartServiceTime(laterTime);
+		pickUp.setserviceTime(0);
 	}
 
 	private ArrayList<Route> copyListRoute() {
@@ -116,33 +241,38 @@ public class DrivingRoutes {
 		return newCopy;
 	}
 
-	private boolean insertingPair(Jobs pair, Route r) {
+	private boolean insertingPair(Jobs pickUp, Jobs pair, Route r) {
 		boolean insertedJobs=false;
+		Route copy=copyRoute(r);
 		if(pair!=null) {
 			// 3. call and try to insert task
-			insertFutureClient(pair,r);
-			r.updateRoute(inp);
-			System.out.print(r.toString());
-			insertedJobs=checkingFutureJobs(r,pair);
-		}
-		return insertedJobs;
-	}
-
-	private boolean checkingFutureJobs(Route r, Jobs pair) {
-		boolean insertedJobs=false;
-		for(Jobs j:r.getJobsDirectory().values()) {
-			if(r.getSubFutureJobsList().containsKey(pair.getId())) {
-				r.getSubFutureJobsList().put(pair.getId(), pair);
-				insertedJobs=true;
+			insertedJobs=insertFutureClient(pickUp,copy);
+			copy.updateRoute(inp);
+			System.out.print(copy.toString());
+			//insertedJobs=checkingFutureJobs(copy,pickUp);
+			if(insertedJobs) {
+				insertedJobs=insertFutureClient(pair,copy);
+				copy.updateRoute(inp);
+				System.out.print(copy.toString());
+				//insertedJobs=checkingFutureJobs(copy,pair);
+			}
+			if(insertedJobs) {
+				r.getSubJobsList().clear();;
+				for(Jobs j:copy.getSubJobsList()) {
+					r.getSubJobsList().add(j);
+				}
+				r.updateRoute(inp);
+				System.out.print(r.toString());
 			}
 		}
 		return insertedJobs;
 	}
 
+
 	private Jobs extractingJobInformationClient(Route r, Jobs jobsInRoute) {
 		Jobs pair=null;
 		// 1. calling job
-		if(jobsInRoute.getsubJobPair()!=null) { // setting the pick up of the home care staff
+		if(jobsInRoute.isClient()) { // setting the pick up of the home care staff
 			pair= callingPairClient(jobsInRoute); // 2. calling tasks
 		}
 		else {
@@ -156,9 +286,10 @@ public class DrivingRoutes {
 
 	private void settingInformationPair(Jobs pair, Jobs inRoute) {
 		// 3. how many people involve the service // time window // preliminary service start time
-		pair.setTotalPeople(1);
+		pair.setTotalPeople(-1);
 		// Time window
-		double earlyTime=inRoute.getendServiceTime();
+		double tv=inp.getCarCost().getCost(inRoute.getId()-1, pair.getId()-1)*test.getDetour();
+		double earlyTime=inRoute.getendServiceTime()+tv;
 		double laterTime=earlyTime+test.getCumulativeWaitingTime();
 		pair.setStartTime(earlyTime);
 		pair.setEndTime(laterTime);
@@ -276,18 +407,21 @@ public class DrivingRoutes {
 		}
 	}
 
-	private void insertFutureClient(Jobs j, Route r) {
+	private boolean insertFutureClient(Jobs j, Route r) {
+		boolean insertedJob=false;
 		if(r.getSubJobsList().isEmpty()) {
 			r.getSubJobsList().add(j);
 			jobsVehicle.put(j.getId(), j);
 			settingTimes(j);
+			insertedJob=true;
 		}
 		else {
-			boolean insertedJob=iterateOverRouteFutureClient(j,r);
+			insertedJob=iterateOverRouteFutureClient(j,r);
 			if(insertedJob) {
 				jobsVehicle.put(j.getId(), j);
 			}
 		}
+		return insertedJob;
 	}
 
 	private void settingTimes(Jobs j) {
@@ -1200,9 +1334,9 @@ public class DrivingRoutes {
 			for(Couple c:subJobsList) {
 				if(c.getQualification()==qualification && qualification==0) {
 					if(inp.getpatients().containsKey(c.getFuture().getId())) {
-					c.getFuture().setPatient(true);}
+						c.getFuture().setPatient(true);}
 					if(inp.getMedicalCentre().containsKey(c.getFuture().getId())) {
-					c.getPresent().setMedicalCentre(true);}
+						c.getPresent().setMedicalCentre(true);}
 					subJobspatients.add(c);
 				}
 				if(c.getQualification()==qualification && qualification==1) {
@@ -1236,21 +1370,10 @@ public class DrivingRoutes {
 			if(c.getPresent().isClient()) {
 				listserviceJobs.add(c.getPresent());
 			}
-			//			else {
-			//				if(c.getPresent().isPatient()) {
-			//					if() {
-			//						
-			//					}
-			//				}
-			//			}	
 		}
 		// definición de lista de trabajos por enfermenra
 		List<AttributeNurse> nursesInformation=inp.getNurse();
-		//		int amount=nursesInformation.get(3);
-		//		ArrayList<ArrayList<Jobs>> homeCareStaff=new ArrayList<nursesInformation.>();
-		//		
-
-
+	
 
 
 	}

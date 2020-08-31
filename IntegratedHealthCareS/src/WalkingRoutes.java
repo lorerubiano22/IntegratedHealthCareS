@@ -169,13 +169,6 @@ public class WalkingRoutes {
 		for(Jobs j:this.inp.getclients().values()) {
 			this.ServedJobs.put(j.getId(),j);	
 		}
-		//		for(SubRoute slot:this.jobSlots) {
-		//			if(slot.getJobSequence().size()==1) {
-		//				if(ServedJobs.containsKey(slot.getJobSequence().getFirst().getId())) {
-		//					ServedJobs.remove(slot.getJobSequence().getFirst().getId());
-		//				}
-		//			}
-		//		}
 		int slotId=jobSlots.size()-1;
 		for(Jobs job:this.inp.getclients().values()) {
 			Jobs i=new Jobs(job);
@@ -245,8 +238,6 @@ public class WalkingRoutes {
 
 	private void jobsInsertion(String serviceStartTime) {
 		for(Jobs job:jobList) {
-
-
 			for(SubRoute wr:jobSlots) {
 				Jobs i=new Jobs(job);
 				if(i.getId()==8) {
@@ -281,8 +272,6 @@ public class WalkingRoutes {
 
 		}
 	}
-
-
 
 
 	public void computeRouteDurtion(SubRoute wr) {
@@ -334,48 +323,7 @@ public class WalkingRoutes {
 		return reacheable;
 	}
 
-
-
-
-
-
-	private void checkIfTheJobIsTheIntermediateJob(Jobs i, SubRoute wr) { // wr: {h,i,j,...}
-		// Checking if is possible to insert before
-		double estimatedB=0;
-		int jobSequence=-1;
-		for(Jobs j:wr.getJobSequence()) { // reading the list of jobs in the slot
-			jobSequence++;
-			if(wr.getJobSequence().getFirst().equals(j)) { // first job in the list
-				estimatedB=j.getstartServiceTime()-i.getReqTime()-inp.getWalkCost().getCost(i.getId(),j.getId());
-				if(estimatedB<=i.getEndTime() && estimatedB>=i.getStartTime()) {// check if it is possible insert the job before all jobs
-					wr.addJobSequence(i,0,estimatedB);
-				}
-			}
-			else {// in case that the job i could be an intermediate job or the last job
-				if(!wr.getJobSequence().getLast().equals(j)) {// // in case that the job i could be an intermediate job
-					int h=jobSequence-1;
-					Jobs job_h=wr.getJobSequence().get(h); // calling the job h
-					estimatedB=job_h.getstartServiceTime()+job_h.getReqTime()+inp.getWalkCost().getCost(job_h.getId(),i.getId());
-					if(estimatedB>=i.getStartTime() && estimatedB<=i.getEndTime()){ // checking if from job j the new job i could be reachable
-						if(estimatedB+i.getReqTime()+inp.getWalkCost().getCost(i.getId(),j.getId())<j.getstartServiceTime()) {
-							wr.addJobSequence(i,jobSequence,estimatedB);
-							System.out.println(wr.toString());
-						}
-					}	
-				}
-				else {// in case that the job i could be the final job
-					if(wr.getJobSequence().getLast().equals(j)) {
-						checkIfTheJobIsTheLatesestJob(i,wr);  // try to insert the job after everything
-					}
-				}
-			}
-			if(wr.getJobList().containsKey(i.getId())) {
-				break;
-			}
-		}
-	}
-
-
+	
 
 	private boolean feasibleInsertion(Jobs i, SubRoute wr) { // return true when is possible insert the job i, l. Otherwise return false
 		boolean feasibility=false;
@@ -391,32 +339,6 @@ public class WalkingRoutes {
 		}	
 		return feasibility;
 	}
-
-
-
-
-
-	private void checkIfTheJobIsTheLatesestJob(Jobs i, SubRoute wr) {
-		Jobs firstJob=wr.getJobSequence().getLast();
-		// 1. Assuming that the job could be assigned as the first job in the sequence and it could start the latest time
-		double estimatedB= firstJob.getstartServiceTime()+firstJob.getReqTime()+inp.getWalkCost().getCost(firstJob.getId(),i.getId());
-		if(estimatedB<=i.getEndTime()) { // The estimated time start for the service
-			wr.addJobSequence(i,wr.getJobSequence().size(),estimatedB);
-			System.out.println(wr.toString());
-		}
-	}
-
-
-
-	private void checkIfTheJobIsTheEarliestJob(Jobs i, SubRoute wr) {
-		// the inserted jobs are the reference to determine the start time for the incoming job 
-		Jobs firstJob=wr.getJobSequence().getFirst();
-		// 1. Assuming that the job could be assigned as the first job in the sequence and it could start the latest time
-		if(i.getstartServiceTime()+i.getReqTime()+inp.getWalkCost().getCost(i.getId(),firstJob.getId())<=firstJob.getstartServiceTime()) {
-			wr.addJobSequence(i,0,i.getStartTime());
-		}
-	}
-
 
 
 	private boolean checkWalkingDuration(Jobs i, SubRoute wr) {
