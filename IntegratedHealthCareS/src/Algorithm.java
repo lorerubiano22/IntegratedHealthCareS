@@ -43,7 +43,7 @@ public class Algorithm {
 		routes.generateAfeasibleSolution();
 		iterations++;
 		setInitialSolution(routes.getInitialSol());
-		initialSolution.computeMetricsSolution();
+		initialSolution.computeMetricsSolution(input, test);
 		//Interaction stages= new Interaction(routes,subJobsList, input, r, t);// Iteration between stage 1 und stage 2: from the current walking routes split and define new ones
 		//routes= stages.getBestRoutes();
 		//subroutes= stages.getBestWalkingRoutes();

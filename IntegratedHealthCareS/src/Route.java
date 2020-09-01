@@ -187,11 +187,13 @@ public class Route {
 		//		private LinkedList<Jobs> subJobsList=new LinkedList<Jobs>(); // subjobs list (pick up and delivary)
 		//		private HashMap<Integer, Jobs> positionJobs=new HashMap<Integer, Jobs>();
 		//		private HashMap<Integer, Jobs>  futureSubJobsList=new HashMap<Integer, Jobs> (); 
-		
+
 		// 1 Compute the start service time
-for(int i=this.subJobsList) {
-	
-}
+		double serviceT=0;
+		for(int i=this.subJobsList.size()-1;i>=0;i--) {
+			Jobs j=this.subJobsList.get(i);
+			serviceT+=j.getReqTime();
+		}
 
 		// 2. Compute the end service time
 
@@ -208,10 +210,11 @@ for(int i=this.subJobsList) {
 	public String toString() 
 	{   String s = "";
 	s = s.concat("\nRute duration: " + (this.getDurationRoute()));
+	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
 	s = s.concat("\nRuta demand:" + this.getPassengers());
 	s = s.concat("\njobs: ");
 	for(Jobs j:this.subJobsList) {
-		s = s.concat("\nID " + j.getId() + "arrival "+ j.getArrivalTime()+ "start service" + j.getstartServiceTime());	
+		s = s.concat("\nID " + j.getId() + " arrival time "+ j.getArrivalTime()+ " start service " + j.getstartServiceTime()+ " waiting time " + j.getWaitingTime());	
 	}
 	return s;
 	}
@@ -220,6 +223,81 @@ for(int i=this.subJobsList) {
 	public void updatingJobsFutureList(Route r, Jobs j) {
 		r.getSubFutureJobsList().put(j.getId(), j);
 
+	}
+
+
+	public void aheadTime(Inputs input, Test test) { // los start service time no se tocan!!
+		// 1. Fixing start and end service time for each job 
+		Jobs previousJob=this.subJobsList.get(0);
+		//	previousJob.setStartServiceTime(previousJob.getEndTime());
+		double timePickUpDropOff= 0 ;// considering the time at the previous job and current job
+		for(int i=1; i<this.subJobsList.size();i++ ) { // 2. fixing arrival time
+			Jobs currentJob=this.subJobsList.get(i);
+			double timeFromPreviosToCurrentJob= computeTimeFromAToB(previousJob,currentJob,input,test);
+			double arrivalTime=previousJob.getstartServiceTime()+previousJob.getReqTime()+timeFromPreviosToCurrentJob;
+			System.out.println("\n Arrival Time\n"+ arrivalTime);
+
+
+
+		}
+		System.out.println("\nRoute Print\n"+this.toString());
+		// compute the waiting time
+
+		// 3. fixing waiting time
+		// update the list of jobs directory
+
+	}
+
+
+	private double computeTimeFromAToB(Jobs previousJob, Jobs currentJob, Inputs input, Test test) {
+		double timeFromAtoB=0;
+		// travel time
+		double travelTime=input.getCarCost().getCost(previousJob.getId()-1, currentJob.getId()-1);
+		// load time at previous job
+		double loadTimePreviousJob=0;
+		if(previousJob.getTotalPeople()>0) {
+			if(previousJob.isClient()) {
+				loadTimePreviousJob=test.getloadTimeHomeCareStaff();
+			}
+			else {
+				loadTimePreviousJob=test.getloadTimePatient();
+			}
+		}
+		// load time at next job
+		double loadTimeCurrentJob=0;
+		if(currentJob.getTotalPeople()>0) {
+			if(previousJob.isClient()) {
+				loadTimeCurrentJob=test.getloadTimeHomeCareStaff();
+			}
+			else {
+				loadTimeCurrentJob=test.getloadTimePatient();
+			}
+
+
+		}
+		timeFromAtoB=loadTimePreviousJob+travelTime+loadTimeCurrentJob;
+
+		return timeFromAtoB;
+	}
+
+
+	private double preparationTimeInVehicle(Jobs previousJobJob, Jobs currentJob, Test test) {
+		double loadDownloadTime=0;
+		// previous job	
+		if(previousJobJob.isClient()) {
+			loadDownloadTime=test.getloadTimeHomeCareStaff();  // drop off the home care staff at client home
+		}
+		else {
+			loadDownloadTime=test.getloadTimePatient(); // load patient and paramedic
+		}
+		// current job
+		if(currentJob.isClient()) {
+			loadDownloadTime+=test.getloadTimeHomeCareStaff(); // pick up the home care staff at client home
+		}
+		else {
+			loadDownloadTime+=test.getloadTimePatient(); // load patient and paramedic
+		}
+		return loadDownloadTime;
 	}
 
 
