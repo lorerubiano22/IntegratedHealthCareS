@@ -22,7 +22,8 @@ public class Jobs {
 	private double sortLTWSizeCriterion; // sort criterion the size of time window and the latest time
 	private int totalPeople=0; // people involven in the service:
 	// - 1  es una persona menos en el vehículo + 1 una plaza ocupada en el vehículo + 2 dos plazas ocupadas en el vehículo 
-	private double arrivalTime=0;
+	private double arrivalTime=0; // time for vehicle
+	private double departureTime=0; // time for vehicle
 	private boolean isServerd = false;
 	private double waitingTime=0;
 	private Jobs subJobPair; // it is the near future task asociated to this job
@@ -59,6 +60,8 @@ public class Jobs {
 		this.hardendTime = i.getEndTime();
 		this.softstartTime = i.getStartTime();
 		this.softendTime = i.getEndTime();
+		this.departureTime=i.departureTime;
+		this.arrivalTime=i.arrivalTime;
 		this.reqQualification = i.getReqQualification();
 		this.serviceTime = i.getReqTime();
 		double sizeTW=hardendTime-hardstartTime;
@@ -80,7 +83,8 @@ public class Jobs {
 		this.softendTime = i.getEndTime();
 		this.reqQualification = i.getReqQualification();
 		this.serviceTime = i.getReqTime();
-		this.arrivalTime=i.getArrivalTime();
+		this.departureTime=i.departureTime;
+		this.arrivalTime=i.arrivalTime;
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
 		this.sortLTWSizeCriterion=(hardendTime)*(sizeTW);
@@ -92,7 +96,7 @@ public class Jobs {
 	}
 
 	/* SET METHODS */
-
+	
 	public void setAssignedJobToMedicalCentre(ArrayList<Jobs> jobs) {this.assignedJob = jobs;}
 	public void setServerd(boolean isServerd) {this.isServerd = isServerd;}
 	public void setTotalPeople(int i) {	this.totalPeople = i;}
@@ -106,6 +110,7 @@ public class Jobs {
 	public void setMedicalCentre(boolean mc) {this.isMedicalCentre = mc;}
 	public void setReqQualification(int qualification) {reqQualification = qualification;}
 	public void setarrivalTime(double arrival) {arrivalTime=arrival;}
+	public void setdepartureTime(double departure) {departureTime=departure;}
 	public void setIDcouple(int couple) {idCouple=couple;}
 	public void setWaitingTime(double arrivalTime, double startService ) {
 		if(arrivalTime<startService) {
@@ -125,6 +130,8 @@ public class Jobs {
 	public double getendServiceTime() {return endServiceTime;}
 	public double getStartTime() {return hardstartTime;}
 	public double getArrivalTime() {return arrivalTime;}
+	public double getDepartureTime() {return departureTime;}
+	
 	public int getIDcouple() {return idCouple;}
 	public double getEndTime() {return hardendTime;}
 
@@ -258,14 +265,12 @@ public class Jobs {
 	public String toString() {
 		String s = "";
 		s = s.concat("\nJob Id: " + this.id);
-		s = s.concat("\nhardstartTime: " + this.hardstartTime);
-		s = s.concat("\nhardendTime: " + this.hardendTime);
-		s = s.concat("\narrivalTime: " + this.arrivalTime);
-		s = s.concat("\nTimeWindowSize: " + (this.hardendTime-this.hardstartTime));
-		s = s.concat("\nsoftstartTime: " + (this.softstartTime));
-		s = s.concat("\nsoftendTime: " + (this.softendTime));
+		s = s.concat("\nstartTime: " + this.hardstartTime);
+		s = s.concat("\nendTime: " + this.hardendTime);
+		s = s.concat("\nservice start Time: " + this.startServiceTime);
+		s = s.concat("\nArrival Time: " + (this.arrivalTime));
+		s = s.concat("\nDeparture Time: " + (this.departureTime));
 		s = s.concat("\nreqQualification: " + (this.reqQualification));
-		s = s.concat("\nstartServiceTime: " + (this.startServiceTime));
 		s = s.concat("\nserviceTime: " + (this.serviceTime));
 		s = s.concat("\npeople on board: " + this.totalPeople);
 		return s;

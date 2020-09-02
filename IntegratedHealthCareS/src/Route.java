@@ -214,7 +214,7 @@ public class Route {
 	s = s.concat("\nRuta demand:" + this.getPassengers());
 	s = s.concat("\njobs: ");
 	for(Jobs j:this.subJobsList) {
-		s = s.concat("\nID " + j.getId() + " arrival time "+ j.getArrivalTime()+ " start service " + j.getstartServiceTime()+ " waiting time " + j.getWaitingTime());	
+		s = s.concat("\nID " + j.getId() + " arrival time "+ j.getArrivalTime()+ " departure time "+ j.getDepartureTime()+ " start service " + j.getstartServiceTime()+ " waiting time " + j.getWaitingTime());	
 	}
 	return s;
 	}

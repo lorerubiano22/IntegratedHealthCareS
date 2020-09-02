@@ -1,0 +1,69 @@
+***************************************************
+*                      OUTPUTS                    *
+***************************************************
+
+
+--------------------------------------------
+
+ Walking Routes:
+
+--------------------------------------------
+[
+ID route: 1
+Required Qualification: 3
+Edge cumulative walking time: 33.0
+Edge cumulative service time: 240.0
+Edge cumulative waiting time: 142.0
+Edge start service time: 600.0
+Edge total of job in the walking route: 5
+ List of jobs:  j_( Id6, B_600.0)  j_( Id2, B_680.0)  j_( Id4, B_718.0)  j_( Id3, B_794.0)  j_( Id5, B_840.0) 
+Edge route duration (service+ walking time): 415.0, 
+ID route: 7
+Required Qualification: 3
+Edge cumulative walking time: 35.0
+Edge cumulative service time: 101.0
+Edge cumulative waiting time: 45.0
+Edge start service time: 920.0
+Edge total of job in the walking route: 5
+ List of jobs:  j_( Id7, B_920.0)  j_( Id11, B_959.0)  j_( Id9, B_980.0)  j_( Id8, B_1006.0)  j_( Id10, B_1046.0) 
+Edge route duration (service+ walking time): 181.0, 
+ID route: 22
+Required Qualification: 2
+Edge cumulative walking time: 1000000.0
+Edge cumulative service time: 30.0
+Edge cumulative waiting time: 0.0
+Edge start service time: 0.0
+Edge total of job in the walking route: 1
+ List of jobs:  j_( Id12, B_0.0) 
+Edge route duration (service+ walking time): 1000030.0, 
+ID route: 23
+Required Qualification: 1
+Edge cumulative walking time: 1000000.0
+Edge cumulative service time: 30.0
+Edge cumulative waiting time: 0.0
+Edge start service time: 0.0
+Edge total of job in the walking route: 1
+ List of jobs:  j_( Id13, B_0.0) 
+Edge route duration (service+ walking time): 1000030.0]
+
+--------------------------------------------
+Driving Routes
+--------------------------------------------
+
+ Initial solution 
+
+
+ID Solution: 0
+FO: Travel time: 0.0
+ Total passengers: 0
+ Waiting time: 0.0
+ Service time: 0.0
+ List of jobs: 
+ Route: 0 j_( Id15, B_324.0)  j_( Id14, B_343.0)  j_( Id16, B_591.0)  j_( Id14, B_613.0)  j_( Id13, B_917.0)  j_( Id7, B_919.0)  j_( Id10, B_936.0)  j_( Id12, B_1170.0)  j_( Id12, B_1187.0) 
+ Route: 1 j_( Id6, B_599.0)  j_( Id5, B_616.0)  j_( Id14, B_658.0)  j_( Id16, B_682.0)  j_( Id13, B_900.0) 
+ Route: 2 j_( Id14, B_388.0)  j_( Id15, B_409.0) 
+
+
+ pc Time:
+
+614645.3305
