@@ -54,32 +54,15 @@ public class DrivingRoutes {
 		patientVehicleAssigment();
 		clientVehicleAssigment();
 		clientVehicleAssigmentTW();
-		//adjustArrivalTime(); // adjusting time window and time when the service ends
-		for(Route r:routeList) { // iterating over the routes
-			if(!r.getSubJobsList().isEmpty()) {
-				System.out.println(r.toString());}	
-		}
-
-
-		asignmentPastJobs(); // FUTURE JOBS!!
-		System.out.println("\nSolution so far\n");
+		asignmentFutureJobs(); // FUTURE JOBS!!
 		for(Route r:routeList ) {
 			if(!r.getSubJobsList().isEmpty()) {
 				initialSol.getRoutes().add(r);
-				System.out.println(r.toString());
 			}
 		}
 		return initialSol;
 	}
 
-	private void adjustArrivalTime() {
-		for(Route r:routeList) {
-			if(!r.getSubJobsList().isEmpty()) {
-				changingArrivalTimeSequence(r);	
-				System.out.println(r.toString());
-			}
-		}
-	}
 
 	private void changingArrivalTimeSequence(Route r) {
 		for(Jobs j:r.getSubJobsList()) {
@@ -95,7 +78,7 @@ public class DrivingRoutes {
 		}
 	}
 
-	private void asignmentPastJobs() {
+	private void asignmentFutureJobs() {
 		boolean insertedJobs=false;
 		ArrayList<Route> copyrouteList= copyListRoute();
 		for(Route r:copyrouteList) {

@@ -23,7 +23,61 @@ public class Algorithm {
 
 	public void setInitialSolution(Solution initialSolution) {
 		this.initialSolution = initialSolution;
+		computingTotalPersonal();
 		initialSolution.setId(iterations);
+	}
+
+
+
+	private void computingTotalPersonal() {
+		// para calcular el total de personas necesarias tengo que considerar las working horas
+		for(Route r:initialSolution.getRoutes()) {
+			double totalOfParamedics=computingParamedics(r);
+			double homeCare1=0;
+			double homeCare2=0;
+			double homeCare3=0;
+
+		}
+	}
+
+
+	private double computingParamedics(Route r) {
+		double totalOfParamedics=0;
+		Jobs previousPatient=null;
+		for(Jobs nextPatient:r.getSubJobsList()) {
+			if(nextPatient.isPatient()) {
+				if(nextPatient.getTotalPeople()>0) {
+					if(previousPatient==null) { // nextPatient(1)--------1 paramedic  <- two paramedic
+						totalOfParamedics++; // un paramedico esta acompanando
+					}
+					else {
+						checkingNewTotalParamedics(previousPatient, nextPatient, totalOfParamedics);
+					}
+				}
+				previousPatient=nextPatient;
+			}
+		}
+		return totalOfParamedics;
+	}
+
+
+
+	private void checkingNewTotalParamedics(Jobs previousPatient, Jobs nextPatient, double totalOfParamedics) {
+		if(previousPatient.getTotalPeople()<0 && nextPatient.getTotalPeople()<0) {// previousPatient(-1)-------nextPatient(-1)  <- new paramedic
+			totalOfParamedics++;
+		}
+
+		if(previousPatient.getTotalPeople()>0 && nextPatient.getTotalPeople()>0) { // previousPatient(1)-------nextPatient(1)  <- new paramedic
+			totalOfParamedics++;
+		}
+
+		//		if(previousPatient.getTotalPeople()<0 && nextPatient.getTotalPeople()>0) { // previousPatient(-1)-------nextPatient(1)  <- no new paramedic
+		//       nothing happen
+		//		}
+
+		if(previousPatient.getTotalPeople()>0 && nextPatient.getTotalPeople()<0) { // previousPatient(1)-------nextPatient(-1)  <- new paramedic
+			totalOfParamedics++;
+		}
 	}
 
 
@@ -352,7 +406,7 @@ public class Algorithm {
 		Couple pairPatientMedicalCentre=creatingPairPickUpDeliveryHCS(presentJob,futureJob, directConnectionDistance);
 		return pairPatientMedicalCentre;
 	}
-	
+
 	private Couple creatingPairPickUpDeliveryHCS(Jobs presentJob, Jobs futureJob, int directConnectionDistance) {
 		Couple presentCouple= new Couple(presentJob,futureJob, directConnectionDistance, test.getDetour());
 		return presentCouple;

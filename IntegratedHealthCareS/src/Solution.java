@@ -55,7 +55,6 @@ public class Solution {
 
 		// 1. Recalculating the time of each job on the route - using variable routes
 		slackTime(input,test); // it tries to reduce the wainting time for each job
-		computingTimeForEachJob();// control that the time for each job are correct
 
 		// 2. compute the solution duration - variable durationSolution
 
@@ -71,23 +70,16 @@ public class Solution {
 	for(Route r:routes) {
 		// de atras para adelante se define cual seran las hora de inicio de la ruta
 		System.out.println("\nprevious times Route Print\n"+r.toString());
-		r.aheadTime(input,test); // asumiendo que el primer trabajo empieza en la ultima hora
-	    // de adelante para atras se define cual sera la hora de inicio de la ruta
+		
+		r.aheadTime(input,test); // From the first Job computing
+		
+		// computing new times
 		Route copy = new Route(r);
 		//r.backwardTime();
 		// comparison between routes - selecting the best one - in terms of time
 	}
 	}
 	
-	
-	private void computingTimeForEachJob() {
-	for(Route r:routes) {
-		if(!r.getSubJobsList().isEmpty()) {
-		r.updateInformationRoute();	
-		}
-	}
-
-	}
 
 }
 

@@ -26,25 +26,7 @@ Edge cumulative waiting time: 45.0
 Edge start service time: 920.0
 Edge total of job in the walking route: 5
  List of jobs:  j_( Id7, B_920.0)  j_( Id11, B_959.0)  j_( Id9, B_980.0)  j_( Id8, B_1006.0)  j_( Id10, B_1046.0) 
-Edge route duration (service+ walking time): 181.0, 
-ID route: 22
-Required Qualification: 2
-Edge cumulative walking time: 1000000.0
-Edge cumulative service time: 30.0
-Edge cumulative waiting time: 0.0
-Edge start service time: 0.0
-Edge total of job in the walking route: 1
- List of jobs:  j_( Id12, B_0.0) 
-Edge route duration (service+ walking time): 1000030.0, 
-ID route: 23
-Required Qualification: 1
-Edge cumulative walking time: 1000000.0
-Edge cumulative service time: 30.0
-Edge cumulative waiting time: 0.0
-Edge start service time: 0.0
-Edge total of job in the walking route: 1
- List of jobs:  j_( Id13, B_0.0) 
-Edge route duration (service+ walking time): 1000030.0]
+Edge route duration (service+ walking time): 181.0, , ]
 
 --------------------------------------------
 Driving Routes
@@ -66,4 +48,4 @@ FO: Travel time: 0.0
 
  pc Time:
 
-614645.3305
+149.6182

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -227,81 +228,130 @@ public class Route {
 
 
 	public void aheadTime(Inputs input, Test test) { // los start service time no se tocan!!
+		// Se actualizan la información de cada trabajo
 		// 1. Fixing start and end service time for each job 
 		Jobs previousJob=this.subJobsList.get(0);
+		updatingFirstJobInTheRoute(previousJob, previousJob.getEndTime(),test,input);
 		//	previousJob.setStartServiceTime(previousJob.getEndTime());
-		double timePickUpDropOff= 0 ;// considering the time at the previous job and current job
 		for(int i=1; i<this.subJobsList.size();i++ ) { // 2. fixing arrival time
 			Jobs currentJob=this.subJobsList.get(i);
-			double timeFromPreviosToCurrentJob= computeTimeFromAToB(previousJob,currentJob,input,test);
-			double arrivalTime=previousJob.getstartServiceTime()+previousJob.getReqTime()+timeFromPreviosToCurrentJob;
-			System.out.println("\n Arrival Time\n"+ arrivalTime);
-
-
+			updateTimesForJobI(previousJob,currentJob,test,input); // copiar la lista de las variables a actualizar en esta parte
+			System.out.println("\nRoute Print\n"+this.toString());
 
 		}
+		computingWaitingTimes(test);
+		closingTheRoute(input,test);// Adding the depot as the end Job
 		System.out.println("\nRoute Print\n"+this.toString());
 		// compute the waiting time
-
 		// 3. fixing waiting time
 		// update the list of jobs directory
+	}
+
+
+	private void closingTheRoute(Inputs input, Test test) {
+		Jobs startRoute=new Jobs(input.getNodes().get(0));
+		// 1. Set an arrival time
+		//private double arrivalTime=0; // time for vehicle
+		Jobs firstJob=this.subJobsList.get(0);
+		double travelTime=input.getCarCost().getCost(startRoute.getId()-1, firstJob.getId()-1);
+		double departureTimeFirstJob= firstJob.getArrivalTime()-travelTime;
+		double loadTimeFirstJob= totalTimeforLoadingVehicle(); // falta calcular el tiempo necesario para el carge de vehículos
+		double arrivalStartFirstJob=departureTimeFirstJob-loadTimeFirstJob;
+		this.subJobsList.add(0,startRoute);
+
+
+		// 1. Set an arrival time
+		//private double arrivalTime=0; // time for vehicle
+		double arrivalStart=0;
+				// 2. Set a departure time
+				//private double departureTime=0; // time for vehicle
+
+
+				// 3. Set a time window  
+				//private double hardstartTime; // input data early time window 
+				// double hardendTime; // input data end time window
+
+				// tipo de nodo/ usuario del servicio
+				// private boolean isPatient;// type of job in the system- patient job at patient home
+				// private boolean isMedicalCentre;// type of job in the system- patient job at medical centre home
+				// private boolean isClient;// type of job in the system- patient job at client home
+
+				// how many people from depot?
+
+				Jobs endRoute=new Jobs(input.getNodes().get(0));
+
+		this.subJobsList.add(endRoute);
 
 	}
 
 
-	private double computeTimeFromAToB(Jobs previousJob, Jobs currentJob, Inputs input, Test test) {
-		double timeFromAtoB=0;
-		// travel time
-		double travelTime=input.getCarCost().getCost(previousJob.getId()-1, currentJob.getId()-1);
-		// load time at previous job
-		double loadTimePreviousJob=0;
-		if(previousJob.getTotalPeople()>0) {
-			if(previousJob.isClient()) {
-				loadTimePreviousJob=test.getloadTimeHomeCareStaff();
+	private double totalTimeforLoadingVehicle() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	private void computingWaitingTimes(Test test) {
+		for(int i=1; i<this.subJobsList.size();i++ ) { // 2. fixing arrival time
+			double possibleStartServiceTime=0;
+			Jobs currentJob=this.subJobsList.get(i);
+			if(currentJob.isClient()) {
+				possibleStartServiceTime=currentJob.getArrivalTime()+test.getloadTimeHomeCareStaff();
 			}
 			else {
-				loadTimePreviousJob=test.getloadTimePatient();
+				possibleStartServiceTime=currentJob.getArrivalTime()+test.getloadTimePatient()+test.getRegistrationTime();
 			}
+			currentJob.setWaitingTime(possibleStartServiceTime, currentJob.getStartTime());
+			System.out.println("\nRoute Print\n"+this.toString());
 		}
-		// load time at next job
-		double loadTimeCurrentJob=0;
-		if(currentJob.getTotalPeople()>0) {
-			if(previousJob.isClient()) {
-				loadTimeCurrentJob=test.getloadTimeHomeCareStaff();
-			}
-			else {
-				loadTimeCurrentJob=test.getloadTimePatient();
-			}
-
-
-		}
-		timeFromAtoB=loadTimePreviousJob+travelTime+loadTimeCurrentJob;
-
-		return timeFromAtoB;
 	}
 
 
-	private double preparationTimeInVehicle(Jobs previousJobJob, Jobs currentJob, Test test) {
-		double loadDownloadTime=0;
-		// previous job	
-		if(previousJobJob.isClient()) {
-			loadDownloadTime=test.getloadTimeHomeCareStaff();  // drop off the home care staff at client home
+	private void updatingFirstJobInTheRoute(Jobs previousJob, double startServiceTime, Test test, Inputs input) {
+		previousJob.setStartServiceTime(startServiceTime); //		1. actualizar el tiempo en que inicia el servicio ----private double startServiceTime; // time when the service start
+		previousJob.setEndServiceTime(previousJob.getstartServiceTime()+previousJob.getReqTime()); //		2. Actualizar el tiempo en el que se termina el servicio ----- private double endServiceTime; // time when the service start
+
+		double arrivalTime=0;//		3. Actualizar la hora en que el vehículo/ las personas llega a un nodo private double arrivalTime=0; // time for vehicle
+		if(previousJob.isClient()) {
+			arrivalTime=previousJob.getstartServiceTime()-test.getloadTimeHomeCareStaff();
 		}
 		else {
-			loadDownloadTime=test.getloadTimePatient(); // load patient and paramedic
+			arrivalTime=previousJob.getstartServiceTime()-test.getloadTimePatient()-test.getRegistrationTime();
 		}
-		// current job
-		if(currentJob.isClient()) {
-			loadDownloadTime+=test.getloadTimeHomeCareStaff(); // pick up the home care staff at client home
+		previousJob.setarrivalTime(arrivalTime);
+
+		double departure=0;//		4. Actualizar la hora en la que parte de nuevo el vehículo departure Time
+		if(previousJob.isClient()) {
+			departure=previousJob.getArrivalTime()+test.getloadTimeHomeCareStaff();
 		}
 		else {
-			loadDownloadTime+=test.getloadTimePatient(); // load patient and paramedic
+			departure=previousJob.getArrivalTime()+test.getloadTimePatient();
 		}
-		return loadDownloadTime;
+		previousJob.setdepartureTime(departure);		
 	}
 
 
+	private void updateTimesForJobI(Jobs previousJob, Jobs currentJob, Test test, Inputs input) {
+		double travelTime= input.getCarCost().getCost(previousJob.getId()-1, currentJob.getId()-1);// sin detour
+		double arrivalTime=previousJob.getDepartureTime()+travelTime;// 3. Actualizar la hora en que el vehículo/ las personas llega a un nodo private double arrivalTime=0; // time for vehicle
+		currentJob.setarrivalTime(arrivalTime);
+		double departureTime=computingDepartureTime(currentJob,test);// 4. Actualizar la hora en la que parte de nuevo el vehículo departure time
+		currentJob.setdepartureTime(departureTime);
+		double serviceStartTime=Math.max(currentJob.getArrivalTime(), currentJob.getStartTime()); //		1. actualizar el tiempo en que inicia el servicio ----private double startServiceTime; // time when the service start
+		currentJob.setStartServiceTime(serviceStartTime);
+		currentJob.setEndServiceTime(currentJob.getstartServiceTime()+currentJob.getReqTime());  //		2. Actualizar el tiempo en el que se termina el servicio ----- private double endServiceTime; // time when the service start
+	}
 
 
+	private double computingDepartureTime(Jobs currentJob, Test test) {
+		double departure=0;
+		if(currentJob.isClient()){
+			departure=currentJob.getArrivalTime()+test.getloadTimeHomeCareStaff();
+		}
+		else {
+			departure=currentJob.getArrivalTime()+test.getloadTimePatient();
+		}
+		return departure;
+	}
 
 }
