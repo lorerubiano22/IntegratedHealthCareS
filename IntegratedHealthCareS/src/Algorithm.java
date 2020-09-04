@@ -92,7 +92,7 @@ public class Algorithm {
 		input = i;
 		subroutes = new WalkingRoutes(input, r, t, i.getNodes()); // stage 1: Creation of walking routes
 		//updateHomeCareStaffJobs();
-		updateListJobs();// jobs couple - class SubJobs
+		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 		routes = new DrivingRoutes(input, r, t,subJobsList); // stage 2: Creation of driving routes
 		routes.generateAfeasibleSolution();
 		iterations++;
