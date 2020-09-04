@@ -107,13 +107,17 @@ public class Algorithm {
 
 	private void updateListJobs() {
 		// stage 0: set the jobs which are not in a walking route
-		ArrayList<Couple> clientJobs= createClientJobs(); // TO DO
+		ArrayList<Couple> clientJobs= createClientJobs(); // esto es solo para las walkin routes
+		
+	//	ArrayList<Couple> clientJobs= createClientJobs(); // esto es solo para las walkin route
+		
 		ArrayList<Couple> patientJobs= createPatientsJobs();
 		// creating the list of subJobs <- each subjob could be also considered as a stop
 		creatingSubjobsList(clientJobs,patientJobs);
 	}
 
 	private void creatingSubjobsList(ArrayList<Couple> clientJobs, ArrayList<Couple> patientJobs) {
+		// una couple vincula dos lugares
 		int i=-1;
 		for(Couple j:clientJobs) {
 			i++;
