@@ -106,12 +106,11 @@ public class Algorithm {
 
 
 	private void updateListJobs() {
-		// stage 0: set the jobs which are not in a walking route
-		ArrayList<Couple> clientJobs= createClientJobs(); // esto es solo para las walkin routes
-		
-	//	ArrayList<Couple> clientJobs= createClientJobs(); // esto es solo para las walkin route
-		
-		ArrayList<Couple> patientJobs= createPatientsJobs();
+		// stage 0: set the jobs which are not in a walking route - * Hard time window
+		ArrayList<Couple> clientJobs= createClientJobs(); //  (Drop-off home care staff at client home)* -------- (Pick up home care staff at client home)
+
+
+		ArrayList<Couple> patientJobs= createPatientsJobs(); //  (Pick up patient at patient home)------(Drop-off paramedic and patient at medical centre)*
 		// creating the list of subJobs <- each subjob could be also considered as a stop
 		creatingSubjobsList(clientJobs,patientJobs);
 	}
@@ -160,18 +159,6 @@ public class Algorithm {
 			System.out.println(pairPatientMedicalCentre.toString());
 			// 4. adding couple
 			coupleFromPatientsRequest.add(pairPatientMedicalCentre);
-
-			// patient home <-----returning ---- Medical centre  - copying for returning patient to patients home
-			//0. creation of couple
-			Couple pairMedicalCentrePatient=creatingCoupleMedicalCentreToPatientHome(j); 
-			// 1. fixing time windows
-			computingTimeWindowMedicalCentrePatientSubJob(pairMedicalCentrePatient,j);
-			// 2. fixing number of people involved
-			settingPeopleInSubJob(pairPatientMedicalCentre, +2,-1); //- drop-off #personas + pick up #personas
-			// 3. checking information
-			System.out.println(pairMedicalCentrePatient.toString());
-			// 4. adding couple
-			coupleFromPatientsRequest.add(pairMedicalCentrePatient);
 		}
 		return coupleFromPatientsRequest;
 	}

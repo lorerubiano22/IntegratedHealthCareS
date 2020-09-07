@@ -2,11 +2,11 @@ import java.util.ArrayList;
 
 /*
  * This class separate the jobs into pick up and delivery tasks. Save the list of jobs per pairs
-*/
+ */
 public class SubJobs extends Jobs {
 	private ArrayList<Jobs> jobList= new ArrayList<Jobs>();
-	
-	
+
+
 	public SubJobs(Jobs present,Jobs future, SubRoute wr) {
 		super(present.getId(), present.getStartTime(), present.getEndTime(),present.getReqQualification(),present.getReqTime()); 
 		present.setPair(future);
@@ -19,6 +19,15 @@ public class SubJobs extends Jobs {
 		super(present.getId(), present.getStartTime(), present.getEndTime(),present.getReqQualification(),present.getReqTime()); 
 	}
 
+	public SubJobs(Jobs j) {
+		super(j.getId(), j.getStartTime(), j.getEndTime(),j.getReqQualification(),j.getReqTime());
+		this.setPatient(j.isPatient());
+		this.setClient(j.isClient());
+		this.setMedicalCentre(j.isMedicalCentre());
+		this.setIdUser(j.getIdUser());
+		this.setTotalPeople(j.getTotalPeople());
+	}
+
 	// Getters
 	public ArrayList<Jobs> getJobList() {
 		return jobList;
@@ -28,7 +37,7 @@ public class SubJobs extends Jobs {
 	public void setJobList(ArrayList<Jobs> jobList) {
 		this.jobList = jobList;
 	}
-	
-	
+
+
 
 }

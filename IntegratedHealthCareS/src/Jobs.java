@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ public class Jobs {
 	// - 1: a sub-Job which represents that a person is leaving the vehicle
 	// 1 : a sub-Job which represents that a person is boarding the vehicle
 	private int idUser;
+	private String subJobKey="";
 	private final int id; // node ID (depotID = 0)
 	private double hardstartTime; // input data early time window 
 	private double hardendTime; // input data end time window
@@ -32,7 +34,7 @@ public class Jobs {
 	private boolean isClient;// type of job in the system- patient job at client home
 	private ArrayList<Jobs> assignedJob= new ArrayList<Jobs>();
 	private int idCouple=0;
-
+	private HashMap<Integer,SubJobs> subJobs= new HashMap<>();
 	// Constructors
 
 	public Jobs(int id, double startTime, double endTime, int reqQualification,
@@ -73,6 +75,7 @@ public class Jobs {
 		isClient=i.isClient;// type of job in the system- patient job at client home
 		idUser=i.idUser;
 		endServiceTime=i.endServiceTime;
+		subJobKey=i.subJobKey;
 	}
 
 	public Jobs(Jobs i) {
@@ -93,13 +96,18 @@ public class Jobs {
 		isMedicalCentre=i.isMedicalCentre;// type of job in the system- patient job at medical centre home
 		isClient=i.isClient;// type of job in the system- patient job at client home
 		endServiceTime=i.endServiceTime;
+		subJobKey=i.subJobKey;
+		idUser=i.idUser;
 	}
 
 	/* SET METHODS */
-	
+
 	public void setAssignedJobToMedicalCentre(ArrayList<Jobs> jobs) {this.assignedJob = jobs;}
 	public void setServerd(boolean isServerd) {this.isServerd = isServerd;}
-	public void setTotalPeople(int i) {	this.totalPeople = i;}
+	public void setTotalPeople(int i) {	
+		subJobKey=creatingKey(i);
+		this.totalPeople = i;}
+
 	public void setStartServiceTime(double B) {this.startServiceTime = (int) Math.ceil(B);}
 	public void setEndServiceTime(double B) {this.endServiceTime = B;}
 	public void setStartTime(double B) {this.hardstartTime = (int) Math.ceil(B);}
@@ -121,54 +129,34 @@ public class Jobs {
 
 	/* GET METHODS */
 	public boolean isServerd() {return isServerd;}
-
 	public boolean isPatient() {return isPatient;}
 	public boolean isMedicalCentre() {return isMedicalCentre;	}
 	public boolean isClient() {return isClient;}	
+
+
+	public String getSubJobKey() { return subJobKey;}
 	public int getId() { return id;}
 	public double getstartServiceTime() {return startServiceTime;}
 	public double getendServiceTime() {return endServiceTime;}
 	public double getStartTime() {return hardstartTime;}
 	public double getArrivalTime() {return arrivalTime;}
 	public double getDepartureTime() {return departureTime;}
-	
 	public int getIDcouple() {return idCouple;}
 	public double getEndTime() {return hardendTime;}
-
 	public double getSoftStartTime() {return this.softstartTime;}
-
 	public double getSoftEndTime() {return this.softendTime;}
 	public double getsortETWSizeCriterion() {return sortETWSizeCriterion;}
-
-	public double getsortLTWSizeCriterion() {return this.sortLTWSizeCriterion;
-	}
-
+	public double getsortLTWSizeCriterion() {return this.sortLTWSizeCriterion;}
 	public int getReqQualification() {return reqQualification;}
-
-	public double getReqTime() {
-		return serviceTime;
-	}
-
-	public int getTotalPeople() {
-		return totalPeople;
-	}
-
-
-
-	public double getWaitingTime() {
-		return waitingTime;
-	}
-	public Jobs getsubJobPair() {
-		return subJobPair;
-	}
+	public double getReqTime() {return serviceTime;}
+	public int getTotalPeople() {return totalPeople;}
+	public double getWaitingTime() {return waitingTime;}
+	public Jobs getsubJobPair() {return subJobPair;}
 	public int getIdUser() {return idUser;}
-
-	public ArrayList<Jobs> getAssignedJobToMedicalCentre() {
-		return assignedJob;
-	}
+	public ArrayList<Jobs> getAssignedJobToMedicalCentre() {return assignedJob;}
+	public HashMap<Integer,SubJobs> getSubJobs() {return subJobs;}
 
 	public double getTW() { return hardendTime-hardstartTime; }
-
 
 	// Setters
 	public void setTimeWindowsDropOffMedicalCentre(int registrationTime) {
@@ -190,6 +178,21 @@ public class Jobs {
 	else {
 		pickUp.setIdUser(pickUp.getId());
 	}
+	}
+
+	private String creatingKey(int i) {
+		String key="";
+
+		if(i>0) {
+			key="P"+this.getId();
+		}
+		else {
+			key="D"+this.getId();
+		}
+		if(this.isMedicalCentre()) {
+			key=key+this.getIdUser();
+		}
+		return key;
 	}
 
 
