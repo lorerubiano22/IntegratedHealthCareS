@@ -2,25 +2,30 @@
 public class Edge implements Comparable<Edge>
 {
     /* INSTANCE FIELDS & CONSTRUCTOR */
-    private Jobs origin; // origin node
-    private Jobs end; // end node
+	private String key="";
+    private SubJobs origin; // origin node
+    private SubJobs end; // end node
     private double time = 0.0; // edge travel time
     private Edge inverseEdge = null; // edge with inverse direction
             
-    public Edge(Jobs originNode, Jobs endNode) 
+    public Edge(SubJobs originNode, SubJobs endNode, Inputs inp) 
     {   origin = originNode;
         end = endNode;
+        time=inp.getCarCost().getCost(originNode.getId()-1, endNode.getId()-1);
+        key=originNode.getSubJobKey()+endNode.getSubJobKey();
     }
 
     /* SET METHODS */
     public void setTime(double c){time = c;}
     public void setInverse(Edge e){inverseEdge = e;}
+    public void setIdKey(String k) { key=k;}
 
     /* GET METHODS */
-    public Jobs getOrigin(){return origin;}
-    public Jobs getEnd(){return end;}
+    public SubJobs getOrigin(){return origin;}
+    public SubJobs getEnd(){return end;}
     public double getTime(){return time;}
     public Edge getInverseEdge(){return inverseEdge;}
+    public String getEdgeKey(){return key;}
 
 
     

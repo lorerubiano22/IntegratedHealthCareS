@@ -39,47 +39,12 @@ public class Solution {
 	for(Route r:routes) {
 		if(!r.getSubJobsList().isEmpty()) {
 			s= s.concat("\n Route: "+ r.getIdRoute());
-			for(Jobs j:r.getSubJobsList()) {	
-				s = s.concat(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");}
+			for(SubJobs j:r.getSubJobsList()) {	
+				s = s.concat(" j_( Id" + j.getSubJobKey()+", B_"+j.getstartServiceTime()+") ");}
 		}	
 	}
 	return s;
 	}
-
-	public void computeMetricsSolution(Inputs input, Test test) {
-		//		private double durationSolution = 0.0; // Travel distance = waiting time + driving time
-		//		private LinkedList<Route> routes = new LinkedList<Route>(); // list of routes in this solution
-		//		private int passengers=0;// number of patient + home care staff and + paramedic transported
-		//		private double waitingTime=0;// Total waiting time
-		//		private double serviceTime=0;
-
-		// 1. Recalculating the time of each job on the route - using variable routes
-		slackTime(input,test); // it tries to reduce the wainting time for each job
-
-		// 2. compute the solution duration - variable durationSolution
-
-		// 3. calculating the total of passengers in the route - passengers
-
-		// 4. calculating the waiting time - waitingTime
-
-		// 5. Calculating the servicie time - serviceTime
-
-
-	}
-	private void slackTime(Inputs input, Test test) {
-	for(Route r:routes) {
-		// de atras para adelante se define cual seran las hora de inicio de la ruta
-		System.out.println("\nprevious times Route Print\n"+r.toString());
-		
-		r.aheadTime(input,test); // From the first Job computing
-		
-		// computing new times
-		Route copy = new Route(r);
-		//r.backwardTime();
-		// comparison between routes - selecting the best one - in terms of time
-	}
-	}
-	
 
 }
 

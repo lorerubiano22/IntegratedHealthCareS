@@ -9,7 +9,7 @@ import java.util.Random;
  *
  */
 public class Algorithm {
-	private int iterations=-1;
+	private int iterations=1;
 	private final Test test;
 	private final Inputs input;
 	private WalkingRoutes subroutes;
@@ -24,21 +24,53 @@ public class Algorithm {
 	public void setInitialSolution(Solution initialSolution) {
 		this.initialSolution = initialSolution;
 		computingTotalPersonal();
+		computingTravelTime(); // driving Routes
+		computingWaitingTime(); // driving Routes
+		computingServiceTime(); // driving Routes
+		addingInfWalkingRoutes(); // walking routes
+
 		initialSolution.setId(iterations);
 	}
 
 
 
-	private void computingTotalPersonal() {
-		// para calcular el total de personas necesarias tengo que considerar las working horas
-		for(Route r:initialSolution.getRoutes()) {
-			double totalOfParamedics=computingParamedics(r);
-			double homeCare1=0;
-			double homeCare2=0;
-			double homeCare3=0;
 
-		}
+
+
+
+
+
+
+
+
+
+
+
+	private void addingInfWalkingRoutes() {
+		// TODO Auto-generated method stub
+
 	}
+
+
+
+	private void computingServiceTime() {
+		// TODO Auto-generated method stub
+
+	}
+
+
+
+	private void computingWaitingTime() {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	private void computingTravelTime() {
+		// TODO Auto-generated method stub
+
+	}
+
 
 
 	private double computingParamedics(Route r) {
@@ -95,9 +127,9 @@ public class Algorithm {
 		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 		routes = new DrivingRoutes(input, r, t,subJobsList); // stage 2: Creation of driving routes
 		routes.generateAfeasibleSolution();
-		iterations++;
+		//iterations++;
 		setInitialSolution(routes.getInitialSol());
-		initialSolution.computeMetricsSolution(input, test);
+		//initialSolution.computeMetricsSolution(input, test);
 		//Interaction stages= new Interaction(routes,subJobsList, input, r, t);// Iteration between stage 1 und stage 2: from the current walking routes split and define new ones
 		//routes= stages.getBestRoutes();
 		//subroutes= stages.getBestWalkingRoutes();
@@ -439,14 +471,15 @@ public class Algorithm {
 		return present;
 	}
 
-
-
-	private Jobs creatingTheFeatureJob(Jobs j) {
-		int startTime= (int)j.getstartServiceTime()+(int)j.getReqTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
-		int endTime= (int)j.getstartServiceTime()+(int)j.getReqTime()+test.getCumulativeWaitingTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
-		Jobs future= new Jobs(j.getId(),startTime,endTime ,j.getReqQualification(), 0); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
-		return future;
+	// auxiliar methods
+	private void computingTotalPersonal() {
+		int passengers=-1;
+		for(Route r: this.initialSolution.getRoutes()) {
+			passengers+=r.getSubJobsList().get(0).getTotalPeople();
+		}
+		initialSolution.setPassengers(passengers);	
 	}
+
 
 
 

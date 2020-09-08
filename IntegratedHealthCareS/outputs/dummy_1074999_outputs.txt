@@ -35,17 +35,19 @@ Driving Routes
  Initial solution 
 
 
-ID Solution: 0
+ID Solution: 1
 FO: Travel time: 0.0
  Total passengers: 0
  Waiting time: 0.0
  Service time: 0.0
  List of jobs: 
- Route: 0 j_( Id15, B_324.0)  j_( Id14, B_343.0)  j_( Id16, B_591.0)  j_( Id14, B_613.0)  j_( Id13, B_917.0)  j_( Id7, B_919.0)  j_( Id10, B_936.0)  j_( Id12, B_1170.0)  j_( Id12, B_1187.0) 
- Route: 1 j_( Id6, B_599.0)  j_( Id5, B_616.0)  j_( Id14, B_658.0)  j_( Id16, B_682.0)  j_( Id13, B_900.0) 
- Route: 2 j_( Id14, B_388.0)  j_( Id15, B_409.0) 
+ Route: 0 j_( IdP1, B_300.0)  j_( IdP15, B_322.0)  j_( IdD1415, B_343.0)  j_( IdP1415, B_388.0)  j_( IdD15, B_407.0)  j_( IdP16, B_589.0)  j_( IdD1416, B_613.0)  j_( IdP1416, B_658.0)  j_( IdD16, B_680.0)  j_( IdD1, B_667.0) 
+ Route: 0 j_( IdP1, B_894.0)  j_( IdD13, B_900.0)  j_( IdP13, B_945.0)  j_( IdD1, B_950.0) 
+ Route: 0 j_( IdP1, B_1164.0)  j_( IdD12, B_1170.0)  j_( IdP12, B_1215.0)  j_( IdD1, B_1220.0) 
+ Route: 0 j_( IdP1, B_595.0)  j_( IdD6, B_599.0)  j_( IdP5, B_1029.0)  j_( IdD1, B_1033.0) 
+ Route: 0 j_( IdP1, B_916.0)  j_( IdD7, B_919.0)  j_( IdP10, B_1115.0)  j_( IdD1, B_1119.0) 
 
 
  pc Time:
 
-149.6182
+701.4595

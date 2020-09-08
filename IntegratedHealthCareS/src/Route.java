@@ -5,16 +5,17 @@ import java.util.List;
 import java.util.Random;
 
 public class Route {
+	
 	private int id=0;
 	private double travelTime = 0.0; // travel time
 	private double serviceTime = 0.0; // travel time
 	private double waitingTime = 0.0; // travel time
 	private double durationRoute = 0.0; // route total costs
 	private int passengers = 0; // route total demand
-	private LinkedList<Edge> edges; // edges list
+	private HashMap<String, Edge> edges; // edges list
 	private LinkedList<Couple> jobsList= new LinkedList<Couple>(); // subjobs list (pick up and delivary)
-	private LinkedList<Jobs> subJobsList=new LinkedList<Jobs>(); // subjobs list (pick up and delivary)
-	private HashMap<Integer, Jobs> positionJobs=new HashMap<Integer, Jobs>();
+	private LinkedList<SubJobs> subJobsList=new LinkedList<SubJobs>(); // subjobs list (pick up and delivary)
+	private HashMap<String, SubJobs> positionJobs=new HashMap<>();
 	private HashMap<Integer, Jobs>  futureSubJobsList=new HashMap<Integer, Jobs> (); 
 
 	// Constructors
@@ -39,15 +40,15 @@ public class Route {
 		waitingTime = 0.0; // travel time
 		durationRoute = 0.0; // route total costs
 		passengers = 0; // route total demand
-		edges=new LinkedList<Edge>(); // edges list
+		edges=new HashMap<String,Edge>(); // edges list
 		jobsList= new LinkedList<Couple>(); // subjobs list (pick up and delivary)
-		subJobsList=new LinkedList<Jobs>(); // subjobs list (pick up and delivary)
-		positionJobs=new HashMap<Integer, Jobs>();
+		subJobsList=new LinkedList<SubJobs>(); // subjobs list (pick up and delivary)
+		positionJobs=new HashMap<String, SubJobs>();
 	}
 
-	private void copySubJobs( LinkedList<Jobs>  SubJobs) {
-		subJobsList=new LinkedList<Jobs>();
-		for(Jobs j:SubJobs) {
+	private void copySubJobs( LinkedList<SubJobs>  SubJobs) {
+		subJobsList=new LinkedList<SubJobs>();
+		for(SubJobs j:SubJobs) {
 			subJobsList.add(j);
 		}
 	}
@@ -55,19 +56,19 @@ public class Route {
 
 
 
-	private void copyDirectories(HashMap<Integer, Jobs> jobsDirectory) {
-		positionJobs=new HashMap<Integer, Jobs>();
-		for(Jobs j:jobsDirectory.values()) {
-			positionJobs.put(j.getId(),new Jobs(j));	
+	private void copyDirectories(HashMap<String, SubJobs> jobsDirectory) {
+		positionJobs=new HashMap<String, SubJobs>();
+		for(SubJobs j:jobsDirectory.values()) {
+			positionJobs.put(j.getSubJobKey(),new SubJobs(j));	
 		}
 
 	}
 
 
-	private void copyEdges(LinkedList<Edge> edges2) {
-		edges=new LinkedList<Edge>();
-		for(Edge e:edges2) {
-			edges.add(e);
+	private void copyEdges(HashMap<String, Edge> edges2) {
+		edges=new HashMap<String, Edge>();
+		for(Edge e:edges2.values()) {
+			edges.put(e.getEdgeKey(),e);
 		}
 	}
 
@@ -86,13 +87,14 @@ public class Route {
 	public void setServiceTime(double st) {this.serviceTime = st;}
 	public void setWaitingTime(double wt) {this.waitingTime = wt;}
 	public void setPassengers(int passengers) {this.passengers = passengers;}
-	public void setEdges(LinkedList<Edge> edges) {this.edges = edges;}
+	public void setEdges(HashMap<String, Edge> edges) {this.edges = edges;}
 	public void setJobsList(LinkedList<Couple> JobsList) {this.jobsList = JobsList;}
-	public void setSubJobsList(LinkedList<Jobs> subJobsList) {this.subJobsList = subJobsList;}
+	public void setSubJobsList(LinkedList<SubJobs> subJobsList) {this.subJobsList = subJobsList;}
 	public void setIdRoute(int idVehicle) { id=idVehicle;}
+	
 
 	// Getters
-	public HashMap<Integer, Jobs> getJobsDirectory(){return positionJobs;}
+	public HashMap<String, SubJobs> getJobsDirectory(){return positionJobs;}
 	public double getDurationRoute() {return durationRoute;}
 	public double getServiceTime() {return serviceTime;}
 	public double getWaitingTime() {return waitingTime;}
@@ -100,17 +102,10 @@ public class Route {
 	public int getIdRoute() {return id;}
 	public int getPassengers() {return passengers;}
 	public LinkedList<Couple> getJobsList() {return jobsList;}
-	public LinkedList<Jobs> getSubJobsList() {return subJobsList;} // present jobs
+	public LinkedList<SubJobs> getSubJobsList() {return subJobsList;} // present jobs
 	public HashMap<Integer, Jobs>  getSubFutureJobsList() {return futureSubJobsList;} // future jobs
-	public LinkedList<Edge> getEdges() {return edges;}
+	public HashMap<String, Edge> getEdges() {return edges;}
 
-
-
-	public void addCouple(Couple c) {
-		jobsList.add(c); // this couple has to have updated the times (service start time, arrival)
-		subJobsList.add(c.getPresent());
-		subJobsList.add(c.getFuture());
-	}
 	public void computeTravelTime(Inputs inp) {
 		double travelTimeDuration=0;
 		for(int j=0; j<this.getSubJobsList().size();j++) {
@@ -129,22 +124,17 @@ public class Route {
 		int totalPassenger =0;
 		// travel time
 		for(int j=0; j<getSubJobsList().size();j++) {
-			Jobs nn=getSubJobsList().get(j);
-			totalPassenger+=getSubJobsList().get(j).getTotalPeople();
+			SubJobs nn=getSubJobsList().get(j);
+			totalPassenger+=nn.getTotalPeople();
 		}
 		this.setPassengers(totalPassenger);
 	}
 	public void updatingJobsList() {
-		for(int id=0;id<this.getSubJobsList().size();id++) {
-			Jobs nodeI=this.getSubJobsList().get(id);
-			if(nodeI.isMedicalCentre()) {
-				this.positionJobs.put(nodeI.getIdUser(), nodeI);	}
-			else {
-				this.positionJobs.put(nodeI.getId(), nodeI);
-			}
+		for(SubJobs nodeI:this.getSubJobsList()) {
+			this.positionJobs.put(nodeI.getSubJobKey(), nodeI);	
 		}
-
 	}
+	
 	public void updateRoute(Inputs inp) {
 		// Consider the list of jobs positions
 		// service time
@@ -157,8 +147,10 @@ public class Route {
 		// duration route
 		double duration= this.getServiceTime()+this.getTravelTime()+this.getWaitingTime();
 		this.setDurationRoute(duration);
-
+		updatingJobsList();
 	}
+	
+
 	private void computeWaitingTime() {
 		double waiting=0;
 		for(Jobs j:this.positionJobs.values() ) {
@@ -214,8 +206,8 @@ public class Route {
 	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
 	s = s.concat("\nRuta demand:" + this.getPassengers());
 	s = s.concat("\njobs: ");
-	for(Jobs j:this.subJobsList) {
-		s = s.concat("\nID " + j.getId() + " arrival time "+ j.getArrivalTime()+ " departure time "+ j.getDepartureTime()+ " start service " + j.getstartServiceTime()+ " waiting time " + j.getWaitingTime());	
+	for(SubJobs j:this.subJobsList) {
+		s = s.concat("\nID " + j.getSubJobKey() + " arrival time "+ j.getArrivalTime()+ " departure time "+ j.getDepartureTime()+ " start service " + j.getstartServiceTime()+ " waiting time " + j.getWaitingTime());	
 	}
 	return s;
 	}
@@ -227,68 +219,7 @@ public class Route {
 	}
 
 
-	public void aheadTime(Inputs input, Test test) { // los start service time no se tocan!!
-		// Se actualizan la información de cada trabajo
-		// 1. Fixing start and end service time for each job 
-		Jobs previousJob=this.subJobsList.get(0);
-		updatingFirstJobInTheRoute(previousJob, previousJob.getEndTime(),test,input);
-		//	previousJob.setStartServiceTime(previousJob.getEndTime());
-		for(int i=1; i<this.subJobsList.size();i++ ) { // 2. fixing arrival time
-			Jobs currentJob=this.subJobsList.get(i);
-			updateTimesForJobI(previousJob,currentJob,test,input); // copiar la lista de las variables a actualizar en esta parte
-			System.out.println("\nRoute Print\n"+this.toString());
 
-		}
-		computingWaitingTimes(test);
-		closingTheRoute(input,test);// Adding the depot as the end Job
-		System.out.println("\nRoute Print\n"+this.toString());
-		// compute the waiting time
-		// 3. fixing waiting time
-		// update the list of jobs directory
-	}
-
-
-	private void closingTheRoute(Inputs input, Test test) {
-		Jobs startRoute=new Jobs(input.getNodes().get(0));
-		// 1. Set an arrival time
-		//private double arrivalTime=0; // time for vehicle
-		Jobs firstJob=this.subJobsList.get(0);
-		double travelTime=input.getCarCost().getCost(startRoute.getId()-1, firstJob.getId()-1);
-		double departureTimeFirstJob= firstJob.getArrivalTime()-travelTime;
-		double loadTimeFirstJob= totalTimeforLoadingVehicle(); // falta calcular el tiempo necesario para el carge de vehículos
-		double arrivalStartFirstJob=departureTimeFirstJob-loadTimeFirstJob;
-		this.subJobsList.add(0,startRoute);
-
-
-		// 1. Set an arrival time
-		//private double arrivalTime=0; // time for vehicle
-		double arrivalStart=0;
-				// 2. Set a departure time
-				//private double departureTime=0; // time for vehicle
-
-
-				// 3. Set a time window  
-				//private double hardstartTime; // input data early time window 
-				// double hardendTime; // input data end time window
-
-				// tipo de nodo/ usuario del servicio
-				// private boolean isPatient;// type of job in the system- patient job at patient home
-				// private boolean isMedicalCentre;// type of job in the system- patient job at medical centre home
-				// private boolean isClient;// type of job in the system- patient job at client home
-
-				// how many people from depot?
-
-				Jobs endRoute=new Jobs(input.getNodes().get(0));
-
-		this.subJobsList.add(endRoute);
-
-	}
-
-
-	private double totalTimeforLoadingVehicle() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 
 	private void computingWaitingTimes(Test test) {

@@ -12,9 +12,10 @@ public class WalkingRoutes {
 	// walking time
 	// pick-up Node
 	// drop-off node
-
-	private double totalTravelTime = 0.0; // route total travel time
-	private float totalServiceTime = 0.0F; // route total service time in the route
+	private double durationWalkingRoute=0;
+	private double totalTravelTime = 0; // route total travel time
+	private double totalServiceTime = 0;// route total service time in the route
+	private double waitingTime=0.0F; // Waiting time
 	private double slack=0;
 	private LinkedList<SubRoute> jobSlots; // list of subroutes which describe the job sequence respecting all restrictions
 	private ArrayList<Jobs> jobList;
@@ -105,6 +106,8 @@ public class WalkingRoutes {
 		// checkSolutionQuality <- each job is once in the set of solutions
 		boolean goodSolution = checkWalkingRouteSet();
 		System.out.print("\n good Solution" + goodSolution);
+		computingRouteTimeDuration(); // computing the travel time for each slot walking time + waiting time
+
 		// 8. Making walking routes into big tasks 
 		walkingRouteToJob(); // fix the pick-up and drop-off nodes for each walking route
 	}
@@ -164,7 +167,33 @@ public class WalkingRoutes {
 	}
 
 
+	private void computingRouteTimeDuration() {
+		//1 Computing the waiting time for each job in each slot
+		for(SubRoute wr:walkingRoutes) {
+			double waitingTime=0;
+			double serviceTime=0;
+			double walkingTime=0;
+			for(Jobs j: wr.getJobSequence()) {
+				j.setWaitingTime(j.getStartTime(), j.getstartServiceTime());
+				waitingTime+=j.getWaitingTime();
+				serviceTime+=j.getReqTime();
+				walkingTime+=wr.getTotalTravelTime();
+			}
+			this.waitingTime=waitingTime;
+			this.totalServiceTime=serviceTime;
+			
+		this.totalTravelTime=walkingTime;
+		this.durationWalkingRoute=this.waitingTime+totalServiceTime+totalTravelTime;	
+		}
+	}
 
+	
+//	private double totalTravelTime = 0.0; // route total travel time
+//	private float totalServiceTime = 0.0F; // route total service time in the route
+//	private float waitingTime=0.0F; // Waiting time
+
+	
+	
 	private void completingIndividualRoutes() {
 		for(Jobs j:this.inp.getclients().values()) {
 			this.ServedJobs.put(j.getId(),j);	
@@ -416,9 +445,11 @@ public class WalkingRoutes {
 
 
 	// Getters
-
+	
+	
+	public double getTotalwaitingTime() { return waitingTime;}
 	public double getTotalTravelTime() { return totalTravelTime;}
-	public float getTotalServiceTime() {return totalServiceTime;}
+	public double getTotalServiceTime() {return totalServiceTime;}
 	public double getSlack() {return slack;}
 	public HashMap<Integer,Jobs> getServedJobs() {return ServedJobs;}
 	public LinkedList<SubRoute> getWalkingRoutes() {return walkingRoutes;}
