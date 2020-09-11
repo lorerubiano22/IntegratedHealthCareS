@@ -46,9 +46,9 @@ public class DrivingRoutes {
 		// Shifts <- set of subjobs (pick up and drop-off: 1/2 people at a location:medical centre/patient home/ client home / depot )
 		// 1. Initial feasible solution
 		initialSol= createInitialSolution();
-		
-	
-		
+
+
+
 		// TO DO 2. VNS
 		// TO DO Local search
 
@@ -72,7 +72,7 @@ public class DrivingRoutes {
 		//		clientVehicleAssigmentTW();
 		//		asignmentFutureJobs(); // FUTURE JOBS!!
 		Solution initialSol= solutionInformation();
-	
+
 		return initialSol;
 	}
 
@@ -80,12 +80,39 @@ public class DrivingRoutes {
 	private Solution solutionInformation() {
 		Solution initialSol= new Solution();
 		for(Route r:routeList ) {
-				if(!r.getSubJobsList().isEmpty()) {
-					r.updateRoute(inp);
-					initialSol.getRoutes().add(r);
-				}
+			if(!r.getSubJobsList().isEmpty()) {
+				r.updateRoute(inp);
+				initialSol.getRoutes().add(r);
 			}
+		}
+		// Computar costos asociados a la solucion
+		computeSolutionCost(initialSol);
+
 		return initialSol;
+	}
+
+	private void computeSolutionCost(Solution initialSol) {
+		// sólo se considera la driving route
+		// update each route
+		// 1. Compute waiting time
+		double waiting=0;
+		double serviceTime=0;
+		double drivingTime=0;
+		int passengers=0;
+		for(Route r:initialSol.getRoutes()) {
+			r.updateRoute(inp);
+			waiting=r.getWaitingTime(); // waiting time
+			serviceTime=r.getServiceTime(); // 2. Service time 
+			drivingTime+=r.getTravelTime(); // 3. Travel time
+			passengers+=r.getPassengers();// 4. Passengers
+		}
+		// 3. Setting values to a solution
+		initialSol.setServiceTime(serviceTime);
+		initialSol.setWaitingTime(waiting);
+		initialSol.setdrivingTime(drivingTime);
+		initialSol.setDurationSolution(waiting+drivingTime+serviceTime);
+		initialSol.setPassengers(passengers);
+
 	}
 
 	private void crossingBetweenRoutes() {
@@ -231,7 +258,7 @@ public class DrivingRoutes {
 		timeStartEndRoutes();
 		//3. compute the connections between SubJobs
 		settingEdges();
-		
+
 	}
 
 	private void settingEdges() {

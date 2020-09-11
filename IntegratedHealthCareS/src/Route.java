@@ -5,13 +5,37 @@ import java.util.List;
 import java.util.Random;
 
 public class Route {
-	
+
 	private int id=0;
 	private double travelTime = 0.0; // travel time
 	private double serviceTime = 0.0; // travel time
 	private double waitingTime = 0.0; // travel time
 	private double durationRoute = 0.0; // route total costs
 	private int passengers = 0; // route total demand
+	private double paramedic=0;// los paramedicos que salen del depot
+	public double getParamedic() {
+		return paramedic;
+	}
+
+
+	public void setParamedic(double paramedic) {
+		this.paramedic = paramedic;
+	}
+
+
+	public double getHomeCareStaff() {
+		return homeCareStaff;
+	}
+
+
+	public void setHomeCareStaff(double homeCareStaff) {
+		this.homeCareStaff = homeCareStaff;
+	}
+
+
+	private double homeCareStaff=0;// los paramedicos que salen del depot
+
+
 	private HashMap<String, Edge> edges; // edges list
 	private LinkedList<Couple> jobsList= new LinkedList<Couple>(); // subjobs list (pick up and delivary)
 	private LinkedList<SubJobs> subJobsList=new LinkedList<SubJobs>(); // subjobs list (pick up and delivary)
@@ -26,6 +50,8 @@ public class Route {
 		waitingTime = r.getWaitingTime(); // travel time
 		durationRoute = r.getDurationRoute(); // route total costs
 		passengers = r.getPassengers(); // route total demand
+		homeCareStaff=r.getHomeCareStaff();
+		paramedic=r.getParamedic();
 		copyEdges(r.edges); // edges list
 		copyCouples(r.jobsList); // subjobs list (pick up and delivary)
 		copySubJobs(r.subJobsList); // subjobs list (pick up and delivary)
@@ -91,7 +117,7 @@ public class Route {
 	public void setJobsList(LinkedList<Couple> JobsList) {this.jobsList = JobsList;}
 	public void setSubJobsList(LinkedList<SubJobs> subJobsList) {this.subJobsList = subJobsList;}
 	public void setIdRoute(int idVehicle) { id=idVehicle;}
-	
+
 
 	// Getters
 	public HashMap<String, SubJobs> getJobsDirectory(){return positionJobs;}
@@ -121,20 +147,32 @@ public class Route {
 
 	}
 	public void computePassenger() {
-		int totalPassenger =0;
-		// travel time
-		for(int j=0; j<getSubJobsList().size();j++) {
-			SubJobs nn=getSubJobsList().get(j);
-			totalPassenger+=nn.getTotalPeople();
-		}
+		paramedic=0;
+		homeCareStaff=0;
+		int totalPassenger =getSubJobsList().get(0).getTotalPeople();
 		this.setPassengers(totalPassenger);
+		if(totalPassenger==1) { // solo una persona es asignada al vehículo
+			if(getSubJobsList().get(1).isMedicalCentre() || getSubJobsList().get(1).isPatient()) {
+				this.paramedic=totalPassenger;
+			}
+			else {
+				homeCareStaff=totalPassenger;
+			}
+		}
+		else {
+			// cuando se ha combinado los paramedicos con el home care staff pensar como computar la cantidad de pesonal asignado a un vehículo 
+
+
+		}
+
 	}
 	public void updatingJobsList() {
+		positionJobs.clear();
 		for(SubJobs nodeI:this.getSubJobsList()) {
 			this.positionJobs.put(nodeI.getSubJobKey(), nodeI);	
 		}
 	}
-	
+
 	public void updateRoute(Inputs inp) {
 		// Consider the list of jobs positions
 		// service time
@@ -149,7 +187,7 @@ public class Route {
 		this.setDurationRoute(duration);
 		updatingJobsList();
 	}
-	
+
 
 	private void computeWaitingTime() {
 		double waiting=0;

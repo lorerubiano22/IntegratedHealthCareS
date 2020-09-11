@@ -23,12 +23,8 @@ public class Algorithm {
 
 	public void setInitialSolution(Solution initialSolution) {
 		this.initialSolution = initialSolution;
-		computingTotalPersonal();
-		computingTravelTime(); // driving Routes
-		computingWaitingTime(); // driving Routes
-		computingServiceTime(); // driving Routes
-		addingInfWalkingRoutes(); // walking routes
-
+		addingWaitingTime(initialSolution);
+		initialSolution.setWalkingTime(this.subroutes.getTotalTravelTime());
 		initialSolution.setId(iterations);
 	}
 
@@ -43,6 +39,14 @@ public class Algorithm {
 
 
 
+
+
+
+	private void addingWaitingTime(Solution initialSolution2) {
+		double waitingSolution=initialSolution2.getWaitingTime()+this.subroutes.getTotalwaitingTime();
+		initialSolution2.setWaitingTime(waitingSolution);		
+		
+	}
 
 
 
