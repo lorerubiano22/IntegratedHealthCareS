@@ -88,6 +88,7 @@ public class SubRoute {
 	public double getTotalTravelTime() {return totalTravelTime;}
 	public double getTotalServiceTime() {return totalServiceTime;}
 	public double getDurationWalkingRoute() {return durationWalkingRoute;}
+	public double getDurationWaitingTime() {return waitingTimeRoute;}
 	public int getSkill() {return reqQualification;}
 
 	// Auxiliar methods

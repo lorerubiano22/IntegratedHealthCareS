@@ -168,32 +168,57 @@ public class WalkingRoutes {
 
 
 	private void computingRouteTimeDuration() {
-		//1 Computing the waiting time for each job in each slot
-		for(SubRoute wr:walkingRoutes) {
-			double waitingTime=0;
-			double serviceTime=0;
-			double walkingTime=0;
-			for(Jobs j: wr.getJobSequence()) {
-				j.setWaitingTime(j.getStartTime(), j.getstartServiceTime());
-				waitingTime+=j.getWaitingTime();
-				serviceTime+=j.getReqTime();
-				walkingTime+=wr.getTotalTravelTime();
+		double service=0;
+		double waitingTime=0;
+		double travelTime=0;
+		// service time and waiting time
+		for(SubRoute wr:this.getWalkingRoutes()) {
+			for(Jobs i:wr.getJobSequence()) {
+				service+=i.getReqTime();
+				waitingTime+=i.getWaitingTime();
 			}
-			this.waitingTime=waitingTime;
-			this.totalServiceTime=serviceTime;
-			
-		this.totalTravelTime=walkingTime;
-		this.durationWalkingRoute=this.waitingTime+totalServiceTime+totalTravelTime;	
+			wr.setwaitingTimeRoute(waitingTime);
+			wr.setTotalServiceTime(service);
+			// travel time
+			for(int i =0;i<wr.getJobSequence().size()-1;i++) {
+				int j=wr.getJobSequence().get(i).getId()-1;
+				int k=wr.getJobSequence().get(i+1).getId()-1;
+				double tv=inp.getWalkCost().getCost(j, k);
+				travelTime+=tv;
+			}
+			wr.setTotalTravelTime(travelTime);
+			double durationRoute=waitingTime+service+travelTime;
+			wr.setDurationWalkingRoute(durationRoute);
+			System.out.println("cost wr "+ wr.getDurationWalkingRoute());	
 		}
+
+		// total values
+		service=0;
+		waitingTime=0;
+		travelTime=0;
+		double durationRoute=0;
+		for(SubRoute wr:this.getWalkingRoutes()) {
+			if(wr.getJobSequence().size()>1) { // route has more than one job
+				service+=wr.getTotalServiceTime();
+				waitingTime=wr.getDurationWaitingTime();
+				travelTime+=wr.getTotalTravelTime();
+				durationRoute+=wr.getDurationWalkingRoute();
+			}
+		}
+
+		this.totalServiceTime=service;
+		this.durationWalkingRoute=durationRoute;
+		this.totalTravelTime=travelTime;
+		this.waitingTime=waitingTime;
 	}
 
-	
-//	private double totalTravelTime = 0.0; // route total travel time
-//	private float totalServiceTime = 0.0F; // route total service time in the route
-//	private float waitingTime=0.0F; // Waiting time
 
-	
-	
+	//	private double totalTravelTime = 0.0; // route total travel time
+	//	private float totalServiceTime = 0.0F; // route total service time in the route
+	//	private float waitingTime=0.0F; // Waiting time
+
+
+
 	private void completingIndividualRoutes() {
 		for(Jobs j:this.inp.getclients().values()) {
 			this.ServedJobs.put(j.getId(),j);	
@@ -352,7 +377,7 @@ public class WalkingRoutes {
 		return reacheable;
 	}
 
-	
+
 
 	private boolean feasibleInsertion(Jobs i, SubRoute wr) { // return true when is possible insert the job i, l. Otherwise return false
 		boolean feasibility=false;
@@ -445,8 +470,8 @@ public class WalkingRoutes {
 
 
 	// Getters
-	
-	
+
+
 	public double getTotalwaitingTime() { return waitingTime;}
 	public double getTotalTravelTime() { return totalTravelTime;}
 	public double getTotalServiceTime() {return totalServiceTime;}
