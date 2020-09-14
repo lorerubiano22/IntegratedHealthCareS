@@ -21,7 +21,7 @@ public class Solution {
 
 	public void setPassengers(int p) {
 		for(Route r:this.routes) {
-			paramedic+=r.getParamedic();// los paramedicos que salen del depot
+			paramedic+=r.getAmountParamedic();// los paramedicos que salen del depot
 			homeCareStaff+=r.getHomeCareStaff();// los paramedicos que salen del depot	
 		}
 		this.passengers = p;
@@ -31,7 +31,7 @@ public class Solution {
 	public void setWaitingTime(double w) {waitingTime=w;}
 	public void setServiceTime(double s) {serviceTime=s;}
 	public void setdrivingTime(double s) {drivingTime=s;}
-public void setWalkingTime(double w) {walkingTime=w;}
+	public void setWalkingTime(double w) {walkingTime=w;}
 
 	// Getters
 	public long getId() { return id;}

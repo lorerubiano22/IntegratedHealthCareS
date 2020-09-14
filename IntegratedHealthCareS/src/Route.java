@@ -12,33 +12,12 @@ public class Route {
 	private double waitingTime = 0.0; // travel time
 	private double durationRoute = 0.0; // route total costs
 	private int passengers = 0; // route total demand
-	private double paramedic=0;// los paramedicos que salen del depot
-	public double getParamedic() {
-		return paramedic;
-	}
-
-
-	public void setParamedic(double paramedic) {
-		this.paramedic = paramedic;
-	}
-
-
-	public double getHomeCareStaff() {
-		return homeCareStaff;
-	}
-
-
-	public void setHomeCareStaff(double homeCareStaff) {
-		this.homeCareStaff = homeCareStaff;
-	}
-
-
+	private double amountParamedics=0;// los paramedicos que salen del depot
 	private double homeCareStaff=0;// los paramedicos que salen del depot
-
-
 	private HashMap<String, Edge> edges; // edges list
 	private LinkedList<Couple> jobsList= new LinkedList<Couple>(); // subjobs list (pick up and delivary)
 	private LinkedList<SubJobs> subJobsList=new LinkedList<SubJobs>(); // subjobs list (pick up and delivary)
+	private LinkedList<ArrayList<SubJobs>> partsList=new LinkedList<ArrayList<SubJobs>>(); // subjobs list (pick up and delivary)
 	private HashMap<String, SubJobs> positionJobs=new HashMap<>();
 	private HashMap<Integer, Jobs>  futureSubJobsList=new HashMap<Integer, Jobs> (); 
 
@@ -51,7 +30,7 @@ public class Route {
 		durationRoute = r.getDurationRoute(); // route total costs
 		passengers = r.getPassengers(); // route total demand
 		homeCareStaff=r.getHomeCareStaff();
-		paramedic=r.getParamedic();
+		amountParamedics=r.getAmountParamedic();
 		copyEdges(r.edges); // edges list
 		copyCouples(r.jobsList); // subjobs list (pick up and delivary)
 		copySubJobs(r.subJobsList); // subjobs list (pick up and delivary)
@@ -117,8 +96,11 @@ public class Route {
 	public void setJobsList(LinkedList<Couple> JobsList) {this.jobsList = JobsList;}
 	public void setSubJobsList(LinkedList<SubJobs> subJobsList) {this.subJobsList = subJobsList;}
 	public void setIdRoute(int idVehicle) { id=idVehicle;}
+	public void setHomeCareStaff(double homeCareStaff) {this.homeCareStaff = homeCareStaff;}
+	public void setAmountParamedic(double paramedic) {this.amountParamedics = paramedic;}
 
-
+	
+	
 	// Getters
 	public HashMap<String, SubJobs> getJobsDirectory(){return positionJobs;}
 	public double getDurationRoute() {return durationRoute;}
@@ -131,6 +113,12 @@ public class Route {
 	public LinkedList<SubJobs> getSubJobsList() {return subJobsList;} // present jobs
 	public HashMap<Integer, Jobs>  getSubFutureJobsList() {return futureSubJobsList;} // future jobs
 	public HashMap<String, Edge> getEdges() {return edges;}
+	public double getAmountParamedic() {return amountParamedics;}
+	public double getHomeCareStaff() {return homeCareStaff;}
+	public LinkedList<ArrayList<SubJobs>> getPartsRoute() {return partsList;}
+	
+	
+	
 
 	public void computeTravelTime(Inputs inp) {
 		double travelTimeDuration=0;
@@ -143,17 +131,17 @@ public class Route {
 			}
 		}
 		travelTime=travelTimeDuration;
-
-
 	}
+	
+	
 	public void computePassenger() {
-		paramedic=0;
+		amountParamedics=0;
 		homeCareStaff=0;
 		int totalPassenger =getSubJobsList().get(0).getTotalPeople();
 		this.setPassengers(totalPassenger);
 		if(totalPassenger==1) { // solo una persona es asignada al vehículo
 			if(getSubJobsList().get(1).isMedicalCentre() || getSubJobsList().get(1).isPatient()) {
-				this.paramedic=totalPassenger;
+				this.amountParamedics=totalPassenger;
 			}
 			else {
 				homeCareStaff=totalPassenger;
@@ -195,8 +183,8 @@ public class Route {
 			waiting+=j.getWaitingTime();
 		}
 		this.setWaitingTime(waiting);
-
 	}
+	
 	private void computeServiceTime() {
 		double service=0;
 		for(Jobs j:this.positionJobs.values() ) {
@@ -322,5 +310,6 @@ public class Route {
 		}
 		return departure;
 	}
+
 
 }
