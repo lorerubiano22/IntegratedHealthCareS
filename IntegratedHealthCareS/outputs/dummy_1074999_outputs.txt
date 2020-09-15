@@ -36,21 +36,22 @@ Driving Routes
 
 
 ID Solution: 1
-FO: Travel time: 724.0
+FO: Travel time: 726.0
 Walking time: 101.0
- Total passengers: 5
- Total paramedic: 1.0
+ Total passengers: 6
+ Total paramedic: 2.0
  Total home care staff: 4.0
  Waiting time: 187.0
  Service time: 656.0
  List of jobs: 
- Route: 0 j_( IdP1, B_300.0)  j_( IdP15, B_322.0)  j_( IdD1415, B_343.0)  j_( IdP1415, B_388.0)  j_( IdD15, B_407.0)  j_( IdP16, B_589.0)  j_( IdD1416, B_613.0)  j_( IdP1416, B_658.0)  j_( IdD16, B_680.0)  j_( IdD1, B_667.0) 
- Route: 0 j_( IdP1, B_894.0)  j_( IdD13, B_900.0)  j_( IdP13, B_945.0)  j_( IdD1, B_950.0) 
- Route: 0 j_( IdP1, B_1164.0)  j_( IdD12, B_1170.0)  j_( IdP12, B_1215.0)  j_( IdD1, B_1220.0) 
- Route: 0 j_( IdP1, B_595.0)  j_( IdD6, B_599.0)  j_( IdP5, B_1029.0)  j_( IdD1, B_1033.0) 
- Route: 0 j_( IdP1, B_916.0)  j_( IdD7, B_919.0)  j_( IdP10, B_1530.0)  j_( IdD1, B_1534.0) 
+ Route: 0 j_( IdP1, B_300.0)  j_( IdP15, B_322.0)  j_( IdD1415, B_343.0)  j_( IdP1415, B_873.0)  j_( IdD15, B_1377.0)  j_( IdD1, B_1367.0) 
+ Route: 0 j_( IdP1, B_570.0)  j_( IdP16, B_589.0)  j_( IdD1416, B_613.0)  j_( IdP1416, B_1143.0)  j_( IdD16, B_1650.0)  j_( IdD1, B_1637.0) 
+ Route: 0 j_( IdP1, B_894.0)  j_( IdD13, B_900.0)  j_( IdP13, B_1430.0)  j_( IdD1, B_1435.0) 
+ Route: 0 j_( IdP1, B_1164.0)  j_( IdD12, B_1170.0)  j_( IdP12, B_1700.0)  j_( IdD1, B_1705.0) 
+ Route: 0 j_( IdP1, B_595.0)  j_( IdD6, B_599.0)  j_( IdP5, B_1514.0)  j_( IdD1, B_1518.0) 
+ Route: 0 j_( IdP1, B_916.0)  j_( IdD7, B_919.0)  j_( IdP10, B_2015.0)  j_( IdD1, B_2019.0) 
 
 
  pc Time:
 
-5679.6402
+27623.7425
