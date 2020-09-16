@@ -120,6 +120,7 @@ public class Jobs {
 	public void setarrivalTime(double arrival) {arrivalTime=arrival;}
 	public void setdepartureTime(double departure) {departureTime=departure;}
 	public void setIDcouple(int couple) {idCouple=couple;}
+	public void setWaitingTime(double w) {this.waitingTime = w;}
 	public void setWaitingTime(double arrivalTime, double startService ) {
 		if(arrivalTime<startService) {
 			this.waitingTime = startService-arrivalTime;	

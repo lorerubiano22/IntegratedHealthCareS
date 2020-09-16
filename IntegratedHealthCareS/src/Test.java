@@ -21,7 +21,7 @@ public class Test {
 		this.seed = seed;
 		this.workingTime=workingTime;
 		this.walking2jobs=walking2jobs;
-		this.detour=detour;
+		this.detour=1+detour;
 		this.cumulativeWalkingTime=cumulativeWalkingTime;
 		this.cumulativeWaitingTime=cumulativeWaitingTime;
 		this.loadTimePatient= p; 

@@ -39,5 +39,14 @@ public class SubJobs extends Jobs {
 	}
 
 
+	public String toString() 
+	{   String s = "";
+	s = s.concat("\nId: " + (this.getSubJobKey()));
+	s = s.concat("\n arrival time: " + (this.getArrivalTime()));
+	s = s.concat("\n start service:" + this.getstartServiceTime());
+	return s;
+	}
+
+
 
 }

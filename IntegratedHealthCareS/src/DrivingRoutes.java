@@ -140,8 +140,8 @@ public class DrivingRoutes {
 
 	private void assignmentShiftVehicle() {
 		//1. intentar las cabezas de cada ruta
-
 		for(Schift turn:splittedSchift) {
+			System.out.println("turn " + turn.toString());
 			insertingHeadings(turn);
 		}
 		// 2. Tan pronto se inserte, revisar la factibilidad de las horas
@@ -155,9 +155,7 @@ public class DrivingRoutes {
 				}
 			}
 		}
-
 		System.out.println("end ");
-
 	}
 
 	private void insertingHeadings(Schift turn) {
@@ -165,12 +163,21 @@ public class DrivingRoutes {
 			Route r= new Route();
 			routeVehicleList.add(r);
 			r.getPartsRoute().add(turn.getRouteParts().get(0));
+			printingPartRoute(r);
 		}
 		else {
 			mergingHeadRoutes(turn);	
 		}
 	}
 
+
+	private void printingPartRoute(Route r) {
+		for(ArrayList<SubJobs> route: r.getPartsRoute()) {
+			for(SubJobs j: route) {
+				System.out.println("SubJobs "+ j.getSubJobKey()+ " arrival "+j.getArrivalTime()+ " Start Service"+ j.getStartTime());
+			}
+		}
+	}
 
 	private void mergingHeadRoutes(Schift turn) {
 		boolean merging=false;
@@ -180,19 +187,36 @@ public class DrivingRoutes {
 			int lastSubJobAssigned=lastPart.size()-1;
 			SubJobs lastSubJob= lastPart.get(lastSubJobAssigned); 	// 1. Seleccionar el ultimo trabajo de la ruta
 			SubJobs firtSubJobToInsert=turn.getRouteParts().get(0).get(1); // the first job- index 0 is the depot
-			merging=checkingTimeDetour(r,lastSubJob,firtSubJobToInsert);
-			if(merging) {			// 2. Seleccionar el primer turno del trabajo que puede ser insertado
-				// 3. Revisar la factibilidad de poder combinar ambas rutas: Detour, capacidad del vehículo
-				insertingHeadingPart(r,turn,lastSubJob);
-			}
-			else { // changing the hour
-				merging=changingTimeToTheNextJob(lastSubJob,firtSubJobToInsert,r);
-
-
+			// 1. Max detour
+			merging=checkingDetour(r,lastSubJob,firtSubJobToInsert); // as soon as the maximum detour constraint is met
+			if(merging) {
+				// 2. Time window
+				merging=checkingTime(r,lastSubJob,firtSubJobToInsert);
+				if(merging) {			// 2. Seleccionar el primer turno del trabajo que puede ser insertado
+					// 3. Revisar la factibilidad de poder combinar ambas rutas: Detour, capacidad del vehículo
+					insertingHeadingPart(r,turn,lastSubJob);
+				}
+				else { // changing the hour
+					merging=changingTimeToTheNextJob(lastSubJob,firtSubJobToInsert,r);
+				}
 			}
 			if(merging) {
 				// 1. Updating the shift time
 				movingTimeShift(firtSubJobToInsert,turn);
+				ArrayList<SubJobs> newPart1=new ArrayList<SubJobs>();
+				for(int i=1;i<turn.getRouteParts().get(0).size();i++) {
+					newPart1.add(turn.getRouteParts().get(0).get(i));
+				}
+				r.getPartsRoute().add(newPart1);
+				///
+				System.out.println("route ");
+				for(ArrayList<SubJobs> route: r.getPartsRoute()) {
+					for(SubJobs j: route) {
+						System.out.println("SubJobs "+ j.getSubJobKey()+ " arrival "+j.getArrivalTime()+ " Start Service"+ j.getStartTime());
+					}
+				}	
+				///
+				break;
 			}
 
 		}
@@ -200,6 +224,13 @@ public class DrivingRoutes {
 			Route newRoute=new Route();
 			newRoute.getPartsRoute().add(turn.getRouteParts().get(0));
 			routeVehicleList.add(newRoute);
+
+			System.out.println("route ");
+			for(ArrayList<SubJobs> route: newRoute.getPartsRoute()) {
+				for(SubJobs j: route) {
+					System.out.println("SubJobs "+ j.getSubJobKey()+ " arrival "+j.getArrivalTime()+ " Start Service"+ j.getStartTime());
+				}
+			}	
 		}
 	}
 
@@ -207,9 +238,32 @@ public class DrivingRoutes {
 		// 1. Cambiar el arrival y el departure time para cada subjob
 		changingArrivalDepartureTimes(firtSubJobToInsert,turn);
 		// 2. cambiar la hora en la que empieza el servicion
-		//changingStartEndServiceTime();
+		changingStartEndServiceTime(turn);
 		//3. Compute the waiting tiem
-		//computingWaitingTime();
+
+	}
+
+
+	private void changingStartEndServiceTime(Schift turn) {
+		for(ArrayList<SubJobs> part:turn.getRouteParts()) {
+			for(SubJobs subjob:part) {
+				double arrivalTime=subjob.getArrivalTime();
+				double additionalTime=computeAdditionalTime(subjob);
+				double startServiceTime=Math.max(subjob.getStartTime(),(arrivalTime+additionalTime));	// setting start service time
+				subjob.setStartServiceTime(startServiceTime);
+				subjob.setEndServiceTime(startServiceTime+subjob.getReqTime());// setting end service time
+				computingWaitingTime(subjob,additionalTime);
+			}
+		}
+	}
+
+	private void computingWaitingTime(SubJobs subjob, double additionalTime) {
+		if((subjob.getArrivalTime()+additionalTime)<=subjob.getstartServiceTime()-additionalTime) {
+			double idealArrivalTime=subjob.getstartServiceTime()-additionalTime;
+			double waitingTime=idealArrivalTime-(subjob.getArrivalTime()+additionalTime);
+			subjob.setWaitingTime(waitingTime);
+		}
+
 	}
 
 	private void changingArrivalDepartureTimes(SubJobs firtSubJobToInsert, Schift turn) {
@@ -305,6 +359,7 @@ public class DrivingRoutes {
 				if((possibleArrivalTime+additionalTime)<firtSubJobToInsert.getStartTime()) {// se generan tiempos de espera
 					double waiting=firtSubJobToInsert.getStartTime()-(possibleArrivalTime+additionalTime);
 					if(waiting<=test.getCumulativeWaitingTime()) {
+						updatingTimeShift(firtSubJobToInsert,possibleArrivalTime);
 						merging=true;
 					}
 				}
@@ -319,11 +374,27 @@ public class DrivingRoutes {
 	}
 
 	private void updatingTimeShift(SubJobs firtSubJobToInsert, double possibleArrivalTime) {
-		double additiontalTime=computeAdditionalTime(firtSubJobToInsert);
-		double time=firtSubJobToInsert.getEndTime()-additiontalTime;
-		double maxTime=Math.min(possibleArrivalTime, time);
-		settingTimes(firtSubJobToInsert,maxTime);
+		// setting arrival time
+		firtSubJobToInsert.setarrivalTime(possibleArrivalTime);
+		// setting departure time	
+		double departureTime=firtSubJobToInsert.getArrivalTime();
+		// 1.1 Set departure time
+		if(firtSubJobToInsert.isClient()) {
+			departureTime=firtSubJobToInsert.getArrivalTime()+test.getloadTimeHomeCareStaff();
+		}
+		else {
+			departureTime=firtSubJobToInsert.getArrivalTime()+test.getloadTimeHomeCareStaff();
+		}
+		firtSubJobToInsert.setdepartureTime(departureTime);
+		// 2. setting start service time additional 
 
+		double additionalTime=computeAdditionalTime(firtSubJobToInsert);
+		double startService=Math.max(firtSubJobToInsert.getArrivalTime()+additionalTime, firtSubJobToInsert.getStartTime());
+		firtSubJobToInsert.setStartServiceTime(startService);
+		// 2.1 setting end service time
+		firtSubJobToInsert.setEndServiceTime(firtSubJobToInsert.getstartServiceTime()+firtSubJobToInsert.getReqTime());
+		System.out.println("start service time"+ firtSubJobToInsert.getstartServiceTime());
+		System.out.println("end service time"+ firtSubJobToInsert.getendServiceTime());
 	}
 
 	private void insertingHeadingPart(Route r, Schift turn, SubJobs lastSubJob) {
@@ -337,10 +408,9 @@ public class DrivingRoutes {
 		r.getPartsRoute().add(jobsListToInsert);
 	}
 
-	private boolean checkingTimeDetour(Route r, SubJobs lastSubJob, SubJobs firtSubJobToInsert) {
+	private boolean checkingTime(Route r, SubJobs lastSubJob, SubJobs firtSubJobToInsert) {
 		boolean merging= false;
 		boolean timeWindowMatch=false;
-		boolean detourMax=false;
 		boolean waitingTime=false;
 		//1. checking the time - reach job firtSubJobToInsert from lastSubJob
 		double tv=inp.getCarCost().getCost(lastSubJob.getId()-1, firtSubJobToInsert.getId()-1);
@@ -358,15 +428,21 @@ public class DrivingRoutes {
 				waitingTime=true;
 			}
 		}
+		if(timeWindowMatch && waitingTime) {
+			merging= true;
+		}
+		return merging;
+	}
+
+	private boolean checkingDetour(Route r, SubJobs lastSubJob, SubJobs firtSubJobToInsert) {
+		boolean detourMax=false;
+		//1. checking the time - reach job firtSubJobToInsert from lastSubJob
 		double distanceSoFarRoute=computeDistanceRotue(r);
 		double maxDetour=computeMaxDetour(firtSubJobToInsert);
 		if(maxDetour>=distanceSoFarRoute){
 			detourMax=true;
-		}//2. checking the detour of of the route
-		if(timeWindowMatch && detourMax && waitingTime) {
-			merging= true;
 		}
-		return merging;
+		return detourMax;
 	}
 
 	private double computeAdditionalTime(SubJobs firtSubJobToInsert) {
@@ -384,20 +460,8 @@ public class DrivingRoutes {
 	private void settingTimes(SubJobs firtSubJobToInsert, double maxTime) {
 		// 1. Set arrival time 
 		firtSubJobToInsert.setarrivalTime(maxTime);
-		double departureTime=firtSubJobToInsert.getArrivalTime();
-		// 1.1 Set departure time
-		if(firtSubJobToInsert.isClient()) {
-			departureTime=firtSubJobToInsert.getArrivalTime()+test.getloadTimeHomeCareStaff();
-		}
-		else {
-			departureTime=firtSubJobToInsert.getArrivalTime()+test.getloadTimeHomeCareStaff();
-		}
-		firtSubJobToInsert.setdepartureTime(departureTime);
-		// 2. setting start service time additional 
-		double additionalTime=computeAdditionalTime(firtSubJobToInsert);
-		firtSubJobToInsert.setStartServiceTime(firtSubJobToInsert.getArrivalTime()+additionalTime);
-		// 2.1 setting end service time
-		firtSubJobToInsert.setEndServiceTime(firtSubJobToInsert.getStartTime()+firtSubJobToInsert.getReqTime());
+
+
 	}
 
 	private double computeMaxDetour(SubJobs firtSubJobToInsert) {
@@ -449,7 +513,10 @@ public class DrivingRoutes {
 		// iterando sobre todos los turnos 
 		double earlyStartService=Double.MAX_VALUE;
 		int size=0;
+		int t=-1;
 		for(Schift turn:splittedSchift) {
+			t++;
+			System.out.println("turn "+t+" "+ "Subjob "+turn.getRouteList().getSubJobsList().get(0).getSubJobKey() +"  " +turn.getRouteList().getSubJobsList().get(0).getArrivalTime()+" ");
 			if(sortedSchift.isEmpty()) {
 				sortedSchift.add(turn);
 			}
@@ -457,13 +524,20 @@ public class DrivingRoutes {
 				readingTurns(sortedSchift,turn);
 			}
 			size=sortedSchift.size()-1;
+		
+			/////
+			for(Schift copy:sortedSchift) {
+				System.out.println("copy turn "+" "+ "Subjob "+copy.getRouteList().getSubJobsList().get(0).getSubJobKey() +"  " +copy.getRouteList().getSubJobsList().get(0).getArrivalTime()+" ");
+				
+		}
+		
 		}
 		splittedSchift.clear();
-		int t=-1;
+		t=-1;
 		for(Schift turn: sortedSchift) {
 			splittedSchift.add(turn);
 			t++;
-			System.out.println("turn "+t+" "+ "Subjob "+turn.getRouteList().getSubJobsList().get(0).getSubJobKey() +"  " +turn.getRouteList().getSubJobsList().get(0).getArrivalTime()+" ");
+			System.out.println("turn "+t+" "+ "Subjob "+turn.getRouteList().getSubJobsList().get(1).getSubJobKey() +"  " +turn.getRouteList().getSubJobsList().get(1).getArrivalTime()+" ");
 
 		}
 		return sortedSchift;
@@ -567,7 +641,7 @@ public class DrivingRoutes {
 	private void readingArray(ArrayList<Schift> sortedSchift, Schift turn) {
 		for(int i=1;i<sortedSchift.size();i++) {
 			SubJobs firstsubJob=turn.getRouteList().getSubJobsList().get(0);
-			SubJobs firstTurnInList=sortedSchift.get(1).getRouteList().getSubJobsList().get(0);
+			SubJobs firstTurnInList=sortedSchift.get(i).getRouteList().getSubJobsList().get(0);
 			if(firstTurnInList.getArrivalTime()>=firstsubJob.getArrivalTime()) {
 				SubJobs previousTurnInList=sortedSchift.get(i-1).getRouteList().getSubJobsList().get(0);
 				if(previousTurnInList.getArrivalTime()<=firstsubJob.getArrivalTime()) {
