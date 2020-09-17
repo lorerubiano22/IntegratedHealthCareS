@@ -47,11 +47,11 @@ Walking time: 101.0
  Route: 0 j_( IdP1, B_300.0)  j_( IdP15, B_322.0)  j_( IdD1415, B_343.0)  j_( IdP1415, B_873.0)  j_( IdD15, B_877.0)  j_( IdD1, B_1367.0) 
  Route: 0 j_( IdP1, B_570.0)  j_( IdP16, B_589.0)  j_( IdD1416, B_613.0)  j_( IdP1416, B_1143.0)  j_( IdD16, B_1650.0)  j_( IdD1, B_1637.0) 
  Route: 0 j_( IdP1, B_911.0)  j_( IdD13, B_630.0)  j_( IdP13, B_930.0)  j_( IdD1, B_622.0) 
- Route: 0 j_( IdP1, B_1181.0)  j_( IdD12, B_612.0)  j_( IdP12, B_1200.0)  j_( IdD1, B_625.0) 
+ Route: 0 j_( IdP1, B_1181.0)  j_( IdD12, B_360.0)  j_( IdP12, B_1200.0)  j_( IdD1, B_622.0) 
  Route: 0 j_( IdP1, B_595.0)  j_( IdD6, B_599.0)  j_( IdP5, B_1514.0)  j_( IdD1, B_622.0) 
- Route: 0 j_( IdP1, B_933.0)  j_( IdD7, B_919.0)  j_( IdP10, B_1515.0)  j_( IdD1, B_625.0) 
+ Route: 0 j_( IdP1, B_933.0)  j_( IdD7, B_919.0)  j_( IdP10, B_1515.0)  j_( IdD1, B_622.0) 
 
 
  pc Time:
 
-55562.5541
+385.5599

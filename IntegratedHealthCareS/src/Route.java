@@ -19,7 +19,8 @@ public class Route {
 	private LinkedList<SubJobs> subJobsList=new LinkedList<SubJobs>(); // subjobs list (pick up and delivary)
 	private LinkedList<ArrayList<SubJobs>> partsList=new LinkedList<ArrayList<SubJobs>>(); // subjobs list (pick up and delivary)
 	private HashMap<String, SubJobs> positionJobs=new HashMap<>();
-	private HashMap<Integer, Jobs>  futureSubJobsList=new HashMap<Integer, Jobs> (); 
+	private HashMap<Integer, Jobs>  futureSubJobsList=new HashMap<Integer, Jobs> ();
+	private Schift  schift; 
 
 	// Constructors
 	public Route(Route r) {
@@ -98,9 +99,13 @@ public class Route {
 	public void setIdRoute(int idVehicle) { id=idVehicle;}
 	public void setHomeCareStaff(double homeCareStaff) {this.homeCareStaff = homeCareStaff;}
 	public void setAmountParamedic(double paramedic) {this.amountParamedics = paramedic;}
+	public void setSchiftRoute(Schift s) {schift=s;
+	for(ArrayList<SubJobs> a: schift.getRouteParts()) {
+		partsList.add(a);
+	}
+	}
 
-	
-	
+
 	// Getters
 	public HashMap<String, SubJobs> getJobsDirectory(){return positionJobs;}
 	public double getDurationRoute() {return durationRoute;}
@@ -116,9 +121,7 @@ public class Route {
 	public double getAmountParamedic() {return amountParamedics;}
 	public double getHomeCareStaff() {return homeCareStaff;}
 	public LinkedList<ArrayList<SubJobs>> getPartsRoute() {return partsList;}
-	
-	
-	
+	public Schift getSchiftRoute() {return schift;}
 
 	public void computeTravelTime(Inputs inp) {
 		double travelTimeDuration=0;
@@ -132,8 +135,8 @@ public class Route {
 		}
 		travelTime=travelTimeDuration;
 	}
-	
-	
+
+
 	public void computePassenger() {
 		amountParamedics=0;
 		homeCareStaff=0;
@@ -147,13 +150,9 @@ public class Route {
 				homeCareStaff=totalPassenger;
 			}
 		}
-		else {
-			// cuando se ha combinado los paramedicos con el home care staff pensar como computar la cantidad de pesonal asignado a un vehículo 
-
-
-		}
-
 	}
+
+
 	public void updatingJobsList() {
 		positionJobs.clear();
 		for(SubJobs nodeI:this.getSubJobsList()) {
@@ -184,7 +183,7 @@ public class Route {
 		}
 		this.setWaitingTime(waiting);
 	}
-	
+
 	private void computeServiceTime() {
 		double service=0;
 		for(Jobs j:this.positionJobs.values() ) {
