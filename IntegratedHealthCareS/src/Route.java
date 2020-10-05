@@ -162,6 +162,12 @@ public class Route {
 
 	public void updateRoute(Inputs inp) {
 		// Consider the list of jobs positions
+		// reading part
+		for(ArrayList<SubJobs> part:this.getPartsRoute()) {
+			for(SubJobs sj:part) {
+				subJobsList.add(sj);
+			}	
+		}
 		// service time
 		this.computeServiceTime();
 		// waiting time

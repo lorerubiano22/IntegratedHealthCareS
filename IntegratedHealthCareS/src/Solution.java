@@ -59,7 +59,7 @@ public class Solution {
 		if(!r.getSubJobsList().isEmpty()) {
 			s= s.concat("\n Route: "+ r.getIdRoute());
 			for(SubJobs j:r.getSubJobsList()) {	
-				s = s.concat(" j_( Id" + j.getSubJobKey()+", B_"+j.getstartServiceTime()+") ");}
+				s = s.concat(" ( Id" + j.getSubJobKey()+", A_"+j.getArrivalTime()+", B_"+j.getstartServiceTime()+", reqTime_"+j.getReqTime()+") ");}
 		}	
 	}
 	return s;
