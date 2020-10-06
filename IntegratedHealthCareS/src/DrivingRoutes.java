@@ -1280,17 +1280,34 @@ public class DrivingRoutes {
 	}
 
 	private void makeTurnInRoute(ArrayList<SubJobs> turn) { // crea tantas rutas como son posibles
-		//	routeList
+		System.out.println(turn.toString());
+		//	calling depot
+		SubJobs depot=(SubJobs)inp.getNodes().get(0);
+		ArrayList<SubJobs> partStart= new ArrayList<SubJobs>();
+		ArrayList<SubJobs> partEnd= new ArrayList<SubJobs>();
+		partStart.add(depot);
+
+		partEnd.add(depot);
 		Route r= new Route();
 		routeList.add(r);
+		r.getPartsRoute().add(partStart);
+
 		// 1. hacer las partes
 		double passengers=1;
 		ArrayList<SubJobs> part= new ArrayList<SubJobs>();
+
+		part= new ArrayList<SubJobs>();
 		r.getPartsRoute().add(part);
-		for(SubJobs sj:turn) {
+		for(int i=0;i<turn.size();i++) {
+			SubJobs sj=turn.get(i);
 			passengers+=sj.getTotalPeople();
 			if(passengers!=0) {
 				part.add(sj);
+				if(i==turn.size()-1) {
+					//r.getPartsRoute().add(part);
+					r.updateRoute(inp);
+					System.out.println(r.toString());
+				}
 			}
 			else {
 				part.add(sj);
@@ -1298,6 +1315,7 @@ public class DrivingRoutes {
 				if(r.getDurationRoute()<=test.getWorkingTime()){
 					r.getPartsRoute().add(part);
 					r.updateRoute(inp);
+					System.out.println(r.toString());
 				}
 				else {
 					printingPartRoute(r);
@@ -1305,13 +1323,16 @@ public class DrivingRoutes {
 					routeList.add(r);
 					r.getPartsRoute().add(part);
 					r.updateRoute(inp);
+					System.out.println(r.toString());
 				}
 			}		
 		}
+		r.getPartsRoute().add(partEnd);
+		r.updateRoute(inp);
 
-
-
-
+		System.out.println("Route");
+		System.out.println(r.toString());
+		System.out.println("end");
 	}
 
 	private void changingArrivalTimeSequence(Route r) {
@@ -1629,8 +1650,6 @@ public class DrivingRoutes {
 				for(ArrayList<SubJobs> homeCare:qualificationParamedic) {
 					boolean insertion=possibleInsertion(j,homeCare);
 					if(insertion) {
-						assignedJobs.put(j.getId(), j);
-
 						break;
 					}
 				}
@@ -1678,13 +1697,72 @@ public class DrivingRoutes {
 		}
 		else { // inside the array there are more jobs
 			//int position=iterateOverSchift(j,homeCare);
-			int position=iterateOverSchiftLastPosition(j,homeCare);
+			// dividir el trabajo
+			ArrayList<SubJobs> pickUpDropOff= null; 
+			if(j.isClient()) {
+				pickUpDropOff=splitClientJobInSubJobs(j);}
+			else {
+				pickUpDropOff=splitPatientJobInSubJobs(j);
+			}
+			// revisar si el primer trabajo de esta parte puede ser insertado
+			SubJobs jsplited=pickUpDropOff.get(0);
+			double workingHours= computingWorkingHours(homeCare,pickUpDropOff);
+			int position=iterateOverSchiftLastPosition(jsplited,homeCare);
 			if(position>=0) {
+				for(SubJobs sj:pickUpDropOff) {
+					homeCare.add(position,sj);
+					assignedJobs.put(sj.getSubJobKey(),sj);
+					printing(homeCare);
+					position++;
+				}
 				inserted=true;
-				insertingSubJobsParamedic(position,j,homeCare); // i <- is the position j <- is the job to be inserted
 			}
 		}
 		return inserted;
+	}
+
+	private double computingWorkingHours(ArrayList<SubJobs> homeCare, ArrayList<SubJobs> pickUpDropOff) {
+		double workingTime=0;
+		SubJobs depot=(SubJobs)inp.getNodes().get(0);
+		double timeWithPatient=computeService(homeCare,pickUpDropOff);
+		double travelTime=computeTravelTime(homeCare,pickUpDropOff);
+		workingTime=timeWithPatient+travelTime;
+		return workingTime;
+	}
+
+	private double computeService(ArrayList<SubJobs> homeCare, ArrayList<SubJobs> pickUpDropOff) {
+		double timeWithPatient=0;
+		double serviceTime=0;
+		double loadUnloadingTime=0;
+		double registrationTime=0;
+		// service time
+		for(SubJobs job:homeCare) {
+			serviceTime+=job.getReqTime();
+			if(job.isClient()) {
+				loadUnloadingTime+=test.getloadTimeHomeCareStaff();
+			}
+			else {
+				loadUnloadingTime+=test.getloadTimePatient();
+				if(job.isMedicalCentre() && job.getTotalPeople()<0) {
+					registrationTime=test.getRegistrationTime();
+				}
+			}
+		}
+		// newJobsToInsert
+		for(SubJobs job:pickUpDropOff) {
+			serviceTime+=job.getReqTime();
+			if(job.isClient()) {
+				loadUnloadingTime+=test.getloadTimeHomeCareStaff();
+			}
+			else {
+				loadUnloadingTime+=test.getloadTimePatient();
+				if(job.isMedicalCentre() && job.getTotalPeople()<0) {
+					registrationTime=test.getRegistrationTime();
+				}
+			}
+		}
+		timeWithPatient=serviceTime+loadUnloadingTime+registrationTime;
+		return timeWithPatient;
 	}
 
 	private void insertionJob(Jobs j, ArrayList<SubJobs> homeCare) {
@@ -1706,7 +1784,7 @@ public class DrivingRoutes {
 			String key=creatingKey(sb);
 			assignedJobs.put(key, sb);
 			homeCare.add(sb);
-		//	settingTimes(0,sb);
+			//	settingTimes(0,sb);
 		}
 
 
@@ -1761,7 +1839,7 @@ public class DrivingRoutes {
 		dropOffPatientHome.setPatient(true);
 		// 1. Setting the start service time -- startServiceTime
 		double travel=inp.getCarCost().getCost(pickUpMedicalCentre.getId()-1, dropOffPatientHome.getId()-1); // es necesario considerar el travel time porque involucra dos locaciones
-			double arrivalTime=pickUpMedicalCentre.getDepartureTime()+travel;  // load al lugar de la cita medica
+		double arrivalTime=pickUpMedicalCentre.getDepartureTime()+travel;  // load al lugar de la cita medica
 		dropOffPatientHome.setarrivalTime(arrivalTime);
 		dropOffPatientHome.setStartTime(arrivalTime);
 		dropOffPatientHome.setEndTime(arrivalTime);// departure from patient home - el tiempo de viaje - el tiempo necesario para cargar los pacientes al vehículo
@@ -1811,7 +1889,7 @@ public class DrivingRoutes {
 		double departureTimeAtMedicalCentre=j.getArrivalTime()-travel;  // load al lugar de la cita medica
 		pickUpPatientHome.setEndServiceTime(departureTimeAtMedicalCentre);
 		pickUpPatientHome.setdepartureTime(departureTimeAtMedicalCentre);	
-		
+
 		pickUpPatientHome.setarrivalTime(departureTimeAtMedicalCentre-test.getloadTimePatient());
 		pickUpPatientHome.setStartTime(departureTimeAtMedicalCentre); // setting time window
 		pickUpPatientHome.setEndTime(departureTimeAtMedicalCentre);
@@ -1820,7 +1898,7 @@ public class DrivingRoutes {
 		// 1. Setting the start service time -- startServiceTime
 		pickUpPatientHome.setStartServiceTime(pickUpPatientHome.getEndTime());
 		// 3. Set el fin del servicio
-		
+
 	}
 
 	private ArrayList<SubJobs> splitClientJobInSubJobs(Jobs j) {

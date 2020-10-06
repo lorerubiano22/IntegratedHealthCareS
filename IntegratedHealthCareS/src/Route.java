@@ -163,6 +163,8 @@ public class Route {
 	public void updateRoute(Inputs inp) {
 		// Consider the list of jobs positions
 		// reading part
+		subJobsList.clear();
+		
 		for(ArrayList<SubJobs> part:this.getPartsRoute()) {
 			for(SubJobs sj:part) {
 				subJobsList.add(sj);
