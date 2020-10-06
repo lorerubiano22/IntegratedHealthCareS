@@ -85,7 +85,7 @@ public class WalkingRoutes {
 		walkingRoutes=improveSlots.getWalkingRoutes();
 
 
-		System.out.println("\n Final WR");
+		System.out.print("\n Final WR");
 
 		for(SubRoute wr:walkingRoutes) {
 			if(wr.getJobSequence().size()>1) {
@@ -168,6 +168,7 @@ public class WalkingRoutes {
 
 
 	private void computingRouteTimeDuration() {
+	
 		double service=0;
 		double waitingTime=0;
 		double travelTime=0;
@@ -189,7 +190,8 @@ public class WalkingRoutes {
 			wr.setTotalTravelTime(travelTime);
 			double durationRoute=waitingTime+service+travelTime;
 			wr.setDurationWalkingRoute(durationRoute);
-			System.out.println("cost wr "+ wr.getDurationWalkingRoute());	
+			System.out.print("Walking duration ");	
+			System.out.println("Walking duration "+ wr.getDurationWalkingRoute());	
 		}
 
 		// total values
@@ -200,7 +202,7 @@ public class WalkingRoutes {
 		for(SubRoute wr:this.getWalkingRoutes()) {
 			if(wr.getJobSequence().size()>1) { // route has more than one job
 				service+=wr.getTotalServiceTime();
-				waitingTime=wr.getDurationWaitingTime();
+				waitingTime+=wr.getDurationWaitingTime();
 				travelTime+=wr.getTotalTravelTime();
 				durationRoute+=wr.getDurationWalkingRoute();
 			}
@@ -478,7 +480,7 @@ public class WalkingRoutes {
 	public double getSlack() {return slack;}
 	public HashMap<Integer,Jobs> getServedJobs() {return ServedJobs;}
 	public LinkedList<SubRoute> getWalkingRoutes() {return walkingRoutes;}
-
-
+	public double getdurationWalkingRoute() { return durationWalkingRoute;}
+	
 
 }

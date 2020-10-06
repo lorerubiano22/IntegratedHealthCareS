@@ -136,10 +136,11 @@ public class SubRoute {
 	if(this.getJobSequence().size()>1) {  
 		s = s.concat("\nID route: " + this.slotID);
 		s = s.concat("\nRequired Qualification: " + this.reqQualification);
-		s = s.concat("\nEdge cumulative walking time: " + this.totalTravelTime);
-		s = s.concat("\nEdge cumulative service time: " + this.totalServiceTime);
-		s = s.concat("\nEdge cumulative waiting time: " + this.waitingTimeRoute);
-		s=s.concat("\nEdge start service time: " + this.startServiceTime);
+		s = s.concat("\n duration walking route: " + this.durationWalkingRoute);
+		s = s.concat("\n cumulative walking time: " + this.totalTravelTime);
+		s = s.concat("\n cumulative service time: " + this.totalServiceTime);
+		s = s.concat("\n cumulative waiting time: " + this.waitingTimeRoute);
+		s=s.concat("\n start service time: " + this.startServiceTime);
 		s = s.concat("\nEdge total of job in the walking route: " + (this.getJobSequence().size()));
 		s = s.concat("\n List of jobs: ");
 		for(Jobs j:this.getJobSequence()) {

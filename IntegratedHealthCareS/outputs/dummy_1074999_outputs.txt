@@ -11,19 +11,21 @@
 [
 ID route: 1
 Required Qualification: 3
-Edge cumulative walking time: 33.0
-Edge cumulative service time: 240.0
-Edge cumulative waiting time: 142.0
-Edge start service time: 600.0
+ duration walking route: 415.0
+ cumulative walking time: 33.0
+ cumulative service time: 240.0
+ cumulative waiting time: 142.0
+ start service time: 600.0
 Edge total of job in the walking route: 5
  List of jobs:  j_( Id6, B_600.0)  j_( Id2, B_680.0)  j_( Id4, B_718.0)  j_( Id3, B_794.0)  j_( Id5, B_840.0) 
 Edge route duration (service+ walking time): 415.0, 
 ID route: 7
 Required Qualification: 3
-Edge cumulative walking time: 68.0
-Edge cumulative service time: 341.0
-Edge cumulative waiting time: 187.0
-Edge start service time: 920.0
+ duration walking route: 596.0
+ cumulative walking time: 68.0
+ cumulative service time: 341.0
+ cumulative waiting time: 187.0
+ start service time: 920.0
 Edge total of job in the walking route: 5
  List of jobs:  j_( Id7, B_920.0)  j_( Id11, B_959.0)  j_( Id9, B_980.0)  j_( Id8, B_1006.0)  j_( Id10, B_1046.0) 
 Edge route duration (service+ walking time): 596.0, , ]
@@ -36,12 +38,12 @@ Driving Routes
 
 
 ID Solution: 1
-FO: Travel time: 1454.0
-Walking time: 101.0
+FO: Travel time or duration: 1454.0
+Walking time: 1011.0
  Total passengers: 0
  Total paramedic: 1.0
  Total home care staff: 4.0
- Waiting time: 445.0
+ Waiting time: 587.0
  Service time: 1131.0
  List of jobs: 
  Route: 0 travelTime: 26.0 waitingTime: 252.0 serviceTime: 60.0 durationRoute: 338.0
@@ -63,4 +65,4 @@ Walking time: 101.0
 
  pc Time:
 
-235.6717
+3985.192

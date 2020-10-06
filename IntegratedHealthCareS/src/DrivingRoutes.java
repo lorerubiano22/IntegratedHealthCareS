@@ -15,7 +15,8 @@ public class DrivingRoutes {
 	// variables para definir al ruta de un vehículo
 	private HashMap<String, ArrayList<SubJobs>>assignedShiftParts=new HashMap<>();
 	private  ArrayList<Route> routeVehicleList= new ArrayList<Route>(); // dummy routes
-
+	// computing walking hours
+private double walkingTime=0;
 	///
 	private  ArrayList<Couple> subJobsList= new ArrayList<Couple>();
 	private  ArrayList<Couple> subJobsHighestQualification= new ArrayList<Couple>();
@@ -73,9 +74,9 @@ public class DrivingRoutes {
 		insertingDepotConnections();
 		Solution initialSol= solutionInformation();
 		System.out.println(initialSol.toString());
-		assigningRoutesToDrivers(initialSol);
+		//assigningRoutesToDrivers(initialSol);
 		//downgradingsRoutes();
-		crossingBetweenRoutes();
+		//crossingBetweenRoutes();
 		//		patientVehicleAssigment(); // assigment to the vehicle
 		//
 		//		clientVehicleAssigment();
@@ -139,15 +140,7 @@ public class DrivingRoutes {
 		return homeCareStaffRoutes;
 	}
 
-	private ArrayList<Route> selectingHighQualification(ArrayList<Route> routes) {
-		ArrayList<Route> homeCareStaffRoutes = new ArrayList<Route>();
-		for(Route r:routes ) {
-			if(r.getSubJobsList().get(1).getReqQualification()==3) {
-				homeCareStaffRoutes.add(r);
-			}
-		}
-		return homeCareStaffRoutes;
-	}
+
 
 	private ArrayList<Route> selectingHomeCareStaffRoutes() {
 		ArrayList<Route> homeCareStaffRoutes = new ArrayList<Route>();

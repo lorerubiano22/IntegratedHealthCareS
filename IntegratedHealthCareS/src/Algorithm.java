@@ -13,111 +13,8 @@ public class Algorithm {
 	private final Test test;
 	private final Inputs input;
 	private WalkingRoutes subroutes;
-	private DrivingRoutes routes;
+	private DrivingRoutes drivingRoute;
 	private Solution initialSolution=null;
-	public Solution getInitialSolution() {
-		return initialSolution;
-	}
-
-
-
-	public void setInitialSolution(Solution initialSolution) {
-		this.initialSolution = initialSolution;
-		addingWaitingTime(initialSolution);
-		initialSolution.setWalkingTime(this.subroutes.getTotalTravelTime());
-		initialSolution.setId(iterations);
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	private void addingWaitingTime(Solution initialSolution2) {
-		double waitingSolution=initialSolution2.getWaitingTime()+this.subroutes.getTotalwaitingTime();
-		initialSolution2.setWaitingTime(waitingSolution);		
-		
-	}
-
-
-
-	private void addingInfWalkingRoutes() {
-		// TODO Auto-generated method stub
-
-	}
-
-
-
-	private void computingServiceTime() {
-		// TODO Auto-generated method stub
-
-	}
-
-
-
-	private void computingWaitingTime() {
-		// TODO Auto-generated method stub
-
-	}
-
-
-	private void computingTravelTime() {
-		// TODO Auto-generated method stub
-
-	}
-
-
-
-	private double computingParamedics(Route r) {
-		double totalOfParamedics=0;
-		Jobs previousPatient=null;
-		for(Jobs nextPatient:r.getSubJobsList()) {
-			if(nextPatient.isPatient()) {
-				if(nextPatient.getTotalPeople()>0) {
-					if(previousPatient==null) { // nextPatient(1)--------1 paramedic  <- two paramedic
-						totalOfParamedics++; // un paramedico esta acompanando
-					}
-					else {
-						checkingNewTotalParamedics(previousPatient, nextPatient, totalOfParamedics);
-					}
-				}
-				previousPatient=nextPatient;
-			}
-		}
-		return totalOfParamedics;
-	}
-
-
-
-	private void checkingNewTotalParamedics(Jobs previousPatient, Jobs nextPatient, double totalOfParamedics) {
-		if(previousPatient.getTotalPeople()<0 && nextPatient.getTotalPeople()<0) {// previousPatient(-1)-------nextPatient(-1)  <- new paramedic
-			totalOfParamedics++;
-		}
-
-		if(previousPatient.getTotalPeople()>0 && nextPatient.getTotalPeople()>0) { // previousPatient(1)-------nextPatient(1)  <- new paramedic
-			totalOfParamedics++;
-		}
-
-		//		if(previousPatient.getTotalPeople()<0 && nextPatient.getTotalPeople()>0) { // previousPatient(-1)-------nextPatient(1)  <- no new paramedic
-		//       nothing happen
-		//		}
-
-		if(previousPatient.getTotalPeople()>0 && nextPatient.getTotalPeople()<0) { // previousPatient(1)-------nextPatient(-1)  <- new paramedic
-			totalOfParamedics++;
-		}
-	}
-
-
-
 	private  ArrayList<Couple> subJobsList= new ArrayList<Couple>();
 
 
@@ -129,15 +26,39 @@ public class Algorithm {
 		subroutes = new WalkingRoutes(input, r, t, i.getNodes()); // stage 1: Creation of walking routes
 		//updateHomeCareStaffJobs();
 		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
-		routes = new DrivingRoutes(input, r, t,subJobsList); // stage 2: Creation of driving routes
-		routes.generateAfeasibleSolution();
+		drivingRoute = new DrivingRoutes(input, r, t,subJobsList); // stage 2: Creation of driving routes
+		drivingRoute.generateAfeasibleSolution();
 		//iterations++;
-		setInitialSolution(routes.getInitialSol());
+		setInitialSolution(drivingRoute.getInitialSol());
 		//initialSolution.computeMetricsSolution(input, test);
 		//Interaction stages= new Interaction(routes,subJobsList, input, r, t);// Iteration between stage 1 und stage 2: from the current walking routes split and define new ones
 		//routes= stages.getBestRoutes();
 		//subroutes= stages.getBestWalkingRoutes();
 	}
+
+	
+	
+	
+
+
+
+	public void setInitialSolution(Solution initialSolution) {
+		this.initialSolution = initialSolution;
+		addingWaitingTime(initialSolution);
+		initialSolution.setId(iterations);
+		initialSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
+	}
+
+	private void addingWaitingTime(Solution initialSolution2) {
+		double waitingSolution=initialSolution2.getWaitingTime()+this.subroutes.getTotalwaitingTime();
+		initialSolution2.setWaitingTime(waitingSolution);		
+		
+	}
+
+
+
+
+
 
 
 
@@ -228,7 +149,6 @@ public class Algorithm {
 	}
 
 
-
 	private Couple creatingCoupleMedicalCentreToPatientHome(Jobs j) {
 		//j.getsubJobPair(): Medical centre
 		// j - location: Patient home
@@ -242,8 +162,6 @@ public class Algorithm {
 		Couple pairMedicalCentrePatient=creatingPairMedicalCentrePatient(presentJob,futureJob, directConnectionDistance);
 		return pairMedicalCentrePatient;
 	}
-
-
 
 	private void settingPeopleInSubJob(Couple pairPatientMedicalCentre, int i, int j) {
 		pairPatientMedicalCentre.getPresent().setTotalPeople(i); // 1 persona porque se recoge sólo al paciente
@@ -277,8 +195,6 @@ public class Algorithm {
 
 	}
 
-
-
 	private Couple creatingCouplePatientHomeToMedicalCentre(Jobs j) {
 		// j- location: Patiente home
 		// j.getsubJobPair()- location: Medical centre
@@ -291,8 +207,6 @@ public class Algorithm {
 		Couple pairPatientMedicalCentre=creatingPairPatientMedicalCentre(presentJob,futureJob, directConnectionDistance);
 		return pairPatientMedicalCentre;
 	}
-
-
 
 
 	/*
@@ -319,7 +233,6 @@ public class Algorithm {
 
 		return presentCouple;
 	}
-
 
 
 	private Couple creatingPairPatientMedicalCentre(Jobs presentJob, Jobs futureJob, int directConnectionDistance) {
@@ -370,7 +283,6 @@ public class Algorithm {
 	}
 
 
-
 	private Jobs creatingSubPairJOb(Jobs j) {
 		double pickUpTimeEarly=j.getstartServiceTime()+j.getReqTime();
 		double pickUpTimeLate=j.getstartServiceTime()+j.getReqTime()+test.getCumulativeWaitingTime();
@@ -400,8 +312,6 @@ public class Algorithm {
 		Couple presentCouple= new Couple(presentJob,futureJob);
 		return presentCouple;
 	}
-
-
 
 	private void convertingWalkingRoutesInOneTask(ArrayList<Couple> coupleFromWalkingRoutes) {
 		for(SubRoute r:subroutes.getWalkingRoutes()) {
@@ -439,8 +349,6 @@ public class Algorithm {
 		return presentCouple;
 	}
 
-
-
 	private HashMap<Integer, Jobs> clientInWalkingRoutes() {
 		HashMap<Integer,Jobs> jobsInWalkingRoutes= new HashMap<Integer,Jobs>();
 		for(SubRoute r:subroutes.getWalkingRoutes()) {
@@ -452,12 +360,6 @@ public class Algorithm {
 		}
 		return jobsInWalkingRoutes;
 	}
-
-
-
-
-
-
 
 	private Jobs creatinngFutureJobFromWR(Jobs present,Jobs pickUpNode) {
 		double startTime= pickUpNode.getstartServiceTime()+pickUpNode.getReqTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
@@ -475,29 +377,15 @@ public class Algorithm {
 		return present;
 	}
 
-	// auxiliar methods
-	private void computingTotalPersonal() {
-		int passengers=-1;
-		for(Route r: this.initialSolution.getRoutes()) {
-			passengers+=r.getSubJobsList().get(0).getTotalPeople();
-		}
-		initialSolution.setPassengers(passengers);	
-	}
-
-
-
 
 	// Getters
 	public WalkingRoutes getSubroutes() {
-		return subroutes;
-	}
+		return subroutes;}
 
 
 
-	public DrivingRoutes getRoutes() {
-		return routes;
-	}
-
+	public DrivingRoutes getRoutes() {return drivingRoute;}
+	public Solution getInitialSolution() {return initialSolution;}
 
 
 

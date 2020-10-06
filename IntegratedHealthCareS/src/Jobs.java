@@ -25,6 +25,7 @@ public class Jobs {
 	private int totalPeople=0; // people involven in the service:
 	// - 1  es una persona menos en el vehículo + 1 una plaza ocupada en el vehículo + 2 dos plazas ocupadas en el vehículo 
 	private double arrivalTime=0; // time for vehicle
+	private double walkingTime=0; // time for vehicle
 	private double departureTime=0; // time for vehicle
 	private boolean isServerd = false;
 	private double waitingTime=0;
@@ -66,6 +67,7 @@ public class Jobs {
 		this.arrivalTime=i.arrivalTime;
 		this.reqQualification = i.getReqQualification();
 		this.serviceTime = i.getReqTime();
+		this.walkingTime=i.walkingTime;
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
 		this.sortLTWSizeCriterion=(hardendTime)*(sizeTW);
@@ -87,6 +89,7 @@ public class Jobs {
 		this.reqQualification = i.getReqQualification();
 		this.serviceTime = i.getReqTime();
 		this.departureTime=i.departureTime;
+		this.walkingTime=i.walkingTime;
 		this.arrivalTime=i.arrivalTime;
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
@@ -107,7 +110,7 @@ public class Jobs {
 	public void setTotalPeople(int i) {	
 		subJobKey=creatingKey(i);
 		this.totalPeople = i;}
-
+	public void setWalkingTime(double walking) {this.walkingTime = walking;}
 	public void setStartServiceTime(double B) {this.startServiceTime = (int) Math.ceil(B);}
 	public void setEndServiceTime(double B) {this.endServiceTime = B;}
 	public void setStartTime(double B) {this.hardstartTime = (int) Math.ceil(B);}
@@ -154,6 +157,7 @@ public class Jobs {
 	public double getWaitingTime() {return waitingTime;}
 	public Jobs getsubJobPair() {return subJobPair;}
 	public int getIdUser() {return idUser;}
+	public double getWalkingTime() {return walkingTime;}
 	public ArrayList<Jobs> getAssignedJobToMedicalCentre() {return assignedJob;}
 	public HashMap<Integer,SubJobs> getSubJobs() {return subJobs;}
 
