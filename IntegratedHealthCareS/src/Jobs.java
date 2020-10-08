@@ -11,7 +11,7 @@ public class Jobs {
 	// 1 : a sub-Job which represents that a person is boarding the vehicle
 	private int idUser;
 	private String subJobKey="";
-	private final int id; // node ID (depotID = 0)
+	private int id; // node ID (depotID = 0)
 	private double hardstartTime; // input data early time window 
 	private double hardendTime; // input data end time window
 	private double softstartTime; // estimated early soft time window
@@ -55,6 +55,12 @@ public class Jobs {
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(startTime)*(sizeTW);
 		this.sortLTWSizeCriterion=(endTime)*(sizeTW);
+		
+		// estar service time
+		
+		
+		
+		
 	}
 
 	public Jobs(Jobs i, double serviceStartTime) {
@@ -68,16 +74,24 @@ public class Jobs {
 		this.reqQualification = i.getReqQualification();
 		this.serviceTime = i.getReqTime();
 		this.walkingTime=i.walkingTime;
+		waitingTime=i.waitingTime;
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
 		this.sortLTWSizeCriterion=(hardendTime)*(sizeTW);
 		this.startServiceTime=serviceStartTime;
+		endServiceTime=i.endServiceTime;
 		isPatient=i.isPatient();// type of job in the system- patient job at patient home
 		isMedicalCentre=i.isMedicalCentre;// type of job in the system- patient job at medical centre home
 		isClient=i.isClient;// type of job in the system- patient job at client home
 		idUser=i.idUser;
-		endServiceTime=i.endServiceTime;
+		totalPeople=i.getTotalPeople();
 		subJobKey=i.subJobKey;
+		if(i.subJobPair!=null) {
+		subJobPair=new Jobs(i.subJobPair);}
+		subJobs= new HashMap<>();
+		for(SubJobs j:i.getSubJobs().values()){
+			subJobs.put(j.getId(), new SubJobs(j));
+		}
 	}
 
 	public Jobs(Jobs i) {
@@ -94,13 +108,14 @@ public class Jobs {
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
 		this.sortLTWSizeCriterion=(hardendTime)*(sizeTW);
-		this.startServiceTime=0;
+		this.startServiceTime=i.getstartServiceTime();
 		isPatient=i.isPatient();// type of job in the system- patient job at patient home
 		isMedicalCentre=i.isMedicalCentre;// type of job in the system- patient job at medical centre home
 		isClient=i.isClient;// type of job in the system- patient job at client home
 		endServiceTime=i.endServiceTime;
 		subJobKey=i.subJobKey;
 		idUser=i.idUser;
+		totalPeople=i.getTotalPeople();
 	}
 
 	/* SET METHODS */
@@ -110,6 +125,7 @@ public class Jobs {
 	public void setTotalPeople(int i) {	
 		subJobKey=creatingKey(i);
 		this.totalPeople = i;}
+	public void setId(int id) {this.id = id;}
 	public void setWalkingTime(double walking) {this.walkingTime = walking;}
 	public void setStartServiceTime(double B) {this.startServiceTime = (int) Math.ceil(B);}
 	public void setEndServiceTime(double B) {this.endServiceTime = B;}

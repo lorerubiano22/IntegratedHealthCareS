@@ -15,6 +15,7 @@ public class Algorithm {
 	private WalkingRoutes subroutes;
 	private DrivingRoutes drivingRoute;
 	private Solution initialSolution=null;
+	private Solution bestSolution=null;
 	private  ArrayList<Couple> subJobsList= new ArrayList<Couple>();
 
 
@@ -30,17 +31,14 @@ public class Algorithm {
 		drivingRoute.generateAfeasibleSolution();
 		//iterations++;
 		setInitialSolution(drivingRoute.getInitialSol());
+		setBestSolution(drivingRoute.getSol());
 		//initialSolution.computeMetricsSolution(input, test);
 		//Interaction stages= new Interaction(routes,subJobsList, input, r, t);// Iteration between stage 1 und stage 2: from the current walking routes split and define new ones
 		//routes= stages.getBestRoutes();
 		//subroutes= stages.getBestWalkingRoutes();
 	}
 
-	
-	
-	
-
-
+	private void setBestSolution(Solution sol) {bestSolution=sol;}
 
 	public void setInitialSolution(Solution initialSolution) {
 		this.initialSolution = initialSolution;
@@ -52,7 +50,7 @@ public class Algorithm {
 	private void addingWaitingTime(Solution initialSolution2) {
 		double waitingSolution=initialSolution2.getWaitingTime()+this.subroutes.getTotalwaitingTime();
 		initialSolution2.setWaitingTime(waitingSolution);		
-		
+
 	}
 
 
@@ -386,6 +384,7 @@ public class Algorithm {
 
 	public DrivingRoutes getRoutes() {return drivingRoute;}
 	public Solution getInitialSolution() {return initialSolution;}
+	public Solution getSolution() {return bestSolution;}
 
 
 

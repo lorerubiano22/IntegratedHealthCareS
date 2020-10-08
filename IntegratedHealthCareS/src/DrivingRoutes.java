@@ -16,7 +16,7 @@ public class DrivingRoutes {
 	private HashMap<String, ArrayList<SubJobs>>assignedShiftParts=new HashMap<>();
 	private  ArrayList<Route> routeVehicleList= new ArrayList<Route>(); // dummy routes
 	// computing walking hours
-private double walkingTime=0;
+	private double walkingTime=0;
 	///
 	private  ArrayList<Couple> subJobsList= new ArrayList<Couple>();
 	private  ArrayList<Couple> subJobsHighestQualification= new ArrayList<Couple>();
@@ -34,10 +34,8 @@ private double walkingTime=0;
 	ArrayList<ArrayList<SubJobs>> qualification3= new ArrayList<>();  // turn for home care staff 2
 
 	private Solution initialSol=null;
+	private Solution solution=null;
 
-	public Solution getInitialSol() {
-		return initialSol;
-	}
 
 	public DrivingRoutes(Inputs i, Random r, Test t, ArrayList<Couple> subJobsList) {
 		inp=i;
@@ -72,9 +70,9 @@ private double walkingTime=0;
 		assigmentJobsToQualifications(clasification);
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		insertingDepotConnections();
-		Solution initialSol= solutionInformation();
-		System.out.println(initialSol.toString());
-		//assigningRoutesToDrivers(initialSol);
+		Solution initialSol= solutionInformation(); // this is the initial solution in which each personal has a vehicle assigned
+
+		assigningRoutesToDrivers(initialSol);
 		//downgradingsRoutes();
 		//crossingBetweenRoutes();
 		//		patientVehicleAssigment(); // assigment to the vehicle
@@ -90,10 +88,305 @@ private double walkingTime=0;
 
 	private void assigningRoutesToDrivers(Solution initialSol) {
 		Solution copySolution= new Solution(initialSol);
-		// el objetivo es combinar partes a vehículos
+		changingDepartureTimes(copySolution);
+		LinkedList<ArrayList<SubJobs>> partsList=extractingParts(initialSol);
+		System.out.println("printing initial solution");
+		System.out.println(initialSol.toString());
+		System.out.println("printing copy solution");
+		System.out.println(copySolution.toString());
+		System.out.println("end");
+		// falta modificar las horas de departure de acuerdo al vehículo y no al personal
+		Solution newSol= new Solution();// route of the vehicles
+		solution= mergingRoutes(copySolution,partsList); // las rutas se mezclan por partes
+	
+	}
+
+
+	private void changingDepartureTimes(Solution copySolution) {
+		// se cambian los departure times de cada subjob en cada parte
+		for(Route r:copySolution.getRoutes()) {
+			for(ArrayList<SubJobs> a:r.getPartsRoute()) {
+				changinPartTime(a);
+			}	
+			r.updateRoute(inp);
+		}
 
 	}
 
+	private void changinPartTime(ArrayList<SubJobs> a) {
+		for(SubJobs j:a) {
+			// if pick up time el tiempo cuenta
+			double departure=0;
+			if(j.isClient()) {
+				departure=j.getArrivalTime()+test.getloadTimeHomeCareStaff();
+			}
+			else {
+				departure=j.getArrivalTime()+test.getloadTimePatient();
+			}
+			j.setdepartureTime(departure);
+		}
+
+	}
+
+	private LinkedList<ArrayList<SubJobs>> extractingParts(Solution initialSol2) {
+		LinkedList<ArrayList<SubJobs>> partsList= new LinkedList<>();
+		for(Route r:initialSol2.getRoutes()) {
+			for(ArrayList<SubJobs> part:r.getPartsRoute()) {
+				partsList.add(part);
+			}
+		}
+		return partsList;
+	}
+
+	private Solution mergingRoutes(Solution copySolution, LinkedList<ArrayList<SubJobs>> partsList) {
+		System.out.println(copySolution.toString());
+		for(int route1=0;route1<copySolution.getRoutes().size()-1;route1++) {
+			for(int route2=0;route2<copySolution.getRoutes().size()-1;route2++) {
+				int part=0;
+				int start=2;
+				Route vehicle= new Route();
+				Route iR=copySolution.getRoutes().get(route1);
+				if(iR.getPartsRoute().size()>2) {
+					System.out.println("Route iR"+ iR.toString());
+					Route jR=copySolution.getRoutes().get(route2);
+					System.out.println("Route jR"+ jR.toString());
+					if(possibleMerge(iR,jR)) {
+						Route refRoute=selecctingStartRoute(iR,jR);
+						Route toInsertRoute=selecctingRouteToInsert(iR,jR);
+						boolean inserted=insertionAllRoute(refRoute,toInsertRoute,vehicle,part);
+						if(!inserted) { // insertion part by part
+							vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(0));
+							vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(1));
+							for(part=start;part<refRoute.getPartsRoute().size();part++) {
+								inserted=isertingRoute(vehicle,toInsertRoute,refRoute);
+								if(!inserted) {
+									vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(part));
+									vehicle.updateRoute(inp);
+								}
+							}
+						}
+						refRoute=updatingNewRoutes(refRoute,vehicle,part);	
+						toInsertRoute=updatingNewRoutes(toInsertRoute,vehicle,part);	
+						System.out.println("Route vehicle"+ vehicle.toString());
+						routeVehicleList.add(vehicle);
+					}
+				}
+				else {
+					break;
+				}
+			}
+			updatingListRoutes();
+			System.out.println(" Route list ");
+			for(Route r:routeVehicleList) {
+				System.out.println(r.toString());
+			}
+		}
+		updatingSolution(copySolution);
+		return copySolution;
+	}
+
+	private void updatingSolution(Solution copySolution) {
+		copySolution.getRoutes().clear();
+		for(Route r:routeVehicleList) {
+			copySolution.getRoutes().add(r);
+		}
+		computeSolutionCost(copySolution);
+	}
+
+	private boolean insertionAllRoute(Route refRoute, Route toInsertRoute, Route vehicle, int part) {
+		boolean inserted=false;
+		int lastPart=refRoute.getPartsRoute().size()-1;// <- esta parte hace referencia al depot
+		SubJobs lastSubjobInRoute= refRoute.getPartsRoute().get(lastPart-1).get(refRoute.getPartsRoute().get(lastPart-1).size()-1);
+		SubJobs firstSubjob= toInsertRoute.getPartsRoute().get(1).get(0);
+		if(lastSubjobInRoute.getDepartureTime()<firstSubjob.getArrivalTime()) {
+			part=refRoute.getPartsRoute().size();
+			inserted=true;
+			for(int j=0;j<refRoute.getPartsRoute().size()-1;j++) { // no se incluye el depot
+				vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(j));
+			}
+			for(int j=1;j<toInsertRoute.getPartsRoute().size();j++) { // no se incluye el depot
+				vehicle.getPartsRoute().add(toInsertRoute.getPartsRoute().get(j));
+			}
+			vehicle.updateRoute(inp);
+		}
+		return inserted;
+	}
+
+	private void updatingListRoutes() {
+		ArrayList<Route> list= gettingListOfRoutes(); // dummy routes
+		for(Route r:list) {
+			if(r.getPartsRoute().isEmpty()) {// 1. eliminar las rutas que no tienen partes
+				routeVehicleList.remove(r);
+			}
+
+		}
+
+		System.out.println(" step 1 ");
+		for(Route r:routeVehicleList) {
+			System.out.println(r.toString());
+		}
+
+		list.clear();
+		for(Route r:routeVehicleList) {
+			list.add(r);
+		}
+
+		routeVehicleList=removingRepeatedRoutes(list);
+
+		System.out.println(" step 2 ");
+		for(Route r:routeVehicleList) {
+			System.out.println(r.toString());
+		}
+
+		System.out.println(" end ");
+	}
+
+	private ArrayList<Route> removingRepeatedRoutes(ArrayList<Route> list) {
+		ArrayList<Route> cleanList= gettingListOfRoutes(); // list of clean routes
+		//2. eliminar las rutas con trabajos repetidos
+		for(Route r:routeVehicleList) {
+			int lenghtRoute=0;
+			int index=-1;
+			ArrayList<Route> repeatedRoutes= checkingRepeatedRoutes(list,r); // el objetivo es que devuelva las rutas con trabajos repetidos
+			if(repeatedRoutes.size()>1) {
+				for(Route clone:repeatedRoutes) { // se itera sobre la lista de rutas y se seleccional la más larga
+					list.remove(clone);
+					if(clone.getSubJobsList().size()>lenghtRoute) {
+						lenghtRoute=clone.getSubJobsList().size();
+						index=repeatedRoutes.indexOf(clone);
+					}
+				}
+			}
+			if(index!=-1) {
+				cleanList.add(repeatedRoutes.get(index));}
+		}
+
+		routeVehicleList.clear();
+		for(Route r:cleanList) {
+			routeVehicleList.add(r);
+		}
+		return routeVehicleList;
+	}
+
+	private ArrayList<Route> checkingRepeatedRoutes(ArrayList<Route> list, Route r) {
+		ArrayList<Route> repeatedRoutes= new ArrayList<Route>(); 
+		for(Route clone:list) {
+
+			for(int job=1;job<clone.getSubJobsList().size()-1;job++) { // no se considera el depot
+				SubJobs j=clone.getSubJobsList().get(job);
+				if(r.getJobsDirectory().containsKey(j.getSubJobKey())) { //si es así es porque la ruta clone es una copia de la ruta r
+					repeatedRoutes.add(clone);
+					break;
+				}
+			}
+		}
+		return repeatedRoutes;
+	}
+
+	private ArrayList<Route> gettingListOfRoutes() {
+		ArrayList<Route> list= new ArrayList<Route>(); // dummy routes
+		for(Route r:routeVehicleList) {
+			list.add(r);
+		}
+		return list;
+	}
+
+	private Route updatingNewRoutes(Route refRoute, Route vehicle, int part) {
+		// el objetivo es dejar que la ruta refRoute sólo tenga partes contenidas en la ruta de vehicle
+
+		for(int index=1;index<vehicle.getPartsRoute().size()-1;index++) {// no se considera el depot
+			ArrayList<SubJobs> j=vehicle.getPartsRoute().get(index);
+			if(vehicle.getPartsRoute().contains(j)) {
+				refRoute.getPartsRoute().remove(j);
+			}
+		}
+		refRoute.updateRoute(inp);
+		return refRoute;
+	}
+
+	private boolean isertingRoute(Route vehicle, Route toInsertRoute, Route refRoute) {
+		boolean inserted=false;		
+		// Este metodo intena insertar las partes de la otra ruta. Siempre evalua las rutas que ya estan integradas en otro
+		Route changing= new Route(toInsertRoute);
+		for(int i=1;i<toInsertRoute.getPartsRoute().size()-1;i++) { // -1 para no incluir el depot al final
+			// primer intenta insertar la parte de la otra ruta
+			SubJobs lastSubjobInRoute= vehicle.getPartsRoute().getLast().get(vehicle.getPartsRoute().getLast().size()-1);
+			SubJobs firstSubjob= toInsertRoute.getPartsRoute().get(i).get(0);
+			if(lastSubjobInRoute.getDepartureTime()>firstSubjob.getArrivalTime()) {
+				vehicle.getPartsRoute().add(toInsertRoute.getPartsRoute().get(i));
+				vehicle.updateRoute(inp);
+				System.out.println("Printing changing 2 " +changing.toString());
+				changing.removingParts(toInsertRoute.getPartsRoute().get(i));
+				changing.updateRoute(inp);
+				System.out.println("Printing changing 1 " +changing.toString());
+				System.out.println("Printing vehicleRouting" +vehicle.toString());
+				inserted=true;	
+				break;
+			}
+		}
+		toInsertRoute.getPartsRoute().clear();
+		for(ArrayList<SubJobs>part:changing.getPartsRoute()) {
+			toInsertRoute.getPartsRoute().add(part);
+		}
+		toInsertRoute.updateRoute(inp);
+		System.out.println("Printing toInsertRoute" +toInsertRoute.toString());
+		return inserted; 
+	}
+
+	private Route selecctingRouteToInsert(Route iR, Route jR) {
+		System.out.println("printing part IR");
+		printing(iR.getPartsRoute().get(0));
+		printing(iR.getPartsRoute().get(1));
+		System.out.println("printing parts JR");
+		printing(jR.getPartsRoute().get(0));
+		printing(jR.getPartsRoute().get(1));
+		if(iR.getPartsRoute().get(1).get(0).getstartServiceTime()> jR.getPartsRoute().get(1).get(0).getstartServiceTime()) {
+			return iR;
+		}
+		else {
+			return jR;
+		}
+	}
+
+	private Route selecctingStartRoute(Route iR, Route jR) {
+		System.out.println("printing part IR");
+		System.out.println("part 1");
+		printing(iR.getPartsRoute().get(0));
+		System.out.println("part 2");
+		printing(iR.getPartsRoute().get(1));
+		System.out.println("printing parts JR");
+		printing(jR.getPartsRoute().get(0));
+		printing(jR.getPartsRoute().get(1));
+		if(iR.getPartsRoute().get(1).get(0).getstartServiceTime()> jR.getPartsRoute().get(1).get(0).getstartServiceTime()) {
+			return jR;
+		}
+		else {
+			return iR;
+		}
+	}
+
+	private boolean possibleMerge(Route iR, Route jR) {
+		// Revisar que las rutas que se van a mezclar no sean las mismas rutas
+		boolean routeToRemve=false;
+		boolean merging=false;
+		boolean diffRoute=false;
+		boolean capacityVehicle=false;
+		if(iR.getPartsRoute().size()>2 && jR.getPartsRoute().size()>2) {
+			routeToRemve=true;
+		}
+		if(iR!=jR) {
+			diffRoute=true;	
+		}
+		// Revisar que el número de personas en el auto no excedan de la capacidad del
+		double totalPassenger=iR.getAmountParamedic()+iR.getHomeCareStaff()+jR.getAmountParamedic()+jR.getHomeCareStaff();
+		if(totalPassenger < inp.getVehicles().get(0).getMaxCapacity()) {
+			capacityVehicle=true;
+		}
+		if(capacityVehicle && diffRoute && routeToRemve) {
+			merging=true;
+		}
+		return merging;
+	}
 
 	private ArrayList<SubJobs> onlyJobs(ArrayList<SubJobs> part) {
 		ArrayList<SubJobs> newPart=new ArrayList<SubJobs> ();
@@ -181,7 +474,10 @@ private double walkingTime=0;
 		double walkingTime=0;
 		double paramedic=0;// los paramedicos que salen del depot
 		double homeCareStaff=0;// los paramedicos que salen del depot
+		int i=-1;
 		for(Route r:initialSol.getRoutes()) {
+			i++;
+			r.setIdRoute(i);
 			r.updateRoute(inp);
 			waiting+=r.getWaitingTime(); // waiting time
 			serviceTime+=r.getServiceTime(); // 2. Service time 
@@ -533,7 +829,7 @@ private double walkingTime=0;
 	}
 
 	private void computingRemainingShiftMiddleParts(Schift turn) {
-		//ArrayList<SubJobs> jobList= turn.getRouteList().getPartsRoute().get(0);	// Calling the first part of the turn
+		//ArrayList<SubJobs> jobList= turn.getRoute().getPartsRoute().get(0);	// Calling the first part of the turn
 		//int size=jobList.size();
 		//SubJobs lastSubJobs=jobList.get(size-1); // calling the last subjobs
 
@@ -553,7 +849,7 @@ private double walkingTime=0;
 	}
 
 	private void computingRemainingShift(Schift turn) {
-		//ArrayList<SubJobs> jobList= turn.getRouteList().getPartsRoute().get(0);	// Calling the first part of the turn
+		//ArrayList<SubJobs> jobList= turn.getRoute().getPartsRoute().get(0);	// Calling the first part of the turn
 		//int size=jobList.size();
 		//SubJobs lastSubJobs=jobList.get(size-1); // calling the last subjobs
 
@@ -670,8 +966,8 @@ private double walkingTime=0;
 
 	private void insertingHeadingPart(Route r, Schift turn, SubJobs lastSubJob) {
 		// 2. inserting the jobs of the first part
-		ArrayList<SubJobs> jobsList=turn.getRouteList().getPartsRoute().get(0);
-		ArrayList<SubJobs> jobsListToInsert=turn.getRouteList().getPartsRoute().get(0);
+		ArrayList<SubJobs> jobsList=turn.getRoute().getPartsRoute().get(0);
+		ArrayList<SubJobs> jobsListToInsert=turn.getRoute().getPartsRoute().get(0);
 		for(int job=1;job<jobsList.size();job++) {
 			SubJobs j=jobsList.get(job);
 			jobsListToInsert.add(j);
@@ -680,8 +976,8 @@ private double walkingTime=0;
 	}
 	private void insertingPart(Route r, Schift turn, SubJobs lastSubJob) {
 		// 2. inserting the jobs of the first part
-		ArrayList<SubJobs> jobsList=turn.getRouteList().getPartsRoute().get(0);
-		ArrayList<SubJobs> jobsListToInsert=turn.getRouteList().getPartsRoute().get(0);
+		ArrayList<SubJobs> jobsList=turn.getRoute().getPartsRoute().get(0);
+		ArrayList<SubJobs> jobsListToInsert=turn.getRoute().getPartsRoute().get(0);
 		for(int job=0;job<jobsList.size();job++) {
 			SubJobs j=jobsList.get(job);
 			jobsListToInsert.add(j);
@@ -801,7 +1097,7 @@ private double walkingTime=0;
 		int t=-1;
 		for(Schift turn:splittedSchift) {
 			t++;
-			System.out.println("turn "+t+" "+ "Subjob "+turn.getRouteList().getSubJobsList().get(0).getSubJobKey() +"  " +turn.getRouteList().getSubJobsList().get(0).getArrivalTime()+" ");
+			System.out.println("turn "+t+" "+ "Subjob "+turn.getRoute().getSubJobsList().get(0).getSubJobKey() +"  " +turn.getRoute().getSubJobsList().get(0).getArrivalTime()+" ");
 			if(sortedSchift.isEmpty()) {
 				sortedSchift.add(turn);
 			}
@@ -812,7 +1108,7 @@ private double walkingTime=0;
 
 			/////
 			for(Schift copy:sortedSchift) {
-				System.out.println("copy turn "+" "+ "Subjob "+copy.getRouteList().getSubJobsList().get(0).getSubJobKey() +"  " +copy.getRouteList().getSubJobsList().get(0).getArrivalTime()+" ");
+				System.out.println("copy turn "+" "+ "Subjob "+copy.getRoute().getSubJobsList().get(0).getSubJobKey() +"  " +copy.getRoute().getSubJobsList().get(0).getArrivalTime()+" ");
 
 			}
 
@@ -822,7 +1118,7 @@ private double walkingTime=0;
 		for(Schift turn: sortedSchift) {
 			splittedSchift.add(turn);
 			t++;
-			System.out.println("turn "+t+" "+ "Subjob "+turn.getRouteList().getSubJobsList().get(1).getSubJobKey() +"  " +turn.getRouteList().getSubJobsList().get(1).getArrivalTime()+" ");
+			System.out.println("turn "+t+" "+ "Subjob "+turn.getRoute().getSubJobsList().get(1).getSubJobKey() +"  " +turn.getRoute().getSubJobsList().get(1).getArrivalTime()+" ");
 
 		}
 	}
@@ -836,7 +1132,7 @@ private double walkingTime=0;
 		int t=-1;
 		for(Schift turn:splittedSchift) {
 			t++;
-			System.out.println("turn "+t+" "+ "Subjob "+turn.getRouteList().getSubJobsList().get(0).getSubJobKey() +"  " +turn.getRouteList().getSubJobsList().get(0).getArrivalTime()+" ");
+			System.out.println("turn "+t+" "+ "Subjob "+turn.getRoute().getSubJobsList().get(0).getSubJobKey() +"  " +turn.getRoute().getSubJobsList().get(0).getArrivalTime()+" ");
 			if(sortedSchift.isEmpty()) {
 				sortedSchift.add(turn);
 			}
@@ -846,7 +1142,7 @@ private double walkingTime=0;
 			size=sortedSchift.size()-1;
 			/////
 			for(Schift copy:sortedSchift) {
-				System.out.println("copy turn "+" "+ "Subjob "+copy.getRouteList().getSubJobsList().get(0).getSubJobKey() +"  " +copy.getRouteList().getSubJobsList().get(0).getArrivalTime()+" ");
+				System.out.println("copy turn "+" "+ "Subjob "+copy.getRoute().getSubJobsList().get(0).getSubJobKey() +"  " +copy.getRoute().getSubJobsList().get(0).getArrivalTime()+" ");
 			}
 		}
 		splittedSchift.clear();
@@ -854,14 +1150,14 @@ private double walkingTime=0;
 		for(Schift turn: sortedSchift) {
 			splittedSchift.add(turn);
 			t++;
-			System.out.println("turn "+t+" "+ "Subjob "+turn.getRouteList().getSubJobsList().get(1).getSubJobKey() +"  " +turn.getRouteList().getSubJobsList().get(1).getArrivalTime()+" ");
+			System.out.println("turn "+t+" "+ "Subjob "+turn.getRoute().getSubJobsList().get(1).getSubJobKey() +"  " +turn.getRoute().getSubJobsList().get(1).getArrivalTime()+" ");
 		}
 	}
 
 	private void readingTurns(ArrayList<Schift> sortedSchift, Schift turn) {
 		if(sortedSchift.size()==1) { 	// 1. si el primer trabajo ya en la lista es más tardío el el inicio del trabajo de part
-			SubJobs firstsubJob=turn.getRouteList().getSubJobsList().get(0);
-			SubJobs firstTurnInList=sortedSchift.get(0).getRouteList().getSubJobsList().get(0);
+			SubJobs firstsubJob=turn.getRoute().getSubJobsList().get(0);
+			SubJobs firstTurnInList=sortedSchift.get(0).getRoute().getSubJobsList().get(0);
 			if(firstTurnInList.getstartServiceTime()<=firstsubJob.getArrivalTime()) {
 				sortedSchift.add(turn);
 			}
@@ -871,9 +1167,9 @@ private double walkingTime=0;
 		}
 		else {
 			int lastTurn=sortedSchift.size()-1;
-			SubJobs firstsubJob=turn.getRouteList().getSubJobsList().get(0);
-			SubJobs firstTurnInList=sortedSchift.get(0).getRouteList().getSubJobsList().get(0);
-			SubJobs lastTurnInList=sortedSchift.get(lastTurn).getRouteList().getSubJobsList().get(0);
+			SubJobs firstsubJob=turn.getRoute().getSubJobsList().get(0);
+			SubJobs firstTurnInList=sortedSchift.get(0).getRoute().getSubJobsList().get(0);
+			SubJobs lastTurnInList=sortedSchift.get(lastTurn).getRoute().getSubJobsList().get(0);
 			if(firstTurnInList.getArrivalTime()>=firstsubJob.getArrivalTime()) {
 				sortedSchift.add(0,turn);
 			}
@@ -891,10 +1187,10 @@ private double walkingTime=0;
 
 
 	private void readingTailsTurns(ArrayList<Schift> sortedSchift, Schift turn) {
-		int lastJobToInsert=turn.getRouteList().getSubJobsList().size();
-		SubJobs firstsubJob=turn.getRouteList().getSubJobsList().get(lastJobToInsert-1);
-		int lastJobInRoute=sortedSchift.get(0).getRouteList().getSubJobsList().size();
-		SubJobs firstTurnInList=sortedSchift.get(0).getRouteList().getSubJobsList().get(lastJobInRoute-1);
+		int lastJobToInsert=turn.getRoute().getSubJobsList().size();
+		SubJobs firstsubJob=turn.getRoute().getSubJobsList().get(lastJobToInsert-1);
+		int lastJobInRoute=sortedSchift.get(0).getRoute().getSubJobsList().size();
+		SubJobs firstTurnInList=sortedSchift.get(0).getRoute().getSubJobsList().get(lastJobInRoute-1);
 		if(sortedSchift.size()==1) { 	// 1. si el primer trabajo ya en la lista es más tardío el el inicio del trabajo de part
 			if(firstTurnInList.getArrivalTime()<=firstsubJob.getArrivalTime()) {
 				sortedSchift.add(turn);
@@ -905,8 +1201,8 @@ private double walkingTime=0;
 		}
 		else {
 			int lastTurn=sortedSchift.size()-1;
-			lastJobInRoute=sortedSchift.get(lastTurn).getRouteList().getSubJobsList().size();
-			SubJobs lastTurnInList=sortedSchift.get(lastTurn).getRouteList().getSubJobsList().get(lastJobInRoute-1);
+			lastJobInRoute=sortedSchift.get(lastTurn).getRoute().getSubJobsList().size();
+			SubJobs lastTurnInList=sortedSchift.get(lastTurn).getRoute().getSubJobsList().get(lastJobInRoute-1);
 			if(lastTurnInList.getArrivalTime()<=firstsubJob.getArrivalTime()) {
 				sortedSchift.add(turn);
 			}
@@ -962,10 +1258,10 @@ private double walkingTime=0;
 
 	private void readingArray(ArrayList<Schift> sortedSchift, Schift turn) {
 		for(int i=1;i<sortedSchift.size();i++) {
-			SubJobs firstsubJob=turn.getRouteList().getSubJobsList().get(0);
-			SubJobs firstTurnInList=sortedSchift.get(i).getRouteList().getSubJobsList().get(0);
+			SubJobs firstsubJob=turn.getRoute().getSubJobsList().get(0);
+			SubJobs firstTurnInList=sortedSchift.get(i).getRoute().getSubJobsList().get(0);
 			if(firstTurnInList.getArrivalTime()>=firstsubJob.getArrivalTime()) {
-				SubJobs previousTurnInList=sortedSchift.get(i-1).getRouteList().getSubJobsList().get(0);
+				SubJobs previousTurnInList=sortedSchift.get(i-1).getRoute().getSubJobsList().get(0);
 				if(previousTurnInList.getArrivalTime()<=firstsubJob.getArrivalTime()) {
 					sortedSchift.add(i,turn);
 					break;
@@ -975,22 +1271,6 @@ private double walkingTime=0;
 	}
 
 
-
-	private ArrayList<ArrayList<SubJobs>> extractingParts(Route r1) {
-		ArrayList<ArrayList<SubJobs>>parts=new ArrayList<ArrayList<SubJobs>>();
-		ArrayList<SubJobs> firstPartR1=new ArrayList<SubJobs>();
-		parts.add(firstPartR1);
-		int passenger=0;
-		for(SubJobs j:r1.getSubJobsList()) {
-			passenger+=j.getTotalPeople();
-			firstPartR1.add(j);
-			if(passenger==0) {
-				firstPartR1=new ArrayList<SubJobs>();
-				parts.add(firstPartR1);				
-			}
-		}
-		return parts;
-	}
 
 	private void assigmentJobsToQualifications(ArrayList<ArrayList<Couple>> clasification) { 
 		// solo la asignación de trabajos a los niveles de calificaciones // se hace una secuencia ordenad_
@@ -1153,6 +1433,16 @@ private double walkingTime=0;
 		timeStartEndRoutes();
 		//3. compute the connections between SubJobs
 		settingEdges();
+		creatingSchifts();
+	}
+
+	private void creatingSchifts() {
+		int intRoute=0;
+		for(Route r:routeList) {
+			intRoute++;
+			Schift personnal= new Schift(r,intRoute);
+			r.setSchiftRoute(personnal);
+		}
 	}
 
 	private void settingEdges() {
@@ -1183,7 +1473,7 @@ private double walkingTime=0;
 
 	private void computeEndTimeRoute(SubJobs lastJob, Route r) {
 		// 1. Compute travel time
-		SubJobs depot=r.getSubJobsList().getLast();
+		SubJobs depot=r.getPartsRoute().get(r.getPartsRoute().size()-1).get(0);
 		double tv=inp.getCarCost().getCost(lastJob.getId()-1, depot.getId()-1);
 		double arrivalTime=	lastJob.getDepartureTime()+tv;
 		depot.setarrivalTime(arrivalTime);
@@ -1196,7 +1486,7 @@ private double walkingTime=0;
 
 	private void computeStartTimeRoute(SubJobs firstJob, Route r) {
 		// 1. Compute travel time
-		SubJobs depot=r.getSubJobsList().getFirst();
+		SubJobs depot=r.getPartsRoute().get(0).get(0);
 		double tv=inp.getCarCost().getCost(depot.getId()-1,firstJob.getId()-1);
 		double arrivalTime=	firstJob.getArrivalTime()-tv-test.getloadTimeHomeCareStaff();
 		depot.setarrivalTime(arrivalTime);
@@ -1444,7 +1734,6 @@ private double walkingTime=0;
 		for(SubJobs j:paramedic) {
 			System.out.println(j.getSubJobKey()+" arrival "+ j.getArrivalTime()+" start time "+ j.getstartServiceTime()+ "req time " + j.getReqTime());
 		}
-
 	}
 
 	private boolean possibleInsertion(Jobs j, ArrayList<SubJobs> homeCare) { // si el trabajo se acepta para ser insertado- entonces el trabajo se desagrega en subtrabajos
@@ -2307,18 +2596,11 @@ private double walkingTime=0;
 				listserviceJobs.add(c.getPresent());
 			}
 		}
-
-
-
-
 	}
 
 
-
-
-
-
-
-
+	// getters 
+	public Solution getInitialSol() {return initialSol;}
+	public Solution getSol() {return solution;}
 
 }

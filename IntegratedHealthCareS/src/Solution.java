@@ -18,6 +18,7 @@ public class Solution {
 	public Solution(Solution initialSol) {
 		id=initialSol.id; // solution ID
 		durationSolution = initialSol.durationSolution; // Travel distance = waiting time + driving time
+		routes = new LinkedList<Route>();
 		routes = copyRoutes(initialSol); // list of routes in this solution
 		passengers=initialSol.passengers;// home care staff and + paramedic transported que salen del depot
 		waitingTime=initialSol.waitingTime;// Total waiting time
@@ -27,12 +28,12 @@ public class Solution {
 		paramedic=initialSol.paramedic;// los paramedicos que salen del depot
 		homeCareStaff=initialSol.homeCareStaff;// los paramedicos que salen del depot
 	}
-	
-	
+
+
 	public Solution() {
 		nInstances++;
-        id = nInstances;
-        routes = new LinkedList<Route>();
+		id = nInstances;
+		routes = new LinkedList<Route>();
 	}
 
 
@@ -61,15 +62,16 @@ public class Solution {
 	public double getWalkingTime() {return walkingTime;}
 
 	// auxiliar methods
-	
+
 	private LinkedList<Route> copyRoutes(Solution initialSol) {
 		LinkedList<Route> copyRoutes= new LinkedList<Route>();
+		// copy Routes
 		for(Route r:initialSol.getRoutes()) {
 			copyRoutes.add(new Route(r));
 		}
 		return copyRoutes;
 	}
-	
+
 	@Override
 	public String toString() 
 	{   String s = "";
@@ -93,11 +95,12 @@ public class Solution {
 			s= s.concat(" paramedic amount: "+ r.getAmountParamedic());
 			s= s.concat("\n");
 			for(SubJobs j:r.getSubJobsList()) {	
-				s = s.concat(" ( Id" + j.getSubJobKey()+", A_"+j.getArrivalTime()+", B_"+j.getstartServiceTime()+", reqTime_"+j.getReqTime()+") ");}
+				s = s.concat(" ( " + j.getSubJobKey()+", A_"+j.getArrivalTime()+", B_"+j.getstartServiceTime()+" D_"+j.getDepartureTime()+", reqTime_"+j.getReqTime()+") ");}
 		}	
 	}
 	return s;
 	}
+
 
 }
 

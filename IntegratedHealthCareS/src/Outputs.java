@@ -5,11 +5,12 @@ import java.util.LinkedList;
 public class Outputs {
 	private LinkedList<SubRoute> subroutes;
 	private Solution initialSolution;
+	private Solution solution;
 
 
 	public Outputs(Algorithm algorithm) {
 		subroutes=algorithm.getSubroutes().getWalkingRoutes();
-		initialSolution=algorithm.getInitialSolution();
+		initialSolution=algorithm.getSolution();
 	}
 
 	/* AUXILIARY METHODS */
@@ -29,6 +30,8 @@ public class Outputs {
 		out.println("Driving Routes");
 		out.println("--------------------------------------------");
 		out.println("\n Initial solution \n");
+		out.println(initialSolution.toString() + "\r\n");
+		out.println("\n Best solution \n");
 		out.println(initialSolution.toString() + "\r\n");
 
 

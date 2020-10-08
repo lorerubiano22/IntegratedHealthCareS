@@ -20,7 +20,12 @@ public class SubJobs extends Jobs {
 	}
 
 	public SubJobs(Jobs j) {
-		super(j.getId(), j.getStartTime(), j.getEndTime(),j.getReqQualification(),j.getReqTime());
+		super(j);
+		this.setId(j.getId());
+		j.setStartTime(j.getStartTime());
+		j.setEndTime(j.getEndTime());
+		j.setReqQualification(j.getReqQualification());
+		j.setserviceTime(j.getReqTime());
 		this.setPatient(j.isPatient());
 		this.setClient(j.isClient());
 		this.setMedicalCentre(j.isMedicalCentre());

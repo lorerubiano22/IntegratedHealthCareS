@@ -14,6 +14,7 @@ public class Route {
 	private int passengers = 0; // route total demand
 	private double amountParamedics=0;// los paramedicos que salen del depot
 	private double homeCareStaff=0;// los paramedicos que salen del depot
+	private double driver=0;// los paramedicos que salen del depot
 	private HashMap<String, Edge> edges; // edges list
 	private LinkedList<Couple> jobsList= new LinkedList<Couple>(); // subjobs list (pick up and delivary)
 	private LinkedList<SubJobs> subJobsList=new LinkedList<SubJobs>(); // subjobs list (pick up and delivary)
@@ -32,10 +33,30 @@ public class Route {
 		passengers = r.getPassengers(); // route total demand
 		homeCareStaff=r.getHomeCareStaff();
 		amountParamedics=r.getAmountParamedic();
+		driver=r.getAmountDriver();
 		copyEdges(r.edges); // edges list
 		copyCouples(r.jobsList); // subjobs list (pick up and delivary)
 		copySubJobs(r.subJobsList); // subjobs list (pick up and delivary)
 		copyDirectories(r.getJobsDirectory());
+		copyPart(r.getPartsRoute());
+		if(r.schift!=null) {
+			
+			schift= new Schift(r.getSchiftRoute());
+		}
+		
+	}
+
+
+	private void copyPart(LinkedList<ArrayList<SubJobs>> partsRoute) {
+		partsList=new LinkedList<ArrayList<SubJobs>>();
+		for(ArrayList<SubJobs> part:partsRoute) {
+			ArrayList<SubJobs> copypart= new ArrayList<SubJobs>();
+			for(SubJobs n:part) {
+				Jobs formalJob=new Jobs(n);
+				copypart.add(new SubJobs(formalJob));
+			}
+			partsList.add(copypart);
+		}
 	}
 
 
@@ -99,11 +120,8 @@ public class Route {
 	public void setIdRoute(int idVehicle) { id=idVehicle;}
 	public void setHomeCareStaff(double homeCareStaff) {this.homeCareStaff = homeCareStaff;}
 	public void setAmountParamedic(double paramedic) {this.amountParamedics = paramedic;}
-	public void setSchiftRoute(Schift s) {schift=s;
-	for(ArrayList<SubJobs> a: schift.getRouteParts()) {
-		partsList.add(a);
-	}
-	}
+	public void setSchiftRoute(Schift s) {schift=s;}
+	public void setAmountDriver(double d) {this.driver = d;}
 
 
 	// Getters
@@ -122,6 +140,9 @@ public class Route {
 	public double getHomeCareStaff() {return homeCareStaff;}
 	public LinkedList<ArrayList<SubJobs>> getPartsRoute() {return partsList;}
 	public Schift getSchiftRoute() {return schift;}
+	public double getAmountDriver() {return driver;}
+
+	// Auxiliar methods
 
 	public void computeTravelTime(Inputs inp) {
 		double travelTimeDuration=0;
@@ -158,13 +179,14 @@ public class Route {
 		for(SubJobs nodeI:this.getSubJobsList()) {
 			this.positionJobs.put(nodeI.getSubJobKey(), nodeI);	
 		}
+
 	}
 
 	public void updateRoute(Inputs inp) {
 		// Consider the list of jobs positions
 		// reading part
 		subJobsList.clear();
-		
+
 		for(ArrayList<SubJobs> part:this.getPartsRoute()) {
 			for(SubJobs sj:part) {
 				subJobsList.add(sj);
@@ -182,8 +204,13 @@ public class Route {
 		this.setDurationRoute(subJobsList.get(subJobsList.size()-1).getDepartureTime()-subJobsList.get(0).getDepartureTime());
 		double idleTime=Math.max(0, (this.getDurationRoute()-duration));
 		this.setWaitingTime(this.getWaitingTime()+idleTime);
-		updatingJobsList();
+
+		updatingJobsList();	// actualizar la lista de directorio de trabajos
+
+
 	}
+
+
 
 
 	private void computeWaitingTime() {
@@ -211,11 +238,38 @@ public class Route {
 	s = s.concat("\nRuta demand:" + this.getPassengers());
 	s = s.concat("\njobs: ");
 	for(SubJobs j:this.subJobsList) {
-		s = s.concat("\nID " + j.getSubJobKey() + " arrival time "+ j.getArrivalTime()+ " departure time "+ j.getDepartureTime()+ " start service " + j.getstartServiceTime()+ " waiting time " + j.getWaitingTime());	
+		s = s.concat("\nID " + j.getSubJobKey() + " arrival time "+ j.getArrivalTime()+ " departure time "+ j.getDepartureTime()+ " start service time" + j.getstartServiceTime()+ " waiting time " + j.getWaitingTime());	
 	}
 	return s;
 	}
 
-	
+
+	public void removingParts(ArrayList<SubJobs> partToRemove) {
+		HashMap<String,SubJobs> toRmove= gettingNodeList(partToRemove);
+		boolean isThepartToRemove=false;
+		for(ArrayList<SubJobs> a:this.getPartsRoute()) {
+			for(SubJobs j:a) {
+				if(toRmove.containsKey(j.getSubJobKey())) {
+					isThepartToRemove=true;
+					break;
+				}
+			}
+			if(isThepartToRemove) {
+				this.getPartsRoute().remove(a);
+				break;
+			}
+		}
+	}
+
+
+	private HashMap<String, SubJobs> gettingNodeList(ArrayList<SubJobs> partToRemove) {
+		HashMap<String,SubJobs> toRmove= new HashMap<String,SubJobs> ();
+		for(SubJobs j:partToRemove) {
+			toRmove.put(j.getSubJobKey(), j);
+		}
+		return toRmove;
+	}
+
+
 
 }
