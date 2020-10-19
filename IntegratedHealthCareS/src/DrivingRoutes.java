@@ -51,14 +51,7 @@ public class DrivingRoutes {
 		// Shifts <- set of subjobs (pick up and drop-off: 1/2 people at a location:medical centre/patient home/ client home / depot )
 		// 1. Initial feasible solution
 		initialSol= createInitialSolution();
-
-
-
-		// TO DO 2. VNS
-		// TO DO Local search
-
-
-
+		solution= assigningRoutesToDrivers(initialSol);
 	}
 
 	private Solution createInitialSolution() {
@@ -71,22 +64,11 @@ public class DrivingRoutes {
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		insertingDepotConnections();
 		Solution initialSol= solutionInformation(); // this is the initial solution in which each personal has a vehicle assigned
-
-		assigningRoutesToDrivers(initialSol);
-		//downgradingsRoutes();
-		//crossingBetweenRoutes();
-		//		patientVehicleAssigment(); // assigment to the vehicle
-		//
-		//		clientVehicleAssigment();
-		//		clientVehicleAssigmentTW();
-		//		asignmentFutureJobs(); // FUTURE JOBS!!
-
-
 		return initialSol;
 	}
 
 
-	private void assigningRoutesToDrivers(Solution initialSol) {
+	private Solution assigningRoutesToDrivers(Solution initialSol) {
 		Solution copySolution= new Solution(initialSol);
 		changingDepartureTimes(copySolution);
 		LinkedList<ArrayList<SubJobs>> partsList=extractingParts(initialSol);
@@ -96,9 +78,13 @@ public class DrivingRoutes {
 		System.out.println(copySolution.toString());
 		System.out.println("end");
 		// falta modificar las horas de departure de acuerdo al vehículo y no al personal
-		Solution newSol= new Solution();// route of the vehicles
-		solution= mergingRoutes(copySolution,partsList); // las rutas se mezclan por partes
-	
+		Solution newSol= mergingRoutes(copySolution,partsList); // las rutas se mezclan por partes
+		System.out.println("printing initial solution");
+		System.out.println(initialSol.toString());
+		System.out.println("printing copy solution");
+		System.out.println(newSol.toString());
+		System.out.println("end");
+		return newSol;
 	}
 
 
@@ -139,9 +125,40 @@ public class DrivingRoutes {
 	}
 
 	private Solution mergingRoutes(Solution copySolution, LinkedList<ArrayList<SubJobs>> partsList) {
+
+
+		Solution Sol= interMergingParts(copySolution,partsList); // 1 merging parts (without complete parts)
+		updatingSolution(copySolution);
+		Solution newSol= intraMergingParts(Sol); // 2 merging parts (splited the parts)
+		updatingSolution(newSol);
+		return newSol;
+	}
+
+	private Solution intraMergingParts(Solution copySolution) {
+		// copiar la lista de las rutas a compiar
+		LinkedList<Route> copyRoute = new LinkedList<>();
+		for(Route r:copySolution.getRoutes()) {
+			copyRoute.add(r);
+		}
+		for(Route referenceRoute:copyRoute) {
+			for(Route toSplittedRoute:copyRoute) {
+				if(referenceRoute!=toSplittedRoute) {
+					
+					
+				}
+			}
+
+		}
+
+		Solution newSol= new Solution(copySolution);
+		return newSol;
+	}
+
+	private Solution interMergingParts(Solution copySolution, LinkedList<ArrayList<SubJobs>> partsList) {
+		// tengo que asegurar que la jornada laboral destinada al conductor sea mayor que la máxima jornada permitida
 		System.out.println(copySolution.toString());
-		for(int route1=0;route1<copySolution.getRoutes().size()-1;route1++) {
-			for(int route2=0;route2<copySolution.getRoutes().size()-1;route2++) {
+		for(int route1=0;route1<copySolution.getRoutes().size();route1++) {
+			for(int route2=0;route2<copySolution.getRoutes().size();route2++) {
 				int part=0;
 				int start=2;
 				Route vehicle= new Route();
@@ -159,7 +176,7 @@ public class DrivingRoutes {
 							vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(1));
 							for(part=start;part<refRoute.getPartsRoute().size();part++) {
 								inserted=isertingRoute(vehicle,toInsertRoute,refRoute);
-								if(!inserted) {
+								if(!inserted) { // insert part by part
 									vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(part));
 									vehicle.updateRoute(inp);
 								}
@@ -181,8 +198,7 @@ public class DrivingRoutes {
 				System.out.println(r.toString());
 			}
 		}
-		updatingSolution(copySolution);
-		return copySolution;
+		return null;
 	}
 
 	private void updatingSolution(Solution copySolution) {
@@ -194,6 +210,17 @@ public class DrivingRoutes {
 	}
 
 	private boolean insertionAllRoute(Route refRoute, Route toInsertRoute, Route vehicle, int part) {
+		boolean feasibleTimes= false;
+		boolean workingHours=lessThanMaxWorkingHours(refRoute,toInsertRoute);
+		if(workingHours) {
+			System.out.print("sTOP");
+			feasibleTimes=checkingTimeWindows(refRoute,toInsertRoute,vehicle,part);
+		}	
+
+		return feasibleTimes;
+	}
+
+	private boolean checkingTimeWindows(Route refRoute, Route toInsertRoute, Route vehicle, int part) {
 		boolean inserted=false;
 		int lastPart=refRoute.getPartsRoute().size()-1;// <- esta parte hace referencia al depot
 		SubJobs lastSubjobInRoute= refRoute.getPartsRoute().get(lastPart-1).get(refRoute.getPartsRoute().get(lastPart-1).size()-1);
@@ -208,6 +235,16 @@ public class DrivingRoutes {
 				vehicle.getPartsRoute().add(toInsertRoute.getPartsRoute().get(j));
 			}
 			vehicle.updateRoute(inp);
+		}
+		return inserted;
+	}
+
+	private boolean lessThanMaxWorkingHours(Route vehicle, Route toInsertRoute) {
+		boolean inserted=false;
+		SubJobs firstSubjobInRoute= vehicle.getPartsRoute().get(0).get(0);
+		SubJobs lastSubjobtoInsert= toInsertRoute.getPartsRoute().get(toInsertRoute.getPartsRoute().size()-1).get(0);
+		if(lastSubjobtoInsert.getArrivalTime()-firstSubjobInRoute.getDepartureTime()<test.getWorkingTime()) {
+			inserted=true;
 		}
 		return inserted;
 	}
@@ -312,10 +349,10 @@ public class DrivingRoutes {
 			// primer intenta insertar la parte de la otra ruta
 			SubJobs lastSubjobInRoute= vehicle.getPartsRoute().getLast().get(vehicle.getPartsRoute().getLast().size()-1);
 			SubJobs firstSubjob= toInsertRoute.getPartsRoute().get(i).get(0);
-			if(lastSubjobInRoute.getDepartureTime()>firstSubjob.getArrivalTime()) {
+			if(lastSubjobInRoute.getDepartureTime()<firstSubjob.getArrivalTime()) {
 				vehicle.getPartsRoute().add(toInsertRoute.getPartsRoute().get(i));
 				vehicle.updateRoute(inp);
-				System.out.println("Printing changing 2 " +changing.toString());
+				System.out.println("Printing changing 2 " +vehicle.toString());
 				changing.removingParts(toInsertRoute.getPartsRoute().get(i));
 				changing.updateRoute(inp);
 				System.out.println("Printing changing 1 " +changing.toString());

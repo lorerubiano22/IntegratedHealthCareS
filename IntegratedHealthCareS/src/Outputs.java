@@ -10,7 +10,8 @@ public class Outputs {
 
 	public Outputs(Algorithm algorithm) {
 		subroutes=algorithm.getSubroutes().getWalkingRoutes();
-		initialSolution=algorithm.getSolution();
+		initialSolution=algorithm.getInitialSolution();
+		solution=algorithm.getSolution();
 	}
 
 	/* AUXILIARY METHODS */
@@ -32,7 +33,7 @@ public class Outputs {
 		out.println("\n Initial solution \n");
 		out.println(initialSolution.toString() + "\r\n");
 		out.println("\n Best solution \n");
-		out.println(initialSolution.toString() + "\r\n");
+		out.println(solution.toString() + "\r\n");
 
 
 		// job | Arrival time | start time | qualification

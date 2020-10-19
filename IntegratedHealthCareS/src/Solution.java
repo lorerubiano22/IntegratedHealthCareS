@@ -95,7 +95,7 @@ public class Solution {
 			s= s.concat(" paramedic amount: "+ r.getAmountParamedic());
 			s= s.concat("\n");
 			for(SubJobs j:r.getSubJobsList()) {	
-				s = s.concat(" ( " + j.getSubJobKey()+", A_"+j.getArrivalTime()+", B_"+j.getstartServiceTime()+" D_"+j.getDepartureTime()+", reqTime_"+j.getReqTime()+") ");}
+				s = s.concat(" ( " + j.getSubJobKey()+", A_"+j.getArrivalTime()+", B_"+j.getstartServiceTime()+" D_"+j.getDepartureTime()+", reqTime_"+j.getReqTime()+") \n");}
 		}	
 	}
 	return s;
