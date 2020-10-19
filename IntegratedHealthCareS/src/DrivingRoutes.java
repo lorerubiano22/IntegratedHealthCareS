@@ -176,7 +176,7 @@ public class DrivingRoutes {
 							vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(0));
 							vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(1));
 							for(part=start;part<refRoute.getPartsRoute().size();part++) {
-								inserted=isertingRoute(vehicle,toInsertRoute,refRoute);
+								inserted=isertingRoute(vehicle,toInsertRoute,refRoute, part);
 								if(!inserted) { // insert part by part
 									vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(part));
 									vehicle.updateRoute(inp);
@@ -357,7 +357,7 @@ settingSolution(copySolution);
 		return refRoute;
 	}
 
-	private boolean isertingRoute(Route vehicle, Route toInsertRoute, Route refRoute) {
+	private boolean isertingRoute(Route vehicle, Route toInsertRoute, Route refRoute, int part2) {
 		boolean inserted=false;		
 		// Este metodo intena insertar las partes de la otra ruta. Siempre evalua las rutas que ya estan integradas en otro
 		Route changing= new Route(toInsertRoute);
