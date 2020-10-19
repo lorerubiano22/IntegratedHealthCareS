@@ -13,7 +13,7 @@ public class DrivingRoutes {
 	private  ArrayList<Route> routeList= new ArrayList<Route>(); // dummy routes
 	private  HashMap<Integer, Jobs> subJobs= new HashMap<>();
 	// variables para definir al ruta de un vehículo
-	private HashMap<String, ArrayList<SubJobs>>assignedShiftParts=new HashMap<>();
+	private HashMap<String, Parts>assignedShiftParts=new HashMap<>();
 	private  ArrayList<Route> routeVehicleList= new ArrayList<Route>(); // dummy routes
 	// computing walking hours
 	private double walkingTime=0;
@@ -26,9 +26,9 @@ public class DrivingRoutes {
 	private HashMap<String, SubJobs>assignedJobs=new HashMap<String, SubJobs>();
 	private HashMap<Integer, Jobs>jobsVehicle=new HashMap<Integer, Jobs>();
 	private HashMap<Integer, Jobs>checkedFutureJobs=new HashMap<Integer, Jobs>();
-	private ArrayList<ArrayList<SubJobs>> schift= new ArrayList<>();
+	private ArrayList<Parts> schift= new ArrayList<>();
 	private ArrayList<Schift>splittedSchift= new ArrayList<Schift>();
-	ArrayList<ArrayList<SubJobs>> qualificationParamedic= new ArrayList<>(); // turn for paramedics
+	ArrayList<Parts> qualificationParamedic= new ArrayList<>(); // turn for paramedics
 	ArrayList<ArrayList<SubJobs>> qualification1= new ArrayList<>();  // turn for home care staff 1
 	ArrayList<ArrayList<SubJobs>> qualification2= new ArrayList<>();  // turn for home care staff 2
 	ArrayList<ArrayList<SubJobs>> qualification3= new ArrayList<>();  // turn for home care staff 2
@@ -71,7 +71,7 @@ public class DrivingRoutes {
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
 		Solution copySolution= new Solution(initialSol);
 		changingDepartureTimes(copySolution);
-		LinkedList<ArrayList<SubJobs>> partsList=extractingParts(initialSol);
+		LinkedList<Parts> partsList=extractingParts(initialSol);
 		System.out.println("printing initial solution");
 		System.out.println(initialSol.toString());
 		System.out.println("printing copy solution");
@@ -91,7 +91,7 @@ public class DrivingRoutes {
 	private void changingDepartureTimes(Solution copySolution) {
 		// se cambian los departure times de cada subjob en cada parte
 		for(Route r:copySolution.getRoutes()) {
-			for(ArrayList<SubJobs> a:r.getPartsRoute()) {
+			for(Parts a:r.getPartsRoute()) {
 				changinPartTime(a);
 			}	
 			r.updateRoute(inp);
@@ -99,8 +99,8 @@ public class DrivingRoutes {
 
 	}
 
-	private void changinPartTime(ArrayList<SubJobs> a) {
-		for(SubJobs j:a) {
+	private void changinPartTime(Parts a) {
+		for(SubJobs j:a.getListSubJobs()) {
 			// if pick up time el tiempo cuenta
 			double departure=0;
 			if(j.isClient()) {
@@ -114,24 +114,24 @@ public class DrivingRoutes {
 
 	}
 
-	private LinkedList<ArrayList<SubJobs>> extractingParts(Solution initialSol2) {
-		LinkedList<ArrayList<SubJobs>> partsList= new LinkedList<>();
+	private LinkedList<Parts> extractingParts(Solution initialSol2) {
+		LinkedList<Parts> partsList= new LinkedList<>();
 		for(Route r:initialSol2.getRoutes()) {
-			for(ArrayList<SubJobs> part:r.getPartsRoute()) {
+			for(Parts part:r.getPartsRoute()) {
 				partsList.add(part);
 			}
 		}
 		return partsList;
 	}
 
-	private Solution mergingRoutes(Solution copySolution, LinkedList<ArrayList<SubJobs>> partsList) {
+	private Solution mergingRoutes(Solution copySolution, LinkedList<Parts> partsList) {
 
 
 		Solution Sol= interMergingParts(copySolution,partsList); // 1 merging parts (without complete parts)
 		updatingSolution(copySolution);
-		Solution newSol= intraMergingParts(Sol); // 2 merging parts (splited the parts)
-		updatingSolution(newSol);
-		return newSol;
+		//Solution newSol= intraMergingParts(Sol); // 2 merging parts (splited the parts)
+		//updatingSolution(newSol);
+		return Sol;
 	}
 
 	private Solution intraMergingParts(Solution copySolution) {
@@ -143,8 +143,8 @@ public class DrivingRoutes {
 		for(Route referenceRoute:copyRoute) {
 			for(Route toSplittedRoute:copyRoute) {
 				if(referenceRoute!=toSplittedRoute) {
-					
-					
+
+
 				}
 			}
 
@@ -154,7 +154,7 @@ public class DrivingRoutes {
 		return newSol;
 	}
 
-	private Solution interMergingParts(Solution copySolution, LinkedList<ArrayList<SubJobs>> partsList) {
+	private Solution interMergingParts(Solution copySolution, LinkedList<Parts> partsList) {
 		// tengo que asegurar que la jornada laboral destinada al conductor sea mayor que la máxima jornada permitida
 		System.out.println(copySolution.toString());
 		for(int route1=0;route1<copySolution.getRoutes().size();route1++) {
@@ -198,7 +198,8 @@ public class DrivingRoutes {
 				System.out.println(r.toString());
 			}
 		}
-		return null;
+		
+		return copySolution;
 	}
 
 	private void updatingSolution(Solution copySolution) {
@@ -223,8 +224,10 @@ public class DrivingRoutes {
 	private boolean checkingTimeWindows(Route refRoute, Route toInsertRoute, Route vehicle, int part) {
 		boolean inserted=false;
 		int lastPart=refRoute.getPartsRoute().size()-1;// <- esta parte hace referencia al depot
-		SubJobs lastSubjobInRoute= refRoute.getPartsRoute().get(lastPart-1).get(refRoute.getPartsRoute().get(lastPart-1).size()-1);
-		SubJobs firstSubjob= toInsertRoute.getPartsRoute().get(1).get(0);
+		//	.getListSubJobs().get(0);
+		Parts partEnd=refRoute.getPartsRoute().get(lastPart-1);
+		SubJobs lastSubjobInRoute= partEnd.getListSubJobs().get(partEnd.getListSubJobs().size()-1);
+		SubJobs firstSubjob= toInsertRoute.getPartsRoute().get(1).getListSubJobs().get(0);
 		if(lastSubjobInRoute.getDepartureTime()<firstSubjob.getArrivalTime()) {
 			part=refRoute.getPartsRoute().size();
 			inserted=true;
@@ -241,8 +244,8 @@ public class DrivingRoutes {
 
 	private boolean lessThanMaxWorkingHours(Route vehicle, Route toInsertRoute) {
 		boolean inserted=false;
-		SubJobs firstSubjobInRoute= vehicle.getPartsRoute().get(0).get(0);
-		SubJobs lastSubjobtoInsert= toInsertRoute.getPartsRoute().get(toInsertRoute.getPartsRoute().size()-1).get(0);
+		SubJobs firstSubjobInRoute= vehicle.getPartsRoute().get(0).getListSubJobs().get(0);
+		SubJobs lastSubjobtoInsert= toInsertRoute.getPartsRoute().get(toInsertRoute.getPartsRoute().size()-1).getListSubJobs().get(0);
 		if(lastSubjobtoInsert.getArrivalTime()-firstSubjobInRoute.getDepartureTime()<test.getWorkingTime()) {
 			inserted=true;
 		}
@@ -332,7 +335,7 @@ public class DrivingRoutes {
 		// el objetivo es dejar que la ruta refRoute sólo tenga partes contenidas en la ruta de vehicle
 
 		for(int index=1;index<vehicle.getPartsRoute().size()-1;index++) {// no se considera el depot
-			ArrayList<SubJobs> j=vehicle.getPartsRoute().get(index);
+			Parts j=vehicle.getPartsRoute().get(index);
 			if(vehicle.getPartsRoute().contains(j)) {
 				refRoute.getPartsRoute().remove(j);
 			}
@@ -347,8 +350,9 @@ public class DrivingRoutes {
 		Route changing= new Route(toInsertRoute);
 		for(int i=1;i<toInsertRoute.getPartsRoute().size()-1;i++) { // -1 para no incluir el depot al final
 			// primer intenta insertar la parte de la otra ruta
-			SubJobs lastSubjobInRoute= vehicle.getPartsRoute().getLast().get(vehicle.getPartsRoute().getLast().size()-1);
-			SubJobs firstSubjob= toInsertRoute.getPartsRoute().get(i).get(0);
+			Parts endPart=vehicle.getPartsRoute().getLast();
+			SubJobs lastSubjobInRoute= endPart.getListSubJobs().get(endPart.getListSubJobs().size()-1);
+			SubJobs firstSubjob= toInsertRoute.getPartsRoute().get(i).getListSubJobs().get(0);
 			if(lastSubjobInRoute.getDepartureTime()<firstSubjob.getArrivalTime()) {
 				vehicle.getPartsRoute().add(toInsertRoute.getPartsRoute().get(i));
 				vehicle.updateRoute(inp);
@@ -362,7 +366,7 @@ public class DrivingRoutes {
 			}
 		}
 		toInsertRoute.getPartsRoute().clear();
-		for(ArrayList<SubJobs>part:changing.getPartsRoute()) {
+		for(Parts part:changing.getPartsRoute()) {
 			toInsertRoute.getPartsRoute().add(part);
 		}
 		toInsertRoute.updateRoute(inp);
@@ -377,7 +381,9 @@ public class DrivingRoutes {
 		System.out.println("printing parts JR");
 		printing(jR.getPartsRoute().get(0));
 		printing(jR.getPartsRoute().get(1));
-		if(iR.getPartsRoute().get(1).get(0).getstartServiceTime()> jR.getPartsRoute().get(1).get(0).getstartServiceTime()) {
+
+
+		if(iR.getPartsRoute().get(1).getListSubJobs().get(0).getstartServiceTime()> jR.getPartsRoute().get(1).getListSubJobs().get(0).getstartServiceTime()) {
 			return iR;
 		}
 		else {
@@ -394,7 +400,7 @@ public class DrivingRoutes {
 		System.out.println("printing parts JR");
 		printing(jR.getPartsRoute().get(0));
 		printing(jR.getPartsRoute().get(1));
-		if(iR.getPartsRoute().get(1).get(0).getstartServiceTime()> jR.getPartsRoute().get(1).get(0).getstartServiceTime()) {
+		if(iR.getPartsRoute().get(1).getListSubJobs().get(0).getstartServiceTime()> jR.getPartsRoute().get(1).getListSubJobs().get(0).getstartServiceTime()) {
 			return jR;
 		}
 		else {
@@ -561,8 +567,8 @@ public class DrivingRoutes {
 			for(Route r:routeVehicleList) {
 				i++;
 				System.out.println("route " + i);
-				for(ArrayList<SubJobs> route: r.getPartsRoute()) {
-					for(SubJobs j: route) {
+				for(Parts route: r.getPartsRoute()) {
+					for(SubJobs j: route.getListSubJobs()) {
 						System.out.println("SubJobs "+ j.getSubJobKey()+ " arrival "+j.getArrivalTime()+ " Start Service"+ j.getstartServiceTime() + "Total people" +j.getTotalPeople());
 					}
 				}
@@ -574,7 +580,7 @@ public class DrivingRoutes {
 		for(Schift turn:splittedSchift) {//1. intentar las cabezas de cada ruta
 
 			System.out.println("turn " + turn.toString());
-			for(ArrayList<SubJobs> route: turn.getRouteParts()) {
+			for(Parts route: turn.getRouteParts()) {
 				printing(route);
 			}
 			insertingParts(turn); // the heading of each route has been already inserted
@@ -583,8 +589,8 @@ public class DrivingRoutes {
 			for(Route r:routeVehicleList) {
 				i++;
 				System.out.println("route " + i);
-				for(ArrayList<SubJobs> route: r.getPartsRoute()) {
-					for(SubJobs j: route) {
+				for(Parts route: r.getPartsRoute()) {
+					for(SubJobs j: route.getListSubJobs()) {
 						System.out.println("SubJobs "+ j.getSubJobKey()+ " arrival "+j.getstartServiceTime()+ " Start Service"+ j.getStartTime() + "Total people" +j.getTotalPeople());
 					}
 				}
@@ -601,18 +607,18 @@ public class DrivingRoutes {
 		for(Route r: routeVehicleList) { // the turn is inserted by parts
 			printingPartRoute(r);
 			int i=-1;
-			for(ArrayList<SubJobs> part:turn.getRouteParts()) { // tan pronto se inserta una parte entonces se continua con la siguiente hasta que todos los turnos sean asignados a un vehículo
+			for(Parts part:turn.getRouteParts()) { // tan pronto se inserta una parte entonces se continua con la siguiente hasta que todos los turnos sean asignados a un vehículo
 				i++;
-				int sizePart=part.size();
+				int sizePart=part.getListSubJobs().size();
 				//if(!assignedShiftParts.containsValue(part) &&part.get(sizePart-1).getId()!=1) {
 				if(!assignedShiftParts.containsValue(part)) {
 					printing(part);
 					String key= "T"+turn.getId()+"P"+i;
 					int lastPartAssigned=r.getPartsRoute().size()-1;
-					ArrayList<SubJobs> lastPart=r.getPartsRoute().get(lastPartAssigned);
-					int lastSubJobAssigned=lastPart.size()-1;
-					SubJobs lastSubJob= lastPart.get(lastSubJobAssigned); 	// 1. Seleccionar el ultimo trabajo de la ruta
-					SubJobs firtSubJobToInsert=part.get(0); // the first job- index 0 is the depot
+					Parts lastPart=r.getPartsRoute().get(lastPartAssigned);
+					int lastSubJobAssigned=lastPart.getListSubJobs().size()-1;
+					SubJobs lastSubJob= lastPart.getListSubJobs().get(lastSubJobAssigned); 	// 1. Seleccionar el ultimo trabajo de la ruta
+					SubJobs firtSubJobToInsert=part.getListSubJobs().get(0); // the first job- index 0 is the depot
 					merging=driverSchedulle(r,part);//check<- el primer trabajo de la ruta con respecto al ultimo trabajo de la parte no debe exceder las 8 horas de trabajo
 					if(merging) {
 						// intentar insertando respentando los tiempos máximos de espera.
@@ -629,12 +635,10 @@ public class DrivingRoutes {
 							if(merging) {
 								movingTimeShiftMiddlePart(firtSubJobToInsert,turn);
 								//movingTimeShift(firtSubJobToInsert,turn);
-								ArrayList<SubJobs> newPart1=new ArrayList<SubJobs>();
-								for(int j=0;j<part.size();j++) {
-									newPart1.add(part.get(j));
-								}
-								r.getPartsRoute().add(newPart1);
-								assignedShiftParts.put(key,newPart1);
+								Parts newPart=new Parts(part);
+
+								r.getPartsRoute().add(newPart);
+								assignedShiftParts.put(key,newPart);
 								System.out.println("final Route ");
 								printingPartRoute(r);
 								break;
@@ -646,18 +650,18 @@ public class DrivingRoutes {
 		}
 	}
 
-	private boolean driverSchedulle(Route r, ArrayList<SubJobs> part) {
+	private boolean driverSchedulle(Route r, Parts part) {
 		boolean workingTime=false;
 		// considerar la hora en la que el vehículo llega al dept
-		SubJobs lastJobsPart=part.get(part.size()-1);
+		SubJobs lastJobsPart=part.getListSubJobs().get(part.getListSubJobs().size()-1);
 		/////////////////
 		// start of the route
-		SubJobs startJobsRoute=r.getPartsRoute().get(0).get(0);
+		SubJobs startJobsRoute=r.getPartsRoute().get(0).getListSubJobs().get(0);
 		// end of the route
 		int longRoute=r.getPartsRoute().size();
-		ArrayList<SubJobs> lastPart=r.getPartsRoute().get(longRoute-1);
-		int longLastPart=lastPart.size();
-		SubJobs lastJobPart=lastPart.get(longLastPart-1);
+		Parts lastPart=r.getPartsRoute().get(longRoute-1);
+		int longLastPart=lastPart.getListSubJobs().size();
+		SubJobs lastJobPart=lastPart.getListSubJobs().get(longLastPart-1);
 		//// travel time	
 		double tv= inp.getCarCost().getCost(lastJobPart.getId()-1, 0);
 		///
@@ -683,8 +687,8 @@ public class DrivingRoutes {
 
 
 	private void printingPartRoute(Route r) {
-		for(ArrayList<SubJobs> route: r.getPartsRoute()) {
-			for(SubJobs j: route) {
+		for(Parts route: r.getPartsRoute()) {
+			for(SubJobs j: route.getListSubJobs()) {
 				System.out.println("SubJobs "+ j.getSubJobKey()+ " arrival "+j.getArrivalTime()+ " Start Service"+ j.getstartServiceTime());
 			}
 		}
@@ -696,10 +700,10 @@ public class DrivingRoutes {
 			System.out.println("iluminame espiritu Santo");
 			printingPartRoute(r);
 			int lastPartAssigned=r.getPartsRoute().size()-1;
-			ArrayList<SubJobs> lastPart=r.getPartsRoute().get(lastPartAssigned);
-			int lastSubJobAssigned=lastPart.size()-1;
-			SubJobs lastSubJob= lastPart.get(lastSubJobAssigned); 	// 1. Seleccionar el ultimo trabajo de la ruta
-			SubJobs firtSubJobToInsert=turn.getRouteParts().get(0).get(1); // the first job- index 0 is the depot
+			Parts lastPart=r.getPartsRoute().get(lastPartAssigned);
+			int lastSubJobAssigned=lastPart.getListSubJobs().size()-1;
+			SubJobs lastSubJob= lastPart.getListSubJobs().get(lastSubJobAssigned); 	// 1. Seleccionar el ultimo trabajo de la ruta
+			SubJobs firtSubJobToInsert=turn.getRouteParts().get(0).getListSubJobs().get(1); // the first job- index 0 is the depot
 			// 1. Max detour
 			merging=checkingDetour(r,lastSubJob,firtSubJobToInsert); // as soon as the maximum detour constraint is met
 			if(merging) {
@@ -717,16 +721,19 @@ public class DrivingRoutes {
 				// 1. Updating the shift time
 				movingTimeShift(firtSubJobToInsert,turn);
 				System.out.println("turn " + turn.toString());
-				for(ArrayList<SubJobs> route: turn.getRouteParts()) {
+				for(Parts route: turn.getRouteParts()) {
 					printing(route);
 				}
 				printingShift(turn);
 				ArrayList<SubJobs> newPart1=new ArrayList<SubJobs>();
-				for(int i=1;i<turn.getRouteParts().get(0).size();i++) {
-					System.out.println("inf job "+turn.getRouteParts().get(0).get(i).toString());
-					newPart1.add(turn.getRouteParts().get(0).get(i));
+				Parts newParts=new Parts();
+				for(int i=1;i<turn.getRouteParts().get(0).getListSubJobs().size();i++) {
+
+					System.out.println("inf job "+turn.getRouteParts().get(0).getListSubJobs().get(i).toString());
+					newPart1.add(turn.getRouteParts().get(0).getListSubJobs().get(i));
 				}
-				r.getPartsRoute().add(newPart1);
+				newParts.setListSubJobs(newPart1);
+				r.getPartsRoute().add(newParts);
 				System.out.println("route ");
 				printingPartRoute(r);
 				///
@@ -740,8 +747,8 @@ public class DrivingRoutes {
 			routeVehicleList.add(newRoute);
 
 			System.out.println("route ");
-			for(ArrayList<SubJobs> route: newRoute.getPartsRoute()) {
-				for(SubJobs j: route) {
+			for(Parts route: newRoute.getPartsRoute()) {
+				for(SubJobs j: route.getListSubJobs()) {
 					System.out.println("SubJobs "+ j.getSubJobKey()+ " arrival "+j.getArrivalTime()+ " Start Service"+ j.getStartTime());
 				}
 			}	
@@ -771,8 +778,8 @@ public class DrivingRoutes {
 	}
 
 	private void changingStartEndServiceTime(Schift turn) {
-		for(ArrayList<SubJobs> part:turn.getRouteParts()) {
-			for(SubJobs subjob:part) {
+		for(Parts part:turn.getRouteParts()) {
+			for(SubJobs subjob:part.getListSubJobs()) {
 				double arrivalTime=subjob.getArrivalTime();
 				double additionalTime=computeAdditionalTime(subjob);
 				double startServiceTime=Math.max(subjob.getStartTime(),(arrivalTime+additionalTime));	// setting start service time
@@ -785,9 +792,9 @@ public class DrivingRoutes {
 
 
 	private void changingStartEndServiceTimeMiddleParts(SubJobs firtSubJobToInsert, Schift turn) {
-		for(ArrayList<SubJobs> part:turn.getRouteParts()) {
-			if(part.get(0).getSubJobKey().equals(firtSubJobToInsert.getSubJobKey())) {
-				for(SubJobs subjob:part) {
+		for(Parts part:turn.getRouteParts()) {
+			if(part.getListSubJobs().get(0).getSubJobKey().equals(firtSubJobToInsert.getSubJobKey())) {
+				for(SubJobs subjob:part.getListSubJobs()) {
 					double arrivalTime=subjob.getArrivalTime();
 					double additionalTime=computeAdditionalTime(subjob);
 					double startServiceTime=Math.max(subjob.getStartTime(),(arrivalTime+additionalTime));	// setting start service time
@@ -816,18 +823,18 @@ public class DrivingRoutes {
 		// remaining part of the shift
 		int refPart=0;
 		for(int i=0;i<turn.getRouteParts().size();i++) {// iterar sobre las partes
-			ArrayList<SubJobs> currentList= turn.getRouteParts().get(i);	// Calling the first part of the turn
+			Parts currentList= turn.getRouteParts().get(i);	// Calling the first part of the turn
 			refPart++;
-			if(currentList.get(0).getSubJobKey().equals(firtSubJobToInsert.getSubJobKey())) {
+			if(currentList.getListSubJobs().get(0).getSubJobKey().equals(firtSubJobToInsert.getSubJobKey())) {
 				computingNewTimes(firtSubJobToInsert,currentList);
 				break;
 			}
 		}
 		for(int i=refPart+1;i<turn.getRouteParts().size();i++) {// iterar sobre las partes
-			ArrayList<SubJobs> currentList= turn.getRouteParts().get(i);	// Calling the first part of the turn
-			ArrayList<SubJobs> preList= turn.getRouteParts().get(i-1);	// Calling the first part of the turn
-			int size=preList.size()-1;
-			SubJobs lastSubJobs=preList.get(size);
+			Parts currentList= turn.getRouteParts().get(i);	// Calling the first part of the turn
+			Parts preList= turn.getRouteParts().get(i-1);	// Calling the first part of the turn
+			int size=preList.getListSubJobs().size()-1;
+			SubJobs lastSubJobs=preList.getListSubJobs().get(size);
 			computingTimes(lastSubJobs,currentList);
 		}
 		printingShift(turn);
@@ -848,14 +855,14 @@ public class DrivingRoutes {
 	//		}
 	//	}
 
-	private void computingNewTimes(SubJobs firtSubJobToInsert, ArrayList<SubJobs> currentList) {
-		SubJobs job=currentList.get(0);
+	private void computingNewTimes(SubJobs firtSubJobToInsert, Parts currentList) {
+		SubJobs job=currentList.getListSubJobs().get(0);
 		job.setarrivalTime(firtSubJobToInsert.getArrivalTime());
 		job.setdepartureTime(firtSubJobToInsert.getDepartureTime());
 		double departureTimeLast=firtSubJobToInsert.getDepartureTime();
-		for(int i=1; i<currentList.size();i++) {
-			job=currentList.get(i);
-			double tv=inp.getCarCost().getCost(currentList.get(i-1).getId()-1, job.getId()-1);
+		for(int i=1; i<currentList.getListSubJobs().size();i++) {
+			job=currentList.getListSubJobs().get(i);
+			double tv=inp.getCarCost().getCost(currentList.getListSubJobs().get(i-1).getId()-1, job.getId()-1);
 			double arrivalTime=departureTimeLast+tv;	
 			job.setarrivalTime(arrivalTime);
 			computeStartEndServiceTime(job);
@@ -876,10 +883,10 @@ public class DrivingRoutes {
 
 	private void printingShift(Schift turn) {
 		int i=-1;
-		for(ArrayList<SubJobs> part:turn.getRouteParts()) {
+		for(Parts part:turn.getRouteParts()) {
 			i++;
 			System.out.println("part "+i);
-			for(SubJobs j:part) {
+			for(SubJobs j:part.getListSubJobs()) {
 				System.out.println("Subjob "+j.getSubJobKey() +" arrival  " +j.getArrivalTime()+" service time " +j.getstartServiceTime());
 			}
 		}
@@ -891,19 +898,19 @@ public class DrivingRoutes {
 		//SubJobs lastSubJobs=jobList.get(size-1); // calling the last subjobs
 
 		for(int i=1;i<turn.getRouteParts().size();i++) {// iterar sobre las partes
-			ArrayList<SubJobs> currentList= turn.getRouteParts().get(i);	// Calling the first part of the turn
-			ArrayList<SubJobs> preList= turn.getRouteParts().get(i-1);	// Calling the first part of the turn
-			int size=preList.size()-1;
-			SubJobs lastSubJobs=preList.get(size);
+			Parts currentList= turn.getRouteParts().get(i);	// Calling the first part of the turn
+			Parts preList= turn.getRouteParts().get(i-1);	// Calling the first part of the turn
+			int size=preList.getListSubJobs().size()-1;
+			SubJobs lastSubJobs=preList.getListSubJobs().get(size);
 			computingTimes(lastSubJobs,currentList);
 			System.out.println("el senor esta conmigo");
 		}
 	}
 
-	private void computingTimes(SubJobs lastSubJobs, ArrayList<SubJobs> currentList) {
+	private void computingTimes(SubJobs lastSubJobs, Parts currentList) {
 		double departureTimeLast=lastSubJobs.getDepartureTime();
-		for(int i=0; i<currentList.size();i++) {
-			SubJobs job=currentList.get(i);
+		for(int i=0; i<currentList.getListSubJobs().size();i++) {
+			SubJobs job=currentList.getListSubJobs().get(i);
 			double tv=inp.getCarCost().getCost(lastSubJobs.getId()-1, job.getId()-1);
 			double arrivalTime=departureTimeLast+tv;	
 			job.setarrivalTime(arrivalTime);
@@ -914,16 +921,16 @@ public class DrivingRoutes {
 	}
 
 	private void computingFirstPart(SubJobs firtSubJobToInsert, Schift turn) {
-		ArrayList<SubJobs> jobList= turn.getRouteParts().get(0); 
+		Parts jobList= turn.getRouteParts().get(0); 
 		// setting the time for the first job
-		SubJobs iNode=jobList.get(1);
+		SubJobs iNode=jobList.getListSubJobs().get(1);
 		iNode.setarrivalTime(firtSubJobToInsert.getArrivalTime());
 		computeStartEndServiceTime(iNode);
 		double departureTimePreviousJob=iNode.getDepartureTime();
-		for(int i=2; i<jobList.size();i++){
-			iNode=jobList.get(i-1);
+		for(int i=2; i<jobList.getListSubJobs().size();i++){
+			iNode=jobList.getListSubJobs().get(i-1);
 			departureTimePreviousJob=iNode.getDepartureTime();
-			SubJobs jNode=jobList.get(i);
+			SubJobs jNode=jobList.getListSubJobs().get(i);
 			double tv=inp.getCarCost().getCost(iNode.getId()-1, jNode.getId()-1);
 			double arrivalTime=departureTimePreviousJob+tv;
 			jNode.setarrivalTime(arrivalTime);
@@ -1003,21 +1010,21 @@ public class DrivingRoutes {
 
 	private void insertingHeadingPart(Route r, Schift turn, SubJobs lastSubJob) {
 		// 2. inserting the jobs of the first part
-		ArrayList<SubJobs> jobsList=turn.getRoute().getPartsRoute().get(0);
-		ArrayList<SubJobs> jobsListToInsert=turn.getRoute().getPartsRoute().get(0);
-		for(int job=1;job<jobsList.size();job++) {
-			SubJobs j=jobsList.get(job);
-			jobsListToInsert.add(j);
+		Parts jobsList=turn.getRoute().getPartsRoute().get(0);
+		Parts jobsListToInsert=turn.getRoute().getPartsRoute().get(0);
+		for(int job=1;job<jobsList.getListSubJobs().size();job++) {
+			SubJobs j=jobsList.getListSubJobs().get(job);
+			jobsListToInsert.getListSubJobs().add(j);
 		}
 		r.getPartsRoute().add(jobsListToInsert);
 	}
 	private void insertingPart(Route r, Schift turn, SubJobs lastSubJob) {
 		// 2. inserting the jobs of the first part
-		ArrayList<SubJobs> jobsList=turn.getRoute().getPartsRoute().get(0);
-		ArrayList<SubJobs> jobsListToInsert=turn.getRoute().getPartsRoute().get(0);
-		for(int job=0;job<jobsList.size();job++) {
-			SubJobs j=jobsList.get(job);
-			jobsListToInsert.add(j);
+		Parts jobsList=turn.getRoute().getPartsRoute().get(0);
+		Parts jobsListToInsert=turn.getRoute().getPartsRoute().get(0);
+		for(int job=0;job<jobsList.getListSubJobs().size();job++) {
+			SubJobs j=jobsList.getListSubJobs().get(job);
+			jobsListToInsert.getListSubJobs().add(j);
 		}
 		r.getPartsRoute().add(jobsListToInsert);
 
@@ -1091,10 +1098,10 @@ public class DrivingRoutes {
 
 	private double computeDistanceRotue(Route r) {
 		double distance=0;
-		for(ArrayList<SubJobs> part:r.getPartsRoute()) {
-			for(int i=1;i<part.size();i++) {
-				SubJobs iNode=part.get(i-1);
-				SubJobs jNode=part.get(i);
+		for(Parts part:r.getPartsRoute()) {
+			for(int i=1;i<part.getListSubJobs().size();i++) {
+				SubJobs iNode=part.getListSubJobs().get(i-1);
+				SubJobs jNode=part.getListSubJobs().get(i);
 				double tv=inp.getCarCost().getCost(iNode.getId()-1, jNode.getId()-1);
 				distance+=tv;
 			}
@@ -1282,10 +1289,10 @@ public class DrivingRoutes {
 
 	private void printingTurn(Schift s) {
 		int i=-1 ;// part of the turn
-		for(ArrayList<SubJobs> j:s.getRouteParts()) {	
+		for(Parts j:s.getRouteParts()) {	
 			i++;
 			System.out.println("Part "+ i);
-			for(SubJobs jb:j) {
+			for(SubJobs jb:j.getListSubJobs()) {
 				System.out.println("subjob "+ jb.getSubJobKey()+ "arival "+ jb.getArrivalTime()+ "Start_service " + jb.getstartServiceTime()+ "  " );
 			}
 		}
@@ -1335,12 +1342,12 @@ public class DrivingRoutes {
 		//	ArrayList<ArrayList<Jobs>> qualification3= assigmentHighQualification(q3,clasification3);
 
 		//Qualification level =0
-		ArrayList<ArrayList<SubJobs>> qualification0= assigmentParamedic(q0,clasification0);
+		ArrayList<Parts> qualification0= assigmentParamedic(q0,clasification0);
 
 		//Qualification level from 1 to 3
-		ArrayList<ArrayList<SubJobs>> qualification1= assigmentParamedic(q1,clasification1); // here are not considering working hours
-		ArrayList<ArrayList<SubJobs>> qualification2= assigmentParamedic(q2,clasification2);
-		ArrayList<ArrayList<SubJobs>> qualification3= assigmentParamedic(q3,clasification3);
+		ArrayList<Parts> qualification1= assigmentParamedic(q1,clasification1); // here are not considering working hours
+		ArrayList<Parts> qualification2= assigmentParamedic(q2,clasification2);
+		ArrayList<Parts> qualification3= assigmentParamedic(q3,clasification3);
 
 
 		//downgradings(qualification3,qualification2); //No se considera porque no es tan facil controlar el tiempo de trabajo
@@ -1349,31 +1356,50 @@ public class DrivingRoutes {
 
 		// 4. Savings los turnos
 		// paramedics
-		for(ArrayList<SubJobs> schifts:qualification0) {
-			if(!schifts.isEmpty()) {
-				schift.add(schifts);
+		Parts newParts= null;
+		for(Parts schifts:qualification0) {
+			if(!schifts.getListSubJobs().isEmpty()) {
+				newParts= new Parts(schifts);
 			}
-		}
-		// home care staff
-		for(ArrayList<SubJobs> schifts:qualification1) {
-			if(!schifts.isEmpty()) {
-				schift.add(schifts);
+			if(newParts!=null) {
+				schift.add(newParts);
 			}
 		}
 
-		for(ArrayList<SubJobs> schifts:qualification2) {
-			if(!schifts.isEmpty()) {
-				schift.add(schifts);
+
+
+
+		// home care staff
+		for(Parts schifts:qualification1) {
+			if(!schifts.getListSubJobs().isEmpty()) {
+				newParts= new Parts(schifts);
+			}
+			if(newParts!=null) {
+				schift.add(newParts);
 			}
 		}
-		for(ArrayList<SubJobs> schifts:qualification3) {
-			if(!schifts.isEmpty()) {
-				schift.add(schifts);
+
+
+
+		for(Parts schifts:qualification2) {
+			if(!schifts.getListSubJobs().isEmpty()) {
+				newParts= new Parts(schifts);
+			}
+			if(newParts!=null) {
+				schift.add(newParts);
+			}
+		}
+		for(Parts schifts:qualification3) {
+			if(!schifts.getListSubJobs().isEmpty()) {
+				newParts= new Parts(schifts);
+			}
+			if(newParts!=null) {
+				schift.add(newParts);
 			}
 		}
 		System.out.println("all turns");
 		int i=-1;
-		for(ArrayList<SubJobs> s:schift) {
+		for(Parts s:schift) {
 			i++;
 			System.out.println("turn "+i);
 			printing(s);
@@ -1463,7 +1489,7 @@ public class DrivingRoutes {
 
 	private void insertingDepotConnections() {
 		// 1. each turn is a route
-		for(ArrayList<SubJobs> turn:schift ) { // cada turno se convertira en una ruta
+		for(Parts turn:schift ) { // cada turno se convertira en una ruta
 			makeTurnInRoute(turn);
 		}
 		// 2. compute the the start and end time of route
@@ -1510,7 +1536,7 @@ public class DrivingRoutes {
 
 	private void computeEndTimeRoute(SubJobs lastJob, Route r) {
 		// 1. Compute travel time
-		SubJobs depot=r.getPartsRoute().get(r.getPartsRoute().size()-1).get(0);
+		SubJobs depot=r.getPartsRoute().get(r.getPartsRoute().size()-1).getListSubJobs().get(0);
 		double tv=inp.getCarCost().getCost(lastJob.getId()-1, depot.getId()-1);
 		double arrivalTime=	lastJob.getDepartureTime()+tv;
 		depot.setarrivalTime(arrivalTime);
@@ -1523,7 +1549,7 @@ public class DrivingRoutes {
 
 	private void computeStartTimeRoute(SubJobs firstJob, Route r) {
 		// 1. Compute travel time
-		SubJobs depot=r.getPartsRoute().get(0).get(0);
+		SubJobs depot=r.getPartsRoute().get(0).getListSubJobs().get(0);
 		double tv=inp.getCarCost().getCost(depot.getId()-1,firstJob.getId()-1);
 		double arrivalTime=	firstJob.getArrivalTime()-tv-test.getloadTimeHomeCareStaff();
 		depot.setarrivalTime(arrivalTime);
@@ -1533,7 +1559,7 @@ public class DrivingRoutes {
 		System.out.println(r.toString());
 	}
 
-	private void makeTurnInRoute(ArrayList<SubJobs> turn) { // crea tantas rutas como son posibles
+	private void makeTurnInRoute(Parts turn) { // crea tantas rutas como son posibles
 		// la creación de estas rutas lo que hace es identificar las partes de cada turno
 		// pero en esencia sólo deberia agregar el deport
 		System.out.println(turn.toString());
@@ -1548,34 +1574,38 @@ public class DrivingRoutes {
 		partStart.add(depotStart);
 
 		partEnd.add(depotEnd);
+		Parts partObject= new Parts();
 		Route r= new Route();
 		routeList.add(r);
-		r.getPartsRoute().add(partStart);
+		partObject.setListSubJobs(partStart);
+		r.getPartsRoute().add(partObject);
 
 		// 1. hacer las partes
 		double passengers=1;
 		ArrayList<SubJobs> part= new ArrayList<SubJobs>();
-
 		part= new ArrayList<SubJobs>();
-		r.getPartsRoute().add(part);
-		for(int i=0;i<turn.size();i++) {
-			SubJobs sj=turn.get(i);
+		partObject= new Parts();
+		r.getPartsRoute().add(partObject);
+		for(int i=0;i<turn.getListSubJobs().size();i++) {
+			SubJobs sj=turn.getListSubJobs().get(i);
 			passengers+=sj.getTotalPeople();
 			if(passengers!=0) {
-				part.add(sj);
-				if(i==turn.size()-1) {
+				partObject.getListSubJobs().add(sj);
+				if(i==turn.getListSubJobs().size()-1) {
 					r.updateRoute(inp);
 					System.out.println(r.toString());
 				}
 			}
 			else {
-				part.add(sj);
-				part= new ArrayList<SubJobs>();
-				r.getPartsRoute().add(part);
+				partObject.getListSubJobs().add(sj);
+				partObject= new Parts();
+				r.getPartsRoute().add(partObject);
 				System.out.println(r.toString());
 			}		
 		}
-		r.getPartsRoute().add(partEnd);
+		partObject= new Parts();
+		partObject.setListSubJobs(partEnd);
+		r.getPartsRoute().add(partObject);
 		r.updateRoute(inp);
 
 		System.out.println("Route");
@@ -1746,15 +1776,15 @@ public class DrivingRoutes {
 
 
 
-	private ArrayList<ArrayList<SubJobs>> assigmentParamedic(int q3, ArrayList<Jobs> clasification3) { // return the list of subJobs
+	private ArrayList<Parts> assigmentParamedic(int q3, ArrayList<Jobs> clasification3) { // return the list of subJobs
 		qualificationParamedic= new ArrayList<> (q3);
 		for(int i=0;i<q3;i++) {
-			ArrayList<SubJobs> schift=new ArrayList<>();
-			qualificationParamedic.add(schift);
+			Parts newPart=new Parts();
+			qualificationParamedic.add(newPart);
 		}
 		// se guarda los schift
 		for(Jobs j:clasification3) { // iterate over jobs
-			for(ArrayList<SubJobs> paramedic:qualificationParamedic) {
+			for(Parts paramedic:qualificationParamedic) {
 				System.out.println(" Turn ");
 				printing(paramedic);
 				boolean insertion=possibleInsertion(j,paramedic);
@@ -1767,15 +1797,15 @@ public class DrivingRoutes {
 	}
 
 
-	private void printing(ArrayList<SubJobs> paramedic) {
-		for(SubJobs j:paramedic) {
+	private void printing(Parts paramedic) {
+		for(SubJobs j:paramedic.getListSubJobs()) {
 			System.out.println(j.getSubJobKey()+" arrival "+ j.getArrivalTime()+" start time "+ j.getstartServiceTime()+ "req time " + j.getReqTime());
 		}
 	}
 
-	private boolean possibleInsertion(Jobs j, ArrayList<SubJobs> homeCare) { // si el trabajo se acepta para ser insertado- entonces el trabajo se desagrega en subtrabajos
+	private boolean possibleInsertion(Jobs j, Parts homeCare) { // si el trabajo se acepta para ser insertado- entonces el trabajo se desagrega en subtrabajos
 		boolean inserted=false;
-		if(homeCare.isEmpty()) {
+		if(homeCare.getListSubJobs().isEmpty()) {
 			insertionJob(j,homeCare);
 			printing(homeCare);
 			inserted=true;
@@ -1783,15 +1813,15 @@ public class DrivingRoutes {
 		else { // inside the array there are more jobs
 			//int position=iterateOverSchift(j,homeCare);
 			// dividir el trabajo
-			ArrayList<SubJobs> pickUpDropOff=disaggregatedJob(j);
+			Parts pickUpDropOff=disaggregatedJob(j);
 
 			// revisar si el primer trabajo de esta parte puede ser insertado
-			SubJobs jsplited=pickUpDropOff.get(0);
+			SubJobs jsplited=pickUpDropOff.getListSubJobs().get(0);
 			//double workingHours= computingWorkingHours(homeCare,pickUpDropOff);
 			int position=iterateOverSchiftLastPosition(jsplited,homeCare);
 			if(position>=0 && enoughWorkingHours(homeCare,pickUpDropOff)) {
-				for(SubJobs sj:pickUpDropOff) {
-					homeCare.add(position,sj);
+				for(SubJobs sj:pickUpDropOff.getListSubJobs()) {
+					homeCare.getListSubJobs().add(position,sj);
 					assignedJobs.put(sj.getSubJobKey(),sj);
 					printing(homeCare);
 					position++;
@@ -1803,18 +1833,18 @@ public class DrivingRoutes {
 	}
 
 
-	private boolean enoughWorkingHours(ArrayList<SubJobs> homeCare, ArrayList<SubJobs> pickUpDropOff) {
+	private boolean enoughWorkingHours(Parts homeCare, Parts pickUpDropOff) {
 		boolean enoughtTime=false;
-		SubJobs primerInRouteSubJob=homeCare.get(0);
-		SubJobs lastSubJobToInsert=pickUpDropOff.get(pickUpDropOff.size()-1);
+		SubJobs primerInRouteSubJob=homeCare.getListSubJobs().get(0);
+		SubJobs lastSubJobToInsert=pickUpDropOff.getListSubJobs().get(pickUpDropOff.getListSubJobs().size()-1);
 		if(primerInRouteSubJob.getArrivalTime()-lastSubJobToInsert.getDepartureTime()<test.getWorkingTime()) {
 			enoughtTime=true;
 		}
 		return enoughtTime;
 	}
 
-	private ArrayList<SubJobs> disaggregatedJob(Jobs j) {
-		ArrayList<SubJobs> pickUpDropOff= null; 
+	private Parts disaggregatedJob(Jobs j) {
+		Parts pickUpDropOff= null; 
 		if(j.isClient()) {
 			pickUpDropOff=splitClientJobInSubJobs(j);}
 		else {
@@ -1881,25 +1911,25 @@ public class DrivingRoutes {
 		return timeWithPatient;
 	}
 
-	private void insertionJob(Jobs j, ArrayList<SubJobs> homeCare) {
+	private void insertionJob(Jobs j, Parts homeCare) {
 		if(j.isClient()) { // revisar si solo los trabajos j se realizan casa de clientes o en medical centres
-			ArrayList<SubJobs> dropOffPickUp=splitClientJobInSubJobs(j);
+			Parts dropOffPickUp=splitClientJobInSubJobs(j);
 			insertingSubJobsIntheSequence(homeCare,dropOffPickUp); // la asignación de la lista de subjobs no necesariamente se hace dentro de un mismo turno
 			j.setarrivalTime(j.getstartServiceTime()-test.getloadTimeHomeCareStaff());
 		}
 		else { // the job j have to be a medical centre
-			ArrayList<SubJobs> pickUpDropOff=splitPatientJobInSubJobs(j);
+			Parts pickUpDropOff=splitPatientJobInSubJobs(j);
 			insertingSubJobsIntheSequence(homeCare,pickUpDropOff); // la asignación de la lista de subjobs no necesariamente se hace dentro de un mismo turno
 
 			j.setarrivalTime(j.getstartServiceTime()-test.getloadTimePatient()-test.getRegistrationTime());
 		}
 	}
 
-	private void insertingSubJobsIntheSequence(ArrayList<SubJobs> homeCare, ArrayList<SubJobs> dropOffPickUp) {
-		for(SubJobs sb:dropOffPickUp ) {
+	private void insertingSubJobsIntheSequence(Parts homeCare, Parts dropOffPickUp) {
+		for(SubJobs sb:dropOffPickUp.getListSubJobs() ) {
 			String key=creatingKey(sb);
 			assignedJobs.put(key, sb);
-			homeCare.add(sb);
+			homeCare.getListSubJobs().add(sb);
 			//	settingTimes(0,sb);
 		}
 
@@ -1921,7 +1951,8 @@ public class DrivingRoutes {
 		return key;
 	}
 
-	private ArrayList<SubJobs> splitPatientJobInSubJobs(Jobs j) {
+	private Parts splitPatientJobInSubJobs(Jobs j) {
+		Parts newPart= new Parts();
 		ArrayList<SubJobs> subJobsList= new ArrayList<SubJobs>();// considerar el inicio y el fin del servicio
 		// 2. Generation del drop off at medical centre
 		Jobs patient= new Jobs(inp.getNodes().get(j.getIdUser()-1));
@@ -1946,7 +1977,8 @@ public class DrivingRoutes {
 		subJobsList.add(dropOffMedicalCentre);
 		subJobsList.add(pickUpMedicalCentre); // Se apilan por orden de sequencia
 		subJobsList.add(dropOffPatientHome);
-		return subJobsList;
+		newPart.setListSubJobs(subJobsList);
+		return newPart;
 	}
 
 	private void settingTimeDropOffPatientSubJob(SubJobs dropOffPatientHome, Jobs pickUpMedicalCentre) {
@@ -2017,7 +2049,8 @@ public class DrivingRoutes {
 
 	}
 
-	private ArrayList<SubJobs> splitClientJobInSubJobs(Jobs j) {
+	private Parts splitClientJobInSubJobs(Jobs j) {
+		Parts newParts= new Parts();
 		ArrayList<SubJobs> subJobsList= new ArrayList<SubJobs>();// considerar el inicio y el fin del servicio
 		// 1. Generación del drop-off job
 		SubJobs dropOff= new SubJobs(j);
@@ -2027,7 +2060,8 @@ public class DrivingRoutes {
 		// 3. Addding the subjobs to the list
 		subJobsList.add(dropOff); // Se apilan por orden de sequencia
 		subJobsList.add(pickUp);
-		return subJobsList;
+		newParts.setListSubJobs(subJobsList);
+		return newParts;
 	}
 
 	private void settingTimeClientSubJob(SubJobs dropOff, SubJobs pickUp) {
@@ -2217,15 +2251,15 @@ public class DrivingRoutes {
 		return capacity;
 	}
 
-	private int iterateOverSchift(SubJobs j, ArrayList<SubJobs> homeCare) {
+	private int iterateOverSchift(SubJobs j, Parts homeCare) {
 		System.out.println("Job to insert "+ j.getId()+" "+ j.getSubJobKey()+" "+ j.getstartServiceTime());
 		boolean inserted=false;
 		int position=-1;
 		// se evalua inser trabajo por trabajo - Tan pronto sea posible insertar el trabajo se para la iteración sobre el turno y se inserta
 		//ArrayList<SubJobs> homeCare=copyListJobs(currentJobs);
-		for(int i=0;i<homeCare.size();i++) { 
-			SubJobs inRoute=homeCare.get(i);
-			if(i==homeCare.size()-1 ) {
+		for(int i=0;i<homeCare.getListSubJobs().size();i++) { 
+			SubJobs inRoute=homeCare.getListSubJobs().get(i);
+			if(i==homeCare.getListSubJobs().size()-1 ) {
 				inserted=insertionLater(inRoute,j);//(inRoute)******(j)
 				if(!inserted) {
 					inserted=insertionEarly(inRoute,j);//(j)******(inRoute)
@@ -2248,7 +2282,7 @@ public class DrivingRoutes {
 					}
 				}
 				if(!inserted) {
-					SubJobs inRouteK=homeCare.get(i+1);
+					SubJobs inRouteK=homeCare.getListSubJobs().get(i+1);
 					inserted=insertedMiddleJob(inRoute,j,inRouteK);// (inRoute)*******(j)******(inRouteK)
 					if(inserted) {
 						position=i+1;
@@ -2260,33 +2294,33 @@ public class DrivingRoutes {
 		return position;
 	}
 
-	private int iterateOverSchiftLastPosition(Jobs j, ArrayList<SubJobs> homeCare) {
+	private int iterateOverSchiftLastPosition(Jobs j, Parts homeCare) {
 		System.out.println("Job to insert "+ j.getId()+" "+ j.getSubJobKey()+" "+ j.getstartServiceTime());
 		boolean inserted=false;
 		int position=-1;
 		// se evalua inser trabajo por trabajo - Tan pronto sea posible insertar el trabajo se para la iteración sobre el turno y se inserta
 		//ArrayList<SubJobs> homeCare=copyListJobs(currentJobs);
-		SubJobs inRoute=homeCare.get(homeCare.size()-1);
+		SubJobs inRoute=homeCare.getListSubJobs().get(homeCare.getListSubJobs().size()-1);
 		SubJobs subj=new SubJobs(j);
 		inserted=insertionLater(inRoute,subj);//(inRoute)******(j)
 		if(inserted) {
-			position=homeCare.size();
+			position=homeCare.getListSubJobs().size();
 		}			
 		return position;
 	}
 
 
-	private void insertingSubJobsParamedic(int i, Jobs j, ArrayList<SubJobs> homeCare) {
+	private void insertingSubJobsParamedic(int i, Jobs j, Parts homeCare) {
 		// 1. split the job into subjobs
-		ArrayList<SubJobs> pickUpDropOff= null; 
+		Parts pickUpDropOff= null; 
 		if(j.isClient()) {
 			pickUpDropOff=splitClientJobInSubJobs(j);}
 		else {
 			pickUpDropOff=splitPatientJobInSubJobs(j);
 		}
-		for(SubJobs sj:pickUpDropOff) {
+		for(SubJobs sj:pickUpDropOff.getListSubJobs()) {
 			if(sj.getEndTime()==j.getEndTime() && sj.getStartTime()==j.getStartTime()) {
-				homeCare.add(i,sj);
+				homeCare.getListSubJobs().add(i,sj);
 				printing(homeCare);
 				assignedJobs.put(sj.getSubJobKey(),sj);
 				break;
@@ -2297,8 +2331,8 @@ public class DrivingRoutes {
 		// insert the equivalent job j in the sequence homeCare
 	}
 
-	private void missingSubJobs(ArrayList<SubJobs> pickUpDropOff) {
-		for(SubJobs sj:pickUpDropOff) {
+	private void missingSubJobs(Parts pickUpDropOff) {
+		for(SubJobs sj:pickUpDropOff.getListSubJobs()) {
 			if(!assignedJobs.containsKey(sj.getSubJobKey())) {
 				iteratingOverCurrentShifts(sj);
 			}
@@ -2311,8 +2345,8 @@ public class DrivingRoutes {
 	private void iteratingOverCurrentShifts(SubJobs sj) {
 		// ArrayList<ArrayList<SubJobs>> qualificationParamedic= new ArrayList<>(); // turn for paramedics
 		int position=-1;
-		for(ArrayList<SubJobs> schift:qualificationParamedic) {
-			if(schift.isEmpty()) {
+		for(Parts schift:qualificationParamedic) {
+			if(schift.getListSubJobs().isEmpty()) {
 				insertionJob(sj,schift);
 				printing(schift);
 			}
@@ -2320,7 +2354,7 @@ public class DrivingRoutes {
 				position=iterateOverSchift(sj,schift);
 				//	position=iterateOverSchiftLastPosition(sj,schift);
 				if(position>0) {
-					schift.add(position,sj);
+					schift.getListSubJobs().add(position,sj);
 					printing(schift);
 					assignedJobs.put(sj.getSubJobKey(),sj);
 					break;

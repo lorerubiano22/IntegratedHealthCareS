@@ -18,7 +18,7 @@ public class Route {
 	private HashMap<String, Edge> edges; // edges list
 	private LinkedList<Couple> jobsList= new LinkedList<Couple>(); // subjobs list (pick up and delivary)
 	private LinkedList<SubJobs> subJobsList=new LinkedList<SubJobs>(); // subjobs list (pick up and delivary)
-	private LinkedList<ArrayList<SubJobs>> partsList=new LinkedList<ArrayList<SubJobs>>(); // subjobs list (pick up and delivary)
+	private LinkedList<Parts> partsList=new LinkedList<Parts>(); // subjobs list (pick up and delivary)
 	private HashMap<String, SubJobs> positionJobs=new HashMap<>();
 	private HashMap<Integer, Jobs>  futureSubJobsList=new HashMap<Integer, Jobs> ();
 	private Schift  schift; 
@@ -40,22 +40,17 @@ public class Route {
 		copyDirectories(r.getJobsDirectory());
 		copyPart(r.getPartsRoute());
 		if(r.schift!=null) {
-			
 			schift= new Schift(r.getSchiftRoute());
 		}
-		
+
 	}
 
 
-	private void copyPart(LinkedList<ArrayList<SubJobs>> partsRoute) {
-		partsList=new LinkedList<ArrayList<SubJobs>>();
-		for(ArrayList<SubJobs> part:partsRoute) {
-			ArrayList<SubJobs> copypart= new ArrayList<SubJobs>();
-			for(SubJobs n:part) {
-				Jobs formalJob=new Jobs(n);
-				copypart.add(new SubJobs(formalJob));
-			}
-			partsList.add(copypart);
+	private void copyPart(LinkedList<Parts> linkedList) {
+		partsList=new LinkedList<Parts>();
+		for(Parts part:linkedList) {
+			Parts newPart= new Parts(part);
+			partsList.add(newPart);
 		}
 	}
 
@@ -138,7 +133,7 @@ public class Route {
 	public HashMap<String, Edge> getEdges() {return edges;}
 	public double getAmountParamedic() {return amountParamedics;}
 	public double getHomeCareStaff() {return homeCareStaff;}
-	public LinkedList<ArrayList<SubJobs>> getPartsRoute() {return partsList;}
+	public LinkedList<Parts> getPartsRoute() {return partsList;}
 	public Schift getSchiftRoute() {return schift;}
 	public double getAmountDriver() {return driver;}
 
@@ -187,8 +182,10 @@ public class Route {
 		// reading part
 		subJobsList.clear();
 
-		for(ArrayList<SubJobs> part:this.getPartsRoute()) {
-			for(SubJobs sj:part) {
+		for(Parts part:this.getPartsRoute()) {
+			Parts partObject= new Parts(part);
+			
+			for(SubJobs sj:partObject.getListSubJobs()) {
 				subJobsList.add(sj);
 			}	
 		}
@@ -244,11 +241,11 @@ public class Route {
 	}
 
 
-	public void removingParts(ArrayList<SubJobs> partToRemove) {
-		HashMap<String,SubJobs> toRmove= gettingNodeList(partToRemove);
+	public void removingParts(Parts parts) {
+		HashMap<String,SubJobs> toRmove= gettingNodeList(parts);
 		boolean isThepartToRemove=false;
-		for(ArrayList<SubJobs> a:this.getPartsRoute()) {
-			for(SubJobs j:a) {
+		for(Parts a:this.getPartsRoute()) {
+			for(SubJobs j:a.getListSubJobs()) {
 				if(toRmove.containsKey(j.getSubJobKey())) {
 					isThepartToRemove=true;
 					break;
@@ -262,9 +259,9 @@ public class Route {
 	}
 
 
-	private HashMap<String, SubJobs> gettingNodeList(ArrayList<SubJobs> partToRemove) {
+	private HashMap<String, SubJobs> gettingNodeList(Parts partToRemove) {
 		HashMap<String,SubJobs> toRmove= new HashMap<String,SubJobs> ();
-		for(SubJobs j:partToRemove) {
+		for(SubJobs j:partToRemove.getListSubJobs()) {
 			toRmove.put(j.getSubJobKey(), j);
 		}
 		return toRmove;
