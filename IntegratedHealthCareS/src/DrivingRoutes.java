@@ -64,6 +64,7 @@ public class DrivingRoutes {
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		insertingDepotConnections();
 		Solution initialSol= solutionInformation(); // this is the initial solution in which each personal has a vehicle assigned
+		System.out.println(initialSol.toString());
 		return initialSol;
 	}
 
@@ -164,10 +165,10 @@ public class DrivingRoutes {
 				Route vehicle= new Route();
 				Route iR=copySolution.getRoutes().get(route1);
 				if(iR.getPartsRoute().size()>2) {
-					System.out.println("Route iR"+ iR.toString());
 					Route jR=copySolution.getRoutes().get(route2);
-					System.out.println("Route jR"+ jR.toString());
 					if(possibleMerge(iR,jR)) {
+						System.out.println("Route iR"+ iR.toString());
+						System.out.println("Route jR"+ jR.toString());
 						Route refRoute=selecctingStartRoute(iR,jR);
 						Route toInsertRoute=selecctingRouteToInsert(iR,jR);
 						boolean inserted=insertionAllRoute(refRoute,toInsertRoute,vehicle,part);
@@ -177,6 +178,10 @@ public class DrivingRoutes {
 							for(part=start;part<refRoute.getPartsRoute().size();part++) {
 								inserted=isertingRoute(vehicle,toInsertRoute,refRoute);
 								if(!inserted) { // insert part by part
+									vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(part));
+									vehicle.updateRoute(inp);
+								}
+								if(part==refRoute.getPartsRoute().size()-1 && inserted ) {
 									vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(part));
 									vehicle.updateRoute(inp);
 								}
@@ -198,8 +203,16 @@ public class DrivingRoutes {
 				System.out.println(r.toString());
 			}
 		}
+settingSolution(copySolution);
 		
 		return copySolution;
+	}
+
+	private void settingSolution(Solution copySolution) {
+		copySolution.getRoutes().clear();
+		for(Route r:routeVehicleList) {
+			copySolution.getRoutes().add(r);
+		}
 	}
 
 	private void updatingSolution(Solution copySolution) {
@@ -1356,8 +1369,9 @@ public class DrivingRoutes {
 
 		// 4. Savings los turnos
 		// paramedics
-		Parts newParts= null;
+
 		for(Parts schifts:qualification0) {
+			Parts newParts= null;
 			if(!schifts.getListSubJobs().isEmpty()) {
 				newParts= new Parts(schifts);
 			}
@@ -1371,6 +1385,7 @@ public class DrivingRoutes {
 
 		// home care staff
 		for(Parts schifts:qualification1) {
+			Parts newParts= null;
 			if(!schifts.getListSubJobs().isEmpty()) {
 				newParts= new Parts(schifts);
 			}
@@ -1382,6 +1397,7 @@ public class DrivingRoutes {
 
 
 		for(Parts schifts:qualification2) {
+			Parts newParts= null;
 			if(!schifts.getListSubJobs().isEmpty()) {
 				newParts= new Parts(schifts);
 			}
@@ -1390,6 +1406,7 @@ public class DrivingRoutes {
 			}
 		}
 		for(Parts schifts:qualification3) {
+			Parts newParts= null;
 			if(!schifts.getListSubJobs().isEmpty()) {
 				newParts= new Parts(schifts);
 			}
