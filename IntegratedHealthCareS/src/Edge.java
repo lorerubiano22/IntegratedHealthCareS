@@ -6,13 +6,15 @@ public class Edge implements Comparable<Edge>
     private SubJobs origin; // origin node
     private SubJobs end; // end node
     private double time = 0.0; // edge travel time
+    private double detour = 0.0; // edge travel time
     private Edge inverseEdge = null; // edge with inverse direction
             
-    public Edge(SubJobs originNode, SubJobs endNode, Inputs inp) 
+    public Edge(SubJobs originNode, SubJobs endNode, Inputs inp, Test test) 
     {   origin = originNode;
         end = endNode;
         time=inp.getCarCost().getCost(originNode.getId()-1, endNode.getId()-1);
         key=originNode.getSubJobKey()+endNode.getSubJobKey();
+        detour=inp.getCarCost().getCost(originNode.getId()-1, endNode.getId()-1)*test.getDetour();
     }
 
     /* SET METHODS */
@@ -24,6 +26,7 @@ public class Edge implements Comparable<Edge>
     public SubJobs getOrigin(){return origin;}
     public SubJobs getEnd(){return end;}
     public double getTime(){return time;}
+    public double getDetour(){return detour;}
     public Edge getInverseEdge(){return inverseEdge;}
     public String getEdgeKey(){return key;}
 

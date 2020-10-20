@@ -178,33 +178,34 @@ public class Route {
 	}
 
 	public void updateRoute(Inputs inp) {
-		// Consider the list of jobs positions
-		// reading part
-		subJobsList.clear();
+		
+			// Consider the list of jobs positions
+			// reading part
+			subJobsList.clear();
 
-		for(Parts part:this.getPartsRoute()) {
-			Parts partObject= new Parts(part);
-			
-			for(SubJobs sj:partObject.getListSubJobs()) {
-				subJobsList.add(sj);
-			}	
+			for(Parts part:this.getPartsRoute()) {
+				Parts partObject= new Parts(part);
+				for(SubJobs sj:partObject.getListSubJobs()) {
+					subJobsList.add(sj);
+				}	
+			}
+			if(this.getPartsRoute().size()>2) {
+			// service time
+			this.computeServiceTime();
+			// waiting time
+			this.computeWaitingTime();
+			// travel time
+			this.computeTravelTime(inp);
+			this.computePassenger();
+			// duration route
+			double duration= this.getServiceTime()+this.getTravelTime()+this.getWaitingTime();
+			this.setDurationRoute(subJobsList.get(subJobsList.size()-1).getDepartureTime()-subJobsList.get(0).getDepartureTime());
+			double idleTime=Math.max(0, (this.getDurationRoute()-duration));
+			this.setWaitingTime(this.getWaitingTime()+idleTime);
+
+			updatingJobsList();	// actualizar la lista de directorio de trabajos
+
 		}
-		// service time
-		this.computeServiceTime();
-		// waiting time
-		this.computeWaitingTime();
-		// travel time
-		this.computeTravelTime(inp);
-		this.computePassenger();
-		// duration route
-		double duration= this.getServiceTime()+this.getTravelTime()+this.getWaitingTime();
-		this.setDurationRoute(subJobsList.get(subJobsList.size()-1).getDepartureTime()-subJobsList.get(0).getDepartureTime());
-		double idleTime=Math.max(0, (this.getDurationRoute()-duration));
-		this.setWaitingTime(this.getWaitingTime()+idleTime);
-
-		updatingJobsList();	// actualizar la lista de directorio de trabajos
-
-
 	}
 
 

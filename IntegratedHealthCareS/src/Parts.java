@@ -9,7 +9,7 @@ public class Parts {
 	private boolean driver=false;
 	private  Route routeVehicle; // the shift is a route in order to count the working hours
 	private  ArrayList<SubJobs> listSubJobs= new ArrayList<>(); // the shift is a route in order to count the working hours
-
+	private SubJobs nodeReference;
 	private  HashMap<String, SubJobs> directorySubjobs= new HashMap<>(); // the shift is a route in order to count the working hours
 	private  HashMap<String, Edge> directoryConnections= new HashMap<>(); // las conecciones entre las partes// este me permite controlar los subtours
 
@@ -34,43 +34,54 @@ public class Parts {
 		listSubJobs= new ArrayList<>(); // the shift is a route in order to count the working hours
 		directorySubjobs= new HashMap<>(); // the shift is a route in order to count the working hours
 		directoryConnections= new HashMap<>(); // las conecciones entre las partes// este me permite controlar los subtours
-
 	}
 
 
+
+	// Getters
 
 	public String getKey() {return key;}
-	public int getQualificationLevel() {
-		return qualificationLevel;
-	}
-	public boolean isParamedicSchift() {
-		return paramedicSchift;
-	}
-	public boolean isHomecareStaffSchift() {
-		return homecareStaffSchift;
-	}
-	public boolean isDriver() {
-		return driver;
-	}
-	public Route getRouteVehicle() {
-		return routeVehicle;
-	}
-	public ArrayList<SubJobs> getListSubJobs() {
-		return listSubJobs;
-	}
-	public HashMap<String, SubJobs> getDirectorySubjobs() {
-		return directorySubjobs;
-	}
-	public HashMap<String, Edge> getDirectoryConnections() {
-		return directoryConnections;
-	}
+	public int getQualificationLevel() {return qualificationLevel;}
+	public boolean isParamedicSchift() {return paramedicSchift;}
+	public boolean isHomecareStaffSchift() {return homecareStaffSchift;}
+	public boolean isDriver() {	return driver;}
+	public Route getRouteVehicle() {return routeVehicle;}
+	public ArrayList<SubJobs> getListSubJobs() {return listSubJobs;}
+	public HashMap<String, SubJobs> getDirectorySubjobs() {return directorySubjobs;}
+	public HashMap<String, Edge> getDirectoryConnections() {return directoryConnections;}
+	public SubJobs getReferenceNode() {return nodeReference;}
 
+	// Setters
+	public void setKeyParts(String k) {this.key = k;}
 
-	public void setListSubJobs(ArrayList<SubJobs> listSubJobs) {
+	public void setListSubJobs(ArrayList<SubJobs> listSubJobs, Inputs inp, Test test) {
 		this.listSubJobs = listSubJobs;
+		for(SubJobs j:listSubJobs) {
+			if(j.getReqQualification()>qualificationLevel) {
+				qualificationLevel=j.getReqQualification();
+			}
+		}
+		// setting the connections
+		for(int i=0;i<listSubJobs.size()-1;i++) {
+			SubJobs iNode=listSubJobs.get(i);
+			SubJobs jNode=listSubJobs.get(i);
+			Edge e= new Edge(iNode,jNode, inp,test);
+			directoryConnections.put(e.getEdgeKey(), e);
+		}
+
+		// Setting the reference node
+		for(SubJobs j:listSubJobs) {
+			if(j.isMedicalCentre() && j.getTotalPeople()<0) {
+				nodeReference=	j;
+			}
+			else {
+				if(j.isClient() && j.getTotalPeople()<0) {
+					nodeReference=	j;
+				}
+			}
+		}
+
 	}
-	public void setKeyParts(String k) {
-		this.key = k;
-	}
+
 
 }

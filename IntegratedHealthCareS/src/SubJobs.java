@@ -4,6 +4,9 @@ import java.util.ArrayList;
  * This class separate the jobs into pick up and delivery tasks. Save the list of jobs per pairs
  */
 public class SubJobs extends Jobs {
+	
+	Edge preEdge;
+	Edge postEdge;
 	private ArrayList<Jobs> jobList= new ArrayList<Jobs>();
 
 
