@@ -93,17 +93,23 @@ Walking time: 1011.0
 
 
 ID Solution: 1
-FO: Travel time or duration: 2686.0
+FO: Travel time or duration: 1659.0
 Walking time: 0.0
  Total passengers: 0
- Total paramedic: 2.0
- Total home care staff: 5.0
- Waiting time: 813.0
- Service time: 1876.0
+ Total paramedic: 1.0
+ Total home care staff: 2.0
+ Waiting time: 429.0
+ Service time: 1251.0
  List of jobs: 
- Route: 0 travelTime: 33.0 waitingTime: 467.0 serviceTime: 120.0 durationRoute: 620.0
+ Route: 0 travelTime: 1.0 waitingTime: 210.0 serviceTime: 90.0 durationRoute: 301.0
+ homeCareSaff amount: 0.0 paramedic amount: 0.0
+ ( D13, A_899.0, B_900.0 D_900.0, reqTime_0.0) 
+ ( P13, A_930.0, B_930.0 D_931.0, reqTime_30.0) 
+ ( D12, A_1169.0, B_1170.0 D_1170.0, reqTime_0.0) 
+ ( P12, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+ Route: 2 travelTime: 19.0 waitingTime: 219.0 serviceTime: 90.0 durationRoute: 328.0
  homeCareSaff amount: 0.0 paramedic amount: 1.0
- ( P1, A_316.0, B_316.0 D_318.0, reqTime_30.0) 
  ( P15, A_322.0, B_324.0 D_324.0, reqTime_0.0) 
  ( D1415, A_326.0, B_343.0 D_328.0, reqTime_0.0) 
  ( P1415, A_373.0, B_373.0 D_375.0, reqTime_30.0) 
@@ -112,28 +118,9 @@ Walking time: 0.0
  ( D1416, A_596.0, B_613.0 D_598.0, reqTime_0.0) 
  ( P1416, A_643.0, B_643.0 D_645.0, reqTime_30.0) 
  ( D16, A_650.0, B_650.0 D_652.0, reqTime_0.0) 
- ( D13, A_899.0, B_900.0 D_900.0, reqTime_0.0) 
- ( P13, A_930.0, B_930.0 D_931.0, reqTime_30.0) 
- ( P1, A_936.0, B_936.0 D_938.0, reqTime_30.0) 
-
- Route: 1 travelTime: 13.0 waitingTime: 124.0 serviceTime: 475.0 durationRoute: 612.0
- homeCareSaff amount: 1.0 paramedic amount: 0.0
- ( P1, A_594.0, B_594.0 D_596.0, reqTime_30.0) 
- ( D6, A_598.0, B_599.0 D_599.0, reqTime_0.0) 
- ( P5, A_1014.0, B_1014.0 D_1015.0, reqTime_415.0) 
- ( D12, A_1169.0, B_1170.0 D_1170.0, reqTime_0.0) 
- ( P12, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
- ( P1, A_1206.0, B_1206.0 D_1208.0, reqTime_30.0) 
-
- Route: 6 travelTime: 11.0 waitingTime: 0.0 serviceTime: 626.0 durationRoute: 605.0
- homeCareSaff amount: 1.0 paramedic amount: 0.0
- ( P1, A_915.0, B_915.0 D_917.0, reqTime_30.0) 
- ( D7, A_918.0, B_919.0 D_919.0, reqTime_0.0) 
- ( P10, A_1515.0, B_1515.0 D_1516.0, reqTime_596.0) 
- ( P1, A_1520.0, B_1520.0 D_1522.0, reqTime_30.0) 
 
 
 
  pc Time:
 
-8076.7872
+1489.3584

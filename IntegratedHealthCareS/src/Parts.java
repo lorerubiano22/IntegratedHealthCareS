@@ -27,6 +27,10 @@ public class Parts {
 			listSubJobs.add(new SubJobs(formalJob));
 			directorySubjobs.put(n.getSubJobKey(), n);
 		}
+		for(Edge e:part.directoryConnections.values()) {
+			Edge eNew= new Edge(e);
+			directoryConnections.put(eNew.getEdgeKey(), eNew);
+		}
 	}
 
 
@@ -61,14 +65,9 @@ public class Parts {
 				qualificationLevel=j.getReqQualification();
 			}
 		}
-		// setting the connections
-		for(int i=0;i<listSubJobs.size()-1;i++) {
-			SubJobs iNode=listSubJobs.get(i);
-			SubJobs jNode=listSubJobs.get(i);
-			Edge e= new Edge(iNode,jNode, inp,test);
-			directoryConnections.put(e.getEdgeKey(), e);
-		}
-
+		
+		settingConnections(listSubJobs,inp,test);
+		
 		// Setting the reference node
 		for(SubJobs j:listSubJobs) {
 			if(j.isMedicalCentre() && j.getTotalPeople()<0) {
@@ -81,6 +80,18 @@ public class Parts {
 			}
 		}
 
+	}
+
+
+	public void settingConnections(ArrayList<SubJobs> listSubJobs2, Inputs inp, Test test) {
+		// setting the connections
+				for(int i=0;i<listSubJobs.size()-1;i++) {
+					SubJobs iNode=listSubJobs.get(i);
+					SubJobs jNode=listSubJobs.get(i+1);
+					Edge e= new Edge(iNode,jNode, inp,test);
+					directoryConnections.put(e.getEdgeKey(), e);
+				}
+		
 	}
 
 

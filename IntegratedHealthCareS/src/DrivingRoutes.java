@@ -72,6 +72,17 @@ public class DrivingRoutes {
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
 		Solution copySolution= new Solution(initialSol);
 		changingDepartureTimes(copySolution);
+
+
+		for(Route r:copySolution.getRoutes()) {
+			for(int i=1;i<r.getPartsRoute().size()-1;i++) {
+				Parts p= r.getPartsRoute().get(i);
+				if(p.getDirectoryConnections().isEmpty()) {
+					System.out.println("empty list of connections");
+				}		
+			}
+		}
+
 		LinkedList<Parts> partsList=extractingParts(initialSol);
 		System.out.println("printing initial solution");
 		System.out.println(initialSol.toString());
@@ -127,11 +138,44 @@ public class DrivingRoutes {
 	}
 
 	private Solution mergingRoutes(Solution copySolution, LinkedList<Parts> partsList) {
+
 		Solution Sol= interMergingParts(copySolution,partsList); // 1 merging parts (without complete parts)
-		updatingSolution(copySolution);
+		updatingSolution(Sol);
+		settingNewPart(Sol);
 		Solution newSol= intraMergingParts(Sol); // 2 merging parts (splited the parts) // here the detours are considered
 		//updatingSolution(newSol);
 		return Sol;
+	}
+
+	private void settingNewPart(Solution sol) {
+		for(Route r:sol.getRoutes()) {
+			int passengers=1;
+			ArrayList<Parts> parts= new ArrayList<>();
+			ArrayList<SubJobs> listSubJobs= new ArrayList<>();
+			parts.add(r.getPartsRoute().get(0));
+			for(SubJobs j:r.getSubJobsList()) {
+				passengers+=j.getTotalPeople();
+				listSubJobs.add(j);
+				if(passengers==0) {
+					Parts part=new Parts();
+					part.setListSubJobs(listSubJobs, inp, test);
+					parts.add(part);
+					listSubJobs= new ArrayList<>();
+				}
+				if(r.getSubJobsList().getLast()==j) {
+					Parts part=new Parts();
+					part.setListSubJobs(listSubJobs, inp, test);
+					parts.add(part);
+				}
+			}
+			parts.add(r.getPartsRoute().getLast());
+			r.getPartsRoute().clear();
+			for(Parts p:parts) {
+				r.getPartsRoute().add(p);
+			}
+		}
+
+
 	}
 
 	private Solution intraMergingParts(Solution copySolution) {
@@ -160,61 +204,288 @@ public class DrivingRoutes {
 		if(refRoute!=toSplit) { // sólo se pueden mezclar si son rutas diferentes
 			// se tiene que tener cuidado con las working horas y con los detours
 			ArrayList<SubJobs> mergingPart= new ArrayList<SubJobs>();
+			System.out.println("ref Route"+refRoute.toString());
+			System.out.println("toSplit Route"+toSplit.toString());
 			Route earlyRoute=selecctingStartRoute(refRoute,toSplit);
 			Route lateRoute=selecctingRouteToInsert(refRoute,toSplit);
-
+			Route newRoute= new Route(); // la ruta que va a almacenar 
 			// 1. Evaluar mezclar las primeras partes 
-			boolean mergingHeading=seatingHeading(earlyRoute,lateRoute,mergingPart);
-
+			boolean mergingHeading=seatingHeading(earlyRoute,lateRoute,mergingPart,newRoute);
 			// 2. Evaluar mezclar las partes intermedias
-
+			boolean mergingIntermediateParts=settingIntermediateParts(earlyRoute,lateRoute,mergingPart);
 			// 3. Evaluar mezclar las ultimas partes
-
-
-
-			mergingPart.add(earlyRoute.getPartsRoute().get(0).getListSubJobs().get(0)); // setting new sequence of jobs
-			//mergingPart.add(earlyRoute.getPartsRoute().get(1).getListSubJobs().get(0));
-			for(int partRef=1; partRef<earlyRoute.getPartsRoute().size();partRef++) { // el trabajo de la parte 1 ya esta insertada
-				Parts Pref=earlyRoute.getPartsRoute().get(partRef);
-				for(int partSplit=1; partSplit<lateRoute.getPartsRoute().size();partSplit++) { // empieza desde uno porque la cabeza ya debio haber sido insertada
-					Parts Psplit=earlyRoute.getPartsRoute().get(partSplit);
-					mergingParts=mergingPart(Pref,Psplit,mergingPart);
-
-				}	
-			}
 		}
 		return merging;
 	}
 
 
 
-	private boolean seatingHeading(Route earlyRoute, Route lateRoute, ArrayList<SubJobs> mergingPart) {
+	private boolean settingIntermediateParts(Route earlyRoute, Route lateRoute, ArrayList<SubJobs> mergingPart) {
+		boolean merging=false;
+
+		return merging;
+	}
+
+	private boolean seatingHeading(Route earlyRoute, Route lateRoute, ArrayList<SubJobs> mergingPart, Route newRoute) {
 		boolean headingMerge= false;// la early es la ruta de referencia  - eso quiere decir que al final el array mergingPart debe ser igual a la ruta más cercana
 		boolean feasibleDetour= false;
 		ArrayList<SubJobs> copy=new ArrayList<SubJobs>(); 
 		// selecting depot
 		SubJobs depot=earlyRoute.getPartsRoute().get(0).getListSubJobs().get(0);
-		copy.add(depot);
+		newRoute.getSubJobsList().add(depot);
 		// selecting first part
 		SubJobs first=earlyRoute.getPartsRoute().get(1).getListSubJobs().get(0);
-		copy.add(first);
+		newRoute.getSubJobsList().add(first);
 		feasibleDetour= evaluationDetour(earlyRoute,lateRoute);
-		SubJobs second=lateRoute.getPartsRoute().get(1).getListSubJobs().get(0);
+		if(feasibleDetour) {// si son factibles los detours se miran las horas
+			boolean feasibleTimeWindow=mergingHeading(earlyRoute,lateRoute,newRoute);
 
-		double accumDistance=inp.getCarCost().getCost(depot.getId()-1, first.getId()-1)+inp.getCarCost().getCost(first.getId()-1, second.getId()-1);
-		String key=first.getId()+","+second.getId();
-		Edge e=lateRoute.getPartsRoute().get(1).getDirectoryConnections().get(key);
-
-
-		if(accumDistance<e.getDetour()) {// evaluar detour desde el depot
-			feasibleDetour= false;
-		}
-		if(feasibleDetour) {
 
 		}
+
+
 		// evaluar detour entre los trabajos
 
 		return headingMerge;
+	}
+
+	private boolean mergingHeading(Route earlyRoute, Route lateRoute, Route newRoute) {
+		// este método lo que hace es modificar la ruta temprana la earlyRoute
+		boolean merge=false;
+
+		newRoute.getSubJobsList().add(earlyRoute.getSubJobsList().get(0).getSubJobs().get(0));
+		// typeParts: 1 patient-patient 2 homeCare-patient or patient-homeCare 3 homeCare-homeCare 
+		int options=typeOfParts(earlyRoute.getPartsRoute().get(1),lateRoute.getPartsRoute().get(1)); 
+		boolean feasibleOption1=false;
+		switch(options) {
+		case 1 :// 1 patient-patient 
+			feasibleOption1=mergingPatientPatient(options,earlyRoute.getPartsRoute().get(1),lateRoute.getPartsRoute().get(1), newRoute);// option1
+			break;
+
+		case 2 : // 2 homeCare-patient or patient-homeCare
+			feasibleOption1=mergingPatientClient(options,earlyRoute.getPartsRoute().get(1),lateRoute.getPartsRoute().get(1), newRoute);// option1
+
+			break; // optional
+
+		default : // 3 homeCare-homeCare
+			feasibleOption1=mergingClients(options,earlyRoute.getPartsRoute().get(1),lateRoute.getPartsRoute().get(1), newRoute);// option1
+		}
+		return merge;
+	}
+
+	private boolean mergingClients(int options, Parts early, Parts late, Route newRoute) {
+		boolean feasible=false;
+		SubJobs depot=newRoute.getSubJobsList().get(0);
+		SubJobs earlyDropOff=early.getListSubJobs().get(0);
+		SubJobs lateDropOff=late.getListSubJobs().get(0);
+		Edge removedConncetion= new Edge(depot,lateDropOff,inp,test);
+		Edge conncetionDepot= new Edge(depot,earlyDropOff,inp,test);
+		/*current distance*/
+		double distEarlyDropOffLateDropOff=inp.getCarCost().getCost(earlyDropOff.getId()-1, lateDropOff.getId()-1);
+		if((earlyDropOff.getDepartureTime()+conncetionDepot.getTime()+distEarlyDropOffLateDropOff)<=lateDropOff.getArrivalTime()) { // time window
+			if((conncetionDepot.getTime()+distEarlyDropOffLateDropOff)<=removedConncetion.getDetour()) {// checking detour
+				feasible=true;
+			}
+		}
+
+		return feasible;
+	}
+
+	private boolean mergingPatientClient(int options, Parts early, Parts late, Route newRoute) {
+		boolean merging=false;
+		SubJobs depot=newRoute.getSubJobsList().get(0);
+
+
+		// calling subjobs
+		SubJobs pickUpEarly=null;
+		SubJobs dropoffEarly=null;
+		SubJobs pickUpLate=null;
+		SubJobs dropoffLate=null;
+
+		if(early.getListSubJobs().size()>1 && late.getListSubJobs().size()==2) { // opción en que el prime trabajo sea uno asociado a un home care staff 
+			pickUpEarly=early.getListSubJobs().get(0); // patient
+			dropoffEarly=early.getListSubJobs().get(1); 
+			dropoffLate=late.getListSubJobs().get(0); // home care
+			boolean feasibleTW=ckeckTimeWindow(pickUpEarly,dropoffLate,dropoffEarly);
+			boolean feasibleDetour=checkDetour(depot,pickUpEarly,dropoffLate,dropoffEarly,early);
+			if(feasibleTW && feasibleDetour ){
+				merging=true;
+				newRoute.getSubJobsList().add(pickUpEarly);
+				newRoute.getSubJobsList().add(dropoffLate);
+				newRoute.getSubJobsList().add(dropoffEarly);
+			}
+		}
+		else {// opción en que el primer trabajo se uno asociado a  un paciente
+			dropoffEarly=late.getListSubJobs().get(0); // home care
+			pickUpLate=late.getListSubJobs().get(1); // patient
+			dropoffLate=early.getListSubJobs().get(0); 
+			Edge connectionToRemove= new Edge(depot,pickUpLate,inp,test);
+			Edge connectionDepot= new Edge(depot,dropoffEarly,inp,test);
+
+			double distDropOffEarlyPickUpLate=inp.getCarCost().getCost(dropoffEarly.getId()-1, pickUpLate.getId());
+			double distDropOffEarlyDropOffLate=inp.getCarCost().getCost(pickUpLate.getId()-1, dropoffLate.getId());
+			if(dropoffEarly.getDepartureTime()+distDropOffEarlyPickUpLate<pickUpLate.getArrivalTime()) { // time window (depot)---x---(pick up patient)
+				if(connectionDepot.getTime()+distDropOffEarlyPickUpLate<=connectionToRemove.getDetour()) { // detour 
+					merging=true;
+					newRoute.getSubJobsList().add(dropoffEarly);
+					newRoute.getSubJobsList().add(pickUpLate);
+					newRoute.getSubJobsList().add(dropoffLate);
+				}
+			}
+		}
+
+
+
+
+
+
+		return merging;
+	}
+
+	private boolean checkDetour(SubJobs depot, SubJobs pickUpEarly, SubJobs dropoffLate, SubJobs dropoffEarly, Parts early) {
+		boolean feasible=false;
+		double tvPickUpEarlyDropOffLate=inp.getCarCost().getCost(pickUpEarly.getId()-1, dropoffLate.getId()-1);
+		double tvDropOffLateDropOffEarly=inp.getCarCost().getCost(dropoffLate.getId()-1, dropoffEarly.getId()-1);
+		/* current connection to depot*/
+		Edge depotConnection=new Edge(depot, pickUpEarly,inp,test);
+
+
+		/*removed connection to depot*/
+		Edge depotConnectionRemoved=new Edge(depot, dropoffLate,inp,test);
+		if(depotConnection.getTime()+tvPickUpEarlyDropOffLate<=depotConnectionRemoved.getDetour()) { //detour: (Depot)---x---(dropoff home care staff)
+
+			String key=pickUpEarly.getSubJobKey()+dropoffEarly.getSubJobKey();
+			Edge pickUpDropOff=early.getDirectoryConnections().get(key);
+			if(tvPickUpEarlyDropOffLate+tvDropOffLateDropOffEarly<=pickUpDropOff.getDetour()) { //detour: (Pick patient)---x---(dropoff patient)
+				feasible=true;
+			}
+		}
+		return feasible;
+	}
+
+	private boolean ckeckTimeWindow(SubJobs pickUpEarly, SubJobs dropoffLate, SubJobs dropoffEarly) { //(Pick patient)---(dropoff home care staff)---(dropoff patient)
+		boolean feasible=false;
+		double tvPickUpEarlyDropOffLate=inp.getCarCost().getCost(pickUpEarly.getId()-1, dropoffLate.getId()-1);
+		double tvDropOffLateDropOffEarly=inp.getCarCost().getCost(dropoffLate.getId()-1, dropoffEarly.getId()-1);
+		if(pickUpEarly.getDepartureTime()+tvPickUpEarlyDropOffLate<dropoffLate.getArrivalTime()) { //(Pick patient)---(dropoff home care staff)
+			if(dropoffLate.getDepartureTime()+tvDropOffLateDropOffEarly<dropoffEarly.getArrivalTime()) {//(dropoff home care staff)---(dropoff patient)
+				feasible=true;
+			}
+		}
+		return feasible;
+	}
+
+	private boolean mergingPatientPatient(int typeParts, Parts earlyPart, Parts latePart, Route newRoute) {
+		boolean merging= false;
+		// typeParts: 1 patient-patient 2 homeCare-patient or patient-homeCare 3 homeCare-homeCare
+
+		SubJobs depot=newRoute.getSubJobsList().get(0);
+
+		// option 1: depot - patient Early pick up - Patient Late pick up - patient Early drop-off - Patient Late drop-off
+		SubJobs pickUpPatientEarly=earlyPart.getListSubJobs().get(0);
+		SubJobs dropOffPatientEarly=earlyPart.getListSubJobs().get(1);
+		SubJobs pickUpPatientLate=latePart.getListSubJobs().get(0);
+		SubJobs dropOffPatientLate=latePart.getListSubJobs().get(1);
+		Edge connectionToDepot=new Edge(depot,pickUpPatientEarly,inp,test);
+		Edge removeConnection=new Edge(depot,pickUpPatientLate,inp,test);
+		double distanceToDepot=connectionToDepot.getTime();
+
+		/*Distance Option*/
+		double travelTime12=inp.getCarCost().getCost(pickUpPatientEarly.getId()-1, pickUpPatientLate.getId()-1);
+		double travelTime23=inp.getCarCost().getCost(pickUpPatientLate.getId()-1, dropOffPatientEarly.getId()-1);
+		double travelTime34=inp.getCarCost().getCost(dropOffPatientEarly.getId()-1, dropOffPatientLate.getId()-1);
+
+		/* detour early -early */	
+		String key= pickUpPatientEarly.getSubJobKey()+dropOffPatientEarly.getSubJobKey();// to check detour ->depot- tarde
+		Edge PatientHouseMedicalCentreEarly= earlyPart.getDirectoryConnections().get(key);
+		double disHomeMedicalCentreEarly=travelTime12+travelTime34;
+
+		double depotJobLate=connectionToDepot.getTime()+travelTime12;
+
+		// Early <- detour temprano - temprano
+		double distHomeMedicalCentreEarlyOption2=travelTime12+travelTime23;	
+
+		/* detour tarde - tarde */
+		key= pickUpPatientLate.getSubJobKey()+dropOffPatientLate.getSubJobKey();// to check detour ->depot- tarde
+		Edge PatientHouseMedicalCentreLate= latePart.getDirectoryConnections().get(key);
+		double distHomeMedicalCentrelteOption2Late=travelTime23+travelTime34;	
+
+		/*Option 1<-pick up temprano - pick up tarde - drop off temprano - drop off tarde*/
+		if((pickUpPatientEarly.getDepartureTime()+travelTime12)<=pickUpPatientLate.getArrivalTime()) {// checking time windows (Early pick up)--- (patient Late pick up)
+			if((pickUpPatientLate.getDepartureTime()+travelTime23)<=dropOffPatientEarly.getArrivalTime()) {// checking time windows (patient Late pick up)---(patient Early drop-off)
+				if((dropOffPatientEarly.getDepartureTime()+travelTime34)<=dropOffPatientLate.getArrivalTime()) {// checking time windows (patient Late pick up)---(patient Early drop-off)
+					// detour current distance (shared trips) vs distance (individual trips)
+					boolean detourLateSubjob=checkingDetourPatient(depotJobLate,removeConnection,distHomeMedicalCentrelteOption2Late,PatientHouseMedicalCentreLate);// connección con el depot y connección entre trabajos
+					boolean detourEarlySubjob=checkingDetourEarlyPatient(disHomeMedicalCentreEarly,PatientHouseMedicalCentreEarly);// connección con el depot y connección entre trabajos
+					if(detourLateSubjob && detourEarlySubjob) {
+						merging= true;
+						newRoute.getSubJobsList().add(pickUpPatientEarly);
+						newRoute.getSubJobsList().add(pickUpPatientLate);
+						newRoute.getSubJobsList().add(dropOffPatientEarly);
+						newRoute.getSubJobsList().add(dropOffPatientLate);
+					}
+				}
+			}
+		}
+
+		/*Option 2 <-pick up temprano - pick up tarde - drop off tarde - drop off temprano*/
+		if(merging) {
+			/* Distance option 2*/ 
+
+			double traveltimePickupDropOff=inp.getCarCost().getCost(pickUpPatientLate.getId()-1, dropOffPatientLate.getId()-1);
+			double traveltimeDropOffDropOff=inp.getCarCost().getCost(dropOffPatientLate.getId()-1, dropOffPatientEarly.getId()-1);
+			double distPickUpDropOffLate=travelTime12+traveltimePickupDropOff+traveltimeDropOffDropOff;
+			// time windows
+			if((dropOffPatientLate.getDepartureTime()+traveltimeDropOffDropOff)<=dropOffPatientEarly.getArrivalTime()) {// checking time windows (Early pick up)--- (patient Late pick up)
+				// checking the detour
+				boolean detourLateSubjob=checkingDetourPatient(depotJobLate,removeConnection,distHomeMedicalCentrelteOption2Late,PatientHouseMedicalCentreLate);
+				boolean detourEarlySubJob=checkingDetourEarly(distPickUpDropOffLate,PatientHouseMedicalCentreEarly);
+				if(detourLateSubjob && detourEarlySubJob) {
+					merging= true;
+					newRoute.getSubJobsList().add(pickUpPatientEarly);
+					newRoute.getSubJobsList().add(pickUpPatientLate);
+					newRoute.getSubJobsList().add(dropOffPatientLate);
+					newRoute.getSubJobsList().add(dropOffPatientEarly);
+
+				}
+
+			}
+		}
+		return merging;
+	}
+
+	private boolean checkingDetourEarly(double distPickUpDropOffLate, Edge patientHouseMedicalCentreEarly) {
+		boolean merging=false;
+		if(distPickUpDropOffLate<=patientHouseMedicalCentreEarly.getDetour()){
+			merging=true;
+		}
+		return merging;
+	}
+
+	private boolean checkingDetourEarlyPatient(double depotJobLate, Edge removeConnection) {
+		boolean detourLate=false;
+		if(depotJobLate<=removeConnection.getDetour()) {
+			detourLate=true;
+		}
+
+		return detourLate;
+	}
+
+
+	private boolean checkingDetourPatient(double detour1, Edge directConnectionRemoved,double detour2, Edge directConnection) {
+		boolean detourLate=false;
+		if(detour1<=directConnectionRemoved.getDetour() && detour2<=directConnection.getDetour()) {
+			detourLate=true;
+		}
+		return detourLate;
+	}
+
+	private boolean mergingIntraParts(Parts earlyPartRoute, Parts latePartRoute) {
+		boolean merge= false;
+		SubJobs firstJobEarly=earlyPartRoute.getListSubJobs().get(0);
+		SubJobs secondJobEarly=earlyPartRoute.getListSubJobs().get(0);
+
+		return merge;
 	}
 
 	private boolean evaluationDetour(Route earlyRoute, Route lateRoute) {
@@ -241,15 +512,36 @@ public class DrivingRoutes {
 	private boolean detourPatients(Parts early, Parts late, SubJobs depot) {
 		boolean feasible=false;
 		// checking respect to early patient
-		double distAccum= =inp.getCarCost().getCost(depot.getId()-1, early.getListSubJobs().get(0).getId()-1)+inp.getCarCost().getCost(early.getListSubJobs().get(0).getId()-1,late.getListSubJobs().get(0).getId()-1);
-		
-		
-		// checking respect to late patient
-		double distanceAccum=inp.getCarCost().getCost(depot.getId()-1, early.getListSubJobs().get(0).getId()-1)+inp.getCarCost().getCost(early.getListSubJobs().get(0).getId()-1,late.getListSubJobs().get(0).getId()-1);
-		String key=depot.getId()+","+late.getListSubJobs().get(0).getId();
-		Edge toCheck=late.getDirectoryConnections().get(key);
-		if(toCheck.getDetour()>distanceAccum) {
+		SubJobs earlyPatientHouse=early.getListSubJobs().get(0);
+		SubJobs earlyPatientMedicalCentre=early.getListSubJobs().get(1);
+		SubJobs latePatientHouse=late.getListSubJobs().get(0);
+		SubJobs latePatientMedicalCentre=late.getListSubJobs().get(1);
+		// counting distance
+
+		/*Option 1<-temprano - tarde - tarde - temprano*/
+		// early patient
+		String key= earlyPatientHouse.getSubJobKey()+earlyPatientMedicalCentre.getSubJobKey();  //to check detour ->temprano- temprano
+		Edge HomeMedicalCentreEarly= early.getDirectoryConnections().get(key); 	
+		double distHomeMedicalCentreEarlyOption1=inp.getCarCost().getCost(earlyPatientHouse.getId()-1, latePatientHouse.getId()-1)+inp.getCarCost().getCost(latePatientHouse.getId()-1,latePatientMedicalCentre.getId()-1)+inp.getCarCost().getCost(latePatientMedicalCentre.getId()-1,earlyPatientMedicalCentre.getId()-1);
+
+		// late pateint
+		Edge depotPatientHouseLate=new Edge(depot,latePatientHouse,inp,test);
+		double distDepotHomeMedicalCentrelteOption1Late=inp.getCarCost().getCost(depot.getId()-1, earlyPatientHouse.getId()-1)+inp.getCarCost().getCost(earlyPatientHouse.getId()-1,latePatientHouse.getId()-1);
+
+		if(distHomeMedicalCentreEarlyOption1<HomeMedicalCentreEarly.getDetour() && distDepotHomeMedicalCentrelteOption1Late<depotPatientHouseLate.getDetour()) {
 			feasible=true;
+		}
+		else {
+			/*Option 2<-temprano - tarde - temprano - tarde*/
+			// Early <- detour temprano - temprano
+			double distHomeMedicalCentreEarlyOption2=inp.getCarCost().getCost(earlyPatientHouse.getId()-1, latePatientHouse.getId()-1)+inp.getCarCost().getCost(latePatientHouse.getId()-1,earlyPatientMedicalCentre.getId()-1);	
+			// Early <- detour tarde - tarte
+			key= latePatientHouse.getSubJobKey()+latePatientMedicalCentre.getSubJobKey();// to check detour ->depot- tarde
+			Edge PatientHouseMedicalCentreLate= late.getDirectoryConnections().get(key);
+			double distHomeMedicalCentrelteOption2Late=inp.getCarCost().getCost(latePatientHouse.getId()-1, earlyPatientMedicalCentre.getId()-1)+inp.getCarCost().getCost(earlyPatientMedicalCentre.getId()-1,latePatientMedicalCentre.getId()-1);	
+			if(distHomeMedicalCentreEarlyOption1<HomeMedicalCentreEarly.getDetour() && distHomeMedicalCentreEarlyOption2<HomeMedicalCentreEarly.getDetour() && distHomeMedicalCentrelteOption2Late<PatientHouseMedicalCentreLate.getDetour()) {
+				feasible=true;
+			}
 		}
 		return feasible;
 	}
@@ -257,13 +549,11 @@ public class DrivingRoutes {
 	private boolean detourPatientClient(Parts early, Parts late, SubJobs depot) {
 		boolean feasible=false;
 		double distanceAccum=inp.getCarCost().getCost(depot.getId()-1, early.getListSubJobs().get(0).getId()-1)+inp.getCarCost().getCost(early.getListSubJobs().get(0).getId()-1,late.getListSubJobs().get(0).getId()-1);
-		String key=depot.getId()+","+late.getListSubJobs().get(0).getId();
-		Edge toCheck=late.getDirectoryConnections().get(key);
+
+		Edge toCheck=new Edge(depot,late.getListSubJobs().get(0),inp,test);
 
 		if(early.getListSubJobs().size()==1) { // el primer trabajo de la ruta es un cliente
 			distanceAccum=inp.getCarCost().getCost(depot.getId()-1, early.getListSubJobs().get(0).getId()-1)+inp.getCarCost().getCost(early.getListSubJobs().get(0).getId()-1,late.getListSubJobs().get(0).getId()-1);
-			key=depot.getId()+","+late.getListSubJobs().get(0).getId();
-			toCheck=late.getDirectoryConnections().get(key);
 			if(toCheck.getDetour()>distanceAccum) {
 				feasible=true;
 			}
@@ -272,8 +562,8 @@ public class DrivingRoutes {
 		if(early.getListSubJobs().size()==2) { // Depot- patient- homeCareStaff-Patient
 			// checking respect to the patient
 			distanceAccum=inp.getCarCost().getCost(early.getListSubJobs().get(0).getId()-1, late.getListSubJobs().get(0).getId()-1)+inp.getCarCost().getCost(late.getListSubJobs().get(0).getId()-1,early.getListSubJobs().get(1).getId()-1);
-			key=early.getListSubJobs().get(0).getId()+","+early.getListSubJobs().get(1).getId();
-			toCheck=late.getDirectoryConnections().get(key);
+			String key=early.getListSubJobs().get(0).getSubJobKey()+early.getListSubJobs().get(1).getSubJobKey();
+			toCheck=early.getDirectoryConnections().get(key);
 			boolean patient=false;
 			boolean client=false;
 			if(toCheck.getDetour()>distanceAccum) {
@@ -281,8 +571,6 @@ public class DrivingRoutes {
 			}
 			// checking respect to the client
 			distanceAccum=inp.getCarCost().getCost(depot.getId()-1, early.getListSubJobs().get(0).getId()-1)+inp.getCarCost().getCost(early.getListSubJobs().get(0).getId()-1,late.getListSubJobs().get(0).getId()-1);
-			key=depot.getId()+","+late.getListSubJobs().get(0).getId();
-			toCheck=late.getDirectoryConnections().get(key);
 			if(toCheck.getDetour()>distanceAccum) {
 				client=true;
 			}
@@ -298,8 +586,7 @@ public class DrivingRoutes {
 		// son sólo dos clientes
 		boolean detour=false;
 		double distanceAccum=inp.getCarCost().getCost(depot.getId()-1, early.getListSubJobs().get(0).getId()-1)+inp.getCarCost().getCost(early.getListSubJobs().get(0).getId()-1,late.getListSubJobs().get(0).getId()-1);
-		String key=depot.getId()+","+late.getListSubJobs().get(0).getId();
-		Edge toCheck=late.getDirectoryConnections().get(key);
+		Edge toCheck=new Edge(depot,late.getListSubJobs().get(0),inp,test);
 		if(toCheck.getDetour()>distanceAccum) {
 			detour=true;
 		}
@@ -311,16 +598,17 @@ public class DrivingRoutes {
 		int typeParts=-1;
 		int part1=parts.getListSubJobs().size();
 		int part2=parts2.getListSubJobs().size();
-		if(part1==1 && part2==3 ||part2==1 && part1==3) {
-			typeParts=1;
+		if(parts.getQualificationLevel()>0 && parts2.getQualificationLevel()==0 ||parts2.getQualificationLevel()>0 && parts.getQualificationLevel()==0) {
+			typeParts=2;
 		}
 		else {
-			if(part1==1 && part2==1) {
-				typeParts=2;
+			if(parts.getQualificationLevel()>0 && parts2.getQualificationLevel()>0) {
+
+				typeParts=3;
 			}	
 			else {
-				if(part1==3 && part2==3) {
-					typeParts=3;
+				if(parts.getQualificationLevel()==0 && parts2.getQualificationLevel()==0) {
+					typeParts=1;
 				}	
 			}
 		}
@@ -464,7 +752,7 @@ public class DrivingRoutes {
 
 	private void settingSolution(Solution copySolution) {
 		for(Route r:copySolution.getRoutes()) {
-			if(!r.getSubJobsList().isEmpty()) {
+			if(r.getPartsRoute().size()>2) {
 				routeVehicleList.add(r);
 			}
 		}
@@ -481,12 +769,18 @@ public class DrivingRoutes {
 		}
 		computeSolutionCost(copySolution);
 
-		for(Route r:routeVehicleList ) {
+		transferPartsInformation(routeVehicleList);
+
+	}
+
+	private void transferPartsInformation(ArrayList<Route> routeVehicleList2) {
+		for(Route r:routeVehicleList2 ) {
 			r.getSubJobsList().clear();
 			for(int part=1;part<r.getPartsRoute().size()-1;part++) {
 				for(SubJobs j:r.getPartsRoute().get(part).getListSubJobs()) {
 					r.getSubJobsList().add(j);
 				}
+				r.getPartsRoute().get(part).settingConnections(r.getPartsRoute().get(part).getListSubJobs(), inp, test);
 			}
 		}
 	}
@@ -748,8 +1042,10 @@ public class DrivingRoutes {
 		if(iR.getPartsRoute().size()>2 && jR.getPartsRoute().size()>2) {
 			routeToRemve=true;
 		}
-		if(iR!=jR) {
-			diffRoute=true;	
+		if(iR!=jR ) {
+			if(iR.getHomeCareStaff()==jR.getHomeCareStaff() && iR.getAmountParamedic()==jR.getAmountParamedic()) {
+				diffRoute=true;	
+			}
 		}
 		// Revisar que el número de personas en el auto no excedan de la capacidad del
 		double totalPassenger=iR.getAmountParamedic()+iR.getHomeCareStaff()+jR.getAmountParamedic()+jR.getHomeCareStaff();
@@ -835,14 +1131,7 @@ public class DrivingRoutes {
 
 		// la lista de trabajos asociados a la ruta
 
-		for(Route r:routeList ) {
-			r.getSubJobsList().clear();
-			for(int part=1;part<r.getPartsRoute().size()-1;part++) {
-				for(SubJobs j:r.getPartsRoute().get(part).getListSubJobs()) {
-					r.getSubJobsList().add(j);
-				}
-			}
-		}
+		transferPartsInformation(routeList);
 		return initialSol;
 	}
 
