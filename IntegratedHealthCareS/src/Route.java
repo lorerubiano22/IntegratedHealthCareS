@@ -177,19 +177,19 @@ public class Route {
 
 	}
 
-	public void updateRoute(Inputs inp) {
-		
-			// Consider the list of jobs positions
-			// reading part
-			subJobsList.clear();
+	public void updateRouteFromParts(Inputs inp) {
 
-			for(Parts part:this.getPartsRoute()) {
-				Parts partObject= new Parts(part);
-				for(SubJobs sj:partObject.getListSubJobs()) {
-					subJobsList.add(sj);
-				}	
-			}
-			if(this.getPartsRoute().size()>2) {
+		// Consider the list of jobs positions
+		// reading part
+		subJobsList.clear();
+
+		for(Parts part:this.getPartsRoute()) {
+			Parts partObject= new Parts(part);
+			for(SubJobs sj:partObject.getListSubJobs()) {
+				subJobsList.add(sj);
+			}	
+		}
+		if(this.getPartsRoute().size()>2) {
 			// service time
 			this.computeServiceTime();
 			// waiting time
@@ -208,7 +208,90 @@ public class Route {
 		}
 	}
 
+	public void updateRouteFromSubJobsList(Inputs inp, Test test) {
 
+		// Consider the list of jobs positions
+		// reading part
+		settingNewPart(inp,test);
+
+		if(this.getPartsRoute().size()>2) {
+			// service time
+			this.computeServiceTime();
+			// waiting time
+			this.computeWaitingTime();
+			// travel time
+			this.computeTravelTime(inp);
+			this.computePassenger();
+			// duration route
+			double duration= this.getServiceTime()+this.getTravelTime()+this.getWaitingTime();
+			this.setDurationRoute(subJobsList.get(subJobsList.size()-1).getDepartureTime()-subJobsList.get(0).getDepartureTime());
+			double idleTime=Math.max(0, (this.getDurationRoute()-duration));
+			this.setWaitingTime(this.getWaitingTime()+idleTime);
+			updatingJobsList();	// actualizar la lista de directorio de trabajos
+		}
+	}
+
+
+
+
+	private void settingNewPart(Inputs inp, Test test) {
+		SubJobs depot=null;
+		int a=0;
+		if(this.getSubJobsList().get(0).getId()==1) { // it is for the route which are already merging
+		a=1;
+			this.getPartsRoute().clear();
+			depot=this.getSubJobsList().get(0);
+		}
+		else {
+			if(this.getPartsRoute().get(0).getListSubJobs().get(0).getId()==1) {
+				depot=this.getPartsRoute().get(0).getListSubJobs().get(0);
+			}
+		}
+		int passengers=depot.getTotalPeople();
+		ArrayList<Parts> parts= new ArrayList<>();
+		ArrayList<SubJobs> listSubJobs= new ArrayList<>();
+		listSubJobs.add(this.getSubJobsList().getFirst());
+		Parts part=new Parts();
+		part.setListSubJobs(listSubJobs, inp, test);
+		parts.add(part);
+		part=new Parts();
+		listSubJobs= new ArrayList<>();
+		for(int i=a;i<this.getSubJobsList().size()-1;i++) {
+			SubJobs j=this.getSubJobsList().get(i);
+			passengers+=j.getTotalPeople();
+			listSubJobs.add(j);
+			if(passengers==0) {
+				part=new Parts();
+				part.setListSubJobs(listSubJobs, inp, test);
+				parts.add(part);
+				listSubJobs= new ArrayList<>();
+			}
+			if(this.getSubJobsList().getLast()==this.getSubJobsList().get(i+1)) {
+				part=new Parts();
+				part.setListSubJobs(listSubJobs, inp, test);
+				parts.add(part);
+			}
+		}		
+		listSubJobs= new ArrayList<>();
+		if(this.getSubJobsList().getLast().getId()==1) {
+			listSubJobs.add(this.getSubJobsList().getLast());
+			this.getSubJobsList().removeFirst();
+			this.getSubJobsList().removeLast();
+		}
+		else {
+			listSubJobs.add(this.getPartsRoute().getLast().getListSubJobs().get(0));
+		}
+		
+		part=new Parts();
+		part.setListSubJobs(listSubJobs, inp, test);
+		parts.add(part);
+		
+		this.getPartsRoute().clear();
+		for(Parts p:parts) {
+			this.getPartsRoute().add(p);
+		}
+		System.out.print(this.toString());
+	}
 
 
 	private void computeWaitingTime() {
