@@ -10,11 +10,12 @@ public class Edge implements Comparable<Edge>
 	private Edge inverseEdge = null; // edge with inverse direction
 
 	public Edge(SubJobs originNode, SubJobs endNode, Inputs inp, Test test) 
-	{   origin = originNode;
-	end = endNode;
-	time=inp.getCarCost().getCost(originNode.getId()-1, endNode.getId()-1);
-	key=originNode.getSubJobKey()+endNode.getSubJobKey();
-	detour=inp.getCarCost().getCost(originNode.getId()-1, endNode.getId()-1)*test.getDetour();
+	{
+		origin = originNode;
+		end = endNode;
+		time=inp.getCarCost().getCost(originNode.getId()-1, endNode.getId()-1);
+		key=originNode.getSubJobKey()+endNode.getSubJobKey();
+		detour=inp.getCarCost().getCost(originNode.getId()-1, endNode.getId()-1)*test.getDetour();
 	}
 
 	public Edge(Edge e) {

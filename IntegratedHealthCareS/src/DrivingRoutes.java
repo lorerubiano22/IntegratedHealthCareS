@@ -257,8 +257,8 @@ public class DrivingRoutes {
 		System.out.println("\nLate route \n"+lateRoute.toString());
 		boolean merging=false;
 		// empieza a mezclar desde la parte 2 de las rutas
-		for(int partEarly=2; partEarly<earlyRoute.getPartsRoute().size();partEarly++) {
-			for(int partLate=2; partLate<lateRoute.getPartsRoute().size();partLate++) {
+		for(int partEarly=2; partEarly<earlyRoute.getPartsRoute().size()-1;partEarly++) {
+			for(int partLate=2; partLate<lateRoute.getPartsRoute().size()-1;partLate++) {
 				int options=typeOfParts(earlyRoute.getPartsRoute().get(partEarly),lateRoute.getPartsRoute().get(partLate)); 
 				switch(options) {
 				case 1 :// 1 patient-patient 
@@ -266,7 +266,7 @@ public class DrivingRoutes {
 					break;
 
 				case 2 : // 2 homeCare-patient or patient-homeCare
-					merging=mergingItermediatePartsPatientClient(options,earlyRoute.getPartsRoute().get(partEarly),lateRoute.getPartsRoute().get(partLate), newRoute);// option1
+					//merging=mergingItermediatePartsPatientClient(options,earlyRoute.getPartsRoute().get(partEarly),lateRoute.getPartsRoute().get(partLate), newRoute);// option1
 
 					break; // optional
 
@@ -291,26 +291,157 @@ public class DrivingRoutes {
 		return merging;
 	}
 
-	private boolean mergingItermediatePartsClients(Parts earlyPart, Parts latePart, Route newRoute) {
+	private boolean mergingItermediatePartsPatientPatient(int options, Parts early, Parts late, Route newRoute) {
 		boolean merging=false;
-		// structure de una parte: (pickUp)---(dropOff)
-		SubJobs pickUpPatientEarly=earlyPart.getListSubJobs().get(0);
-		SubJobs dropOffPatientEarly=earlyPart.getListSubJobs().get(1);
-		SubJobs pickUpPatientLate=latePart.getListSubJobs().get(0);
-		SubJobs dropOffPatientLate=latePart.getListSubJobs().get(1);
-		
-		// Option 1: (pickUpPatientEarly)---(pickUpPatientLate)---(dropOffPatientEarly)---(dropOffPatientLate)
-		
-		
-		// Option 2: (pickUpPatientEarly)---(pickUpPatientLate)---(dropOffPatientLate)---(dropOffPatientEarly)
-		
+		/* part structure: (pick patient up at medical centre)
+		(drop patient off at patient home)
+		(pick next patient up at home)
+		(drop next patient off at at medical centre)
+		 */
+		// early part
+		SubJobs earlypickMC=early.getListSubJobs().get(0);
+		SubJobs earlydropOffPatientHome=early.getListSubJobs().get(1);
+		SubJobs earlypickUpPatientHome=early.getListSubJobs().get(2);
+		SubJobs earlydropOffMedicalCentre=early.getListSubJobs().get(3);
+
+		// late part
+		SubJobs latepickMC=late.getListSubJobs().get(0);
+		SubJobs latedropOffPatientHome=late.getListSubJobs().get(1);
+		SubJobs latepickUpPatientHome=late.getListSubJobs().get(2);
+		SubJobs latedropOffMedicalCentre=late.getListSubJobs().get(3);
+		/* option 1: (early pick patient up at medical centre) ---(late pick patient up at medical centre)
+		(early drop patient off at patient home) --- (late drop patient off at patient home)
+		(early pick next patient up at home)---(late pick next patient up at home)
+		(early drop next patient off at at medical centre) ---(late drop next patient off at at medical centre)
+		 */
+		boolean mergingPickUp= checkingTWDetour(earlypickMC,latepickMC,earlydropOffPatientHome,latedropOffPatientHome,early,late); // checking: (early pick medical centre)---(late pick up medica centre)---(early drop off patient home)---(late drop off patient home)--
+		if(mergingPickUp) { //
+			mergingPickUp= checkingTWDetour(earlypickUpPatientHome,latepickUpPatientHome,earlydropOffMedicalCentre,latedropOffMedicalCentre,early,late); // checking: (early pick medical centre)---(late pick medical centre)---(early drop off medical centre)---(late drop off medical centre)
+			if(mergingPickUp) {
+				newRoute.getSubJobsList().add(earlypickMC);
+				newRoute.getSubJobsList().add(latepickMC);
+				newRoute.getSubJobsList().add(earlydropOffPatientHome);
+				newRoute.getSubJobsList().add(latedropOffPatientHome);
+				newRoute.getSubJobsList().add(earlypickUpPatientHome);
+				newRoute.getSubJobsList().add(latepickUpPatientHome);
+				newRoute.getSubJobsList().add(earlydropOffMedicalCentre);
+				newRoute.getSubJobsList().add(latedropOffMedicalCentre);
+			}
+		}
+		else {
+			/*Option 2 
+		(early pick patient up at medical centre)---(early drop patient off at patient home)
+		(late pick patient up at medical centre)---(late drop patient off at patient home)
+		(early pick next patient up at home)---(early drop patient off at medical centre)
+		(late pick next patient up at home)---(late drop patient off at medical centre) 
+		*/
+			double distDropOffPickEarlyLate= inp.getCarCost().getCost(earlydropOffPatientHome.getId()-1, latepickMC.getId()-1); // (early drop patient off at patient home)---(late pick patient up at medical centre)
+			// evaluate option 2: en la opción dos no se consideran los detours
+			if(earlydropOffPatientHome.getDepartureTime()+distDropOffPickEarlyLate<=latepickMC.getArrivalTime()) { // checking TW: (early drop patient off at patient home)---(late pick patient up at medical centre)	
+				double distDropOffPickLateEarly=inp.getCarCost().getCost(latedropOffPatientHome.getId()-1, earlypickUpPatientHome.getId()-1);// (late drop patient off at patient home)---(early pick next patient up at home)
+				if(latedropOffPatientHome.getDepartureTime()+distDropOffPickLateEarly<=earlypickUpPatientHome.getArrivalTime()) { // check TW: (late drop patient off at patient home)---(early pick next patient up at home)
+					double distDropOffPickEaryLate=inp.getCarCost().getCost(earlydropOffMedicalCentre.getId()-1, latepickUpPatientHome.getId()-1);
+					if(earlydropOffMedicalCentre.getDepartureTime()+distDropOffPickEaryLate<=latepickUpPatientHome.getArrivalTime()) {// check TW: (early drop patient off at medical centre)---(late pick next patient up at home)
+						mergingPickUp=true;
+						newRoute.getSubJobsList().add(earlypickMC);
+						newRoute.getSubJobsList().add(earlydropOffPatientHome);
+						newRoute.getSubJobsList().add(latepickMC);
+						newRoute.getSubJobsList().add(latedropOffPatientHome);
+						newRoute.getSubJobsList().add(earlypickUpPatientHome);
+						newRoute.getSubJobsList().add(earlydropOffMedicalCentre);
+						newRoute.getSubJobsList().add(latepickUpPatientHome);
+						newRoute.getSubJobsList().add(latedropOffMedicalCentre);
+					}
+				}
+			}
+		}
 		return merging;
 	}
 
-	
+	private boolean checkingTWDetour(SubJobs earlypickMC, SubJobs latepickMC, SubJobs earlydropOffPatientHome,
+			SubJobs latedropOffPatientHome, Parts early, Parts late) {
+		boolean merge=false;
+		double distpickUpDropOff=inp.getCarCost().getCost(latepickMC.getId()-1, earlydropOffPatientHome.getId()-1);
+		double distDropOffDropOff=inp.getCarCost().getCost(earlydropOffPatientHome.getId()-1, latedropOffPatientHome.getId()-1);
+		//computing distances
+		double distpickMedicalCentre= inp.getCarCost().getCost(earlypickMC.getId()-1, latepickMC.getId()-1);// (early pick medical centre)---(late pick up medica centre)
+		double distdropOffPatient= inp.getCarCost().getCost(earlydropOffPatientHome.getId()-1, latedropOffPatientHome.getId()-1);// (early pick medical centre)---(late pick up medica centre)
+		if(latedropOffPatientHome.getDepartureTime()+distpickUpDropOff<earlydropOffPatientHome.getArrivalTime()) {// (early pick medical centre)---x---(early drop off patient home)
+			if(earlydropOffPatientHome.getDepartureTime()+distDropOffDropOff<latedropOffPatientHome.getArrivalTime()) {//(late pick up medica centre)---x---(late drop off patient home)
+				String key=latepickMC.getSubJobKey()+latedropOffPatientHome.getSubJobKey();
+				Edge rempovedConnectionLate=late.getDirectoryConnections().get(key);
+				Edge rempovedConnectionearly=early.getDirectoryConnections().get(key);
+				if((distpickMedicalCentre+distdropOffPatient)<=rempovedConnectionearly.getDetour() && (distpickUpDropOff+distdropOffPatient)<=rempovedConnectionLate.getDetour()) { // checking detour
+					merge=true;
+				}
+			}
+		}
+		return merge;
+	}
+
+	private boolean mergingItermediatePartsClients(Parts earlyPart, Parts latePart, Route newRoute) {
+		boolean merging=false;
+		// structure de una parte: (pickUp)---(dropOff)
+		SubJobs pickUpEarly=earlyPart.getListSubJobs().get(0);
+		SubJobs dropOffEarly=earlyPart.getListSubJobs().get(1);
+		SubJobs pickUpLate=latePart.getListSubJobs().get(0);
+		SubJobs dropOffLate=latePart.getListSubJobs().get(1);
+
+		// Option 1: (pickUpPatientEarly)---(pickUpPatientLate)---(dropOffPatientEarly)---(dropOffPatientLate)
+		double pickUpEarlypickUpLate=inp.getCarCost().getCost(pickUpEarly.getId()-1, pickUpLate.getId()-1);
+		double dropOffEarlydropOffLate=inp.getCarCost().getCost(dropOffEarly.getId()-1,dropOffLate.getId()-1);
+		// connection
+		if(pickUpEarly.getDepartureTime()+pickUpEarlypickUpLate<=pickUpLate.getArrivalTime()) {// Travel time first combination
+			if(dropOffEarly.getDepartureTime()+dropOffEarlydropOffLate<=dropOffLate.getArrivalTime()) { // Travel time second combination
+				// control detour early job (pickUpPatientEarly)---x---(dropOffPatientEarly)
+				String key=pickUpEarly.getSubJobKey()+dropOffEarly.getSubJobKey();
+				Edge connectionEarly=earlyPart.getDirectoryConnections().get(key);
+				double detourEarly=pickUpEarlypickUpLate+inp.getCarCost().getCost(pickUpLate.getId()-1, dropOffEarly.getId()-1);
+
+				// control detour early job (pickUpPatientLate)---x---(dropOffPatientLate)
+				key=pickUpLate.getSubJobKey()+dropOffLate.getSubJobKey();
+				Edge connectionLate=earlyPart.getDirectoryConnections().get(key);
+				double detourLate=dropOffEarlydropOffLate+inp.getCarCost().getCost(pickUpLate.getId()-1, dropOffEarly.getId()-1);
+				if(detourEarly<=connectionEarly.getDetour() && detourLate<=connectionLate.getDetour()) {// tour early and late
+					merging=true;
+					newRoute.getSubJobsList().add(pickUpEarly);
+					newRoute.getSubJobsList().add(pickUpLate);
+					newRoute.getSubJobsList().add(dropOffEarly);
+					newRoute.getSubJobsList().add(dropOffLate);
+				}
+			}	
+		}
 
 
-	
+
+		// Option 2: (pickUpPatientEarly)---(pickUpPatientLate)---(dropOffPatientEarly)---(dropOffPatientLate)
+		if(!merging) {
+			double dropOffLatedropOffEarly=inp.getCarCost().getCost(dropOffLate.getId()-1, dropOffEarly.getId()-1);
+			if(pickUpEarly.getDepartureTime()+pickUpEarlypickUpLate<=pickUpLate.getArrivalTime()) { // time window (pickUpPatientEarly)---(pickUpPatientLate)
+				if(dropOffLate.getDepartureTime()+dropOffLatedropOffEarly<=dropOffEarly.getArrivalTime()) { // time window (dropOffPatientEarly)---(dropOffPatientLate)
+					// distance detour
+					String key=pickUpLate.getSubJobKey()+dropOffLate.getSubJobKey();
+					Edge edgeConnectionLate=latePart.getDirectoryConnections().get(key);
+					double distDetour=pickUpEarlypickUpLate+edgeConnectionLate.getTime()+dropOffLatedropOffEarly;
+					key=pickUpLate.getSubJobKey()+dropOffLate.getSubJobKey();
+					Edge directConnection= earlyPart.getDirectoryConnections().get(key);
+					if(distDetour<=directConnection.getDetour()) { // detour
+						merging=true;
+						newRoute.getSubJobsList().add(pickUpEarly);
+						newRoute.getSubJobsList().add(pickUpLate);
+						newRoute.getSubJobsList().add(dropOffLate);
+						newRoute.getSubJobsList().add(dropOffEarly);
+					}
+				}
+			}
+		}
+		return merging;
+	}
+
+
+
+
+
 
 	private boolean seatingHeading(Route earlyRoute, Route lateRoute, Route newRoute) {
 		boolean headingMerge= false;// la early es la ruta de referencia  - eso quiere decir que al final el array mergingPart debe ser igual a la ruta más cercana

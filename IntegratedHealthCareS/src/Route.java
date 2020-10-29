@@ -318,8 +318,10 @@ public class Route {
 	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
 	s = s.concat("\nRuta demand:" + this.getPassengers());
 	s = s.concat("\njobs: ");
-	for(SubJobs j:this.subJobsList) {
+	for(Parts p:this.getPartsRoute()) {
+	for(SubJobs j:p.getListSubJobs()) {
 		s = s.concat("\nID " + j.getSubJobKey() + " arrival time "+ j.getArrivalTime()+ " departure time "+ j.getDepartureTime()+ " start service time" + j.getstartServiceTime()+ " waiting time " + j.getWaitingTime());	
+	}
 	}
 	return s;
 	}
