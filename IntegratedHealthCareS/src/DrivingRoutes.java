@@ -334,7 +334,7 @@ public class DrivingRoutes {
 		(late pick patient up at medical centre)---(late drop patient off at patient home)
 		(early pick next patient up at home)---(early drop patient off at medical centre)
 		(late pick next patient up at home)---(late drop patient off at medical centre) 
-		*/
+			 */
 			double distDropOffPickEarlyLate= inp.getCarCost().getCost(earlydropOffPatientHome.getId()-1, latepickMC.getId()-1); // (early drop patient off at patient home)---(late pick patient up at medical centre)
 			// evaluate option 2: en la opción dos no se consideran los detours
 			if(earlydropOffPatientHome.getDepartureTime()+distDropOffPickEarlyLate<=latepickMC.getArrivalTime()) { // checking TW: (early drop patient off at patient home)---(late pick patient up at medical centre)	
@@ -2639,9 +2639,18 @@ public class DrivingRoutes {
 		}
 		// se guarda los schift
 		for(Jobs j:clasification3) { // iterate over jobs
+			System.out.println(" Stop "+ j.getId());
+
 			for(Parts paramedic:qualificationParamedic) {
 				System.out.println(" Turn ");
 				printing(paramedic);
+				if(j.getId()==53 ) {
+					if(paramedic.getListSubJobs().size()!=0) {
+						if(paramedic.getListSubJobs().get(0).getId()==54) {
+							System.out.println(" Stop "+ j.getId());
+						}
+					}
+				}
 				boolean insertion=possibleInsertion(j,paramedic);
 				if(insertion) {
 					break;
@@ -3107,6 +3116,9 @@ public class DrivingRoutes {
 	}
 
 	private int iterateOverSchift(SubJobs j, Parts homeCare) {
+		if(j.getSubJobKey().equals("D54")) {
+			System.out.println("Job to insert "+ j.getId()+" "+ j.getSubJobKey()+" "+ j.getstartServiceTime());	
+		}
 		System.out.println("Job to insert "+ j.getId()+" "+ j.getSubJobKey()+" "+ j.getstartServiceTime());
 		boolean inserted=false;
 		int position=-1;

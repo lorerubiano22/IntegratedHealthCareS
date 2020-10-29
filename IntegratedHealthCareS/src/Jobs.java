@@ -105,6 +105,7 @@ public class Jobs {
 		this.departureTime=i.departureTime;
 		this.walkingTime=i.walkingTime;
 		this.arrivalTime=i.arrivalTime;
+		this.departureTime=i.departureTime;
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
 		this.sortLTWSizeCriterion=(hardendTime)*(sizeTW);

@@ -65,9 +65,9 @@ public class Parts {
 				qualificationLevel=j.getReqQualification();
 			}
 		}
-		
+
 		settingConnections(listSubJobs,inp,test);
-		
+
 		// Setting the reference node
 		for(SubJobs j:listSubJobs) {
 			if(j.isMedicalCentre() && j.getTotalPeople()<0) {
@@ -85,13 +85,24 @@ public class Parts {
 
 	public void settingConnections(ArrayList<SubJobs> listSubJobs2, Inputs inp, Test test) {
 		// setting the connections
-				for(int i=0;i<listSubJobs.size()-1;i++) {
-					SubJobs iNode=listSubJobs.get(i);
-					SubJobs jNode=listSubJobs.get(i+1);
-					Edge e= new Edge(iNode,jNode, inp,test);
-					directoryConnections.put(e.getEdgeKey(), e);
-				}
-		
+		for(int i=0;i<listSubJobs.size()-1;i++) {
+			SubJobs iNode=listSubJobs.get(i);
+			SubJobs jNode=listSubJobs.get(i+1);
+			Edge e= new Edge(iNode,jNode, inp,test);
+			directoryConnections.put(e.getEdgeKey(), e);
+		}
+
+	}
+
+	public String toString() 
+	{   String s = "";
+	s = s.concat("\nID part: " + key);
+	s = s.concat("\n List of jobs: ");
+	s= s.concat("\n");
+	for(SubJobs j:this.getListSubJobs()) {	
+		s = s.concat(" ( " + j.getSubJobKey()+", A_"+j.getArrivalTime()+", B_"+j.getstartServiceTime()+" D_"+j.getDepartureTime()+", reqTime_"+j.getReqTime()+") \n");
+	}
+	return s;
 	}
 
 
