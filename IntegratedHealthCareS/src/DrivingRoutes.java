@@ -931,13 +931,17 @@ public class DrivingRoutes {
 							vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(0));
 							vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(1));
 							for(part=start;part<refRoute.getPartsRoute().size()-1;part++) {
-
+int newStart=0;
 								System.out.println("\nRoute refRoute"+ refRoute.toString());
 								System.out.println("\nRoute toInsertRoute"+ toInsertRoute.toString());
 								inserted=isertingRoute(vehicle,toInsertRoute,refRoute, part);
 								if(!inserted) { // insert part by part
 									vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(part));
 									vehicle.updateRouteFromParts(inp);
+								}
+								else {
+									newStart=part-1;
+									part=newStart; // para que siga metiendo las partes de la ruta que aún falta por incorporar
 								}
 
 							}
@@ -1148,7 +1152,8 @@ public class DrivingRoutes {
 			Parts endPart=vehicle.getPartsRoute().getLast();
 			SubJobs lastSubjobInRoute= endPart.getListSubJobs().get(endPart.getListSubJobs().size()-1);
 			SubJobs firstSubjob= toInsertRoute.getPartsRoute().get(i).getListSubJobs().get(0);
-			boolean nextPart= checkingNextPart(firstSubjob,refRoute.getPartsRoute().get(part2).getListSubJobs().get(0));
+			SubJobs nextSubJobPart= refRoute.getPartsRoute().get(part2).getListSubJobs().get(0);
+			boolean nextPart= checkingNextPart(lastSubjobInRoute,firstSubjob,nextSubJobPart);
 			if(lastSubjobInRoute.getDepartureTime()<firstSubjob.getArrivalTime() && nextPart) {
 				vehicle.getPartsRoute().add(toInsertRoute.getPartsRoute().get(i));
 				if(refRoute.getPartsRoute().get(part2).getListSubJobs().get(0).getId()==1) {
@@ -1206,13 +1211,14 @@ public class DrivingRoutes {
 		return inserted; 
 	}
 
-	private boolean checkingNextPart(SubJobs toInsert, SubJobs refRoute) {
+	private boolean checkingNextPart(SubJobs refRoute, SubJobs toInsert, SubJobs nextSubJobPart) {
+		//boolean nextPart= checkingNextPart(lastSubjobInRoute,toinsert,nextSubJobPart);
 		boolean nextPart=false;
 		if(refRoute.getId()==1) {
 			nextPart=true;
 		}
 		else {
-			if(refRoute.getDepartureTime()<toInsert.getArrivalTime() && toInsert.getDepartureTime()<refRoute.getArrivalTime() ) {
+			if(refRoute.getDepartureTime()<toInsert.getArrivalTime() && toInsert.getDepartureTime()<nextSubJobPart.getArrivalTime() ) {
 				nextPart=true;
 			}
 		}

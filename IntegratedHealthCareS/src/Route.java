@@ -316,7 +316,7 @@ public class Route {
 	{   String s = "";
 	s = s.concat("\nRute duration: " + (this.getDurationRoute()));
 	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
-	s = s.concat("\nRuta demand:" + this.getPassengers());
+	s = s.concat("\nRuta passengers:" + this.getPassengers());
 	s = s.concat("\njobs: ");
 	for(Parts p:this.getPartsRoute()) {
 	for(SubJobs j:p.getListSubJobs()) {
