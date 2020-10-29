@@ -3161,15 +3161,14 @@ public class DrivingRoutes {
 		return position;
 	}
 
-	private int iterateOverSchiftLastPosition(Jobs j, Parts homeCare) {
+	private int iterateOverSchiftLastPosition(SubJobs j, Parts homeCare) {
 		System.out.println("Job to insert "+ j.getId()+" "+ j.getSubJobKey()+" "+ j.getstartServiceTime());
 		boolean inserted=false;
 		int position=-1;
 		// se evalua inser trabajo por trabajo - Tan pronto sea posible insertar el trabajo se para la iteración sobre el turno y se inserta
 		//ArrayList<SubJobs> homeCare=copyListJobs(currentJobs);
 		SubJobs inRoute=homeCare.getListSubJobs().get(homeCare.getListSubJobs().size()-1);
-		SubJobs subj=new SubJobs(j);
-		inserted=insertionLater(inRoute,subj);//(inRoute)******(j)
+		inserted=insertionLater(inRoute,j);//(inRoute)******(j)
 		if(inserted) {
 			position=homeCare.getListSubJobs().size();
 		}			
