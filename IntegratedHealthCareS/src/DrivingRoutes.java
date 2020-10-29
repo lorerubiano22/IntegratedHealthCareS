@@ -276,9 +276,6 @@ public class DrivingRoutes {
 				// insertar despues de la ruta más temprana: early---late
 
 				// insertar antes de la ruta más temprana:
-
-
-
 			}	
 		}
 
@@ -931,7 +928,7 @@ public class DrivingRoutes {
 							vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(0));
 							vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(1));
 							for(part=start;part<refRoute.getPartsRoute().size()-1;part++) {
-int newStart=0;
+								int newStart=0;
 								System.out.println("\nRoute refRoute"+ refRoute.toString());
 								System.out.println("\nRoute toInsertRoute"+ toInsertRoute.toString());
 								inserted=isertingRoute(vehicle,toInsertRoute,refRoute, part);
@@ -1152,8 +1149,9 @@ int newStart=0;
 			Parts endPart=vehicle.getPartsRoute().getLast();
 			SubJobs lastSubjobInRoute= endPart.getListSubJobs().get(endPart.getListSubJobs().size()-1);
 			SubJobs firstSubjob= toInsertRoute.getPartsRoute().get(i).getListSubJobs().get(0);
+			SubJobs lastSubjob= toInsertRoute.getPartsRoute().get(i).getListSubJobs().get(toInsertRoute.getPartsRoute().get(i).getListSubJobs().size()-1);
 			SubJobs nextSubJobPart= refRoute.getPartsRoute().get(part2).getListSubJobs().get(0);
-			boolean nextPart= checkingNextPart(lastSubjobInRoute,firstSubjob,nextSubJobPart);
+			boolean nextPart= checkingNextPart(lastSubjobInRoute,firstSubjob,lastSubjob,nextSubJobPart);
 			if(lastSubjobInRoute.getDepartureTime()<firstSubjob.getArrivalTime() && nextPart) {
 				vehicle.getPartsRoute().add(toInsertRoute.getPartsRoute().get(i));
 				if(refRoute.getPartsRoute().get(part2).getListSubJobs().get(0).getId()==1) {
@@ -1211,14 +1209,14 @@ int newStart=0;
 		return inserted; 
 	}
 
-	private boolean checkingNextPart(SubJobs refRoute, SubJobs toInsert, SubJobs nextSubJobPart) {
-		//boolean nextPart= checkingNextPart(lastSubjobInRoute,toinsert,nextSubJobPart);
+	private boolean checkingNextPart(SubJobs lastSubjobInRoute, SubJobs firstSubjob, SubJobs lastSubjob, SubJobs nextSubJobPart) {
+		//(lastSubjobInRoute,firstSubjob,lastSubjob,nextSubJobPart);
 		boolean nextPart=false;
-		if(refRoute.getId()==1) {
+		if(lastSubjobInRoute.getId()==1) {
 			nextPart=true;
 		}
 		else {
-			if(refRoute.getDepartureTime()<toInsert.getArrivalTime() && toInsert.getDepartureTime()<nextSubJobPart.getArrivalTime() ) {
+			if(lastSubjobInRoute.getDepartureTime()<firstSubjob.getArrivalTime() && lastSubjob.getDepartureTime()<nextSubJobPart.getArrivalTime() ) {
 				nextPart=true;
 			}
 		}
