@@ -44,8 +44,8 @@ public class Edge implements Comparable<Edge>
 	@Override
 	public String toString() 
 	{   String s = "";
-	s = s.concat("\nEdge origin job: " + this.getOrigin());
-	s = s.concat("\nEdge end job: " + this.getEnd());
+	s = s.concat("\nEdge origin job: " + this.getOrigin()+","+this.getEnd());
+	//s = s.concat("\nEdge end job: " + this.getEnd());
 	s = s.concat("\nEdge time: " + (this.getTime()));
 	return s;
 	}

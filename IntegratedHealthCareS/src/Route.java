@@ -156,10 +156,12 @@ public class Route {
 	public void computePassenger() {
 		amountParamedics=0;
 		homeCareStaff=0;
+		System.out.println("***printingRoute ***"+this.toString());
 		int totalPassenger =getSubJobsList().get(0).getTotalPeople();
 		this.setPassengers(totalPassenger);
+		System.out.println("***printingRoute ***"+this.toString());
 		if(totalPassenger==1) { // solo una persona es asignada al vehículo
-			if(getSubJobsList().get(1).isMedicalCentre() || getSubJobsList().get(1).isPatient()) {
+			if(getSubJobsList().get(0).isMedicalCentre() || getSubJobsList().get(0).isPatient()) {
 				this.amountParamedics=totalPassenger;
 			}
 			else {
@@ -189,7 +191,7 @@ public class Route {
 				subJobsList.add(sj);
 			}	
 		}
-		if(this.getPartsRoute().size()>2) {
+		if(this.getPartsRoute().size()>2 && !this.getSubJobsList().isEmpty()) {
 			// service time
 			this.computeServiceTime();
 			// waiting time
@@ -202,9 +204,7 @@ public class Route {
 			this.setDurationRoute(subJobsList.get(subJobsList.size()-1).getDepartureTime()-subJobsList.get(0).getDepartureTime());
 			double idleTime=Math.max(0, (this.getDurationRoute()-duration));
 			this.setWaitingTime(this.getWaitingTime()+idleTime);
-
 			updatingJobsList();	// actualizar la lista de directorio de trabajos
-
 		}
 	}
 
@@ -214,7 +214,7 @@ public class Route {
 		// reading part
 		settingNewPart(inp,test);
 
-		if(this.getPartsRoute().size()>2) {
+		if(this.getPartsRoute().size()>2 && !this.getSubJobsList().isEmpty()) {
 			// service time
 			this.computeServiceTime();
 			// waiting time
@@ -235,28 +235,53 @@ public class Route {
 
 
 	private void settingNewPart(Inputs inp, Test test) {
+		
 		SubJobs depot=null;
+		SubJobs depotEnd=null;
 		int a=0;
-		if(this.getSubJobsList().get(0).getId()==1) { // it is for the route which are already merging
-		a=1;
-			this.getPartsRoute().clear();
-			depot=this.getSubJobsList().get(0);
+		System.out.println("SubJobsList"+this.getSubJobsList().size());
+		System.out.println("Parts"+this.getPartsRoute().size());
+		System.out.println("Route \n "+this.toString());
+		if(this.getSubJobsList().isEmpty()) {
+			System.out.println("SubJobsList is empty ");
 		}
-		else {
-			if(this.getPartsRoute().get(0).getListSubJobs().get(0).getId()==1) {
-				depot=this.getPartsRoute().get(0).getListSubJobs().get(0);
+		if(!this.getSubJobsList().isEmpty() && !this.getPartsRoute().isEmpty()) {
+			if(this.getSubJobsList().get(0).getId()==1) { // it is for the route which are already merging
+				a=1;
+				this.getPartsRoute().clear();
+				depot=this.getSubJobsList().get(0);
+				System.out.println("Subjobs");
+			}
+			else {
+				if(this.getPartsRoute().get(0).getListSubJobs().get(0).getId()==1) {
+					depot=this.getPartsRoute().get(0).getListSubJobs().get(0);
+					System.out.println("parts");
+				}
+
 			}
 		}
+		else {
+			if(this.getSubJobsList().isEmpty()) { // subJobs is empty
+				depot=this.getPartsRoute().get(0).getListSubJobs().get(0);
+			}
+			else {
+				if(this.getPartsRoute().isEmpty()) {
+					depot=this.getSubJobsList().get(0);
+				}
+			}
+		}
+
 		int passengers=depot.getTotalPeople();
 		ArrayList<Parts> parts= new ArrayList<>();
 		ArrayList<SubJobs> listSubJobs= new ArrayList<>();
-		listSubJobs.add(this.getSubJobsList().getFirst());
+		listSubJobs.add(depot);
 		Parts part=new Parts();
 		part.setListSubJobs(listSubJobs, inp, test);
 		parts.add(part);
 		part=new Parts();
 		listSubJobs= new ArrayList<>();
-		for(int i=a;i<this.getSubJobsList().size()-1;i++) {
+
+		for(int i=a;i<this.getSubJobsList().size();i++) {
 			SubJobs j=this.getSubJobsList().get(i);
 			passengers+=j.getTotalPeople();
 			listSubJobs.add(j);
@@ -266,26 +291,55 @@ public class Route {
 				parts.add(part);
 				listSubJobs= new ArrayList<>();
 			}
-			if(this.getSubJobsList().getLast()==this.getSubJobsList().get(i+1)) {
-				part=new Parts();
-				part.setListSubJobs(listSubJobs, inp, test);
-				parts.add(part);
+			else {
+				if(this.getSubJobsList().getLast()==j) {
+					part=new Parts();
+					part.setListSubJobs(listSubJobs, inp, test);
+					parts.add(part);
+				}
 			}
 		}		
+		
+		
+		int lastIndex=0;
 		listSubJobs= new ArrayList<>();
-		if(this.getSubJobsList().getLast().getId()==1) {
-			listSubJobs.add(this.getSubJobsList().getLast());
-			this.getSubJobsList().removeFirst();
-			this.getSubJobsList().removeLast();
+		if(!this.getSubJobsList().isEmpty() && !this.getPartsRoute().isEmpty()) {
+			if(this.getSubJobsList().getLast().getId()==1) {
+				depotEnd=this.getSubJobsList().getLast();
+				listSubJobs.add(depotEnd);
+				this.getSubJobsList().removeFirst();
+				this.getSubJobsList().removeLast();
+			}
+			else {
+				lastIndex=this.getPartsRoute().size()-1;
+				if(this.getPartsRoute().get(lastIndex).getListSubJobs().get(0).getId()==1) {
+					depotEnd=this.getPartsRoute().get(lastIndex).getListSubJobs().get(0);
+					listSubJobs.add(depotEnd);
+					System.out.println("parts");
+				}
+			}
 		}
 		else {
-			listSubJobs.add(this.getPartsRoute().getLast().getListSubJobs().get(0));
+			if(this.getSubJobsList().isEmpty()) {
+				depotEnd=this.getPartsRoute().get(lastIndex).getListSubJobs().get(0);
+				listSubJobs.add(depotEnd);
+				System.out.println("parts");
+			}
+			else {
+				if(this.getPartsRoute().isEmpty()) {
+					depotEnd=this.getSubJobsList().getLast();
+					listSubJobs.add(depotEnd);
+					this.getSubJobsList().removeFirst();
+					this.getSubJobsList().removeLast();
+				}
+			}
 		}
-		
+	
+
 		part=new Parts();
 		part.setListSubJobs(listSubJobs, inp, test);
 		parts.add(part);
-		
+
 		this.getPartsRoute().clear();
 		for(Parts p:parts) {
 			this.getPartsRoute().add(p);
@@ -319,9 +373,10 @@ public class Route {
 	s = s.concat("\nRuta passengers:" + this.getPassengers());
 	s = s.concat("\njobs: ");
 	for(Parts p:this.getPartsRoute()) {
-	for(SubJobs j:p.getListSubJobs()) {
-		s = s.concat("\nID " + j.getSubJobKey() + " arrival time "+ j.getArrivalTime()+ " departure time "+ j.getDepartureTime()+ " start service time" + j.getstartServiceTime()+ " waiting time " + j.getWaitingTime());	
-	}
+		for(SubJobs j:p.getListSubJobs()) {
+			s = s.concat("\nID " + j.getSubJobKey() + " arrival time "+ j.getArrivalTime()+ " departure time "+ j.getDepartureTime()+ " start service time" + j.getstartServiceTime()+ " waiting time " + j.getWaitingTime());	
+		}
+		s = s.concat("\n\n");
 	}
 	return s;
 	}

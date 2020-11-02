@@ -27,9 +27,9 @@ public class Parts {
 			listSubJobs.add(new SubJobs(formalJob));
 			directorySubjobs.put(n.getSubJobKey(), n);
 		}
-		for(Edge e:part.directoryConnections.values()) {
+		for(Edge e:part.getDirectoryConnections().values()) {
 			Edge eNew= new Edge(e);
-			directoryConnections.put(eNew.getEdgeKey(), eNew);
+			this.directoryConnections.put(eNew.getEdgeKey(), eNew);
 		}
 	}
 
