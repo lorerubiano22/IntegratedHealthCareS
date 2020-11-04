@@ -153,22 +153,7 @@ public class Route {
 	}
 
 
-	public void computePassenger() {
-		amountParamedics=0;
-		homeCareStaff=0;
-		System.out.println("***printingRoute ***"+this.toString());
-		int totalPassenger =getSubJobsList().get(0).getTotalPeople();
-		this.setPassengers(totalPassenger);
-		System.out.println("***printingRoute ***"+this.toString());
-		if(totalPassenger==1) { // solo una persona es asignada al vehículo
-			if(getSubJobsList().get(0).isMedicalCentre() || getSubJobsList().get(0).isPatient()) {
-				this.amountParamedics=totalPassenger;
-			}
-			else {
-				homeCareStaff=totalPassenger;
-			}
-		}
-	}
+
 
 
 	public void updatingJobsList() {
@@ -198,7 +183,7 @@ public class Route {
 			this.computeWaitingTime();
 			// travel time
 			this.computeTravelTime(inp);
-			this.computePassenger();
+			//this.computePassenger();
 			// duration route
 			double duration= this.getServiceTime()+this.getTravelTime()+this.getWaitingTime();
 			this.setDurationRoute(subJobsList.get(subJobsList.size()-1).getDepartureTime()-subJobsList.get(0).getDepartureTime());
@@ -221,7 +206,7 @@ public class Route {
 			this.computeWaitingTime();
 			// travel time
 			this.computeTravelTime(inp);
-			this.computePassenger();
+			//this.computePassenger();
 			// duration route
 			double duration= this.getServiceTime()+this.getTravelTime()+this.getWaitingTime();
 			this.setDurationRoute(subJobsList.get(subJobsList.size()-1).getDepartureTime()-subJobsList.get(0).getDepartureTime());
