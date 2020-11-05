@@ -102,7 +102,13 @@ public class WalkingRoutes {
 				System.out.print("\n");
 			}
 		}
-
+LinkedList<SubRoute> copy= new LinkedList<SubRoute> ();
+for(SubRoute s:walkingRoutes) {
+	if(s.getJobSequence().size()>1) {
+		copy.add(s);
+	}
+	
+}
 		// checkSolutionQuality <- each job is once in the set of solutions
 		boolean goodSolution = checkWalkingRouteSet();
 		System.out.print("\n good Solution" + goodSolution);

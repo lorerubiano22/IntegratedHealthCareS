@@ -87,7 +87,6 @@ public class DrivingRoutes {
 		System.out.println("printing copy solution");
 		System.out.println(copySolution.toString());
 		System.out.println("end");
-		// falta modificar las horas de departure de acuerdo al vehículo y no al personal
 		Solution newSol= mergingRoutes(copySolution,partsList); // las rutas se mezclan por partes
 		updatingSolution(newSol);
 		System.out.println("printing initial solution");
@@ -105,7 +104,7 @@ public class DrivingRoutes {
 			for(Parts a:r.getPartsRoute()) {
 				changinPartTime(a);
 			}	
-			r.updateRouteFromParts(inp);
+			r.updateRouteFromParts(inp,test);
 		}
 
 	}
@@ -1322,7 +1321,7 @@ return merging;
 								inserted=isertingRoute(vehicle,toInsertRoute,refRoute, part);
 								if(!inserted) { // insert part by part
 									vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(part));
-									vehicle.updateRouteFromParts(inp);
+									vehicle.updateRouteFromParts(inp,test);
 								}
 								else {
 									newStart=part-1;
@@ -1335,7 +1334,7 @@ return merging;
 								boolean insertRest=isertingTheRest(vehicle,toInsertRoute);
 								if(!insertRest) {
 									vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(part));
-									vehicle.updateRouteFromParts(inp);}
+									vehicle.updateRouteFromParts(inp,test);}
 							}
 						}
 						refRoute=updatingNewRoutes(refRoute,vehicle,part);	
@@ -1424,7 +1423,7 @@ return merging;
 			vehicle.setAmountParamedic(refRoute.getAmountParamedic()+toInsertRoute.getAmountParamedic());
 			vehicle.setHomeCareStaff(refRoute.getHomeCareStaff()+toInsertRoute.getHomeCareStaff());
 
-			vehicle.updateRouteFromParts(inp);
+			vehicle.updateRouteFromParts(inp,test);
 		}
 		return inserted;
 	}
@@ -1527,7 +1526,7 @@ return merging;
 				refRoute.getPartsRoute().remove(j);
 			}
 		}
-		refRoute.updateRouteFromParts(inp);
+		refRoute.updateRouteFromParts(inp,test);
 		return refRoute;
 	}
 
@@ -1553,10 +1552,10 @@ return merging;
 					vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(part2));
 					part2++;
 				}
-				vehicle.updateRouteFromParts(inp);
+				vehicle.updateRouteFromParts(inp,test);
 				System.out.println("Printing changing 2 " +vehicle.toString());
 				changing.removingParts(toInsertRoute.getPartsRoute().get(i));
-				changing.updateRouteFromParts(inp);
+				changing.updateRouteFromParts(inp,test);
 				System.out.println("Printing changing 1 " +changing.toString());
 				System.out.println("Printing vehicleRouting" +vehicle.toString());
 				inserted=true;	
@@ -1567,7 +1566,7 @@ return merging;
 		for(Parts part:changing.getPartsRoute()) {
 			toInsertRoute.getPartsRoute().add(part);
 		}
-		toInsertRoute.updateRouteFromParts(inp);
+		toInsertRoute.updateRouteFromParts(inp,test);
 		System.out.println("Printing toInsertRoute" +toInsertRoute.toString());
 		return inserted; 
 	}
@@ -1585,10 +1584,10 @@ return merging;
 		if(lastSubjobInRoute.getDepartureTime()<firstSubjob.getArrivalTime()) {
 			for(int i=1;i<toInsertRoute.getPartsRoute().size();i++) { // -1 para no incluir el depot al final
 				vehicle.getPartsRoute().add(toInsertRoute.getPartsRoute().get(i));
-				vehicle.updateRouteFromParts(inp);
+				vehicle.updateRouteFromParts(inp,test);
 				System.out.println("Printing changing 2 " +vehicle.toString());
 				changing.removingParts(toInsertRoute.getPartsRoute().get(i));
-				changing.updateRouteFromParts(inp);
+				changing.updateRouteFromParts(inp,test);
 				System.out.println("Printing changing 1 " +changing.toString());
 				System.out.println("Printing vehicleRouting" +vehicle.toString());
 				inserted=true;	
@@ -1599,7 +1598,7 @@ return merging;
 		for(Parts part:changing.getPartsRoute()) {
 			toInsertRoute.getPartsRoute().add(part);
 		}
-		toInsertRoute.updateRouteFromParts(inp);
+		toInsertRoute.updateRouteFromParts(inp,test);
 		System.out.println("Printing toInsertRoute" +toInsertRoute.toString());
 		return inserted; 
 	}
@@ -1740,7 +1739,7 @@ return merging;
 		for(Route r:routeList ) {
 			routeN++;
 			if(!r.getSubJobsList().isEmpty()) {
-				r.updateRouteFromParts(inp);
+				r.updateRouteFromParts(inp,test);
 				r.setIdRoute(routeN);
 				initialSol.getRoutes().add(r);
 			}
@@ -1783,7 +1782,7 @@ return merging;
 		for(Route r:initialSol.getRoutes()) {
 			i++;
 			r.setIdRoute(i);
-			r.updateRouteFromParts(inp);
+			r.updateRouteFromParts(inp,test);
 			waiting+=r.getWaitingTime(); // waiting time
 			serviceTime+=r.getServiceTime(); // 2. Service time 
 			drivingTime+=r.getTravelTime(); // 3. Travel time
@@ -2858,7 +2857,7 @@ return merging;
 			if(passengers!=0) {
 				partObject.getListSubJobs().add(sj);
 				if(i==turn.getListSubJobs().size()-1) {
-					r.updateRouteFromParts(inp);
+					r.updateRouteFromParts(inp,test);
 					System.out.println(r.toString());
 				}
 			}
@@ -2872,7 +2871,7 @@ return merging;
 		partObject= new Parts();
 		partObject.setListSubJobs(partEnd,inp,test);
 		r.getPartsRoute().add(partObject);
-		r.updateRouteFromParts(inp);
+		r.updateRouteFromParts(inp,test);
 		// setting personnal
 		if(turn.getListSubJobs().get(0).isPatient()) {
 			r.setAmountDriver(0);

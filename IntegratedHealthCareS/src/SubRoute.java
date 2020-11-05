@@ -144,7 +144,7 @@ public class SubRoute {
 		s = s.concat("\nEdge total of job in the walking route: " + (this.getJobSequence().size()));
 		s = s.concat("\n List of jobs: ");
 		for(Jobs j:this.getJobSequence()) {
-			s = s.concat(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") ");	
+			s = s.concat(" j_( Id" + j.getId()+"A"+ j.getArrivalTime() +", B_"+j.getstartServiceTime()+") ");	
 		}
 		//	s = s.concat("\n Information Jobs: ");
 		//	for(Jobs j:this.getJobSequence()) {

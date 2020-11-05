@@ -164,7 +164,7 @@ public class Route {
 
 	}
 
-	public void updateRouteFromParts(Inputs inp) {
+	public void updateRouteFromParts(Inputs inp, Test test) {
 
 		// Consider the list of jobs positions
 		// reading part
@@ -180,7 +180,7 @@ public class Route {
 			// service time
 			this.computeServiceTime();
 			// waiting time
-			this.computeWaitingTime();
+			this.computeWaitingTime(test);
 			// travel time
 			this.computeTravelTime(inp);
 			//this.computePassenger();
@@ -203,7 +203,7 @@ public class Route {
 			// service time
 			this.computeServiceTime();
 			// waiting time
-			this.computeWaitingTime();
+			this.computeWaitingTime(test);
 			// travel time
 			this.computeTravelTime(inp);
 			//this.computePassenger();
@@ -333,9 +333,25 @@ public class Route {
 	}
 
 
-	private void computeWaitingTime() {
+	private void computeWaitingTime(Test test) {
 		double waiting=0;
 		for(Jobs j:this.positionJobs.values() ) {
+			double aditionaltime=0;
+			if(j.isClient()) {
+				aditionaltime=test.getloadTimeHomeCareStaff();
+			}
+			else {
+				if(j.isMedicalCentre() && j.getTotalPeople()<0) {
+					aditionaltime=test.getloadTimePatient()+test.getRegistrationTime();
+				}
+				else {
+					aditionaltime=test.getloadTimePatient();
+				}
+			}
+			if((j.getArrivalTime()+aditionaltime)<j.getstartServiceTime()) {
+				waiting=j.getstartServiceTime()-(j.getArrivalTime()+aditionaltime);
+			}
+			j.setWaitingTime(waiting);
 			waiting+=j.getWaitingTime();
 		}
 		this.setWaitingTime(waiting);
