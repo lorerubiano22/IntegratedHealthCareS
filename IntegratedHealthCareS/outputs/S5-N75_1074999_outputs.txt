@@ -73,7 +73,7 @@ Walking time: 10229.0
  Total passengers: 0
  Total paramedic: 12.0
  Total home care staff: 19.0
- Waiting time: 51412.0
+ Waiting time: 51397.0
  Service time: 12689.0
  List of jobs: 
  Route: 0 travelTime: 39.0 waitingTime: 1696.0 serviceTime: 165.0 durationRoute: 338.0
@@ -261,7 +261,7 @@ Walking time: 10229.0
 
 
 
- Route: 7 travelTime: 21.0 waitingTime: 15.0 serviceTime: 105.0 durationRoute: 141.0
+ Route: 7 travelTime: 21.0 waitingTime: 0.0 serviceTime: 105.0 durationRoute: 141.0
  homeCareSaff amount: 0.0 paramedic amount: 1.0
  ( P1, A_498.0, B_498.0 D_498.0, reqTime_30.0) 
 
@@ -690,7 +690,7 @@ Walking time: 0.0
  Total passengers: 0
  Total paramedic: 12.0
  Total home care staff: 16.0
- Waiting time: 54201.0
+ Waiting time: 54186.0
  Service time: 11609.0
  List of jobs: 
  Route: 0 travelTime: 39.0 waitingTime: 1696.0 serviceTime: 165.0 durationRoute: 338.0
@@ -861,7 +861,7 @@ Walking time: 0.0
 
 
 
- Route: 6 travelTime: 21.0 waitingTime: 15.0 serviceTime: 105.0 durationRoute: 141.0
+ Route: 6 travelTime: 21.0 waitingTime: 0.0 serviceTime: 105.0 durationRoute: 141.0
  homeCareSaff amount: 0.0 paramedic amount: 1.0
  ( P1, A_498.0, B_498.0 D_500.0, reqTime_30.0) 
 
@@ -1009,4 +1009,4 @@ Walking time: 0.0
 
  pc Time:
 
-1787.5928
+1464.35

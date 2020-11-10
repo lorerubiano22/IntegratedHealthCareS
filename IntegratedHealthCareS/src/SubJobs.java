@@ -53,7 +53,9 @@ public class SubJobs extends Jobs {
 	s = s.concat("\n start time: " + (this.getStartTime()));
 	s = s.concat("\n end time: " + (this.getEndTime()));
 	s = s.concat("\n arrival time: " + (this.getArrivalTime()));
+	s = s.concat("\n departure time: " + (this.getDepartureTime()));
 	s = s.concat("\n start service:" + this.getstartServiceTime());
+	s = s.concat("\n end service:" + this.getendServiceTime());
 	return s;
 	}
 

@@ -21,6 +21,7 @@ public class Route {
 	private LinkedList<Parts> partsList=new LinkedList<Parts>(); // subjobs list (pick up and delivary)
 	private HashMap<String, SubJobs> positionJobs=new HashMap<>();
 	private HashMap<Integer, Jobs>  futureSubJobsList=new HashMap<Integer, Jobs> ();
+	private double idleTime=0;
 	private Schift  schift; 
 
 	// Constructors
@@ -34,6 +35,7 @@ public class Route {
 		homeCareStaff=r.getHomeCareStaff();
 		amountParamedics=r.getAmountParamedic();
 		driver=r.getAmountDriver();
+		idleTime=r.getIdleTime();
 		copyEdges(r.edges); // edges list
 		copyCouples(r.jobsList); // subjobs list (pick up and delivary)
 		copySubJobs(r.subJobsList); // subjobs list (pick up and delivary)
@@ -62,6 +64,7 @@ public class Route {
 		waitingTime = 0.0; // travel time
 		durationRoute = 0.0; // route total costs
 		passengers = 0; // route total demand
+		idleTime=0;
 		edges=new HashMap<String,Edge>(); // edges list
 		jobsList= new LinkedList<Couple>(); // subjobs list (pick up and delivary)
 		subJobsList=new LinkedList<SubJobs>(); // subjobs list (pick up and delivary)
@@ -117,6 +120,7 @@ public class Route {
 	public void setAmountParamedic(double paramedic) {this.amountParamedics = paramedic;}
 	public void setSchiftRoute(Schift s) {schift=s;}
 	public void setAmountDriver(double d) {this.driver = d;}
+	public void setIdleTime(double idleTime) {this.idleTime = idleTime;}
 
 
 	// Getters
@@ -136,6 +140,7 @@ public class Route {
 	public LinkedList<Parts> getPartsRoute() {return partsList;}
 	public Schift getSchiftRoute() {return schift;}
 	public double getAmountDriver() {return driver;}
+	public double getIdleTime() {return idleTime;}
 
 	// Auxiliar methods
 
@@ -154,22 +159,20 @@ public class Route {
 
 
 
-
-
 	public void updatingJobsList() {
 		positionJobs.clear();
 		for(SubJobs nodeI:this.getSubJobsList()) {
 			this.positionJobs.put(nodeI.getSubJobKey(), nodeI);	
 		}
-
 	}
 
 	public void updateRouteFromParts(Inputs inp, Test test) {
-
 		// Consider the list of jobs positions
 		// reading part
 		subJobsList.clear();
-
+		if(this.id==6) {
+			System.out.println("stop");
+		}
 		for(Parts part:this.getPartsRoute()) {
 			Parts partObject= new Parts(part);
 			for(SubJobs sj:partObject.getListSubJobs()) {
@@ -188,7 +191,7 @@ public class Route {
 			double duration= this.getServiceTime()+this.getTravelTime()+this.getWaitingTime();
 			this.setDurationRoute(subJobsList.get(subJobsList.size()-1).getDepartureTime()-subJobsList.get(0).getDepartureTime());
 			double idleTime=Math.max(0, (this.getDurationRoute()-duration));
-			this.setWaitingTime(this.getWaitingTime()+idleTime);
+			this.setIdleTime(this.getWaitingTime()+idleTime);
 			updatingJobsList();	// actualizar la lista de directorio de trabajos
 		}
 	}
@@ -220,7 +223,7 @@ public class Route {
 
 
 	private void settingNewPart(Inputs inp, Test test) {
-		
+
 		SubJobs depot=null;
 		SubJobs depotEnd=null;
 		int a=0;
@@ -284,8 +287,8 @@ public class Route {
 				}
 			}
 		}		
-		
-		
+
+
 		int lastIndex=0;
 		listSubJobs= new ArrayList<>();
 		if(!this.getSubJobsList().isEmpty() && !this.getPartsRoute().isEmpty()) {
@@ -319,7 +322,7 @@ public class Route {
 				}
 			}
 		}
-	
+
 
 		part=new Parts();
 		part.setListSubJobs(listSubJobs, inp, test);
@@ -352,6 +355,7 @@ public class Route {
 				waiting=j.getstartServiceTime()-(j.getArrivalTime()+aditionaltime);
 			}
 			j.setWaitingTime(waiting);
+			System.out.println(j.toString());
 			waiting+=j.getWaitingTime();
 		}
 		this.setWaitingTime(waiting);
@@ -371,6 +375,7 @@ public class Route {
 	{   String s = "";
 	s = s.concat("\nRute duration: " + (this.getDurationRoute()));
 	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
+	s = s.concat("\nRute idle time: " + (this.getIdleTime()));
 	s = s.concat("\nRuta passengers:" + this.getPassengers());
 	s = s.concat("\njobs: ");
 	for(Parts p:this.getPartsRoute()) {
