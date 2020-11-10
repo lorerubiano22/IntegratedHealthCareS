@@ -380,7 +380,7 @@ public class Route {
 	s = s.concat("\njobs: ");
 	for(Parts p:this.getPartsRoute()) {
 		for(SubJobs j:p.getListSubJobs()) {
-			s = s.concat("\nID " + j.getSubJobKey() + " arrival time "+ j.getArrivalTime()+ " departure time "+ j.getDepartureTime()+ " start service time" + j.getstartServiceTime()+ " waiting time " + j.getWaitingTime());	
+			s = s.concat("\nID " + j.getSubJobKey() + " arrival time "+ j.getArrivalTime()+ " departure time "+ j.getDepartureTime()+ " start service time" + j.getstartServiceTime()+ " req time " + j.getReqTime()+ " waiting time " + j.getWaitingTime());	
 		}
 		s = s.concat("\n\n");
 	}

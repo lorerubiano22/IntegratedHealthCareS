@@ -82,13 +82,13 @@ public class DrivingRoutes {
 			}
 		}
 
-		LinkedList<Parts> partsList=extractingParts(initialSol);
+		
 		System.out.println("printing initial solution");
 		System.out.println(initialSol.toString());
 		System.out.println("printing copy solution");
 		System.out.println(copySolution.toString());
 		System.out.println("end");
-		Solution newSol= mergingRoutes(copySolution,partsList); // las rutas se mezclan por partes
+		Solution newSol= mergingRoutes(copySolution); // las rutas se mezclan por partes
 		updatingSolution(newSol);
 		System.out.println("printing initial solution");
 		System.out.println(initialSol.toString());
@@ -135,17 +135,23 @@ public class DrivingRoutes {
 		return partsList;
 	}
 
-	private Solution mergingRoutes(Solution copySolution, LinkedList<Parts> partsList) {
+	private Solution mergingRoutes(Solution copySolution) {
 		// revisar la capacidad del vehículo en tiempos de 
-		Solution Sol= interMergingParts(copySolution,partsList); // 1 merging parts (without complete parts)
+		Solution Sol= interMergingParts(copySolution); // 1 merging parts (without complete parts)
 
 		updatingSolution(Sol);
 
 		settingNewPart(Sol);
 
+		System.out.println("primer merging solution");
+		System.out.println(Sol.toString());
+	
+		
 		Solution newSol= intraMergingParts(Sol); // 2 merging parts (splited the parts) // here the detours are considered
 		updatingSolution(newSol);
-
+		System.out.println("second merging solution");
+		System.out.println(newSol.toString());
+		System.out.println("end");
 		return newSol;
 	}
 
@@ -181,24 +187,9 @@ public class DrivingRoutes {
 	}
 
 	private Solution intraMergingParts(Solution copySolution) {
-		for(Route r:copySolution.getRoutes()) {
-			for(Parts p:r.getPartsRoute()) {
-				if(p.getListSubJobs().isEmpty()) {
-					System.out.println("***Parte vacia");
-				}
-			}
 
-		}
 		Solution newSol= new Solution(copySolution); // 1. copy solution
-		for(Route r:copySolution.getRoutes()) {
-			for(Parts p:r.getPartsRoute()) {
-				if(p.getListSubJobs().isEmpty()) {
-					System.out.println("***Parte vacia");
-				}
-			}
-
-		}
-		// 2. Seleccionar las rutas que se van a mezclar
+			// 2. Seleccionar las rutas que se van a mezclar
 		ArrayList<Route> copyRoute = copyListRoute(copySolution); // copy original route for safe
 		for(Route refRoute:copySolution.getRoutes()) {
 			for(Route toSplit:copySolution.getRoutes()) {
@@ -225,10 +216,7 @@ public class DrivingRoutes {
 		if(refRoute!=toSplit) { // sólo se pueden mezclar si son rutas diferentes
 			// se tiene que tener cuidado con las working horas y con los detours
 			ArrayList<SubJobs> mergingPart= new ArrayList<SubJobs>();
-
-			System.out.println("ref Route"+refRoute.toString());
-			System.out.println("toSplit Route"+toSplit.toString());
-
+	
 			Route earlyRoute=selecctingStartRoute(refRoute,toSplit);
 			Route lateRoute=selecctingRouteToInsert(refRoute,toSplit);
 			Route newRoute= new Route(); // la ruta que va a almacenar 
@@ -574,19 +562,14 @@ public class DrivingRoutes {
 		// structure (pik-up)---(drop-off)---(pik-up)---(drop-off)
 		boolean merge=false;
 		ArrayList<Parts> ordering=orderingParts(earlyRoute,lateRoute);
-		if(ordering.get(0).getListSubJobs().size()==2 && ordering.get(1).getListSubJobs().size()==4) {
-			merge=notequalMerge(ordering,newRoute);
-		}
-		else {
-			if(ordering.get(0).getListSubJobs().size()==2 && ordering.get(1).getListSubJobs().size()==2) {
-				merge=equalMerge(ordering,newRoute);
-			}
-		}
-
-
-
-
-
+		//if(ordering.get(0).getListSubJobs().size()==2 && ordering.get(1).getListSubJobs().size()==4) {
+		merge=notequalMerge(ordering,newRoute);
+		//}
+		//		else {
+		//			if(ordering.get(0).getListSubJobs().size()==2 && ordering.get(1).getListSubJobs().size()==2) {
+		//				merge=equalMerge(ordering,newRoute);
+		//			}
+		//		}
 		return merge;
 	}
 
@@ -666,7 +649,7 @@ public class DrivingRoutes {
 							// home care
 							double detour=computingdetour(s,next,ordering.get(0));
 							double detourDuration=detour+tvPickUp1LatePickUp1Early+tvnextdropOff1Late;
-							 key=ordering.get(1).getListSubJobs().get(0).getSubJobKey()+ordering.get(1).getListSubJobs().get(1).getSubJobKey();
+							key=ordering.get(1).getListSubJobs().get(0).getSubJobKey()+ordering.get(1).getListSubJobs().get(1).getSubJobKey();
 							Edge connection=ordering.get(1).getDirectoryConnections().get(key);
 							// patient home
 							int lastJob=ordering.get(0).getListSubJobs().size()-1;
@@ -677,9 +660,23 @@ public class DrivingRoutes {
 							}
 							else { // next is the last subJobs
 								feasibledetour=true;
-								}
+							}
 							if(detourDuration<=connection.getDetour() && feasibledetour) { // checking detour
 								merging=true;
+								for(SubJobs jS:ordering.get(0).getListSubJobs()) {
+									if(jS.equals(s) || next.equals(s)) {
+										if(jS.equals(s) ) {
+											newRoute.getSubJobsList().add(pickUp1Late);
+											newRoute.getSubJobsList().add(jS);}
+										else if(next.equals(s)) {
+											newRoute.getSubJobsList().add(jS);
+											newRoute.getSubJobsList().add(dropOff1Late);
+										}
+									}
+									else {
+										newRoute.getSubJobsList().add(jS);
+									}
+								}
 								break;
 							}
 						}
@@ -698,8 +695,10 @@ public class DrivingRoutes {
 		boolean feasibledetour=false;
 		double detourPart1=0;
 		String key="";
-		if(!s.equals(parts.getListSubJobs().get(0)) ||!s.equals(parts.getListSubJobs().get(parts.getListSubJobs().size()-1))) {
-			int i=parts.getListSubJobs().indexOf(s);
+		int i=parts.getListSubJobs().indexOf(s);
+
+		if(i!=0 &&!s.equals(parts.getListSubJobs().get(parts.getListSubJobs().size()-1))) {
+
 			key=parts.getListSubJobs().get(i-1).getSubJobKey()+parts.getListSubJobs().get(i).getSubJobKey();
 			Edge connection=parts.getDirectoryConnections().get(key);
 			detourPart1=computingDetour(s,parts,pickUp1Late);		
@@ -714,10 +713,10 @@ public class DrivingRoutes {
 	private double computingDetour(SubJobs s, Parts parts, SubJobs pickUp1Late) {
 		double detour=0;
 		if(!s.equals(parts.getListSubJobs().get(0))) {
-		int a=parts.getListSubJobs().indexOf(s);
-		SubJobs j=parts.getListSubJobs().get(a-1);
-		SubJobs i=parts.getListSubJobs().get(a);
-		detour=inp.getCarCost().getCost(i.getId()-1, pickUp1Late.getId()-1)+inp.getCarCost().getCost(pickUp1Late.getId()-1,j.getId()-1);
+			int a=parts.getListSubJobs().indexOf(s);
+			SubJobs j=parts.getListSubJobs().get(a-1);
+			SubJobs i=parts.getListSubJobs().get(a);
+			detour=inp.getCarCost().getCost(i.getId()-1, pickUp1Late.getId()-1)+inp.getCarCost().getCost(pickUp1Late.getId()-1,j.getId()-1);
 		}
 		return detour;
 	}
@@ -1422,7 +1421,7 @@ public class DrivingRoutes {
 		return instert;
 	}
 
-	private Solution interMergingParts(Solution copySolution, LinkedList<Parts> partsList) {
+	private Solution interMergingParts(Solution copySolution) {
 		// tengo que asegurar que la jornada laboral destinada al conductor sea mayor que la máxima jornada permitida
 		System.out.println(copySolution.toString());
 		for(int route1=0;route1<copySolution.getRoutes().size();route1++) {
@@ -1436,17 +1435,34 @@ public class DrivingRoutes {
 					System.out.println("\nRoute iR"+ iR.toString());
 					System.out.println("\nRoute jR"+ jR.toString());
 					if(possibleMerge(iR,jR)) {
-						if(iR.getPartsRoute().get(1).getListSubJobs().get(0).getId()==21 || jR.getPartsRoute().get(1).getListSubJobs().get(0).getId()==7) {
-							System.out.println("\nRoute iR"+ iR.toString());
-							System.out.println("\nRoute jR"+ jR.toString());
-						}
-
+						
 						Route refRoute=selecctingStartRoute(iR,jR);
 						Route toInsertRoute=selecctingRouteToInsert(iR,jR);
 						System.out.println("\nRoute refRoute"+ refRoute.toString());
 						System.out.println("\nRoute toInsertRoute"+ toInsertRoute.toString());
+						if(refRoute.getPartsRoute().get(1).getListSubJobs().get(0).getId()==21 && toInsertRoute.getPartsRoute().get(1).getListSubJobs().get(0).getId()==7) {
+							System.out.println("\nRoute iR"+ iR.toString());
+							System.out.println("\nRoute jR"+ jR.toString());
+						}
+						if(toInsertRoute.getPartsRoute().get(1).getListSubJobs().get(0).getId()==21 && refRoute.getPartsRoute().get(1).getListSubJobs().get(0).getId()==7) {
+							System.out.println("\nRoute iR"+ iR.toString());
+							System.out.println("\nRoute jR"+ jR.toString());
+						}
 						boolean inserted=insertionAllRoute(refRoute,toInsertRoute,vehicle,part);
 						if(!inserted) { // insertion part by part
+							
+							if(refRoute.getPartsRoute().get(1).getListSubJobs().get(0).getId()==21 && toInsertRoute.getPartsRoute().get(1).getListSubJobs().get(0).getId()==7) {
+								System.out.println("\nRoute iR"+ iR.toString());
+								System.out.println("\nRoute jR"+ jR.toString());
+							}
+							if(toInsertRoute.getPartsRoute().get(1).getListSubJobs().get(0).getId()==21 && refRoute.getPartsRoute().get(1).getListSubJobs().get(0).getId()==7) {
+								System.out.println("\nRoute iR"+ iR.toString());
+								System.out.println("\nRoute jR"+ jR.toString());
+							}
+
+							
+							
+							
 							vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(0));
 							vehicle.getPartsRoute().add(refRoute.getPartsRoute().get(1));
 							vehicle.setAmountParamedic(refRoute.getAmountParamedic());
@@ -1475,9 +1491,12 @@ public class DrivingRoutes {
 								}
 							}
 						}
+//						refRoute=updatingNewRoutes(refRoute,vehicle,part);	
+//						toInsertRoute.updateRouteFromParts(inp,test);
 						refRoute=updatingNewRoutes(refRoute,vehicle,part);	
 						toInsertRoute=updatingNewRoutes(toInsertRoute,vehicle,part);	
-						System.out.println("Route vehicle"+ vehicle.toString());
+						System.out.println("Route refRoute"+ refRoute.toString());
+						System.out.println("Route toInsertRoute"+ toInsertRoute.toString());
 						routeVehicleList.add(vehicle);
 					}
 				}
@@ -2909,6 +2928,10 @@ public class DrivingRoutes {
 		//3. compute the connections between SubJobs
 		settingEdges();
 		creatingSchifts();
+		for(Route r:routeList) {
+			System.out.println(r.toString());
+		}
+		System.out.println("Stop");
 	}
 
 	private void creatingSchifts() {
@@ -2938,11 +2961,11 @@ public class DrivingRoutes {
 			//1. start time
 			SubJobs firstJob=r.getSubJobsList().get(1); // it is not the depot node
 			computeStartTimeRoute(firstJob,r);
-			r.getSubJobsList().get(0).setserviceTime(0);
+			//r.getSubJobsList().get(0).setserviceTime(0);
 			// end time
 			SubJobs lastJob=r.getSubJobsList().get(r.getSubJobsList().size()-2);  // it is not the depot node
 			computeEndTimeRoute(lastJob,r);
-			r.getSubJobsList().get(r.getSubJobsList().size()-1).setserviceTime(0);
+			//r.getSubJobsList().get(r.getSubJobsList().size()-1).setserviceTime(0);
 		}
 	}
 
@@ -2956,6 +2979,7 @@ public class DrivingRoutes {
 		depot.setdepartureTime(arrivalTime);
 		depot.setStartServiceTime(arrivalTime);
 		depot.setEndServiceTime(arrivalTime);
+		depot.setserviceTime(0);
 		System.out.println(r.toString());
 	}
 
@@ -2968,6 +2992,7 @@ public class DrivingRoutes {
 		depot.setdepartureTime(arrivalTime);
 		depot.setStartServiceTime(arrivalTime);
 		depot.setEndServiceTime(arrivalTime);
+		depot.setserviceTime(0);
 		System.out.println(r.toString());
 	}
 

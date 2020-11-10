@@ -2046,3 +2046,291 @@
 
 10/11/2020 13:54:16: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
 
+10/11/2020 14:43:48: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 14:43:48: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 14:43:48: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 14:43:48: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 14:45:33: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 14:45:33: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 14:45:33: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 14:45:33: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 14:47:19: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 14:47:19: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 14:47:19: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 14:47:19: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 14:48:08: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 14:48:08: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 14:48:08: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 14:48:08: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 14:58:37: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 14:58:37: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 14:58:37: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 14:58:37: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:00:22: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:00:22: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:00:22: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:00:22: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:03:53: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:03:53: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:03:53: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:03:53: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:18:28: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:18:28: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:18:28: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:18:28: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:21:06: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:21:06: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:21:06: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:21:06: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:22:08: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:22:08: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:22:08: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:22:08: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:23:34: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:23:34: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:23:34: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:23:34: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:25:22: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:25:22: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:25:22: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:25:22: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:26:47: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:26:47: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:26:47: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:26:47: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:34:35: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:34:35: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:34:35: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:34:35: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:39:29: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:39:29: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:39:29: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:39:29: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:47:04: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:47:04: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:47:04: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:47:04: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:49:03: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:49:03: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 15:49:03: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 15:49:03: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:06:36: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:06:36: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:06:36: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:06:36: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:07:12: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:07:12: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:07:12: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:07:12: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:12:29: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:12:29: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:12:29: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:12:29: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:13:35: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:13:35: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:13:35: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:13:35: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:34:09: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:34:09: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:34:09: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:34:09: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:35:20: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:35:20: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:35:20: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:35:20: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:43:16: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:43:16: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:43:16: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:43:16: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:44:15: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:44:15: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:44:15: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:44:15: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:52:47: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:52:47: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:52:47: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:52:47: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:53:08: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:53:08: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:53:08: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:53:08: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:54:27: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:54:27: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:54:27: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:54:27: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:55:09: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:55:09: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:55:09: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:55:09: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:55:25: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:55:25: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:55:25: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:55:25: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:56:11: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:56:11: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:56:11: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:56:11: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:56:54: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:56:54: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:56:54: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:56:54: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:57:45: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:57:45: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:57:45: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:57:45: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:58:39: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:58:39: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 16:58:39: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 16:58:39: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 17:00:36: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 17:00:36: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 17:00:36: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 17:00:36: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 17:05:48: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 17:05:48: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+10/11/2020 17:05:48: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+10/11/2020 17:05:48: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
