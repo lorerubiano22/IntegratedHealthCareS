@@ -268,8 +268,8 @@ public class Route {
 		parts.add(part);
 		part=new Parts();
 		listSubJobs= new ArrayList<>();
-
-		for(int i=a;i<this.getSubJobsList().size();i++) {
+		
+		for(int i=a;i<this.getSubJobsList().size()-1;i++) {
 			SubJobs j=this.getSubJobsList().get(i);
 			passengers+=j.getTotalPeople();
 			listSubJobs.add(j);
@@ -280,7 +280,7 @@ public class Route {
 				listSubJobs= new ArrayList<>();
 			}
 			else {
-				if(this.getSubJobsList().getLast()==j) {
+				if(this.getSubJobsList().get(this.getSubJobsList().size()-1)==j) {
 					part=new Parts();
 					part.setListSubJobs(listSubJobs, inp, test);
 					parts.add(part);
