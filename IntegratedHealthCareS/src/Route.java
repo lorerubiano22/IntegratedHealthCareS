@@ -269,7 +269,7 @@ public class Route {
 		part=new Parts();
 		listSubJobs= new ArrayList<>();
 		
-		for(int i=a;i<this.getSubJobsList().size()-1;i++) {
+		for(int i=a;i<this.getSubJobsList().size();i++) {
 			SubJobs j=this.getSubJobsList().get(i);
 			passengers+=j.getTotalPeople();
 			listSubJobs.add(j);
