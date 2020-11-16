@@ -685,13 +685,13 @@ Walking time: 10229.0
 
 
 ID Solution: 1
-FO: Travel time or duration: 4379.0
+FO: Travel time or duration: 15626.0
 Walking time: 0.0
  Total passengers: 0
  Total paramedic: 11.0
  Total home care staff: 15.0
- Waiting time: 12986.0
- Service time: 9310.0
+ Waiting time: 216898.0
+ Service time: 12269.0
  List of jobs: 
  Route: 0 travelTime: 53.0 waitingTime: 3392.0 serviceTime: 195.0 durationRoute: 338.0
  homeCareSaff amount: 0.0 paramedic amount: 1.0
@@ -898,13 +898,15 @@ Walking time: 0.0
 
 
 
- Route: 7 travelTime: 13.0 waitingTime: 0.0 serviceTime: 60.0 durationRoute: 223.0
+ Route: 7 travelTime: 18.0 waitingTime: 108.0 serviceTime: 60.0 durationRoute: 223.0
  homeCareSaff amount: 0.0 paramedic amount: 1.0
  ( P1, A_493.0, B_493.0 D_495.0, reqTime_0.0) 
 
 
  ( P4752, A_583.0, B_583.0 D_585.0, reqTime_60.0) 
  ( D52, A_589.0, B_589.0 D_591.0, reqTime_0.0) 
+ ( P61, A_593.0, B_622.0 D_595.0, reqTime_0.0) 
+ ( D4961, A_626.0, B_643.0 D_628.0, reqTime_0.0) 
 
 
  ( P1, A_716.0, B_716.0 D_718.0, reqTime_0.0) 
@@ -926,7 +928,7 @@ Walking time: 0.0
 
 
 
- Route: 9 travelTime: 21.0 waitingTime: 0.0 serviceTime: 60.0 durationRoute: 220.0
+ Route: 9 travelTime: 26.0 waitingTime: 216.0 serviceTime: 60.0 durationRoute: 220.0
  homeCareSaff amount: 0.0 paramedic amount: 1.0
  ( P1, A_496.0, B_496.0 D_498.0, reqTime_0.0) 
 
@@ -937,6 +939,8 @@ Walking time: 0.0
 
  ( P4752, A_583.0, B_583.0 D_585.0, reqTime_60.0) 
  ( D52, A_589.0, B_589.0 D_591.0, reqTime_0.0) 
+ ( P61, A_593.0, B_622.0 D_595.0, reqTime_0.0) 
+ ( D4961, A_626.0, B_643.0 D_628.0, reqTime_0.0) 
 
 
  ( P1, A_716.0, B_716.0 D_718.0, reqTime_0.0) 
@@ -962,12 +966,153 @@ Walking time: 0.0
 
 
 
- Route: 19 travelTime: 28.0 waitingTime: 2768.0 serviceTime: 75.0 durationRoute: 609.0
+ Route: 11 travelTime: 10.0 waitingTime: 0.0 serviceTime: 30.0 durationRoute: 310.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( D1, A_895.0, B_895.0 D_897.0, reqTime_0.0) 
+
+
+ ( D19, A_899.0, B_900.0 D_900.0, reqTime_0.0) 
+
+
+ ( P5, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_1205.0, B_1205.0 D_1207.0, reqTime_0.0) 
+
+
+
+ Route: 12 travelTime: 11.0 waitingTime: 0.0 serviceTime: 30.0 durationRoute: 312.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( D1, A_893.0, B_893.0 D_895.0, reqTime_0.0) 
+
+
+ ( D20, A_899.0, B_900.0 D_900.0, reqTime_0.0) 
+
+
+ ( P5, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_1205.0, B_1205.0 D_1207.0, reqTime_0.0) 
+
+
+
+ Route: 13 travelTime: 13.0 waitingTime: 0.0 serviceTime: 30.0 durationRoute: 313.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( D1, A_892.0, B_892.0 D_894.0, reqTime_0.0) 
+
+
+ ( D22, A_899.0, B_900.0 D_900.0, reqTime_0.0) 
+
+
+ ( P5, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_1205.0, B_1205.0 D_1207.0, reqTime_0.0) 
+
+
+
+ Route: 14 travelTime: 11.0 waitingTime: 0.0 serviceTime: 30.0 durationRoute: 309.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( P1, A_896.0, B_896.0 D_898.0, reqTime_0.0) 
+
+
+ ( D23, A_899.0, B_900.0 D_900.0, reqTime_0.0) 
+
+
+ ( P5, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_1205.0, B_1205.0 D_1207.0, reqTime_0.0) 
+
+
+
+ Route: 15 travelTime: 17.0 waitingTime: 0.0 serviceTime: 30.0 durationRoute: 312.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( D1, A_894.0, B_894.0 D_896.0, reqTime_0.0) 
+
+
+ ( D24, A_899.0, B_900.0 D_900.0, reqTime_0.0) 
+
+
+ ( P43, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_1206.0, B_1206.0 D_1208.0, reqTime_0.0) 
+
+
+
+ Route: 16 travelTime: 16.0 waitingTime: 0.0 serviceTime: 30.0 durationRoute: 323.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( D1, A_895.0, B_895.0 D_897.0, reqTime_0.0) 
+
+
+ ( D25, A_899.0, B_900.0 D_900.0, reqTime_0.0) 
+
+
+ ( D7, A_1169.0, B_1170.0 D_1170.0, reqTime_0.0) 
+ ( P5, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_1218.0, B_1218.0 D_1220.0, reqTime_0.0) 
+
+
+
+ Route: 17 travelTime: 17.0 waitingTime: 0.0 serviceTime: 30.0 durationRoute: 312.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( D1, A_893.0, B_893.0 D_895.0, reqTime_0.0) 
+
+
+ ( D26, A_899.0, B_900.0 D_900.0, reqTime_0.0) 
+
+
+ ( D21, A_1169.0, B_1170.0 D_1170.0, reqTime_0.0) 
+ ( P5, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_1205.0, B_1205.0 D_1207.0, reqTime_0.0) 
+
+
+
+ Route: 18 travelTime: 38.0 waitingTime: 179200.0 serviceTime: 9119.0 durationRoute: 3604.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( P1, A_895.0, B_895.0 D_897.0, reqTime_0.0) 
+
+
+ ( D18, A_898.0, B_899.0 D_899.0, reqTime_0.0) 
+
+
+ ( P15, A_990.0, B_990.0 D_991.0, reqTime_90.0) 
+ ( D30, A_994.0, B_1170.0 D_995.0, reqTime_0.0) 
+
+
+ ( D5, A_1169.0, B_1170.0 D_1170.0, reqTime_0.0) 
+ ( P30, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P39, A_1260.0, B_1260.0 D_1261.0, reqTime_90.0) 
+ ( P12, A_3018.0, B_3018.0 D_3019.0, reqTime_2119.0) 
+ ( P28, A_4093.0, B_4093.0 D_4094.0, reqTime_3194.0) 
+ ( P27, A_4495.0, B_4495.0 D_4496.0, reqTime_3596.0) 
+
+
+ ( P1, A_4499.0, B_4499.0 D_4501.0, reqTime_0.0) 
+
+
+
+ Route: 19 travelTime: 49.0 waitingTime: 22144.0 serviceTime: 225.0 durationRoute: 609.0
  homeCareSaff amount: 1.0 paramedic amount: 0.0
  ( P1, A_624.0, B_624.0 D_626.0, reqTime_0.0) 
 
 
  ( D4, A_629.0, B_630.0 D_630.0, reqTime_0.0) 
+
+
+ ( D15, A_899.0, B_900.0 D_900.0, reqTime_0.0) 
+ ( P23, A_960.0, B_960.0 D_961.0, reqTime_60.0) 
+
+
+ ( D42, A_966.0, B_1170.0 D_967.0, reqTime_0.0) 
+ ( P17, A_990.0, B_990.0 D_991.0, reqTime_90.0) 
 
 
  ( D38, A_996.0, B_1170.0 D_997.0, reqTime_0.0) 
@@ -980,7 +1125,7 @@ Walking time: 0.0
 
 
 
- Route: 20 travelTime: 52.0 waitingTime: 3672.0 serviceTime: 390.0 durationRoute: 641.0
+ Route: 20 travelTime: 104.0 waitingTime: 7344.0 serviceTime: 630.0 durationRoute: 641.0
  homeCareSaff amount: 1.0 paramedic amount: 0.0
  ( P1, A_626.0, B_626.0 D_628.0, reqTime_0.0) 
 
@@ -1004,6 +1149,18 @@ Walking time: 0.0
  ( P25, A_960.0, B_960.0 D_961.0, reqTime_60.0) 
 
 
+ ( P24, A_990.0, B_990.0 D_991.0, reqTime_90.0) 
+ ( D43, A_999.0, B_1170.0 D_1000.0, reqTime_0.0) 
+
+
+ ( P20, A_1020.0, B_1020.0 D_1021.0, reqTime_120.0) 
+ ( D40, A_1030.0, B_1170.0 D_1031.0, reqTime_0.0) 
+
+
+ ( D5, A_1169.0, B_1170.0 D_1170.0, reqTime_0.0) 
+ ( P40, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
  ( P33, A_1215.0, B_1215.0 D_1216.0, reqTime_45.0) 
  ( P6, A_1230.0, B_1230.0 D_1231.0, reqTime_60.0) 
  ( P32, A_1260.0, B_1260.0 D_1261.0, reqTime_90.0) 
@@ -1013,8 +1170,90 @@ Walking time: 0.0
 
 
 
+ Route: 21 travelTime: 12.0 waitingTime: 0.0 serviceTime: 30.0 durationRoute: 324.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( P1, A_895.0, B_895.0 D_897.0, reqTime_0.0) 
+
+
+ ( D36, A_899.0, B_900.0 D_900.0, reqTime_0.0) 
+
+
+ ( D33, A_1169.0, B_1170.0 D_1170.0, reqTime_0.0) 
+ ( P5, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_1219.0, B_1219.0 D_1221.0, reqTime_0.0) 
+
+
+
+ Route: 22 travelTime: 20.0 waitingTime: 0.0 serviceTime: 120.0 durationRoute: 2131.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( D1, A_893.0, B_893.0 D_895.0, reqTime_0.0) 
+
+
+ ( D10, A_898.0, B_899.0 D_899.0, reqTime_0.0) 
+
+
+ ( P26, A_990.0, B_990.0 D_991.0, reqTime_90.0) 
+ ( D5, A_1169.0, B_1170.0 D_1170.0, reqTime_0.0) 
+
+
+ ( P41, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_3024.0, B_3024.0 D_3026.0, reqTime_0.0) 
+
+
+
+ Route: 23 travelTime: 36.0 waitingTime: 1608.0 serviceTime: 180.0 durationRoute: 3209.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( D1, A_891.0, B_891.0 D_893.0, reqTime_0.0) 
+
+
+ ( D14, A_898.0, B_899.0 D_899.0, reqTime_0.0) 
+
+
+ ( P19, A_960.0, B_960.0 D_961.0, reqTime_60.0) 
+ ( D39, A_968.0, B_1170.0 D_969.0, reqTime_0.0) 
+
+
+ ( P36, A_990.0, B_990.0 D_991.0, reqTime_90.0) 
+ ( D5, A_1169.0, B_1170.0 D_1170.0, reqTime_0.0) 
+
+
+ ( P42, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_4100.0, B_4100.0 D_4102.0, reqTime_0.0) 
+
+
+
+ Route: 24 travelTime: 9.0 waitingTime: 0.0 serviceTime: 30.0 durationRoute: 42.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( D1, A_1163.0, B_1163.0 D_1165.0, reqTime_0.0) 
+
+
+ ( P5, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_1205.0, B_1205.0 D_1207.0, reqTime_0.0) 
+
+
+
+ Route: 25 travelTime: 14.0 waitingTime: 0.0 serviceTime: 30.0 durationRoute: 47.0
+ homeCareSaff amount: 1.0 paramedic amount: 0.0
+ ( D1, A_1161.0, B_1161.0 D_1163.0, reqTime_0.0) 
+
+
+ ( P21, A_1200.0, B_1200.0 D_1201.0, reqTime_30.0) 
+
+
+ ( P1, A_1208.0, B_1208.0 D_1210.0, reqTime_0.0) 
+
+
+
 
 
  pc Time:
 
-57166.3265
+2079.9345

@@ -85,12 +85,17 @@ public class Parts {
 
 	public void settingConnections(ArrayList<SubJobs> listSubJobs2, Inputs inp, Test test) {
 		// setting the connections
+		directoryConnections.clear();
 		for(int i=0;i<listSubJobs.size()-1;i++) {
 			SubJobs iNode=listSubJobs.get(i);
 			SubJobs jNode=listSubJobs.get(i+1);
 			Edge e= new Edge(iNode,jNode, inp,test);
 			directoryConnections.put(e.getEdgeKey(), e);
 		}
+		for(Edge e:directoryConnections.values()) {
+			System.out.print(e.toString());
+		}
+		System.out.println("end");
 
 	}
 
@@ -103,6 +108,18 @@ public class Parts {
 		s = s.concat(" ( " + j.getSubJobKey()+", A_"+j.getArrivalTime()+", B_"+j.getstartServiceTime()+" D_"+j.getDepartureTime()+", reqTime_"+j.getReqTime()+") \n");
 	}
 	return s;
+	}
+
+
+	public void settingConnections(Parts parts, Parts parts2) {
+		this.getDirectoryConnections().clear();
+		for(Edge e:parts.getDirectoryConnections().values()) {
+		this.getDirectoryConnections().put(e.getEdgeKey(),e);	
+		}
+		for(Edge e:parts2.getDirectoryConnections().values()) {
+			this.getDirectoryConnections().put(e.getEdgeKey(),e);	
+			}
+		
 	}
 
 
