@@ -5,11 +5,6 @@
 
 --------------------------------------------
 
- Walking Routes:
-
---------------------------------------------
-[, , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , ]
-
 --------------------------------------------
 Driving Routes
 --------------------------------------------
@@ -24,8 +19,8 @@ Walking time: 0.0
  Total passengers: 0
  Total paramedic: 12.0
  Total home care staff: 22.0
- Waiting time: 3467.0
- Service time: 3390.0
+Waiting+service time:: 6467.0
+
  List of jobs: 
  Route: 0 travelTime: 39.0 waitingTime: 94.0 serviceTime: 135.0 durationRoute: 338.0
  homeCareSaff amount: 0.0 paramedic amount: 1.0
@@ -703,8 +698,8 @@ Walking time: 0.0
  Total passengers: 0
  Total paramedic: 9.0
  Total home care staff: 16.0
- Waiting time: 3494.0
- Service time: 3540.0
+Waiting+service time: 6494.0
+ 
  List of jobs: 
  Route: 0 travelTime: 47.0 waitingTime: 94.0 serviceTime: 165.0 durationRoute: 338.0
  homeCareSaff amount: 0.0 paramedic amount: 1.0

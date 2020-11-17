@@ -103,10 +103,39 @@ public class DrivingRoutes {
 
 		merge= checkingSubJobs(initialSol,initialSol);
 		System.out.println("solution "+merge);
-
+		Solution newSolution=sclackTime(newSol);
+		updatingSolution(newSolution);
 		return newSol;
 	}
 
+
+	private Solution sclackTime(Solution newSol) {
+		Solution copySolution= new Solution(initialSol);
+		for(Route r:copySolution.getRoutes()) {
+			int routeLength=r.getSubJobsList().size()-1;
+			for(int i=routeLength;i>0;i--) {
+				// Last subjob
+				SubJobs jSubJob=r.getSubJobsList().get(i);
+				jSubJob.setarrivalTime(jSubJob.getstartServiceTime()-jSubJob.getloadUnloadRegistrationTime());
+				jSubJob.setdepartureTime(jSubJob.getstartServiceTime()+jSubJob.getloadUnloadRegistrationTime());
+				// previous to the last subjob
+				SubJobs iSubJob=r.getSubJobsList().get(i-1);
+				double tv=inp.getCarCost().getCost(iSubJob.getId()-1, jSubJob.getId()-1);
+				double newDepartureTime=jSubJob.getArrivalTime()-tv; // el vehículo parte del nodo
+				if(newDepartureTime<=iSubJob.getEndTime() && newDepartureTime>= iSubJob.getStartTime()) {
+					iSubJob.setStartServiceTime(newDepartureTime);
+					iSubJob.setEndServiceTime(iSubJob.getstartServiceTime()+iSubJob.getReqTime());
+					//iSubJob.setarrivalTime(iSubJob.getstartServiceTime()-iSubJob.getloadUnloadRegistrationTime());
+				}
+				else if ((newDepartureTime-test.getCumulativeWaitingTime())<=iSubJob.getStartTime() ){
+					
+				}
+			}
+			r.updateRouteFromParts(inp,test);
+		}
+
+		return copySolution;
+	}
 
 	private boolean checkingSubJobs(Solution refSolution,Solution test) {
 		boolean merge=false;
@@ -625,7 +654,7 @@ public class DrivingRoutes {
 				int options=typeOfParts(earlyRoute.getPartsRoute().get(partEarly),lateRoute.getPartsRoute().get(partLate)); 
 				switch(options) {
 				case 1 :// 1 patient-patient 
-					
+
 					merging=mergingItermediatePartsPatientPatient(options,earlyRoute.getPartsRoute().get(partEarly),lateRoute.getPartsRoute().get(partLate), newRoute,earlyRoute,lateRoute);// option1
 					break;
 
@@ -635,7 +664,7 @@ public class DrivingRoutes {
 					break; // optional
 
 				default : // 3 homeCare-homeCare
-			
+
 					merging=mergingItermediatePartsClients(earlyRoute.getPartsRoute().get(partEarly),lateRoute.getPartsRoute().get(partLate), newRoute);// option1
 				}
 			}	
@@ -1226,7 +1255,7 @@ public class DrivingRoutes {
 				dropoffEarly=early.getListSubJobs().get(0); // home care
 				pickUpLate=late.getListSubJobs().get(0); // patient
 				dropoffLate=late.getListSubJobs().get(1); 
-				
+
 				boolean feasibleTW=ckeckTimeWindow(pickUpEarly,dropoffLate,dropoffEarly);
 				boolean feasibleDetour=checkDetour(depot,pickUpEarly,dropoffLate,dropoffEarly,early);
 				if(feasibleTW && feasibleDetour ){
