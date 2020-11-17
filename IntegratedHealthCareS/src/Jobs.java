@@ -23,6 +23,8 @@ public class Jobs {
 	private double sortETWSizeCriterion; // sort criterion the size of time window and the earliest time
 	private double sortLTWSizeCriterion; // sort criterion the size of time window and the latest time
 	private int totalPeople=0; // people involven in the service:
+	// preparation time
+	private double loadUnloadRegistrationTime=0;
 	// - 1  es una persona menos en el vehículo + 1 una plaza ocupada en el vehículo + 2 dos plazas ocupadas en el vehículo 
 	private double arrivalTime=0; // time for vehicle
 	private double walkingTime=0; // time for vehicle
@@ -84,6 +86,7 @@ public class Jobs {
 		isMedicalCentre=i.isMedicalCentre;// type of job in the system- patient job at medical centre home
 		isClient=i.isClient;// type of job in the system- patient job at client home
 		idUser=i.idUser;
+		this.loadUnloadRegistrationTime=i.getloadUnloadRegistrationTime();
 		totalPeople=i.getTotalPeople();
 		subJobKey=i.subJobKey;
 		if(i.subJobPair!=null) {
@@ -106,6 +109,7 @@ public class Jobs {
 		this.walkingTime=i.walkingTime;
 		this.arrivalTime=i.arrivalTime;
 		this.departureTime=i.departureTime;
+		this.loadUnloadRegistrationTime=i.getloadUnloadRegistrationTime();
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
 		this.sortLTWSizeCriterion=(hardendTime)*(sizeTW);
@@ -128,6 +132,7 @@ public class Jobs {
 		this.totalPeople = i;}
 	public void setId(int id) {this.id = id;}
 	public void setWalkingTime(double walking) {this.walkingTime = walking;}
+	public void setloadUnloadRegistrationTime(double time) {this.loadUnloadRegistrationTime = time;}
 	public void setStartServiceTime(double B) {this.startServiceTime = (int) Math.ceil(B);}
 	public void setEndServiceTime(double B) {this.endServiceTime = B;}
 	public void setStartTime(double B) {this.hardstartTime = (int) Math.ceil(B);}
@@ -163,6 +168,9 @@ public class Jobs {
 	public double getStartTime() {return hardstartTime;}
 	public double getArrivalTime() {return arrivalTime;}
 	public double getDepartureTime() {return departureTime;}
+	public double getloadUnloadRegistrationTime() {return loadUnloadRegistrationTime;}
+		
+	
 	public int getIDcouple() {return idCouple;}
 	public double getEndTime() {return hardendTime;}
 	public double getSoftStartTime() {return this.softstartTime;}
@@ -188,7 +196,7 @@ public class Jobs {
 		this.setEndTime(startTime-registrationTime);
 	}
 
-	public void setTimeWindowsPickUpMedicalCentre(double startTime, int maxDetourDirectConnection, int cumulativeWaitingTime) {
+	public void setTimeWindowsPickUpMedicalCentre(double startTime, int maxDetourDirectConnection, double cumulativeWaitingTime) {
 		this.setEndTime(startTime-maxDetourDirectConnection);
 		// aca se considera el waiting time pensando en el tiempo max permitido que el paciente puede estar en el centro médico
 		this.setStartTime(this.getEndTime()-cumulativeWaitingTime);
@@ -298,6 +306,7 @@ public class Jobs {
 		s = s.concat("\nDeparture Time: " + (this.departureTime));
 		s = s.concat("\nreqQualification: " + (this.reqQualification));
 		s = s.concat("\nserviceTime: " + (this.serviceTime));
+		s = s.concat("\n preparation time: " + (this.loadUnloadRegistrationTime));
 		s = s.concat("\npeople on board: " + this.totalPeople);
 		return s;
 	}

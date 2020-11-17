@@ -7,6 +7,7 @@ public class SubJobs extends Jobs {
 	
 	Edge preEdge;
 	Edge postEdge;
+	
 	private ArrayList<Jobs> jobList= new ArrayList<Jobs>();
 
 
@@ -34,6 +35,7 @@ public class SubJobs extends Jobs {
 		this.setMedicalCentre(j.isMedicalCentre());
 		this.setIdUser(j.getIdUser());
 		this.setTotalPeople(j.getTotalPeople());
+		this.setloadUnloadRegistrationTime(j.getloadUnloadRegistrationTime());
 	}
 
 	// Getters
@@ -56,6 +58,7 @@ public class SubJobs extends Jobs {
 	s = s.concat("\n departure time: " + (this.getDepartureTime()));
 	s = s.concat("\n start service:" + this.getstartServiceTime());
 	s = s.concat("\n end service:" + this.getendServiceTime());
+	s = s.concat("\n preparation time: " + (this.getloadUnloadRegistrationTime()));
 	return s;
 	}
 

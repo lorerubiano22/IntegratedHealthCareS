@@ -9,14 +9,14 @@ public class Test {
 	private final double walking2jobs;
 	private final double detour;
 	private final double cumulativeWalkingTime;
-	private final int cumulativeWaitingTime;
+	private final double cumulativeWaitingTime;
 	private final int loadTimePatient;
 	private final int loadTimeHomeCareStaff;
 	private final int patientRegistrationTime;
 	private final double routeLenght;
 
 	public Test(String name, double maxTime, long seed, double workingTime, double routeLenght, 
-			double detour, double cumulativeWalkingTime, double walking2jobs, int cumulativeWaitingTime, int p,int HCS, int registrationTime){
+			double detour, double cumulativeWalkingTime, double walking2jobs, double cumulativeWaitingTime, int p,int HCS, int registrationTime){
 		instanceName = name;
 		testTime = maxTime*60;
 		this.seed = seed;
@@ -40,7 +40,7 @@ public class Test {
 	public double getWalking2jobs() {return walking2jobs;}
 	public double getDetour() {return detour;}
 	public double getCumulativeWalkingTime() {return cumulativeWalkingTime;}
-	public int getCumulativeWaitingTime() {return cumulativeWaitingTime;}
+	public double getCumulativeWaitingTime() {return cumulativeWaitingTime;}
 	public int getloadTimePatient() {return loadTimePatient;}
 	public int getloadTimeHomeCareStaff() {return loadTimeHomeCareStaff;}
 	public int getRegistrationTime() {return patientRegistrationTime;}

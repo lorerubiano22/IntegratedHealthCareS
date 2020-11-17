@@ -1,4 +1,4 @@
 #instance name | max time | seed      | working time| route length driver| walking duration 2 jobs | Detour between pickup and delivery (percentage)  |  Cumulative walking pickup and delivery  |  Cumulative waiting between each delivery and pickup |  load time for patient |  load time for home care Staff | registration Time at medical centre 
 #S5-N75				1		1074999   	    480  	 1000000		10  					 0.15  								 20 												15
 #dummy				1		1074999   	    480  	 1000000		10  					 0.15  								 36 												500           2     1        15
-S5-N75				1		1074999   	    480  	 100000000000		10  					 0.15  								 36 												500           2     1        15
+S5-N75				1		1074999   	    480  	 480						10  					 0.15  												 36 												50000000000           2     1        15
