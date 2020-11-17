@@ -357,7 +357,9 @@ public class Route {
 
 	private void computeWaitingTime(Test test) {
 		double waiting=0;
+		
 		for(Jobs j:this.positionJobs.values() ) {
+			double w=0;
 			double aditionaltime=0;
 			if(j.isClient()) {
 				aditionaltime=test.getloadTimeHomeCareStaff();
@@ -371,9 +373,9 @@ public class Route {
 				}
 			}
 			if((j.getArrivalTime()+aditionaltime)<j.getstartServiceTime()) {
-				waiting=j.getstartServiceTime()-(j.getArrivalTime()+aditionaltime);
+				w=j.getstartServiceTime()-(j.getArrivalTime()+aditionaltime);
 			}
-			j.setWaitingTime(waiting);
+			j.setWaitingTime(w);
 			System.out.println(j.toString());
 			waiting+=j.getWaitingTime();
 		}
