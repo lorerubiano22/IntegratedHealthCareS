@@ -23,6 +23,7 @@ public class TestsReader {
                     int maxTime = in.nextInt();
                     long seed = in.nextLong();
                     double workingTime=in.nextDouble();
+                    double routeLenght=in.nextDouble();
                     double walking2jobs=in.nextDouble();
                     double detour=1-in.nextDouble();
                     double cumulativeWalkingTime=in.nextDouble();
@@ -30,7 +31,7 @@ public class TestsReader {
                     int loadPatient= in.nextInt();
                     int loadHomeCare= in.nextInt();
                     int patientRegistrationTime=in.nextInt();
-                    Test aTest = new Test(instanceName, maxTime, seed,workingTime, walking2jobs,  detour,  cumulativeWalkingTime, cumulativeWaitingTime,loadPatient, loadHomeCare , patientRegistrationTime);
+                    Test aTest = new Test(instanceName, maxTime, seed,workingTime, routeLenght,walking2jobs,  detour,  cumulativeWalkingTime, cumulativeWaitingTime,loadPatient, loadHomeCare , patientRegistrationTime);
                     list.add(aTest);
                 }
             }

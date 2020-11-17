@@ -76,7 +76,8 @@ public class Solution {
 	public String toString() 
 	{   String s = "";
 	s = s.concat("\nID Solution: " + id);
-	s = s.concat("\nFO: Travel time or duration: " + durationSolution);
+	s = s.concat("\nFO: Duration: " + durationSolution);
+	s = s.concat("\nFO: Travel time: " + drivingTime);
 	s = s.concat("\nWalking time: " + walkingTime);
 	s = s.concat("\n Total passengers: " + passengers);
 	s = s.concat("\n Total paramedic: " + paramedic);
