@@ -135,14 +135,27 @@ public class DrivingRoutes {
 	}
 
 	private Solution sclackTime(Solution newSol) {
+		// compute: arrival time, start service time, end service time, departure time
 		Solution copySolution= new Solution(initialSol);
 		for(Route r:copySolution.getRoutes()) {
 			int routeLength=r.getSubJobsList().size()-1;
 			for(int i=routeLength;i>0;i--) {
 				// Last subjob
 				SubJobs jSubJob=r.getSubJobsList().get(i);
-				jSubJob.setarrivalTime(jSubJob.getstartServiceTime()-jSubJob.getloadUnloadRegistrationTime());
-				jSubJob.setdepartureTime(jSubJob.getstartServiceTime()+jSubJob.getloadUnloadRegistrationTime());
+				
+				// additional time
+				double additionalTime=0;
+				if(jSubJob.isClient()) {
+					additionalTime=test.getloadTimeHomeCareStaff();
+				}
+				else {
+					if(jSubJob.getId()!=1) {
+						additionalTime=test.getloadTimeHomeCareStaff();	
+					}
+				}
+				
+				jSubJob.setarrivalTime(jSubJob.getstartServiceTime()-additionalTime);
+				jSubJob.setdepartureTime(jSubJob.getstartServiceTime()+additionalTime);
 				// previous to the last subjob
 				SubJobs iSubJob=r.getSubJobsList().get(i-1);
 				double tv=inp.getCarCost().getCost(iSubJob.getId()-1, jSubJob.getId()-1);
@@ -150,10 +163,6 @@ public class DrivingRoutes {
 				if(newDepartureTime<=iSubJob.getEndTime() && newDepartureTime>= iSubJob.getStartTime()) {
 					iSubJob.setStartServiceTime(newDepartureTime);
 					iSubJob.setEndServiceTime(iSubJob.getstartServiceTime()+iSubJob.getReqTime());
-					//iSubJob.setarrivalTime(iSubJob.getstartServiceTime()-iSubJob.getloadUnloadRegistrationTime());
-				}
-				else if ((newDepartureTime-test.getCumulativeWaitingTime())<=iSubJob.getStartTime() ){
-
 				}
 			}
 			r.updateRouteFromParts(inp,test);
