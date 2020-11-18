@@ -25,6 +25,7 @@ public class Jobs {
 	private int totalPeople=0; // people involven in the service:
 	// preparation time
 	private double loadUnloadRegistrationTime=0;
+	private double loadUnloadTime=0;
 	// - 1  es una persona menos en el vehículo + 1 una plaza ocupada en el vehículo + 2 dos plazas ocupadas en el vehículo 
 	private double arrivalTime=0; // time for vehicle
 	private double walkingTime=0; // time for vehicle
@@ -133,6 +134,7 @@ public class Jobs {
 	public void setId(int id) {this.id = id;}
 	public void setWalkingTime(double walking) {this.walkingTime = walking;}
 	public void setloadUnloadRegistrationTime(double time) {this.loadUnloadRegistrationTime = time;}
+	public void setloadUnloadTime(double time) {this.loadUnloadTime = time;}
 	public void setStartServiceTime(double B) {this.startServiceTime = (int) Math.ceil(B);}
 	public void setEndServiceTime(double B) {this.endServiceTime = B;}
 	public void setStartTime(double B) {this.hardstartTime = (int) Math.ceil(B);}
@@ -169,7 +171,7 @@ public class Jobs {
 	public double getArrivalTime() {return arrivalTime;}
 	public double getDepartureTime() {return departureTime;}
 	public double getloadUnloadRegistrationTime() {return loadUnloadRegistrationTime;}
-		
+	public double getloadUnloadTime() {return loadUnloadTime;}
 	
 	public int getIDcouple() {return idCouple;}
 	public double getEndTime() {return hardendTime;}
