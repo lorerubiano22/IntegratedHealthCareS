@@ -14,9 +14,11 @@ public class Test {
 	private final int loadTimeHomeCareStaff;
 	private final int patientRegistrationTime;
 	private final double routeLenght;
+	
 
 	public Test(String name, double maxTime, long seed, double workingTime, double routeLenght, 
-			double detour, double cumulativeWalkingTime, double walking2jobs, double cumulativeWaitingTime, int p,int HCS, int registrationTime){
+			 double walking2jobs, double detour, double cumulativeWalkingTime, double cumulativeWaitingTime, int p,int HCS, int registrationTime){
+		
 		instanceName = name;
 		testTime = maxTime*60;
 		this.seed = seed;

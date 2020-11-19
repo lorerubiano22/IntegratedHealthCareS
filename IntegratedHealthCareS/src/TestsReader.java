@@ -25,7 +25,7 @@ public class TestsReader {
                     double workingTime=in.nextDouble();
                     double routeLenght=in.nextDouble();
                     double walking2jobs=in.nextDouble();
-                    double detour=1-in.nextDouble();
+                    double detour=1+in.nextDouble();
                     double cumulativeWalkingTime=in.nextDouble();
                     double cumulativeWaitingTime=in.nextDouble();
                     int loadPatient= in.nextInt();

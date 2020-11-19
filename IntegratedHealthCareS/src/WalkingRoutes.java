@@ -18,7 +18,7 @@ public class WalkingRoutes {
 	private double waitingTime=0.0F; // Waiting time
 	private double slack=0;
 	private LinkedList<SubRoute> jobSlots; // list of subroutes which describe the job sequence respecting all restrictions
-	private ArrayList<Jobs> jobList;
+	private ArrayList<Jobs> jobList; // es la lista que almacena todos los trabajos
 	private HashMap<Integer, Jobs> ServedJobs=new HashMap<> ();
 	private Inputs inp; // input problem
 	private Test test; // input problem
@@ -261,6 +261,7 @@ for(SubRoute s:walkingRoutes) {
 
 	private void walkingRouteToJob() {
 		for(SubRoute wr:jobSlots) {
+			System.out.println(wr.toString());
 			if(wr.getJobSequence().size()>1) {// only for real walking routes
 				wr.setDropOffNode(wr.getJobSequence().getFirst());
 
@@ -302,14 +303,6 @@ for(SubRoute s:walkingRoutes) {
 		for(Jobs job:jobList) {
 			for(SubRoute wr:jobSlots) {
 				Jobs i=new Jobs(job);
-				if(i.getId()==8) {
-					System.out.print("Stop");
-				}
-				if(wr.getJobSequence().get(0).getId()==7 && wr.getJobSequence().get(0).getstartServiceTime()==wr.getJobSequence().get(0).getEndTime()) {
-					if(i.getId()==11 || i.getId()==9 || i.getId()==8 || i.getId()==10 ) {
-						System.out.println("\nStop\n");
-					}
-				}
 				insertionJob(i,wr,serviceStartTime);
 				//	wr.updateInfWalkingRoute(test,inp);
 				System.out.println("\nRoute\n");
@@ -472,7 +465,8 @@ for(SubRoute s:walkingRoutes) {
 				}
 			}
 		}
-		i.setarrivalTime(i.getstartServiceTime()-test.getloadTimeHomeCareStaff());
+		//i.setarrivalTime(i.getstartServiceTime()-test.getloadTimeHomeCareStaff());
+		i.setarrivalTime(i.getstartServiceTime()); // no se considera tiempo de descargue
 	}
 
 
