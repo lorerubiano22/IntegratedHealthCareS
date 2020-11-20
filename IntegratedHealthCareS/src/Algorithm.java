@@ -81,7 +81,8 @@ public class Algorithm {
 			j.getFuture().setIDcouple(i);
 			subJobsList.add(j);
 			if(j.getPresent().getStartTime()>j.getFuture().getStartTime()) {
-				System.out.println("Error");}
+				System.out.println("Error");
+				}
 
 		}
 
