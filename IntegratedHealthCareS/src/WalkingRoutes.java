@@ -55,6 +55,18 @@ public class WalkingRoutes {
 
 		//3. Creating multiples slots - set covering problem
 		creatingMultipleSlots(serviceStartTime);
+		for(SubRoute wr:jobSlots) {
+			if(wr.getJobSequence().size()>1) {
+				System.out.println("Duration  "+wr.getDurationWalkingRoute());  // to remove
+//			System.out.print("\n WR_Cost_ iD  "+wr.getSlotID()+" "+ wr.getTotalTravelTime());  // to remove
+//			for(Jobs j:wr.getJobSequence()) {
+//				System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") "); // to remove
+//			}
+//			System.out.print("\n");
+			}
+		}
+		slackprocedureWalkingRoute(jobSlots);
+		computingRouteTimeDuration(jobSlots); // computing the travel time for each slot walking time + waiting time
 		settingCostIndividualRoutes();
 		completingIndividualRoutes();
 
@@ -66,25 +78,25 @@ public class WalkingRoutes {
 
 
 		// 6.2 To Do: Computing walking time duration: Method to determine the start time for each job in the walking route - apply PERT method for each slot
-		slackprocedureWalkingRoute(jobSlots);
-		computingRouteTimeDuration(jobSlots); // computing the travel time for each slot walking time + waiting time
+
 	
 		
 		//computingWalkingTimeDuration(jobSlots); // computing the travel time for each slot walking time + waiting time
 
 		System.out.println("potential WR");
 		for(SubRoute wr:jobSlots) {
-			//if(wr.getJobSequence().size()>1) {
-			System.out.print("\n WR_Cost_ iD  "+wr.getSlotID()+" "+ wr.getTotalTravelTime());  // to remove
-			for(Jobs j:wr.getJobSequence()) {
-				System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") "); // to remove
+			if(wr.getJobSequence().size()>1) {
+				System.out.println("Duration  "+wr.getDurationWalkingRoute());  // to remove
+//			System.out.print("\n WR_Cost_ iD  "+wr.getSlotID()+" "+ wr.getTotalTravelTime());  // to remove
+//			for(Jobs j:wr.getJobSequence()) {
+//				System.out.print(" j_( Id" + j.getId()+", B_"+j.getstartServiceTime()+") "); // to remove
+//			}
+//			System.out.print("\n");
 			}
-			System.out.print("\n");
-			//}
 		}
 		// 7. Solving set partitioning problem
 		ExactAllocation improveSlots= new ExactAllocation(test,inp);
-		improveSlots.selectionWalkingRoutes(jobSlots);
+		improveSlots.selectionWalkingRoutes(jobSlots,walkingRoutes);
 		walkingRoutes=improveSlots.getWalkingRoutes();
 
 
@@ -247,25 +259,8 @@ public class WalkingRoutes {
 		double travelTime=0;
 		// service time and waiting time
 		for(SubRoute wr:walk) {
-			for(Jobs i:wr.getJobSequence()) {
-				service+=i.getReqTime();
-				waitingTime+=i.getWaitingTime();
-			}
-			wr.setwaitingTimeRoute(waitingTime);
-			wr.setTotalServiceTime(service);
-			// travel time
-			for(int i =0;i<wr.getJobSequence().size()-1;i++) {
-				int j=wr.getJobSequence().get(i).getId()-1;
-				int k=wr.getJobSequence().get(i+1).getId()-1;
-				double tv=inp.getWalkCost().getCost(j, k);
-				travelTime+=tv;
-			}
-			wr.setTotalTravelTime(travelTime);
-			double durationRoute=waitingTime+service+travelTime;
-			wr.setDurationWalkingRoute(durationRoute);
-			System.out.print("Walking duration ");	
-			System.out.println("Walking duration "+ wr.getDurationWalkingRoute());	
-		}
+			computeRouteDurtion(wr);
+	}
 
 		// total values
 		service=0;
@@ -350,7 +345,7 @@ public class WalkingRoutes {
 				double startTime=wr.getDropOffNode().getstartServiceTime(); // considering the unloading of the home health care staff
 				presentbigJob.setStartTime(startTime);
 				presentbigJob.setEndTime(startTime);
-				presentbigJob.setStartServiceTime(wr.getDropOffNode().getstartServiceTime());
+				presentbigJob.setStartServiceTime(startTime);
 				// 2. Setting the duration of the jobs
 				presentbigJob.setserviceTime(0); 
 				// 3. Setting qualification of the nurse
@@ -361,8 +356,8 @@ public class WalkingRoutes {
 				 */
 				Jobs futurebigJob=new Jobs(wr.getPickUpNode());		
 				// 1. Setting the TW and start service time
-				futurebigJob.setStartTime(wr.getPickUpNode().getstartServiceTime()+ presentbigJob.getReqTime());
-				futurebigJob.setEndTime(wr.getPickUpNode().getstartServiceTime()+ presentbigJob.getReqTime());
+				futurebigJob.setStartTime(wr.getPickUpNode().getstartServiceTime()+ wr.getDurationWalkingRoute());
+				futurebigJob.setEndTime(wr.getPickUpNode().getstartServiceTime()+ wr.getDurationWalkingRoute());
 				// 2. Setting the duration of the jobs
 				futurebigJob.setserviceTime(wr.getDurationWalkingRoute()); 
 				// 3. Setting qualification of the nurse
@@ -377,11 +372,16 @@ public class WalkingRoutes {
 	private void jobsInsertion(String serviceStartTime) {
 		for(Jobs job:jobList) {
 			for(SubRoute wr:jobSlots) {
+				computeRouteDurtion(wr);
+				if(wr.getSlotID()==9) {
+					System.out.println("\nRoute\n");
+				}
 				Jobs i=new Jobs(job);
 				insertionJob(i,wr,serviceStartTime);
 				//	wr.updateInfWalkingRoute(test,inp);
 				System.out.println("\nRoute\n");
 				System.out.println(wr.toString());
+				
 			}
 		}
 	}
@@ -395,14 +395,17 @@ public class WalkingRoutes {
 		if(feasibleInsertion(i,wr)) { // it determines if the current route doesn't exceeds the maximum walking duration between two jobs
 			// maximum walking duration between drop-off and delivery <- it is the route length
 			if(feasibleTWAndWorkingTime(i,wr)) {
-				i.setWaitingTime(i.getstartServiceTime(), i.getArrivalTime());
+				if(wr.getSlotID()==9) {
+					System.out.println("\nRoute\n");
+				}
+				//i.setWaitingTime(i.getstartServiceTime(), i.getArrivalTime());
 				wr.getJobSequence().add(i); // append job at the end of the sequence	
 				computeRouteDurtion(wr);
 			}
 
 		}
 	}
-
+	
 
 	public void computeRouteDurtion(SubRoute wr) {
 		double service=0;
@@ -425,7 +428,12 @@ public class WalkingRoutes {
 		wr.setTotalTravelTime(travelTime);
 		double durationRoute=waitingTime+service+travelTime;
 		wr.setDurationWalkingRoute(durationRoute);
-		System.out.println("cost wr "+ wr.getDurationWalkingRoute());
+		System.out.print("Walking duration ");
+		
+		System.out.println("Walking duration "+ wr.getDurationWalkingRoute());	
+		if(wr.getDurationWalkingRoute()>=test.getWorkingTime()) {
+			System.out.print("Walking duration ");	
+		}
 	}
 
 
@@ -443,7 +451,7 @@ public class WalkingRoutes {
 				waitingTime=i.getStartTime()-possibleArrivalTime;
 			}
 			double newJobTime=travelTime+waitingTime+i.getReqTime(); //1. Compute the time which involves the new inserted job: ArrivalTime+ tiemeReq + waiting time
-			if(wr.getDurationWalkingRoute()+newJobTime<test.getWorkingTime()) { // if the new job doesn´t exceed the maximum working hours
+			if((wr.getDurationWalkingRoute()+newJobTime)<test.getWorkingTime()) { // if the new job doesn´t exceed the maximum working hours
 				reacheable=true; // job i will be inserted in the Route wr
 				i.setarrivalTime(possibleArrivalTime);
 				double serviceStartTime=Math.max(i.getArrivalTime(), i.getStartTime());

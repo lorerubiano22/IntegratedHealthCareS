@@ -330,7 +330,12 @@ public class Algorithm {
 				// 4. adding couple
 				coupleFromWalkingRoutes.add(pairPickUpDropOffHCS);
 				// 3. checking information
+				System.out.println("couple ");
 				System.out.println(pairPickUpDropOffHCS.toString());
+				System.out.println("couple ");
+				if(present.getStartTime()>future.getEndTime()) { // control
+					System.out.println("error");
+				}
 
 			}
 		}
@@ -361,7 +366,8 @@ public class Algorithm {
 	}
 
 	private Jobs creatinngFutureJobFromWR(Jobs present,Jobs pickUpNode) {
-		Jobs future= new Jobs(pickUpNode.getId(),pickUpNode.getStartTime(),pickUpNode.getEndTime() ,pickUpNode.getReqQualification(), test.getloadTimeHomeCareStaff()); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
+		double previousTime= pickUpNode.getstartServiceTime();
+		Jobs future= new Jobs(pickUpNode.getId(),previousTime,previousTime ,pickUpNode.getReqQualification(), test.getloadTimeHomeCareStaff()); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
 		return future;
 	}
 

@@ -54,7 +54,7 @@ public class ExactAllocation {
 	/*
 	 * Model to select slots
 	 */
-	public void selectionWalkingRoutes(LinkedList<SubRoute> jobSlots) {
+	public void selectionWalkingRoutes(LinkedList<SubRoute> jobSlots, LinkedList<SubRoute> walkingRoutes) {
 		try
 		  {
 		
