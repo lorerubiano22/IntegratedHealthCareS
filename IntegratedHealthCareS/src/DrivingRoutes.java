@@ -64,6 +64,7 @@ public class DrivingRoutes {
 		// Los tiempos de las ventanas de tiempo son menores que la hora de inicio del servicio porque considera el tiempo del registro y el tiempo de carga y descarga del personal
 		settingStartServiceTime(); // late time - the start service time is fixed for the jobs which have a hard time window
 		assigmentJobsToQualifications(clasification);
+		mergingToQualifications(clasification);
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		insertingDepotConnections();
 		Solution initialSol= solutionInformation(); // this is the initial solution in which each personal has a vehicle assigned
@@ -71,6 +72,11 @@ public class DrivingRoutes {
 		return initialSol;
 	}
 
+
+	private void mergingToQualifications(ArrayList<ArrayList<Couple>> clasification) {
+		// TODO Auto-generated method stub
+
+	}
 
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
 		Solution copySolution= new Solution(initialSol);
@@ -119,7 +125,7 @@ public class DrivingRoutes {
 
 
 
-	
+
 
 
 
@@ -3656,12 +3662,9 @@ public class DrivingRoutes {
 		ArrayList<Parts> qualification3= assigmentParamedic(q3,clasification3);
 
 
-		//downgradings(qualification3,qualification2); //No se considera porque no es tan facil controlar el tiempo de trabajo
+		downgradings(qualification3,qualification2); //No se considera porque no es tan facil controlar el tiempo de trabajo
 		//downgradings(qualification2,qualification1);
 
-
-		// 4. Savings los turnos
-		// paramedics
 
 		for(Parts schifts:qualification0) {
 			Parts newParts= null;
@@ -3721,21 +3724,14 @@ public class DrivingRoutes {
 
 
 
-	private void downgradings(ArrayList<ArrayList<SubJobs>> qualification3,ArrayList<ArrayList<SubJobs>> qualification2) {
-		// here both arrays are modified qualification2 and qualification22
-		// 1. Copy copy both arrays
-		ArrayList<ArrayList<SubJobs>> higherQualification = copyArrayOfArrays(qualification3);
-		ArrayList<ArrayList<SubJobs>> lowerQualification = copyArrayOfArrays(qualification2);
-		int shiftToRemove=-1;
-		for(ArrayList<SubJobs> shift:lowerQualification) {
-			shiftToRemove++;
-			boolean inserted=tryToInsertInHigherShift(shift,qualification2);
-			if(inserted) { 
-				qualification2.remove(shiftToRemove);
-			}
+	private void downgradings(ArrayList<Parts> highQualification, ArrayList<Parts> lowQualification) {
+		// cada parte es un personal
+		boolean insertion=false;
+		for(Parts high:highQualification) {
+			insertion=downgradingsPart(high,lowQualification);
 
-		}
-		System.out.println("Stop");
+		}	
+		System.out.println("Print solution"+insertion );
 	}
 
 
@@ -3746,6 +3742,120 @@ public class DrivingRoutes {
 
 
 
+
+
+	private boolean downgradingsPart(Parts high, ArrayList<Parts> lowQualification) {
+		boolean insertion =false;
+		// structure (firstHight)---(lastHight)---(firstLow)---(lastLow)
+		for(Parts low:lowQualification) {
+			if(!low.getListSubJobs().isEmpty()) {
+				SubJobs firstHight=high.getListSubJobs().get(0); // head of the high cualification level
+				SubJobs lastHight=high.getListSubJobs().get(high.getListSubJobs().size()-1); // head of the high cualification level
+				SubJobs firstLow=low.getListSubJobs().get(0); // head of the low cualification level
+				SubJobs lastLow=low.getListSubJobs().get(high.getListSubJobs().size()-1); // head of the low cualification level
+				double distanceFromDepot=inp.getCarCost().getCost(0, firstHight.getId()-1);
+				double distanceToDepot=inp.getCarCost().getCost(lastLow.getId()-1, 0);
+				double distanceConnection=inp.getCarCost().getCost(lastHight.getId()-1, firstLow.getId()-1);
+				if ((lastHight.getDepartureTime()-lastLow.getDepartureTime()+distanceFromDepot+distanceToDepot+distanceConnection)<test.getWorkingTime()) { // revisar las working horas
+					insertion=tryingToInsert(distanceFromDepot,distanceToDepot,distanceConnection,firstLow,lastLow,lastLow,high,low);
+				}
+				else {
+					insertion=tryingToInsertchangingTime(high,low);
+				}
+				if(insertion) {
+					insertion=false;
+					low.getListSubJobs().clear();
+				}
+			}
+		}
+
+
+		return insertion;
+	}
+
+	private boolean tryingToInsertchangingTime(Parts high, Parts low) {
+		// quien cambia la hora son los trabajos que estan en low
+		boolean inserted=false;
+
+		SubJobs firstHight=high.getListSubJobs().get(0); // head of the high cualification level
+		SubJobs lastHight=high.getListSubJobs().get(high.getListSubJobs().size()-1); // head of the high cualification level
+		SubJobs firstLow=low.getListSubJobs().get(0); // head of the low cualification level
+		SubJobs lastLow=low.getListSubJobs().get(high.getListSubJobs().size()-1); // head of the low cualification level
+		if(lastHight.getDepartureTime()<firstLow.getStartTime()) {
+			double distanceFromDepot=inp.getCarCost().getCost(0, firstHight.getId()-1);
+			double distanceToDepot=inp.getCarCost().getCost(lastLow.getId()-1, 0);
+			double distanceConnection=inp.getCarCost().getCost(lastHight.getId()-1, firstLow.getId()-1);
+			// possible new times
+			double arrivalTime=lastHight.getDepartureTime()+distanceConnection;
+			double possibleStartTime=arrivalTime+test.getloadTimeHomeCareStaff();
+			if(possibleStartTime>=firstLow.getStartTime() && possibleStartTime<=lastLow.getEndTime()) {
+				ArrayList<SubJobs> part=calculating(possibleStartTime,low);
+				if(!part.isEmpty()) {
+					double newEndLow=part.get(part.size()-1).getDepartureTime();
+					if((newEndLow-firstHight.getArrivalTime()+distanceFromDepot+distanceToDepot+distanceConnection)<=test.getWorkingTime()) {
+						inserted=true;
+						changingTimeLow(part,low);
+					}
+				}
+			}
+		}
+		return inserted;
+	}
+
+	private void changingTimeLow(ArrayList<SubJobs> part, Parts low) {
+		for(SubJobs p) {
+			
+		}
+		
+	}
+
+	private ArrayList<SubJobs> calculating(double possibleStartTime, Parts lowRef) {
+		double newEnd=0;
+		ArrayList<SubJobs> low= new ArrayList<SubJobs>();
+		for(SubJobs j:lowRef.getListSubJobs()) {
+			low.add(new SubJobs(j));
+		}
+		double travelTime=0;
+		double serviceTime=0;
+		double arrivalTime=possibleStartTime;
+		double startServiceTime=0;
+		double endServiceTime=0;
+		double departureTime=0;
+
+		for(int i=0;i<low.size()-1;i++) {
+
+			travelTime=inp.getCarCost().getCost(low.get(i).getId()-1, low.get(i+1).getId()-1);
+			low.get(i).setarrivalTime(possibleStartTime-test.getloadTimeHomeCareStaff());
+			low.get(i).setStartServiceTime(possibleStartTime);
+			low.get(i).setEndServiceTime(possibleStartTime+low.get(i).getReqTime());
+			low.get(i).setdepartureTime(low.get(i).getendServiceTime()+test.getloadTimeHomeCareStaff());
+			possibleStartTime=low.get(i).getDepartureTime()+travelTime;
+		}
+		return low;
+	}
+
+	private boolean tryingToInsert(double distanceFromDepot, double distanceToDepot, double distanceConnection,
+			SubJobs lastHight, SubJobs firstLow, SubJobs lastLow, Parts high, Parts low) {
+		boolean inserted=false;
+		if((lastHight.getDepartureTime()+distanceConnection) <=firstLow.getstartServiceTime() && lastHight.getDepartureTime()>firstLow.getArrivalTime()) { // revisar la ventana de tiempo
+
+			inserted=true;
+			//	setListSubJobs(ArrayList<SubJobs> listSubJobs, Inputs inp, Test test)
+			ArrayList<SubJobs> newListJob= new ArrayList<SubJobs>();
+			for(SubJobs p:high.getListSubJobs()) {
+				newListJob.add(p);
+			}
+			for(SubJobs p:low.getListSubJobs()) {
+				newListJob.add(p);
+			}
+			high.getListSubJobs().clear();
+			high.setListSubJobs(newListJob, inp, test);
+		}
+		else {
+			inserted=tryingToInsertchangingTime(high,low);
+		}
+		return inserted;
+	}
 
 	private boolean tryToInsertInHigherShift(ArrayList<SubJobs> shift, ArrayList<ArrayList<SubJobs>> qualification22) {
 		// check if it can be inserted after or before
@@ -4172,7 +4282,10 @@ public class DrivingRoutes {
 		boolean enoughtTime=false;
 		SubJobs primerInRouteSubJob=homeCare.getListSubJobs().get(0);
 		SubJobs lastSubJobToInsert=pickUpDropOff.getListSubJobs().get(pickUpDropOff.getListSubJobs().size()-1);
-		if(primerInRouteSubJob.getArrivalTime()-lastSubJobToInsert.getDepartureTime()<test.getWorkingTime()) {
+		double distanceFromDepot=inp.getCarCost().getCost(0,primerInRouteSubJob.getId()-1);
+		double distancetoDepot=inp.getCarCost().getCost(lastSubJobToInsert.getId()-1, 0);
+		double preliminaryWorkingTime=primerInRouteSubJob.getArrivalTime()-lastSubJobToInsert.getDepartureTime()+distanceFromDepot+distancetoDepot;
+		if((primerInRouteSubJob.getArrivalTime()-lastSubJobToInsert.getDepartureTime())>0 && preliminaryWorkingTime<test.getWorkingTime()) {
 			enoughtTime=true;
 		}
 		return enoughtTime;
