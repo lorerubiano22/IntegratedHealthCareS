@@ -360,9 +360,7 @@ public class Algorithm {
 	}
 
 	private Jobs creatinngFutureJobFromWR(Jobs present,Jobs pickUpNode) {
-		double startTime= pickUpNode.getstartServiceTime()+pickUpNode.getReqTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
-		double endTime = startTime+ test.getCumulativeWaitingTime();
-		Jobs future= new Jobs(pickUpNode.getId(),startTime,endTime ,pickUpNode.getReqQualification(), test.getloadTimeHomeCareStaff()); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
+		Jobs future= new Jobs(pickUpNode.getId(),pickUpNode.getStartTime(),pickUpNode.getEndTime() ,pickUpNode.getReqQualification(), test.getloadTimeHomeCareStaff()); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
 		return future;
 	}
 
@@ -370,7 +368,7 @@ public class Algorithm {
 
 	private Jobs creatinngPresentJobFromWR(Jobs dropOffNode, double walkingRouteLength) {
 		// start when the service
-		double previousTime= dropOffNode.getstartServiceTime()-test.getloadTimeHomeCareStaff(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
+		double previousTime= dropOffNode.getstartServiceTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
 		Jobs present= new Jobs(dropOffNode.getId(),previousTime,previousTime ,dropOffNode.getReqQualification(), walkingRouteLength); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
 		return present;
 	}

@@ -150,6 +150,7 @@ public class Jobs {
 	public void setWaitingTime(double w) {
 		this.waitingTime = w;}
 	public void setWaitingTime(double arrivalTime, double startService ) {
+		waitingTime=0;
 		if(arrivalTime<startService) {
 			this.waitingTime = startService-arrivalTime;	
 		}

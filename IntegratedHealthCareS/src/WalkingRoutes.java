@@ -29,7 +29,6 @@ public class WalkingRoutes {
 
 	// Methods
 	public WalkingRoutes(Inputs input, Random r, Test t, List<Jobs> nodes) {
-
 		// Information
 		jobList= new ArrayList<Jobs>();
 		inp=input;
@@ -67,7 +66,11 @@ public class WalkingRoutes {
 
 
 		// 6.2 To Do: Computing walking time duration: Method to determine the start time for each job in the walking route - apply PERT method for each slot
-		computingWalkingTimeDuration(jobSlots); // computing the travel time for each slot walking time + waiting time
+		slackprocedureWalkingRoute(jobSlots);
+		computingRouteTimeDuration(jobSlots); // computing the travel time for each slot walking time + waiting time
+	
+		
+		//computingWalkingTimeDuration(jobSlots); // computing the travel time for each slot walking time + waiting time
 
 		System.out.println("potential WR");
 		for(SubRoute wr:jobSlots) {
@@ -102,20 +105,84 @@ public class WalkingRoutes {
 				System.out.print("\n");
 			}
 		}
-LinkedList<SubRoute> copy= new LinkedList<SubRoute> ();
-for(SubRoute s:walkingRoutes) {
-	if(s.getJobSequence().size()>1) {
-		copy.add(s);
-	}
-	
-}
+		LinkedList<SubRoute> copy= new LinkedList<SubRoute> ();
+		for(SubRoute s:walkingRoutes) {
+			if(s.getJobSequence().size()>1) {
+				copy.add(s);
+			}
+
+		}
+		walkingRoutes.clear();
+		int walkRouteID=-1;
+		for(SubRoute s:copy) {
+			walkRouteID++;
+			s.setSlotID(walkRouteID);
+				walkingRoutes.add(s);
+			}
 		// checkSolutionQuality <- each job is once in the set of solutions
 		boolean goodSolution = checkWalkingRouteSet();
 		System.out.print("\n good Solution" + goodSolution);
-		computingRouteTimeDuration(); // computing the travel time for each slot walking time + waiting time
-
+		
+		//slackprocedureWalkingRoute();
+		computingRouteTimeDuration(walkingRoutes); // computing the travel time for each slot walking time + waiting time
+	
 		// 8. Making walking routes into big tasks 
 		walkingRouteToJob(); // fix the pick-up and drop-off nodes for each walking route
+	}
+
+
+	//LinkedList<SubRoute> walkingRoutes
+	private void settingTimes(LinkedList<SubRoute> walk) {
+		for(SubRoute s:walk) {
+			for(Jobs j:s.getJobSequence()) {
+		double departureTime=j.getstartServiceTime()+j.getReqTime();
+		j.setdepartureTime(departureTime);
+		j.setEndServiceTime(departureTime);
+			}
+		}
+	}
+
+
+	//LinkedList<SubRoute> walkingRoutes
+	private void slackprocedureWalkingRoute(LinkedList<SubRoute> walk) {
+		settingTimes(walk);
+		for(SubRoute s:walk) {
+			int length=	s.getJobSequence().size()-1;
+			for(int i=length;i>0;i--) {// iterating over route
+				
+				Jobs j=s.getJobSequence().get(i-1); // los tiempos de este nodo cambian
+				Jobs k=s.getJobSequence().get(i); // este es el nodo de referencia 
+				double departure=k.getDepartureTime();
+				double startServiceTime=departure-k.getReqTime();
+				double arrival=startServiceTime;
+				if(i==length) { // se modifican los tiempos del ultimo nodo
+					arrival=Math.max(startServiceTime, k.getStartTime());
+					k.setWaitingTime(arrival, startServiceTime);
+					k.setarrivalTime(arrival);
+					k.setdepartureTime(departure+test.getloadTimeHomeCareStaff());
+				}
+				double travelTime=inp.getWalkCost().getCost(j.getId()-1, k.getId()-1);
+				 departure=k.getArrivalTime()-travelTime;
+				 startServiceTime=departure-j.getReqTime();
+				 arrival=startServiceTime;
+				if(startServiceTime>=j.getStartTime() && startServiceTime<=j.getEndTime()) {
+					arrival=Math.max(startServiceTime, j.getStartTime());
+					j.setarrivalTime(arrival);
+					j.setStartServiceTime(startServiceTime);
+					j.setEndServiceTime(departure);
+					j.setdepartureTime(departure);
+					j.setWaitingTime(arrival, startServiceTime);
+				}
+				
+				if(i==1) {// para el inicio de la ruta considerar el cargue y el descargue 
+					j.setWaitingTime(arrival+test.getloadTimeHomeCareStaff(), startServiceTime);
+					j.setarrivalTime(arrival-test.getloadTimeHomeCareStaff());
+				}
+			}
+			System.out.println("route");
+			System.out.println(s.toString());
+			System.out.println("route");
+		}	
 	}
 
 
@@ -172,14 +239,14 @@ for(SubRoute s:walkingRoutes) {
 		}
 	}
 
+	//inkedList<SubRoute> walkingRoutes
+	private void computingRouteTimeDuration(LinkedList<SubRoute> walk) {
 
-	private void computingRouteTimeDuration() {
-	
 		double service=0;
 		double waitingTime=0;
 		double travelTime=0;
 		// service time and waiting time
-		for(SubRoute wr:this.getWalkingRoutes()) {
+		for(SubRoute wr:walk) {
 			for(Jobs i:wr.getJobSequence()) {
 				service+=i.getReqTime();
 				waitingTime+=i.getWaitingTime();
@@ -205,12 +272,20 @@ for(SubRoute s:walkingRoutes) {
 		waitingTime=0;
 		travelTime=0;
 		double durationRoute=0;
-		for(SubRoute wr:this.getWalkingRoutes()) {
+		for(SubRoute wr:walk) {
+			double serviceRoute=0;
+			double waitingRoute=0;
+			double travelRoute=0;
+			double durationR=0;
 			if(wr.getJobSequence().size()>1) { // route has more than one job
-				service+=wr.getTotalServiceTime();
-				waitingTime+=wr.getDurationWaitingTime();
-				travelTime+=wr.getTotalTravelTime();
-				durationRoute+=wr.getDurationWalkingRoute();
+				serviceRoute=wr.getTotalServiceTime();
+				service+=serviceRoute;
+				waitingRoute=wr.getDurationWaitingTime();
+				waitingTime+=waitingRoute;
+				travelRoute=wr.getTotalTravelTime();
+				travelTime+=travelRoute;
+				durationR=wr.getDurationWalkingRoute();
+				durationRoute+=durationR;
 			}
 		}
 
@@ -272,12 +347,12 @@ for(SubRoute s:walkingRoutes) {
 				 */
 				Jobs presentbigJob=new Jobs(wr.getDropOffNode());
 				// 1. Setting the TW and start service time
-				double startTime=wr.getDropOffNode().getstartServiceTime()-test.getloadTimeHomeCareStaff(); // considering the unloading of the home health care staff
+				double startTime=wr.getDropOffNode().getstartServiceTime(); // considering the unloading of the home health care staff
 				presentbigJob.setStartTime(startTime);
 				presentbigJob.setEndTime(startTime);
 				presentbigJob.setStartServiceTime(wr.getDropOffNode().getstartServiceTime());
 				// 2. Setting the duration of the jobs
-				presentbigJob.setserviceTime(wr.getDurationWalkingRoute()); 
+				presentbigJob.setserviceTime(0); 
 				// 3. Setting qualification of the nurse
 				presentbigJob.setReqQualification(wr.getSkill());
 
@@ -286,10 +361,10 @@ for(SubRoute s:walkingRoutes) {
 				 */
 				Jobs futurebigJob=new Jobs(wr.getPickUpNode());		
 				// 1. Setting the TW and start service time
-				futurebigJob.setStartTime((int)wr.getPickUpNode().getstartServiceTime()+ (int)wr.getPickUpNode().getReqTime());
-				futurebigJob.setEndTime((int)futurebigJob.getStartTime()+ (int)this.test.getCumulativeWaitingTime());
+				futurebigJob.setStartTime(wr.getPickUpNode().getstartServiceTime()+ presentbigJob.getReqTime());
+				futurebigJob.setEndTime(wr.getPickUpNode().getstartServiceTime()+ presentbigJob.getReqTime());
 				// 2. Setting the duration of the jobs
-				futurebigJob.setserviceTime(test.getloadTimeHomeCareStaff());
+				futurebigJob.setserviceTime(wr.getDurationWalkingRoute()); 
 				// 3. Setting qualification of the nurse
 				SubJobs separateJobs= new SubJobs(presentbigJob,futurebigJob,wr);
 				this.subJobList.add(separateJobs);
@@ -481,6 +556,6 @@ for(SubRoute s:walkingRoutes) {
 	public HashMap<Integer,Jobs> getServedJobs() {return ServedJobs;}
 	public LinkedList<SubRoute> getWalkingRoutes() {return walkingRoutes;}
 	public double getdurationWalkingRoute() { return durationWalkingRoute;}
-	
+
 
 }
