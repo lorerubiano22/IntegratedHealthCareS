@@ -72,7 +72,7 @@ public class DrivingRoutes {
 	}
 
 
-	
+
 
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
 		Solution copySolution= new Solution(initialSol);
@@ -2199,7 +2199,10 @@ public class DrivingRoutes {
 					System.out.println("\nRoute iR"+ iR.toString());
 					System.out.println("\nRoute jR"+ jR.toString());
 					if(possibleMerge(iR,jR)) {
-
+if(iR.getJobsDirectory().containsKey("D40") || jR.getJobsDirectory().containsKey("D40")) {
+	System.out.println("\nRoute iR"+ iR.toString());
+	System.out.println("\nRoute jR"+ jR.toString());
+}
 						Route refRoute=selecctingStartRoute(iR,jR);
 						Route toInsertRoute=selecctingRouteToInsert(iR,jR);
 						System.out.println("\nRoute refRoute"+ refRoute.toString());
@@ -2243,7 +2246,9 @@ public class DrivingRoutes {
 						//						refRoute=updatingNewRoutes(refRoute,vehicle,part);	
 						//						toInsertRoute.updateRouteFromParts(inp,test);
 						refRoute=updatingNewRoutes(refRoute,vehicle,part);	
-						toInsertRoute=updatingChangedRoutes(toInsertRoute,vehicle,part);	
+						toInsertRoute=updatingChangedRoutes(toInsertRoute,refRoute,part);	
+						vehicle.getPartsRoute().clear();
+						
 						System.out.println("Route refRoute"+ refRoute.toString());
 						System.out.println("Route toInsertRoute"+ toInsertRoute.toString());
 						//routeVehicleList.add(vehicle);
@@ -2311,9 +2316,9 @@ public class DrivingRoutes {
 
 	private boolean checkingTimeWindows(Route refRoute, Route toInsertRoute, Route vehicle, int part) {
 		boolean inserted=keeptheTimes(refRoute,toInsertRoute,vehicle,part);
-		if(!inserted) { // changing time
-			inserted=changetheTimes(refRoute,toInsertRoute,vehicle,part);
-		}
+		//		if(!inserted) { // changing time
+		//			inserted=changetheTimes(refRoute,toInsertRoute,vehicle,part);
+		//		}
 		return inserted;
 	}
 
@@ -2486,11 +2491,26 @@ public class DrivingRoutes {
 			refRoute.getPartsRoute().add(p);
 		}
 		refRoute.updateRouteFromParts(inp,test);
+
 		return refRoute;
 	}
 
 	private Route updatingChangedRoutes(Route refRoute, Route vehicle, int part) {
-
+		ArrayList<Parts> toKeep= new ArrayList<Parts>();
+		for(Parts p:refRoute.getPartsRoute()) {
+			toKeep.add(p);
+		}
+		for(Parts p:toKeep) {
+			for(SubJobs s:p.getListSubJobs()) {
+				if(s.getId()!=1) {
+					if(vehicle.getJobsDirectory().containsKey(s.getSubJobKey())) {
+						refRoute.getPartsRoute().remove(p);
+						break;
+					}
+				}
+			}
+			
+		}
 		refRoute.updateRouteFromParts(inp,test);
 		return refRoute;
 	}
@@ -3656,12 +3676,12 @@ public class DrivingRoutes {
 		ArrayList<Parts> qualification1= assigmentParamedic(q1,clasification1); // here are not considering working hours
 		ArrayList<Parts> qualification2= assigmentParamedic(q2,clasification2);
 		ArrayList<Parts> qualification3= assigmentParamedic(q3,clasification3);
-	
+
 		//downgradings(qualification3,qualification2);
 		downgradings(qualification2,qualification1);
 		downgradings(qualification3,qualification2);
 		downgradings(qualification3,qualification1); //No se considera porque no es tan facil controlar el tiempo de trabajo
-		
+
 		//downgradings(qualification2,qualification1);
 
 
@@ -3787,21 +3807,21 @@ public class DrivingRoutes {
 		double possibleDepartureTime=firstHight.getArrivalTime()-distanceConnection;
 		double workTime=lastHight.getDepartureTime()-firstLow.getArrivalTime()+distanceFromDepot+distanceToDepot+distanceConnection;
 		if(workTime<test.getWorkingTime()) { // working time
-		if(lastLow.getDepartureTime()<=possibleDepartureTime && lastLow.getDepartureTime()<firstHight.getArrivalTime()) {
-			inserted=true;
-			ArrayList<SubJobs> list= new ArrayList<SubJobs>();
-			for(SubJobs j:low.getListSubJobs()) {
-				list.add(j);
-			}
-			for(SubJobs j:high.getListSubJobs()) {
-				list.add(j);
-			}
-			high.getListSubJobs().clear();
-			for(SubJobs j:list) {
-				high.getListSubJobs().add(j);
+			if(lastLow.getDepartureTime()<=possibleDepartureTime && lastLow.getDepartureTime()<firstHight.getArrivalTime()) {
+				inserted=true;
+				ArrayList<SubJobs> list= new ArrayList<SubJobs>();
+				for(SubJobs j:low.getListSubJobs()) {
+					list.add(j);
+				}
+				for(SubJobs j:high.getListSubJobs()) {
+					list.add(j);
+				}
+				high.getListSubJobs().clear();
+				for(SubJobs j:list) {
+					high.getListSubJobs().add(j);
+				}
 			}
 		}
-	}
 		return inserted;
 	}
 
@@ -3887,10 +3907,10 @@ public class DrivingRoutes {
 			high.setListSubJobs(newListJob, inp, test);
 		}
 		else {
-			
+
 			inserted=tryingToInsertearly(high,low);
 			if(!inserted) {
-			inserted=tryingToInsertchangingTime(high,low);}
+				inserted=tryingToInsertchangingTime(high,low);}
 		}
 		return inserted;
 	}

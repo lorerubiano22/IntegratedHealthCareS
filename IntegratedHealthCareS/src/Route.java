@@ -179,7 +179,9 @@ public class Route {
 		for(Parts part:this.getPartsRoute()) {
 			Parts partObject= new Parts(part);
 			for(SubJobs sj:partObject.getListSubJobs()) {
+				if(sj.getId()!=1) {
 				subJobsList.add(sj);
+				}
 			}	
 		}
 		if(this.getPartsRoute().size()>2 && !this.getSubJobsList().isEmpty()) {
