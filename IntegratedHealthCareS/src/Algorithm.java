@@ -343,7 +343,7 @@ public class Algorithm {
 
 	private Couple creatingCoupleClientHome(Jobs presentJob, Jobs futureJob) {
 		presentJob.setPair(futureJob);
-		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId(), futureJob.getId()); // setting the time for picking up the patient at home patient
+		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1); // setting the time for picking up the patient at home patient
 		Couple pairPatientMedicalCentre=creatingPairPickUpDeliveryHCS(presentJob,futureJob, directConnectionDistance);
 		return pairPatientMedicalCentre;
 	}

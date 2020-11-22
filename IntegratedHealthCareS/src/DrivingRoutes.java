@@ -76,6 +76,8 @@ public class DrivingRoutes {
 
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
 		Solution copySolution= new Solution(initialSol);
+		System.out.println("printing copy solution");
+		System.out.println(copySolution.toString());
 		changingDepartureTimes(copySolution);
 		for(Route r:copySolution.getRoutes()) {
 			for(int i=1;i<r.getPartsRoute().size()-1;i++) {
@@ -106,14 +108,14 @@ public class DrivingRoutes {
 		// haciendo una combinación diferente
 
 
-		Solution auxSolution=sclackTime(newSol);
+		//Solution auxSolution=sclackTime(newSol);
 
-		merge= checkingSubJobs(initialSol,auxSolution);
-		boolean noduplicateJobs= checkDoubleJobs(auxSolution);
-		System.out.println("solution "+merge);
+		//merge= checkingSubJobs(initialSol,auxSolution);
+		//boolean noduplicateJobs= checkDoubleJobs(auxSolution);
+		//System.out.println("solution "+merge);
 
-		updatingSolution(copySolution);
-		return copySolution;
+		//updatingSolution(copySolution);
+		return newSol;
 	}
 
 
@@ -4123,11 +4125,11 @@ public class DrivingRoutes {
 		// 1. computing times Route
 		for(Route r:this.routeList) {
 			//1. start time
-			SubJobs firstJob=r.getSubJobsList().get(1); // it is not the depot node
+			SubJobs firstJob=r.getSubJobsList().get(0); // it is not the depot node
 			computeStartTimeRoute(firstJob,r);
 			//r.getSubJobsList().get(0).setserviceTime(0);
 			// end time
-			SubJobs lastJob=r.getSubJobsList().get(r.getSubJobsList().size()-2);  // it is not the depot node
+			SubJobs lastJob=r.getSubJobsList().get(r.getSubJobsList().size()-1);  // it is not the depot node
 			computeEndTimeRoute(lastJob,r);
 			//r.getSubJobsList().get(r.getSubJobsList().size()-1).setserviceTime(0);
 		}
