@@ -9,6 +9,7 @@ public class Parts {
 	private boolean driver=false;
 	private  Route routeVehicle; // the shift is a route in order to count the working hours
 	private  ArrayList<SubJobs> listSubJobs= new ArrayList<>(); // the shift is a route in order to count the working hours
+	private  SubJobs headPart;
 	private SubJobs nodeReference;
 	private  HashMap<String, SubJobs> directorySubjobs= new HashMap<>(); // the shift is a route in order to count the working hours
 	private  HashMap<String, Edge> directoryConnections= new HashMap<>(); // las conecciones entre las partes// este me permite controlar los subtours
@@ -51,6 +52,7 @@ public class Parts {
 	public boolean isDriver() {	return driver;}
 	public Route getRouteVehicle() {return routeVehicle;}
 	public ArrayList<SubJobs> getListSubJobs() {return listSubJobs;}
+	public SubJobs getmainElement() {return headPart;}
 	public HashMap<String, SubJobs> getDirectorySubjobs() {return directorySubjobs;}
 	public HashMap<String, Edge> getDirectoryConnections() {return directoryConnections;}
 	public SubJobs getReferenceNode() {return nodeReference;}

@@ -122,6 +122,8 @@ public class Jobs {
 		subJobKey=i.subJobKey;
 		idUser=i.idUser;
 		totalPeople=i.getTotalPeople();
+		if(i.subJobPair!=null) {
+			subJobPair=new Jobs(i.subJobPair);}
 	}
 
 	/* SET METHODS */

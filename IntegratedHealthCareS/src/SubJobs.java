@@ -42,7 +42,7 @@ public class SubJobs extends Jobs {
 	public ArrayList<Jobs> getJobList() {
 		return jobList;
 	}
-
+	
 	// Setters
 	public void setJobList(ArrayList<Jobs> jobList) {
 		this.jobList = jobList;

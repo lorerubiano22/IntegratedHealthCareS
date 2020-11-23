@@ -35,6 +35,20 @@ public class Couple {
 		present.setReqQualification(qualification);
 		future.setReqQualification(qualification);
 	}
+	
+	
+	public Couple(SubJobs j, SubJobs j2) {
+		if(j.getstartServiceTime()<j2.getstartServiceTime()) {
+			present=j;
+			future=j2;
+		}
+		else {
+			present=j2;
+			future=j;
+		}
+		directConnection=0;	
+		qualification=Math.max(j.getReqQualification(), j2.getReqQualification());
+	}
 	public Couple(Inputs input) {
 		inp=input;
 	}
