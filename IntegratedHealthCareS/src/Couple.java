@@ -47,6 +47,8 @@ public class Couple {
 			future=j;
 		}
 		directConnection=0;	
+		startEndNodes.add(j2);
+		startEndNodes.add(j);
 		qualification=Math.max(j.getReqQualification(), j2.getReqQualification());
 	}
 	public Couple(Inputs input) {
