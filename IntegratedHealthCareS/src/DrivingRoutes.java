@@ -175,7 +175,7 @@ public class DrivingRoutes {
 			list.add(j);
 		}
 		for(SubJobs j:list) {
-			if(j.getId()==39) {
+			if(j.getId()==9) {
 				boolean a=false;
 			}
 			if(subJobsID.containsKey(j.getSubJobKey())) {
@@ -198,7 +198,7 @@ public class DrivingRoutes {
 	private void updatingCouple(SubJobs j1, SubJobs j2) {
 	double arrivalTime=j1.getstartServiceTime()+j2.getReqTime(); // cuando puede pasar el vehículo a recoger la enfermenra
 	double departureTime=arrivalTime+test.getloadTimeHomeCareStaff(); // cuando puede pasar el vehículo a recoger la enfermenra	
-	j2.setserviceTime(arrivalTime);// TW
+	j2.setStartTime(arrivalTime);// TW
 	j2.setEndTime(arrivalTime);// TW
 	j2.setarrivalTime(arrivalTime);
 	j2.setStartServiceTime(arrivalTime);
@@ -226,6 +226,7 @@ public class DrivingRoutes {
 		boolean inserted=false;
 		// iterando sobre la rute
 		if(r.getSubJobsList().isEmpty()) { // en caso de que este vacia
+			inserted=true;
 			r.getSubJobsList().add(j1);
 		}
 		else {
