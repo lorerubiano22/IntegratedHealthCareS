@@ -174,13 +174,21 @@ public class DrivingRoutes {
 
 	private boolean mergingTwoRoutes(Route s, ArrayList<Route> remainingRoutes) {
 		boolean merge=false; // la idea es que la ruta de la walking route sea la ruta de referencia la rutas que se pueden eliminar son las que estan contenidas en remainingRoutes 
+		if(s.getJobsDirectory().containsKey("P68")) {
+			System.out.print("stop");
+		}
 		Route newRoute=new Route();
 		double startTimeRoute=s.getPartsRoute().get(0).getListSubJobs().get(0).getArrivalTime();
 		double endTimeRoute=s.getPartsRoute().get(s.getPartsRoute().size()-1).getListSubJobs().get(0).getArrivalTime();
 		if(endTimeRoute-startTimeRoute<test.getWorkingTime()) { // working hours
 			for(Route potential: remainingRoutes) {
 				if(!potential.getSubJobsList().isEmpty() && !potential.equals(s)) {
+					if(potential.getJobsDirectory().containsKey("P13") && s.getJobsDirectory().containsKey("P35")) {
+						System.out.print("stop");
+					}
 				merge=feasibilityMerging(potential,s,newRoute);
+				printList(newRoute);
+				
 				if(merge) {
 					settingParts(newRoute);
 					s.getPartsRoute().clear();
@@ -191,7 +199,8 @@ public class DrivingRoutes {
 					updatingRefRoute(s,newRoute);
 					// potential route
 					updatingPotentialRout(s,potential);
-
+					newRoute.getSubJobsList().clear();
+					newRoute.getPartsRoute().clear();
 					break;
 				}
 			}
@@ -342,7 +351,7 @@ public class DrivingRoutes {
 	private HashMap<String, SubJobs> selecctingMissingJobs(Route s, Route newRoute) {
 		HashMap<String, SubJobs> subJobsID= new HashMap<String, SubJobs>();
 		for(SubJobs j:s.getSubJobsList()){
-			if(!newRoute.getSubJobsList().contains(j)) {
+			if(!newRoute.getJobsDirectory().containsKey(j.getSubJobKey())) {
 				subJobsID.put(j.getSubJobKey(), j);
 			}
 		}
@@ -406,7 +415,7 @@ public class DrivingRoutes {
 	private void printList(Route r) {
 		System.out.println("Route start");
 		for(SubJobs j:r.getSubJobsList()) {
-			System.out.println("ID "+j.getId()+" B "+j.getstartServiceTime()+" TW["+j.getStartTime()+";"+j.getEndTime()+"]");
+			System.out.println("ID "+j.getSubJobKey()+" B "+j.getstartServiceTime()+" TW["+j.getStartTime()+";"+j.getEndTime()+"]");
 		}
 		System.out.println("Route end");
 	}
@@ -477,10 +486,12 @@ public class DrivingRoutes {
 				if(a.getDepartureTime()>j1.getstartServiceTime()) {
 					inserted=true;
 					r.getSubJobsList().add(0,j1);
+					r.getJobsDirectory().put(j1.getSubJobKey(), j1);
 				}
 				else {
 					inserted=true;
 					r.getSubJobsList().add(j1);
+					r.getJobsDirectory().put(j1.getSubJobKey(), j1);
 				}
 			}
 			else { // más de un trabajo
@@ -505,12 +516,25 @@ public class DrivingRoutes {
 		boolean intermediateSubJob=false;
 		boolean insertion=false;
 		if(early) {
+			ArrayList<SubJobs> copy= new ArrayList<SubJobs> ();
+			for(SubJobs j:r.getSubJobsList()) {
+				copy.add(j);
+			}
+			if(vehicleCapacityPart(copy)) {
 			r.getSubJobsList().add(0,j1);
+			r.getJobsDirectory().put(j1.getSubJobKey(), j1);	}
 		} 
 		else {
 			late=lastSubJob(j1,r.getSubJobsList().get(r.getSubJobsList().size()-1));
 			if(late) {
-				r.getSubJobsList().add(j1);}
+				ArrayList<SubJobs> copy= new ArrayList<SubJobs> ();
+				for(SubJobs j:r.getSubJobsList()) {
+					copy.add(j);
+				}
+				if(vehicleCapacityPart(copy)) {
+				r.getSubJobsList().add(j1);
+				r.getJobsDirectory().put(j1.getSubJobKey(), j1);}	
+			}
 		}
 		if(!late && !early) {
 			// structure (a)---(j1)---(b)
@@ -520,9 +544,15 @@ public class DrivingRoutes {
 				double tvAj1=inp.getCarCost().getCost(a.getId()-1, j1.getId()-1);
 				double tvj1B=inp.getCarCost().getCost(j1.getId()-1,b.getId()-1);
 				if(a.getDepartureTime()+tvAj1<=j1.getArrivalTime() && j1.getDepartureTime()+tvj1B<=b.getArrivalTime()) {
+					ArrayList<SubJobs> copy= new ArrayList<SubJobs> ();
+					for(SubJobs jsub:r.getSubJobsList()) {
+						copy.add(jsub);
+					}
+					if(vehicleCapacityPart(copy)) {
 					intermediateSubJob=true;
 					r.getSubJobsList().add(j+1,j1);
-					break;
+					r.getJobsDirectory().put(j1.getSubJobKey(), j1);
+					break;}
 				}
 				else {
 					if((j1.getEndTime()-j1.getStartTime()>0)) {
@@ -1157,6 +1187,10 @@ public class DrivingRoutes {
 		for(SubJobs s: list) {
 			action=s.getTotalPeople();
 			passegers+=action;
+			if(Math.abs(passegers)>inp.getVehicles().get(0).getMaxCapacity()) {
+				enoughCapacity=false;
+				break;
+			}
 		}
 		if(Math.abs(passegers)>inp.getVehicles().get(0).getMaxCapacity()) {
 			enoughCapacity=false;
@@ -5076,17 +5110,7 @@ public class DrivingRoutes {
 
 
 
-	private boolean enoughtCapacity(Route r) {
-		boolean capacity =false;
-		// 1. working time 
-		r.computeTravelTime(inp);
-		// 2. capacity of vehicle
-		//r.computePassenger();
-		if(Math.abs(r.getPassengers())<inp.getVehicles().get(0).getMaxCapacity() && r.getTravelTime()<test.getWorkingTime()) {
-			capacity =true;
-		}
-		return capacity;
-	}
+	
 
 
 
@@ -5607,19 +5631,7 @@ public class DrivingRoutes {
 
 
 
-	private boolean enoughCapacityForNewJob(Route r, Jobs j) {
-		boolean capacity=false;
-		double passengerAmount=j.getTotalPeople();
-		// 1. working time 
-		r.computeTravelTime(inp);
-		// 2. capacity of vehicle
-		//r.computePassenger();
-		if(Math.abs(r.getPassengers())+Math.abs(passengerAmount)<=inp.getVehicles().get(0).getMaxCapacity() && r.getTravelTime()<test.getWorkingTime()) {
-			capacity =true;
-		}
-		return capacity;
-	}
-
+	
 	private int iterateOverSchift(SubJobs j, Parts homeCare) {
 		if(j.getSubJobKey().equals("D54")) {
 			System.out.println("Job to insert "+ j.getId()+" "+ j.getSubJobKey()+" "+ j.getstartServiceTime());	
