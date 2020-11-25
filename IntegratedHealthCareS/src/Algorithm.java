@@ -259,6 +259,7 @@ public class Algorithm {
 		// 1. WALKING ROUTES-- Convert walking route in big jobs
 		convertingWalkingRoutesInOneTask(coupleFromWalkingRoutes);
 		// Individual client JOBS
+		if(!input.getclients().isEmpty()) {
 		for(Jobs j: input.getclients().values()) {
 			// Creating the request for picking up the nurse
 			if(!jobsInWalkingRoutes.containsKey(j.getId())) { // only jobs which are not in a walking route	
@@ -277,6 +278,7 @@ public class Algorithm {
 				coupleFromWalkingRoutes.add(pickUpDropOff);
 			}
 		}
+	}
 		// create in the class Couple a constructor for setting the walking routes
 		return coupleFromWalkingRoutes;
 	}
@@ -313,6 +315,7 @@ public class Algorithm {
 	}
 
 	private void convertingWalkingRoutesInOneTask(ArrayList<Couple> coupleFromWalkingRoutes) {
+		if(subroutes.getWalkingRoutes()!=null) {
 		for(SubRoute r:subroutes.getWalkingRoutes()) {
 			if(r.getDropOffNode()!=null && r.getPickUpNode()!=null) {
 				double walkingRouteLength=r.getDurationWalkingRoute();
@@ -340,6 +343,7 @@ public class Algorithm {
 			}
 		}
 	}
+	}
 
 	private Couple creatingCoupleClientHome(Jobs presentJob, Jobs futureJob) {
 		presentJob.setPair(futureJob);
@@ -355,6 +359,7 @@ public class Algorithm {
 
 	private HashMap<Integer, Jobs> clientInWalkingRoutes() {
 		HashMap<Integer,Jobs> jobsInWalkingRoutes= new HashMap<Integer,Jobs>();
+		if(subroutes.getWalkingRoutes()!=null) {
 		for(SubRoute r:subroutes.getWalkingRoutes()) {
 			if(r.getJobSequence().size()>1) {
 				for(Jobs j:r.getJobSequence()) {
@@ -362,6 +367,7 @@ public class Algorithm {
 				}
 			}
 		}
+	}
 		return jobsInWalkingRoutes;
 	}
 

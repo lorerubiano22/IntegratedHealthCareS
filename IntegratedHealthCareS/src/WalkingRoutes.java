@@ -39,7 +39,7 @@ public class WalkingRoutes {
 				jobList.add(i);
 			}
 		}
-
+if(!jobList.isEmpty()) {
 		// 1. sorting jobs
 		//	jobList.sort(Jobs.TWSIZE_Early); // sorting list of jobs according the earliest time and the size of the TW
 		jobList.sort(Jobs.SORT_BY_STARTW); // sorting list of jobs according the earliest time and the start time of the TW
@@ -140,6 +140,7 @@ public class WalkingRoutes {
 	
 		// 8. Making walking routes into big tasks 
 		walkingRouteToJob(); // fix the pick-up and drop-off nodes for each walking route
+	}
 	}
 
 
