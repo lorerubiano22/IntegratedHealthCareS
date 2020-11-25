@@ -78,9 +78,13 @@ public class DrivingRoutes {
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
 		Solution copySolution= new Solution(initialSol); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
 		Solution mergeTurnos=mergingTurnos(copySolution);
-		System.out.println("printing copy solution");
-		System.out.println(copySolution.toString());
+		changingDepartureTimes(mergeTurnos);
+		updatingSolution(mergeTurnos);
+		boolean merge= checkingSubJobs(initialSol,initialSol);
 		changingDepartureTimes(copySolution);
+		
+		
+		
 		for(Route r:copySolution.getRoutes()) {
 			for(int i=1;i<r.getPartsRoute().size()-1;i++) {
 				Parts p= r.getPartsRoute().get(i);
@@ -89,24 +93,21 @@ public class DrivingRoutes {
 				}		
 			}
 		}
-		boolean merge= checkingSubJobs(initialSol,initialSol);
-		Solution solFixedTime=insertTWNarrow(initialSol); // insertar la 
-
-
-		System.out.println("printing initial solution");
-		System.out.println(initialSol.toString());
-		System.out.println("printing copy solution");
-		System.out.println(copySolution.toString());
-		System.out.println("end");
-		Solution newSol= mergingRoutes(copySolution); // las rutas se mezclan por partes
+		merge= checkingSubJobs(initialSol,initialSol);
+		//Solution solFixedTime=insertTWNarrow(initialSol); // insertar la 
+		
+		Solution newSol1= mergingRoutes(mergeTurnos); // las rutas se mezclan por partes
+		
+		merge= checkingSubJobs(initialSol,newSol1);
+		
+		updatingSolution(newSol1);
+		
+		Solution newSol2= mergingRoutes(copySolution); // las rutas se mezclan por partes
 		//Solution newSolVehicle= mergingRoutes(copySolution); // ajustando las rutas al número de vehículos
-		merge= checkingSubJobs(initialSol,newSol);
-		System.out.println("printing initial solution");
-		updatingSolution(newSol);
-		System.out.println("printing initial solution");
-		System.out.println(initialSol.toString());
-		System.out.println("printing copy solution");
-		System.out.println(newSol.toString());
+		merge= checkingSubJobs(initialSol,newSol2);
+	
+		updatingSolution(newSol2);
+	
 
 		// haciendo una combinación diferente
 
@@ -118,7 +119,7 @@ public class DrivingRoutes {
 		//System.out.println("solution "+merge);
 
 		//updatingSolution(copySolution);
-		return newSol;
+		return newSol2;
 	}
 
 
@@ -148,27 +149,28 @@ public class DrivingRoutes {
 		}
 		for(Route s: walkingRoutes) {
 			boolean merge=mergingTwoRoutes(s,remainingRoutes);
-		if(!merge) {
-			merge=mergingTwoRoutes(s,walkingRoutes);
-		}
+			if(!merge) {
+				merge=mergingTwoRoutes(s,walkingRoutes);
+			}
 		}
 		for(Route s: remainingRoutes) {
 			if(!s.getSubJobsList().isEmpty()) {
 				boolean merge=mergingTwoRoutes(s,remainingRoutes);
 			}
 		}
-		
+
 		for(Route s: walkingRoutes) {
 			if(!s.getSubJobsList().isEmpty()) {
 				sol.getRoutes().add(s);
 			}
 		}
-		
+
 		for(Route s: remainingRoutes) {
 			if(!s.getSubJobsList().isEmpty()) {
 				sol.getRoutes().add(s);
 			}
 		}
+		updatingSolution(sol);
 		return sol;
 	}
 
@@ -186,25 +188,25 @@ public class DrivingRoutes {
 					if(potential.getJobsDirectory().containsKey("P13") && s.getJobsDirectory().containsKey("P35")) {
 						System.out.print("stop");
 					}
-				merge=feasibilityMerging(potential,s,newRoute);
-				printList(newRoute);
-				
-				if(merge) {
-					settingParts(newRoute);
-					s.getPartsRoute().clear();
-					s.getSubJobsList().clear();
-					for(Parts p:newRoute.getPartsRoute()) {
-						s.getPartsRoute().add(p);	
+					merge=feasibilityMerging(potential,s,newRoute);
+					printList(newRoute);
+
+					if(merge) {
+						settingParts(newRoute);
+						s.getPartsRoute().clear();
+						s.getSubJobsList().clear();
+						for(Parts p:newRoute.getPartsRoute()) {
+							s.getPartsRoute().add(p);	
+						}
+						updatingRefRoute(s,newRoute);
+						// potential route
+						updatingPotentialRout(s,potential);
+						newRoute.getSubJobsList().clear();
+						newRoute.getPartsRoute().clear();
+						break;
 					}
-					updatingRefRoute(s,newRoute);
-					// potential route
-					updatingPotentialRout(s,potential);
-					newRoute.getSubJobsList().clear();
-					newRoute.getPartsRoute().clear();
-					break;
 				}
 			}
-		}
 		}
 		System.out.print(s.toString());
 		return merge;
@@ -376,6 +378,7 @@ public class DrivingRoutes {
 			SubJobs j2=(SubJobs)this.coupleList.get(j.getSubJobKey()).getStartEndNodes().get(0);
 			if((j1.getEndTime()-j1.getStartTime())==0 && (j2.getEndTime()-j2.getStartTime())==0) {
 				newRoute.getSubJobsList().add(j);
+				newRoute.getJobsDirectory().put(j.getSubJobKey(), j);
 			}
 		}
 		return newRoute;
@@ -511,29 +514,20 @@ public class DrivingRoutes {
 
 	private boolean readingRouteAndChangingTime(SubJobs j1, Route r) {
 		// checking if can be inserted with the current time
-		boolean early=firstSubJob(j1,r.getSubJobsList().get(0));
+		boolean early=firstSubJob(j1,r.getSubJobsList().get(0),r.getSubJobsList());
 		boolean late=false;
 		boolean intermediateSubJob=false;
 		boolean insertion=false;
 		if(early) {
-			ArrayList<SubJobs> copy= new ArrayList<SubJobs> ();
-			for(SubJobs j:r.getSubJobsList()) {
-				copy.add(j);
-			}
-			if(vehicleCapacityPart(copy)) {
+
 			r.getSubJobsList().add(0,j1);
-			r.getJobsDirectory().put(j1.getSubJobKey(), j1);	}
+			r.getJobsDirectory().put(j1.getSubJobKey(), j1);	
 		} 
 		else {
-			late=lastSubJob(j1,r.getSubJobsList().get(r.getSubJobsList().size()-1));
+			late=lastSubJob(j1,r.getSubJobsList().get(r.getSubJobsList().size()-1),r.getSubJobsList());
 			if(late) {
-				ArrayList<SubJobs> copy= new ArrayList<SubJobs> ();
-				for(SubJobs j:r.getSubJobsList()) {
-					copy.add(j);
-				}
-				if(vehicleCapacityPart(copy)) {
-				r.getSubJobsList().add(j1);
-				r.getJobsDirectory().put(j1.getSubJobKey(), j1);}	
+					r.getSubJobsList().add(j1);
+					r.getJobsDirectory().put(j1.getSubJobKey(), j1);
 			}
 		}
 		if(!late && !early) {
@@ -548,11 +542,12 @@ public class DrivingRoutes {
 					for(SubJobs jsub:r.getSubJobsList()) {
 						copy.add(jsub);
 					}
+					copy.add(j+1,j1);
 					if(vehicleCapacityPart(copy)) {
-					intermediateSubJob=true;
-					r.getSubJobsList().add(j+1,j1);
-					r.getJobsDirectory().put(j1.getSubJobKey(), j1);
-					break;}
+						intermediateSubJob=true;
+						r.getSubJobsList().add(j+1,j1);
+						r.getJobsDirectory().put(j1.getSubJobKey(), j1);
+						break;}
 				}
 				else {
 					if((j1.getEndTime()-j1.getStartTime()>0)) {
@@ -560,6 +555,12 @@ public class DrivingRoutes {
 							double posibleDepartureTime=b.getArrivalTime()-tvj1B;
 							double posibleStartTime=posibleDepartureTime-j1.getReqTime();
 							if(a.getDepartureTime()<posibleStartTime && posibleStartTime>=j1.getStartTime() &&posibleStartTime<=j1.getEndTime() && posibleStartTime<b.getArrivalTime() ) {
+								ArrayList<SubJobs> copy= new ArrayList<SubJobs> ();
+								for(SubJobs jsub:r.getSubJobsList()) {
+									copy.add(jsub);
+								}
+								copy.add(j+1,j1);
+								if(vehicleCapacityPart(copy)) {
 								intermediateSubJob=true;
 								double startService=Math.max(j1.getStartTime(), posibleStartTime);
 								double ArrivalTime=startService-test.getloadTimeHomeCareStaff();
@@ -567,6 +568,7 @@ public class DrivingRoutes {
 								j1.setStartServiceTime(startService);
 								j1.setEndServiceTime(startService+j1.getReqTime());
 								j1.setdepartureTime(j1.getendServiceTime());
+								}
 							}
 						}
 					}
@@ -579,26 +581,46 @@ public class DrivingRoutes {
 		return insertion;
 	}
 
-	private boolean lastSubJob(SubJobs j1, SubJobs subJobs2) {
+	private boolean lastSubJob(SubJobs j1, SubJobs subJobs2, LinkedList<SubJobs> linkedList) {
 		boolean late=false;
 		double tv=inp.getCarCost().getCost(subJobs2.getId()-1, j1.getId()-1);
 		if(subJobs2.getDepartureTime()+tv<=j1.getArrivalTime()) {
-			late=true;
+			ArrayList<SubJobs> copy= new ArrayList<SubJobs> ();
+			for(SubJobs j:linkedList) {
+				copy.add(j);
+			}
+			copy.add(0,j1);
+			if(vehicleCapacityPart(copy)) {
+			late=true;}
 		}	
 		return late;
 	}
 
-	private boolean firstSubJob(SubJobs j1, SubJobs s) {
+	private boolean firstSubJob(SubJobs j1, SubJobs s, LinkedList<SubJobs> linkedList) {
 		boolean early=false;
 		double tv=inp.getCarCost().getCost(j1.getId()-1, s.getId()-1);
-		if(j1.getDepartureTime()+tv<=s.getArrivalTime()) {
-			early=true;
+		if(j1.getDepartureTime()+tv<=s.getArrivalTime()) {	
+			ArrayList<SubJobs> copy= new ArrayList<SubJobs> ();
+			for(SubJobs j:linkedList) {
+				copy.add(j);
+			}
+			copy.add(0,j1);
+			if(vehicleCapacityPart(copy)) {
+				early=true;
+			}
+
 		}	
 		else { // changing time
 			if((j1.getEndTime()-j1.getStartTime())>0) {
 				double possibleDeparture=s.getArrivalTime()-tv;
 				double possibleStartTime=possibleDeparture-j1.getReqTime();
 				if(j1.getStartTime()<=possibleStartTime &&j1.getEndTime()>=possibleStartTime && s.getArrivalTime()>possibleStartTime) {
+					ArrayList<SubJobs> copy= new ArrayList<SubJobs> ();
+					for(SubJobs j:linkedList) {
+						copy.add(j);
+					}
+					copy.add(0,j1);
+					if(vehicleCapacityPart(copy)) {
 					early=true;
 					double startTime=Math.max(j1.getStartTime(),possibleStartTime);
 					//double startTime=Math.max(j1.getStartTime(),possibleStartTime);
@@ -606,7 +628,7 @@ public class DrivingRoutes {
 					j1.setarrivalTime(ArrivalTime);
 					j1.setStartServiceTime(startTime);
 					j1.setEndServiceTime(startTime+j1.getReqTime());
-					j1.setdepartureTime(j1.getendServiceTime());
+					j1.setdepartureTime(j1.getendServiceTime());}
 				}
 			}
 		}	
@@ -3083,13 +3105,13 @@ public class DrivingRoutes {
 	}
 
 	private void updatingSolution(Solution copySolution) {
-		copySolution.getRoutes().clear();
-		for(Route r:routeVehicleList) {
-			copySolution.getRoutes().add(r);
-		}
+//		copySolution.getRoutes().clear();
+//		for(Route r:routeVehicleList) {
+//			copySolution.getRoutes().add(r);
+//		}
 		computeSolutionCost(copySolution);
 
-		transferPartsInformation(routeVehicleList);
+		//transferPartsInformation(routeVehicleList);
 
 	}
 
@@ -5110,7 +5132,7 @@ public class DrivingRoutes {
 
 
 
-	
+
 
 
 
@@ -5631,7 +5653,7 @@ public class DrivingRoutes {
 
 
 
-	
+
 	private int iterateOverSchift(SubJobs j, Parts homeCare) {
 		if(j.getSubJobKey().equals("D54")) {
 			System.out.println("Job to insert "+ j.getId()+" "+ j.getSubJobKey()+" "+ j.getstartServiceTime());	
