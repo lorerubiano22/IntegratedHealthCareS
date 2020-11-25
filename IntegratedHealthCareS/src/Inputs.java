@@ -44,11 +44,14 @@ public class Inputs {
 				if(j.getSoftStartTime()!=0 && j.getId()!=1) {
 					j.setPatient(true);
 					patients.put(j.getId(),j);
+					maxQualificationLevel=0;
 				}
 				else {
 					if(j.getId()!=1) {
 					j.setMedicalCentre(true);
-					medicalCentre.put(j.getId(),j);}
+					medicalCentre.put(j.getId(),j);
+					maxQualificationLevel=0;
+					}
 				}
 			}
 		}

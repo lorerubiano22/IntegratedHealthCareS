@@ -26,8 +26,15 @@ public class Outputs {
 		out.println("--------------------------------------------");
 		out.println("\r\n Walking Routes:\r\n");
 		out.println("--------------------------------------------");
-		out.println(subroutes.toString() + "\r\n");
-		out.println("--------------------------------------------");
+		if(subroutes!=null) {
+			out.println(subroutes.toString() + "\r\n");
+			out.println("--------------------------------------------");
+		}
+		else {
+			out.println("------------------ NA ---------------------");
+			out.println("--------------------------------------------");
+		}
+			
 		out.println("Driving Routes");
 		out.println("--------------------------------------------");
 		out.println("\n Initial solution \n");
