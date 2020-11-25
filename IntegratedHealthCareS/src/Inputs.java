@@ -10,6 +10,7 @@ public class Inputs {
 
 	private final List<Jobs> nodes; // array of all nodes (node 0 is
 	// depot)
+	private final HashMap<Integer,Double> directoryNodes=new HashMap<Integer,Double> (); // clients job
 	private final HashMap<Integer,Jobs> clients=new HashMap<Integer,Jobs> (); // clients job
 	private final HashMap<Integer,Jobs>  patients=new HashMap<Integer,Jobs> (); // patients job at patient home
 	private final HashMap<Integer,Jobs>  medicalCentre=new HashMap<Integer,Jobs> (); // patients job at medical centre
@@ -33,6 +34,7 @@ public class Inputs {
 		this.vehicles = vehicles;
 		maxQualificationLevel= Integer.MIN_VALUE;
 		for(Jobs j:nodes) {
+			directoryNodes.put(j.getId(),j.getReqTime());
 			if(j.getReqQualification()>0 && j.getId()!=1) {
 				j.setClient(true);
 				clients.put(j.getId(),j);
@@ -44,13 +46,17 @@ public class Inputs {
 				if(j.getSoftStartTime()!=0 && j.getId()!=1) {
 					j.setPatient(true);
 					patients.put(j.getId(),j);
-					maxQualificationLevel=0;
+					if(maxQualificationLevel<j.getReqQualification()) {
+						maxQualificationLevel=j.getReqQualification();
+					}
 				}
 				else {
 					if(j.getId()!=1) {
 					j.setMedicalCentre(true);
 					medicalCentre.put(j.getId(),j);
-					maxQualificationLevel=0;
+					if(maxQualificationLevel<j.getReqQualification()) {
+						maxQualificationLevel=j.getReqQualification();
+					}
 					}
 				}
 			}
@@ -76,10 +82,14 @@ public class Inputs {
 
 
 	/* GET METHODS */
-
+	public HashMap<Integer,Double> getdirectoryNodes() {
+		return directoryNodes;
+	}
 	public HashMap<Integer,Jobs> getclients() {
 		return clients;
 	}
+	
+	
 	public HashMap<Integer,Jobs> getpatients() {
 		return patients;
 	}

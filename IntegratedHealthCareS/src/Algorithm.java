@@ -27,7 +27,7 @@ public class Algorithm {
 		subroutes = new WalkingRoutes(input, r, t, i.getNodes()); // stage 1: Creation of walking routes
 		//updateHomeCareStaffJobs();
 		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
-		drivingRoute = new DrivingRoutes(input, r, t,subJobsList); // stage 2: Creation of driving routes
+		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,subroutes); // stage 2: Creation of driving routes
 		drivingRoute.generateAfeasibleSolution();
 		//iterations++;
 		setInitialSolution(drivingRoute.getInitialSol());
@@ -261,6 +261,9 @@ public class Algorithm {
 		// Individual client JOBS
 		if(!input.getclients().isEmpty()) {
 		for(Jobs j: input.getclients().values()) {
+			if(j.getId()==3) {
+				System.out.println("stop");
+			}
 			// Creating the request for picking up the nurse
 			if(!jobsInWalkingRoutes.containsKey(j.getId())) { // only jobs which are not in a walking route	
 				Jobs presentJob= new Jobs(j);

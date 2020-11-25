@@ -171,7 +171,7 @@ public class Route {
 		}
 	}
 
-	public void updateRouteFromParts(Inputs inp, Test test) {
+	public void updateRouteFromParts(Inputs inp, Test test, HashMap<Integer, SubRoute> jobsInWalkingRoute) {
 		// Consider the list of jobs positions
 		// reading part
 		subJobsList.clear();
@@ -181,12 +181,13 @@ public class Route {
 			for(SubJobs sj:partObject.getListSubJobs()) {
 				if(sj.getId()!=1) {
 				subJobsList.add(sj);
+				positionJobs.put(sj.getSubJobKey(),sj);
 				}
 			}	
 		}
 		if(this.getPartsRoute().size()>2 && !this.getSubJobsList().isEmpty()) {
 			// service time
-			this.computeServiceTime();
+			this.computeServiceTime(inp,jobsInWalkingRoute);
 			// waiting time
 			this.computeWaitingTime(test);
 			// travel time
@@ -231,10 +232,30 @@ public class Route {
 		this.setIloadUnloadRegistrationTime(loadRegistrationTime);
 	}
 
-	private void computeServiceTime() {
+	private void computeServiceTime(Inputs inp, HashMap<Integer, SubRoute> jobsInWalkingRoute) {
 		double service=0;
+		HashMap<Integer, Jobs> assigned=new HashMap<Integer, Jobs>();
+		
 		for(Jobs j:this.positionJobs.values() ) {
-			service+=j.getReqTime();
+			if(j.getId()==12 || j.getId()==17) {
+				System.out.println(j.toString());
+			}
+			if(jobsInWalkingRoute.containsKey(j.getId())) {
+				SubRoute r=jobsInWalkingRoute.get(j.getId());
+				for(Jobs sj:r.getJobSequence()) {
+					assigned.put(sj.getId(), sj);
+				}
+			}
+			else {
+			assigned.put(j.getId(), j);
+			}
+		}
+		
+		for(Jobs j:assigned.values() ) {
+			if(j.getId()==27 || j.getId()==13) {
+				System.out.println(j.toString());
+			}
+			service+=inp.getdirectoryNodes().get(j.getId());
 		}
 		this.setServiceTime(service);
 	}
@@ -245,6 +266,7 @@ public class Route {
 	{   String s = "";
 	s = s.concat("\nRute duration: " + (this.getDurationRoute()));
 	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
+	s = s.concat("\nRute service time: " + (this.getServiceTime()));
 	s = s.concat("\nRute idle time: " + (this.getIdleTime()));
 	s = s.concat("\nRuta passengers:" + this.getPassengers());
 	s = s.concat("\njobs: ");
