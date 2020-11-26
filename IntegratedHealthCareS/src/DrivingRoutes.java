@@ -142,17 +142,27 @@ if(sol1.getDurationSolution()<sol2.getDurationSolution())return sol1;
 
 	private Solution treatment1(Solution initialSol2) {
 		Solution copySolution= new Solution(initialSol2); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
-	
+		Solution newSolution=new Solution(initialSol2);
+		boolean merge=false;
 		changingDepartureTimes(copySolution);
+		if(!inp.getpatients().isEmpty()) {
 		Solution patientsRoute=selectingPatientRoutes(copySolution);
 		Solution presolpatientsRoute= mergingRoutes(patientsRoute); // las rutas se mezclan por partes
-		boolean merge= checkingSubJobs(patientsRoute,presolpatientsRoute);
+		merge= checkingSubJobs(patientsRoute,presolpatientsRoute);
 		Solution presolhomeCareStaff=mergingTurnos(initialSol);
 		Solution newInitialSolution=mergeSolutions(presolpatientsRoute,presolhomeCareStaff);
-		updatingSolution(newInitialSolution);
-		merge= checkingSubJobs(initialSol,newInitialSolution);
+		newSolution= mergingRoutes(newInitialSolution); 
+		updatingSolution(newSolution);
+		merge= checkingSubJobs(initialSol,newSolution);
+		}
+		else{
+		newSolution= mergingRoutes(copySolution); // las rutas se mezclan por partes
+		updatingSolution(newSolution);
+		merge= checkingSubJobs(initialSol,newSolution);
+		}
+		
 
-		Solution newSolution= mergingRoutes(newInitialSolution); // las rutas se mezclan por partes
+	
 
 
 
