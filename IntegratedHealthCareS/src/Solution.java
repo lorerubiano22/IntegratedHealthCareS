@@ -12,6 +12,8 @@ public class Solution {
 	private double serviceTime=0;
 	private double drivingTime=0;
 	private double walkingTime=0;
+	private double idleTimeSol=0;  
+	private double driverTimeSol=0;
 	private double paramedic=0;// los paramedicos que salen del depot
 	private double homeCareStaff=0;// los paramedicos que salen del depot
 
@@ -20,6 +22,7 @@ public class Solution {
 		durationSolution = initialSol.durationSolution; // Travel distance = waiting time + driving time
 		routes = new LinkedList<Route>();
 		routes = copyRoutes(initialSol); // list of routes in this solution
+		idleTimeSol=initialSol.idleTimeSol;
 		passengers=initialSol.passengers;// home care staff and + paramedic transported que salen del depot
 		waitingTime=initialSol.waitingTime;// Total waiting time
 		serviceTime=initialSol.serviceTime;
@@ -50,7 +53,8 @@ public class Solution {
 	public void setServiceTime(double s) {serviceTime=s;}
 	public void setdrivingTime(double s) {drivingTime=s;}
 	public void setWalkingTime(double w) {walkingTime=w;}
-
+	public void setIdleTime(double idleTime) {idleTimeSol=	idleTime;}
+	public void setDriverTime(double dr) {driverTimeSol=	dr;}
 	// Getters
 	public long getId() { return id;}
 	public double getDurationSolution() { return durationSolution;}
@@ -82,7 +86,9 @@ public class Solution {
 	s = s.concat("\n Total passengers: " + passengers);
 	s = s.concat("\n Total paramedic: " + paramedic);
 	s = s.concat("\n Total home care staff: " + homeCareStaff);
+	s = s.concat("\n Idle time: " + idleTimeSol);
 	s = s.concat("\n Waiting time: " + waitingTime);
+	s = s.concat("\n Driver time: " + driverTimeSol);
 	s= s.concat("\n Service time: "+  serviceTime);
 	s = s.concat("\n List of jobs: ");
 	for(Route r:routes) {
@@ -91,6 +97,7 @@ public class Solution {
 			s= s.concat(" travelTime: "+ r.getTravelTime());
 			s= s.concat(" waitingTime: "+ r.getWaitingTime());
 			s= s.concat(" serviceTime: "+ r.getServiceTime());
+			s= s.concat(" IdleTime: "+ r.getIdleTime());
 			s= s.concat(" durationRoute: "+ r.getDurationRoute());
 			s= s.concat("\n homeCareSaff amount: "+ r.getHomeCareStaff());
 			s= s.concat(" paramedic amount: "+ r.getAmountParamedic());
@@ -106,6 +113,9 @@ public class Solution {
 	}
 	return s;
 	}
+
+
+
 
 
 }

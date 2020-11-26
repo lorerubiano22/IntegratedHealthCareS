@@ -8,6 +8,7 @@ public class Route {
 
 	private int id=0;
 	private double travelTime = 0.0; // travel time
+	private double travelTimeDriver = 0.0; // travel time
 	private double serviceTime = 0.0; // travel time
 	private double waitingTime = 0.0; // travel time
 	private double durationRoute = 0.0; // route total costs
@@ -146,6 +147,7 @@ public class Route {
 	public double getAmountDriver() {return driver;}
 	public double getIdleTime() {return idleTime;}
 	public double getloadUnloadRegistrationTime() {return loadUnloadRegistration;}
+	public double getDriverTime() {return travelTimeDriver;}
 	
 	// Auxiliar methods
 
@@ -162,6 +164,24 @@ public class Route {
 		travelTime=travelTimeDuration;
 	}
 
+	public void computeDriverTravelTime(Inputs inp) {
+		double travelTimeDuration=0;
+		for(int j=0; j<this.getSubJobsList().size();j++) {
+			Jobs jNode=this.getSubJobsList().get(j);
+			double tvToDepot=inp.getCarCost().getCost(jNode.getId()-1, 0);
+			if(j!=this.getSubJobsList().size()-1 && jNode.getId()!=0) { // travel time
+				Jobs kNode=this.getSubJobsList().get(j+1);
+				double tvFromoDepot=inp.getCarCost().getCost(0,kNode.getId()-1);
+				if(jNode.getDepartureTime()+tvFromoDepot+tvToDepot<kNode.getArrivalTime()) {
+					travelTimeDuration+=tvToDepot;
+					travelTimeDuration+=tvFromoDepot;
+				}
+//				else{double time=inp.getCarCost().getCost(jNode.getId()-1, kNode.getId()-1);
+//				travelTimeDuration+=time;}
+			}
+		}
+		travelTimeDriver=travelTimeDuration+travelTime;
+	}
 
 
 	public void updatingJobsList() {
@@ -193,6 +213,8 @@ public class Route {
 			// travel time
 			this.computeTravelTime(inp);
 			//this.computePassenger();
+			this.computeDriverTravelTime(inp);
+			
 			// duration route
 			double duration= this.getServiceTime()+this.getTravelTime()+this.getWaitingTime()+this.getloadUnloadRegistrationTime();
 			this.setDurationRoute(subJobsList.get(subJobsList.size()-1).getDepartureTime()-subJobsList.get(0).getDepartureTime());

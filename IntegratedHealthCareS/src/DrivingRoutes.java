@@ -122,8 +122,10 @@ public class DrivingRoutes {
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
 		Solution copySolution= new Solution(initialSol); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
 		Solution sol1= treatment1(initialSol);
+		updatingSolution(sol1);
 		boolean areAllJobsAssigned=checkAssigment(sol1);
 		Solution sol2= treatment2(initialSol);
+		updatingSolution(sol2);
 		 areAllJobsAssigned=checkAssigment(sol2);
 if(sol1.getDurationSolution()<sol2.getDurationSolution())return sol1; 
 		return sol2;
@@ -3803,12 +3805,12 @@ if(sol1.getDurationSolution()<sol2.getDurationSolution())return sol1;
 		//int passengers=0;
 		double durationSolution = 0.0; // Travel distance = waiting time + driving time
 		double waiting=0;
-		double travelTime=0;
+		double idleTime=0;
 		double serviceTime=0;
 		double drivingTime=0;
-		double walkingTime=0;
 		double paramedic=0;// los paramedicos que salen del depot
 		double homeCareStaff=0;// los paramedicos que salen del depot
+		double drivertime=0;// los paramedicos que salen del depot
 		int i=-1;
 
 		for(Route r:initialSol.getRoutes()) {
@@ -3816,15 +3818,18 @@ if(sol1.getDurationSolution()<sol2.getDurationSolution())return sol1;
 			r.setIdRoute(i);
 			r.updateRouteFromParts(inp,test,jobsInWalkingRoute);
 			System.out.println(r.toString());
+			idleTime+=r.getIdleTime();
 			waiting+=r.getWaitingTime(); // waiting time
 			serviceTime+=r.getServiceTime(); // 2. Service time 
 			drivingTime+=r.getTravelTime(); // 3. Travel time
 			//passengers+=r.getPassengers();// 4. Passengers
 			durationSolution+=r.getDurationRoute();
+			drivertime+=r.getDriverTime();
 			paramedic+=r.getAmountParamedic();
 			homeCareStaff+=r.getHomeCareStaff();
 		}
 		// 3. Setting values to a solution
+		initialSol.setIdleTime(idleTime);
 		initialSol.setWaitingTime(waiting);
 		initialSol.setServiceTime(serviceTime);
 		initialSol.setdrivingTime(drivingTime);
@@ -3832,6 +3837,7 @@ if(sol1.getDurationSolution()<sol2.getDurationSolution())return sol1;
 		initialSol.setDurationSolution(durationSolution);
 		initialSol.setParamedic(paramedic);
 		initialSol.setHomeCareStaff(homeCareStaff);
+		initialSol.setDriverTime(drivertime);
 		System.out.println(initialSol.toString());
 	}
 

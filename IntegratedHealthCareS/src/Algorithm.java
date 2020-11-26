@@ -38,7 +38,11 @@ public class Algorithm {
 		//subroutes= stages.getBestWalkingRoutes();
 	}
 
-	private void setBestSolution(Solution sol) {bestSolution=sol;}
+	private void setBestSolution(Solution sol) {bestSolution=sol;
+	addingWaitingTime(sol);
+	sol.setId(iterations);
+	sol.setWalkingTime(subroutes.getdurationWalkingRoute());
+	}
 
 	public void setInitialSolution(Solution initialSolution) {
 		this.initialSolution = initialSolution;

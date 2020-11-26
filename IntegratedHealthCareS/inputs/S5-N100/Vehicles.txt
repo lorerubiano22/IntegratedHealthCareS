@@ -1,2 +1,2 @@
 #Vehicles Capacity
-15	5
+30	5
