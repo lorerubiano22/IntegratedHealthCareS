@@ -96,7 +96,7 @@ public class DrivingRoutes {
 		HashMap<Integer, Jobs> missing= new HashMap<Integer, Jobs> ();
 		for(Jobs j: inp.getNodes()) {
 			if(j.getId()!=1) {
-			missing.put(j.getId(), j);
+				missing.put(j.getId(), j);
 			}
 		}
 		for(SubRoute r:subroutes.getWalkingRoutes()) {
@@ -121,14 +121,17 @@ public class DrivingRoutes {
 
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
 		Solution copySolution= new Solution(initialSol); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
-		Solution sol1= treatment1(initialSol);
+		Solution alternativeSolution= assigmentTursToVehicles(copySolution);
+		Solution sol1= treatment2(initialSol);
 		updatingSolution(sol1);
+
 		boolean areAllJobsAssigned=checkAssigment(sol1);
-		Solution sol2= treatment2(initialSol);
-		updatingSolution(sol2);
-		 areAllJobsAssigned=checkAssigment(sol2);
-if(sol1.getDurationSolution()<sol2.getDurationSolution())return sol1; 
-		return sol2;
+		Solution sol2= treatment1(initialSol);
+
+		//updatingSolution(sol2);
+		//areAllJobsAssigned=checkAssigment(sol2);
+		///if(sol1.getDurationSolution()<sol2.getDurationSolution())return sol1; 
+		return sol1;
 	}
 
 
@@ -140,29 +143,149 @@ if(sol1.getDurationSolution()<sol2.getDurationSolution())return sol1;
 
 
 
+
+
+
+
+	private Solution assigmentTursToVehicles(Solution copySolution) {
+		Solution turnsPersonnel= new Solution (copySolution);
+		Solution newSolution= new Solution ();
+		HashMap <String, SubJobs> missing= listNodes(turnsPersonnel);
+		ArrayList <SubJobs> subJobsList= selectingJobsToAssign(turnsPersonnel);
+		Solution routePatient= selectingPatientRoutes(turnsPersonnel);
+		LinkedList<Route> routeHomeCare=selectingHCroute(turnsPersonnel);
+		LinkedList<Route> vehicleRoutes= new LinkedList<Route>();
+		assigningHeadPatients(routePatient,vehicleRoutes,missing); // checking
+
+		return newSolution;
+	}
+
+	private void assigningHeadPatients(Solution routePatient, LinkedList<Route> vehicleRoutes, HashMap<String, SubJobs> missing) {
+		ArrayList <SubJobs> heads= selectingHeadsSchifts(routePatient);
+		heads.sort(Jobs.SORT_BY_STARTW);
+		boolean inserted=false;
+		for(SubJobs s: heads) {
+			inserted=merge(s,vehicleRoutes,missing);
+		}
+
+	}
+
+	private boolean merge(SubJobs s, LinkedList<Route> vehicleRoutes, HashMap<String, SubJobs> missing) {
+		boolean inserted=false;
+		SubJobs j1=(SubJobs)this.coupleList.get(s.getSubJobKey()).getStartEndNodes().get(1);
+		SubJobs j2=(SubJobs)this.coupleList.get(s.getSubJobKey()).getStartEndNodes().get(0);
+		for(Route r: vehicleRoutes) {
+			inserted=insertingJob(s,r,vehicleRoutes,missing); // aca se insertan
+			if(inserted) {
+				missing.remove(j1.getSubJobKey());
+				missing.remove(j2.getSubJobKey());
+			}
+			else {
+				Route newRoute= new Route();
+				newRoute.getSubJobsList().add(j1);
+				newRoute.getSubJobsList().add(j2);
+			}
+		}
+		return inserted;
+	}
+
+	private boolean insertingJob(SubJobs s, Route r, LinkedList<Route> vehicleRoutes,
+			HashMap<String, SubJobs> missing) {
+		boolean inserted=false;
+		SubJobs j1=(SubJobs)this.coupleList.get(s.getSubJobKey()).getStartEndNodes().get(1);
+		SubJobs j2=(SubJobs)this.coupleList.get(s.getSubJobKey()).getStartEndNodes().get(0);
+		if(r.getSubJobsList().isEmpty()) {
+			r.getSubJobsList().add(j1);
+			r.getSubJobsList().add(j2);
+			missing.remove(j1.getSubJobKey());
+			missing.remove(j2.getSubJobKey());
+		}
+		else {
+			// structure (j1)---x---(   )---x---(j2)
+			for(int i=0;i<r.getSubJobsList().size();i++) {
+				SubJobs subJ=r.getSubJobsList().get(i);
+				boolean early=earlySubJob(subJ,j1);
+			}
+			
+		}
+		return inserted;
+	}
+
+	private boolean earlySubJob(SubJobs subJ, SubJobs j1) {
+		boolean early=false;
+		if(j1.getDepartureTime()<subJ.getArrivalTime()) {
+			early=true;
+		}
+		else {
+			double dist=inp.getCarCost().getCost(j1.getId()-1, subJ.getId()-1);
+			double possibleDeparture=subJ.getArrivalTime()-dist;
+			if(possibleDeparture<j1.getDepartureTime()) {
+			double delta=j1.getDepartureTime()-possibleDeparture;
+			double possibleStartTime=j1.getstartServiceTime()-delta;
+			if(possibleStartTime>j1.getStartTime() && possibleStartTime<j1.getEndTime()) {
+				early=true;
+			}
+			}
+		}
+		return false;
+	}
+
+	private ArrayList<SubJobs> selectingHeadsSchifts(Solution routePatient) {
+		ArrayList <SubJobs> heads = new ArrayList <SubJobs>();
+		for(Route r:routePatient.getRoutes()) {
+			heads.add(r.getSubJobsList().get(0));
+		}
+		return heads;
+	}
+
+	private ArrayList<SubJobs> selectingJobsToAssign(Solution turnsPersonnel) {
+		ArrayList<SubJobs> jobsToAssign = new ArrayList<SubJobs>();
+		for(Route r:turnsPersonnel.getRoutes()) {
+			for(int i=1;i<r.getPartsRoute().size();i++) {
+				for(SubJobs s:r.getPartsRoute().get(i).getListSubJobs()) {
+					jobsToAssign.add(s);
+				}
+			}	
+		}
+
+		return jobsToAssign;
+	}
+
+	private HashMap<String, SubJobs> listNodes(Solution turnsPersonnel) {
+		HashMap <String, SubJobs> missing= new HashMap <>();
+		for(Route r:turnsPersonnel.getRoutes()) {
+			for(SubJobs j:r.getSubJobsList()) {
+				if(j.getId()!=1) {
+					missing.put(j.getSubJobKey(), j);
+				}
+			}
+		}
+		return missing;
+	}
+
 	private Solution treatment1(Solution initialSol2) {
 		Solution copySolution= new Solution(initialSol2); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
 		Solution newSolution=new Solution(initialSol2);
 		boolean merge=false;
 		changingDepartureTimes(copySolution);
 		if(!inp.getpatients().isEmpty()) {
-		Solution patientsRoute=selectingPatientRoutes(copySolution);
-		Solution presolpatientsRoute= mergingRoutes(patientsRoute); // las rutas se mezclan por partes
-		merge= checkingSubJobs(patientsRoute,presolpatientsRoute);
-		Solution presolhomeCareStaff=mergingTurnos(initialSol);
-		Solution newInitialSolution=mergeSolutions(presolpatientsRoute,presolhomeCareStaff);
-		newSolution= mergingRoutes(newInitialSolution); 
-		updatingSolution(newSolution);
-		merge= checkingSubJobs(initialSol,newSolution);
+			Solution patientsRoute=selectingPatientRoutes(copySolution);
+			Solution presolpatientsRoute= mergingRoutes(patientsRoute); // las rutas se mezclan por partes
+			merge= checkingSubJobs(patientsRoute,presolpatientsRoute);
+			Solution presolhomeCareStaff=mergingTurnos(initialSol);
+			Solution newInitialSolution=mergeSolutions(presolpatientsRoute,presolhomeCareStaff);
+			newSolution= mergingRoutes(newInitialSolution); 
+			updatingSolution(newSolution);
+			merge= checkingSubJobs(initialSol,newSolution);
 		}
 		else{
-		newSolution= mergingRoutes(copySolution); // las rutas se mezclan por partes
-		updatingSolution(newSolution);
-		merge= checkingSubJobs(initialSol,newSolution);
+			newSolution= mergingRoutes(copySolution); // las rutas se mezclan por partes
+			updatingSolution(newSolution);
+			merge= checkingSubJobs(initialSol,newSolution);
 		}
-		
 
-	
+
+
 
 
 
