@@ -5045,31 +5045,73 @@ public class DrivingRoutes {
 	
 			//double workingHours= computingWorkingHours(homeCare,pickUpDropOff);
 			int position=iterateOverSchiftLastPosition(jsplited,pickUpDropOff,homeCare);
-			if(position>=0 && enoughWorkingHours(homeCare,pickUpDropOff)) {
-				for(SubJobs sj:pickUpDropOff.getListSubJobs()) {
-					homeCare.getListSubJobs().add(position,sj);
-					assignedJobs.put(sj.getSubJobKey(),sj);
-					printing(homeCare);
-					position++;
+			if(position>=0 ) {
+				ArrayList<SubJobs> newListSubJobs= new ArrayList<SubJobs>();
+				if(position==0) {
+					for(SubJobs ssj:pickUpDropOff.getListSubJobs()) {
+						assignedJobs.put(ssj.getSubJobKey(),ssj);
+						newListSubJobs.add(ssj);
+					}
+					for(SubJobs ssj:homeCare.getListSubJobs()) {
+						newListSubJobs.add(ssj);
+					}
+					
 				}
+				else if(position==homeCare.getListSubJobs().size()) {
+					for(SubJobs ssj:homeCare.getListSubJobs()) {
+						newListSubJobs.add(ssj);
+					}
+					for(SubJobs ssj:pickUpDropOff.getListSubJobs()) {
+						assignedJobs.put(ssj.getSubJobKey(),ssj);
+						newListSubJobs.add(ssj);
+					}
+				}
+				homeCare.getListSubJobs().clear();
+				for(SubJobs ssj:newListSubJobs) {
+					homeCare.getListSubJobs().add(ssj);
+				}
+				printing(homeCare);
 				inserted=true;
-			}
+			
+		}
 		}
 		return inserted;
 	}
 
 
-	private boolean enoughWorkingHours(Parts homeCare, Parts pickUpDropOff) {
+	private boolean enoughWorkingHours(Parts homeCare, Parts pickUpDropOff, int position) {
 		boolean enoughtTime=false;
-		SubJobs primerInRouteSubJob=homeCare.getListSubJobs().get(0);
-		SubJobs lastSubJobToInsert=pickUpDropOff.getListSubJobs().get(pickUpDropOff.getListSubJobs().size()-1);
+		ArrayList<SubJobs> possibleNewRoute= possibleRoute(homeCare,pickUpDropOff,position);
+		
+		
+		SubJobs primerInRouteSubJob=possibleNewRoute.get(0);
+		SubJobs lastSubJobToInsert=possibleNewRoute.get(possibleNewRoute.size()-1);
 		double distanceFromDepot=inp.getCarCost().getCost(0,primerInRouteSubJob.getId()-1);
 		double distancetoDepot=inp.getCarCost().getCost(lastSubJobToInsert.getId()-1, 0);
-		double preliminaryWorkingTime=primerInRouteSubJob.getArrivalTime()-lastSubJobToInsert.getDepartureTime()+distanceFromDepot+distancetoDepot;
-		if((primerInRouteSubJob.getArrivalTime()-lastSubJobToInsert.getDepartureTime())>0 && preliminaryWorkingTime<test.getWorkingTime()) {
+		double preliminaryWorkingTime=lastSubJobToInsert.getDepartureTime()-primerInRouteSubJob.getArrivalTime()+distanceFromDepot+distancetoDepot;
+		if(preliminaryWorkingTime<test.getWorkingTime()) {
 			enoughtTime=true;
 		}
 		return enoughtTime;
+	}
+
+	private ArrayList<SubJobs> possibleRoute(Parts homeCare, Parts pickUpDropOff, int position) {
+		ArrayList<SubJobs> possibleNewRoute= new ArrayList<SubJobs>();
+		ArrayList<Parts> parts= new ArrayList<Parts>();
+		if(position==0) {
+		parts.add(homeCare);
+		parts.add(position,pickUpDropOff);}
+		else {
+			parts.add(homeCare);
+			parts.add(pickUpDropOff);
+		}
+		for(Parts p: parts) {
+			for(SubJobs j:p.getListSubJobs()) {
+				possibleNewRoute.add(j);
+			}
+			
+		}
+		return possibleNewRoute;
 	}
 
 	private Parts disaggregatedJob(Jobs j) {
@@ -5527,6 +5569,7 @@ public class DrivingRoutes {
 
 	private int iterateOverSchiftLastPosition(SubJobs j, Parts pickUpDropOff, Parts homeCare) {
 		System.out.println("Job to insert "+ j.getId()+" "+ j.getSubJobKey()+" "+ j.getstartServiceTime());
+		
 		boolean inserted=false;
 		int position=-1;
 		// se evalua inser trabajo por trabajo - Tan pronto sea posible insertar el trabajo se para la iteración sobre el turno y se inserta
@@ -5535,11 +5578,22 @@ public class DrivingRoutes {
 		inserted=insertionLater(inRoute,j);//(inRoute)******(j)
 		if(inserted) {
 			position=homeCare.getListSubJobs().size();
+			if(enoughWorkingHours(homeCare,pickUpDropOff,position)) {
+				inserted=true;
+			}
+			else {inserted=false;
+			position=-1;}
 		}
 		else {
 			SubJobs firstInRoute=homeCare.getListSubJobs().get(0);
 			position=insertionChangingStartServiceTime(firstInRoute,pickUpDropOff);
-		}
+			if(position>=0) {
+			if(enoughWorkingHours(homeCare,pickUpDropOff,position)) {
+				inserted=true;
+			}
+			else {inserted=false;
+			position=-1;}
+		}}
 		return position;
 	}
 
