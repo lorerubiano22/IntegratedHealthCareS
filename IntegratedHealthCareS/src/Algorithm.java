@@ -328,6 +328,9 @@ public class Algorithm {
 				double walkingRouteLength=r.getDurationWalkingRoute();
 
 				// 0. creation of subjobs and fixing time windows 
+				if(r.getDropOffNode().getId()==3) {
+					System.out.println("couple ");
+				}
 				Jobs present=creatinngPresentJobFromWR(r.getDropOffNode(),walkingRouteLength);
 
 				Jobs future=creatinngFutureJobFromWR(present, r.getPickUpNode());
@@ -388,8 +391,7 @@ public class Algorithm {
 
 	private Jobs creatinngPresentJobFromWR(Jobs dropOffNode, double walkingRouteLength) {
 		// start when the service
-		double previousTime= dropOffNode.getstartServiceTime(); // early time window = start time service + time requested // lastest=  start time service + time requested + max waiting time
-		Jobs present= new Jobs(dropOffNode.getId(),previousTime,previousTime ,dropOffNode.getReqQualification(), walkingRouteLength); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
+		Jobs present= new Jobs(dropOffNode.getId(),dropOffNode.getStartTime(),dropOffNode.getEndTime() ,dropOffNode.getReqQualification(), walkingRouteLength); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
 		return present;
 	}
 

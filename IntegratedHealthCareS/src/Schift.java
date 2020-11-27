@@ -76,7 +76,7 @@ public class Schift {
 
 	// setters
 	public void setParamedicSchift(boolean paramedicSchift) {this.paramedicSchift = paramedicSchift;}
-	public void setRouteList(Route routeList) {this.route = routeList;}
+	public void setRouteList(Route route) {this.route = route;}
 	public void setHomecareStaffSchift(boolean homecareStaffSchift) {this.homecareStaffSchift = homecareStaffSchift;}
 	public void setId(int id) {this.id = id;}
 	public void setQualificationLevel(int q) {this.qualificationLevel =q;}

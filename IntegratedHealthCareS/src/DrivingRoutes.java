@@ -74,6 +74,7 @@ public class DrivingRoutes {
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		insertingDepotConnections();
 		Solution initialSol= solutionInformation(); // this is the initial solution in which each personal has a vehicle assigned
+		savingInformationSchifts(initialSol);
 		double serviceTime=checkServiceTimes(initialSol);
 		boolean areAllJobsAssigned=checkAssigment(initialSol);
 		System.out.println(initialSol.toString());
@@ -82,6 +83,12 @@ public class DrivingRoutes {
 
 
 
+
+	private void savingInformationSchifts(Solution initialSol2) {
+		for(Route r:initialSol2.getRoutes()) {
+			r.getSchiftRoute().setRouteList(r);
+		}
+	}
 
 	private double checkServiceTimes(Solution initialSol2) {
 		double service=0;
@@ -4361,11 +4368,14 @@ public class DrivingRoutes {
 		//1. list of jobs
 		// Classifying clients: Home care staff
 		ArrayList<Jobs> clasification3 = creationJobsHomeCareStaff(clasification.get(0)); 
+		clasification3.sort(Jobs.TWSIZE_Early);
 		ArrayList<Jobs> clasification2 = creationJobsHomeCareStaff(clasification.get(1));
+		clasification2.sort(Jobs.TWSIZE_Early);
 		ArrayList<Jobs> clasification1 = creationJobsHomeCareStaff(clasification.get(2));
+		clasification1.sort(Jobs.TWSIZE_Early);
 		// Classifying patients: Paramedics
 		ArrayList<Jobs> clasification0 = creationJobsParamedics(clasification.get(3));
-
+		clasification0.sort(Jobs.TWSIZE_Early);
 		// 2. Calling the type and quantity of home care staff
 		List<AttributeNurse> homeCareStaff= inp.getNurse(); // home Care Staff according the qualification level
 		List<AttributeParamedics> paramedic= inp.getParamedic(); // paramedic qualification level
@@ -4391,9 +4401,9 @@ public class DrivingRoutes {
 
 
 		//downgradings(qualification3,qualification2);
-		downgradings(qualification2,qualification1);
+		//downgradings(qualification2,qualification1);
 		downgradings(qualification3,qualification2);
-		downgradings(qualification3,qualification1); //No se considera porque no es tan facil controlar el tiempo de trabajo
+		downgradings(qualification2,qualification1); //No se considera porque no es tan facil controlar el tiempo de trabajo
 
 		//downgradings(qualification2,qualification1);
 
@@ -5001,18 +5011,9 @@ public class DrivingRoutes {
 		}
 		// se guarda los schift
 		for(Jobs j:clasification3) { // iterate over jobs
-			System.out.println(" Stop "+ j.getId());
-
 			for(Parts paramedic:qualificationParamedic) {
 				System.out.println(" Turn ");
 				printing(paramedic);
-				if(j.getId()==37 ) {
-					if(paramedic.getListSubJobs().size()!=0) {
-						if(paramedic.getListSubJobs().get(0).getId()==54) {
-							System.out.println(" Stop "+ j.getId());
-						}
-					}
-				}
 				boolean insertion=possibleInsertion(j,paramedic);
 				if(insertion) {
 					break;
