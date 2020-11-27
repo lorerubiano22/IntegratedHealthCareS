@@ -5038,14 +5038,13 @@ public class DrivingRoutes {
 			inserted=true;
 		}
 		else { // inside the array there are more jobs
-			//int position=iterateOverSchift(j,homeCare);
 			// dividir el trabajo
 			Parts pickUpDropOff=disaggregatedJob(j);
-
 			// revisar si el primer trabajo de esta parte puede ser insertado
 			SubJobs jsplited=pickUpDropOff.getListSubJobs().get(0);
+	
 			//double workingHours= computingWorkingHours(homeCare,pickUpDropOff);
-			int position=iterateOverSchiftLastPosition(jsplited,homeCare);
+			int position=iterateOverSchiftLastPosition(jsplited,pickUpDropOff,homeCare);
 			if(position>=0 && enoughWorkingHours(homeCare,pickUpDropOff)) {
 				for(SubJobs sj:pickUpDropOff.getListSubJobs()) {
 					homeCare.getListSubJobs().add(position,sj);
@@ -5526,7 +5525,7 @@ public class DrivingRoutes {
 		return position;
 	}
 
-	private int iterateOverSchiftLastPosition(SubJobs j, Parts homeCare) {
+	private int iterateOverSchiftLastPosition(SubJobs j, Parts pickUpDropOff, Parts homeCare) {
 		System.out.println("Job to insert "+ j.getId()+" "+ j.getSubJobKey()+" "+ j.getstartServiceTime());
 		boolean inserted=false;
 		int position=-1;
@@ -5536,10 +5535,41 @@ public class DrivingRoutes {
 		inserted=insertionLater(inRoute,j);//(inRoute)******(j)
 		if(inserted) {
 			position=homeCare.getListSubJobs().size();
-		}			
+		}
+		else {
+			SubJobs firstInRoute=homeCare.getListSubJobs().get(0);
+			position=insertionChangingStartServiceTime(firstInRoute,pickUpDropOff);
+		}
 		return position;
 	}
 
+
+	private int insertionChangingStartServiceTime(SubJobs firstInRoute, Parts pickUpDropOff) {
+		boolean inserted=false;
+		int position=-1;
+		SubJobs j=pickUpDropOff.getListSubJobs().get(0);
+		SubJobs k=pickUpDropOff.getListSubJobs().get(pickUpDropOff.getListSubJobs().size()-1);
+		// se intenta insertar antes - El trabajo importante es j porque k es la continuación
+		double tv=inp.getCarCost().getCost(k.getId()-1, firstInRoute.getId()-1);
+		double departureK=firstInRoute.getArrivalTime()-tv;
+		double deltaStartServiceDeparture = k.getDepartureTime()-k.getstartServiceTime();
+		double startServiceTimeK=departureK-deltaStartServiceDeparture;
+		double deltaArrivalStartServiceK = k.getArrivalTime()-k.getstartServiceTime();
+		double arrivalTimeK=startServiceTimeK-deltaArrivalStartServiceK;
+		double hardStartServiceTime=arrivalTimeK-k.getReqTime();
+		if(hardStartServiceTime>j.getStartTime() && hardStartServiceTime<j.getEndTime()) {
+			position=0;
+			double deltaStartServiceTime=j.getstartServiceTime()-hardStartServiceTime;
+			for(SubJobs sj:pickUpDropOff.getListSubJobs()) {
+				sj.setarrivalTime(sj.getArrivalTime()-deltaStartServiceTime);
+				sj.setStartServiceTime(sj.getstartServiceTime()-deltaStartServiceTime);
+				sj.setEndServiceTime(sj.getendServiceTime()-deltaStartServiceTime);
+				sj.setdepartureTime(sj.getDepartureTime()-deltaStartServiceTime);
+			}	
+		}
+		
+		return position;
+	}
 
 	private void insertingSubJobsParamedic(int i, Jobs j, Parts homeCare) {
 		// 1. split the job into subjobs
