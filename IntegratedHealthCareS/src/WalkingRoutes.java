@@ -331,7 +331,8 @@ public class WalkingRoutes {
 				Jobs presentbigJob=new Jobs(wr.getDropOffNode());
 				// 1. Setting the TW and start service time
 				double startTime=wr.getDropOffNode().getstartServiceTime(); // considering the unloading of the home health care staff
-				presentbigJob.setStartTime(startTime);
+				double deltaTimeWindow=computingMinSize(wr);
+				presentbigJob.setStartTime(startTime-deltaTimeWindow);
 				presentbigJob.setEndTime(startTime);
 				presentbigJob.setStartServiceTime(startTime);
 				// 2. Setting the duration of the jobs
@@ -355,6 +356,17 @@ public class WalkingRoutes {
 		}
 	}
 
+
+
+	private double computingMinSize(SubRoute wr) {
+		double delta=Double.MAX_VALUE;
+		for(Jobs j:wr.getJobSequence()) {
+			if(j.getEndTime()-j.getStartTime()<delta) {
+				delta=(j.getEndTime()-j.getStartTime());
+			}
+		}
+		return delta;
+	}
 
 
 	private void jobsInsertion(String serviceStartTime) {
