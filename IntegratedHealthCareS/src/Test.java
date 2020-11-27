@@ -14,10 +14,12 @@ public class Test {
 	private final int loadTimeHomeCareStaff;
 	private final int patientRegistrationTime;
 	private final double routeLenght;
+	private final double driverObjective;
+	private final double homeCareStaffObjective;
 	
 
 	public Test(String name, double maxTime, long seed, double workingTime, double routeLenght, 
-			 double walking2jobs, double detour, double cumulativeWalkingTime, double cumulativeWaitingTime, int p,int HCS, int registrationTime){
+			 double walking2jobs, double detour, double cumulativeWalkingTime, double cumulativeWaitingTime, int p,int HCS, int registrationTime,double driverOb, double homeOb){
 		
 		instanceName = name;
 		testTime = maxTime*60;
@@ -31,9 +33,13 @@ public class Test {
 		this.loadTimePatient= p; 
 		this.loadTimeHomeCareStaff=HCS;
 		this.patientRegistrationTime=registrationTime;
+		driverObjective=driverOb;
+		homeCareStaffObjective=homeOb;
 	}
 
 	/* GET METHODS */
+	public double getdriverObjective(){return driverObjective;}
+	public double gethomeCareStaffObjective() { return homeCareStaffObjective; }
 	public long getSeed(){return seed;}
 	public double getTestTime() { return testTime; }
 	public String getInstanceName() { return instanceName;}

@@ -16,7 +16,11 @@ public class Solution {
 	private double driverTimeSol=0;
 	private double paramedic=0;// los paramedicos que salen del depot
 	private double homeCareStaff=0;// los paramedicos que salen del depot
-
+	private double driverCost=0;// los paramedicos que salen del depot
+	private double homeCareStaffCost=0;// los paramedicos que salen del depot
+	private double waitingTimeToPenalize=0; // 
+	
+	
 	public Solution(Solution initialSol) {
 		id=initialSol.id; // solution ID
 		durationSolution = initialSol.durationSolution; // Travel distance = waiting time + driving time
@@ -25,11 +29,14 @@ public class Solution {
 		idleTimeSol=initialSol.idleTimeSol;
 		passengers=initialSol.passengers;// home care staff and + paramedic transported que salen del depot
 		waitingTime=initialSol.waitingTime;// Total waiting time
+		driverCost=initialSol.driverCost;// los paramedicos que salen del depot
+		homeCareStaffCost=initialSol.homeCareStaffCost;// los paramedicos que salen del depot
 		serviceTime=initialSol.serviceTime;
 		drivingTime=initialSol.drivingTime;
 		walkingTime=initialSol.walkingTime;
 		paramedic=initialSol.paramedic;// los paramedicos que salen del depot
 		homeCareStaff=initialSol.homeCareStaff;// los paramedicos que salen del depot
+		waitingTimeToPenalize=initialSol.waitingTimeToPenalize;
 	}
 
 
@@ -54,7 +61,10 @@ public class Solution {
 	public void setdrivingTime(double s) {drivingTime=s;}
 	public void setWalkingTime(double w) {walkingTime=w;}
 	public void setIdleTime(double idleTime) {idleTimeSol=	idleTime;}
-	public void setDriverTime(double dr) {driverTimeSol=	dr;}
+	public void setObjFunctionDriver(double dr) {driverCost=	dr;}
+	public void setObjFunctionHomeCareStaff(double dr) {homeCareStaffCost=	dr;}
+	public void setwaitingTimeToPenalize(double dr) {waitingTimeToPenalize=	dr;}
+	
 	// Getters
 	public long getId() { return id;}
 	public double getDurationSolution() { return durationSolution;}
@@ -64,7 +74,10 @@ public class Solution {
 	public double getServiceTime() {return serviceTime;}
 	public double getdrivingTime(){return drivingTime;}
 	public double getWalkingTime() {return walkingTime;}
-
+	public double getObjectiveFunctionDriver() {return driverCost;}
+	public double getObjectiveFunctionHomeCareStaff() {return homeCareStaffCost;}
+	public double getwaitingTimeToPenalize() {return waitingTimeToPenalize;}
+	
 	// auxiliar methods
 
 	private LinkedList<Route> copyRoutes(Solution initialSol) {
@@ -88,6 +101,7 @@ public class Solution {
 	s = s.concat("\n Total home care staff: " + homeCareStaff);
 	s = s.concat("\n Idle time: " + idleTimeSol);
 	s = s.concat("\n Waiting time: " + waitingTime);
+	s= s.concat("\n waiting Time to penalize: "+ waitingTimeToPenalize);
 	s = s.concat("\n Driver time: " + driverTimeSol);
 	s= s.concat("\n Service time: "+  serviceTime);
 	s = s.concat("\n List of jobs: ");
@@ -97,6 +111,7 @@ public class Solution {
 			s= s.concat(" travelTime: "+ r.getTravelTime());
 			s= s.concat(" waitingTime: "+ r.getWaitingTime());
 			s= s.concat(" serviceTime: "+ r.getServiceTime());
+			s= s.concat(" waiting Time to penalize: "+ r.getwaitingTimeToPenalize());
 			s= s.concat(" IdleTime: "+ r.getIdleTime());
 			s= s.concat(" durationRoute: "+ r.getDurationRoute());
 			s= s.concat("\n homeCareSaff amount: "+ r.getHomeCareStaff());

@@ -25,7 +25,11 @@ public class Route {
 	private double idleTime=0;
 	private Schift  schift; 
 	private double  loadUnloadRegistration=0; 
-
+	private double driverCost=0;// los paramedicos que salen del depot
+	private double homeCareStaffCost=0;// los paramedicos que salen del depot
+	private double waitingTimeToPenalize=0;
+	
+	
 	// Constructors
 	public Route(Route r) {
 		id=r.getIdRoute();
@@ -36,9 +40,13 @@ public class Route {
 		passengers = r.getPassengers(); // route total demand
 		homeCareStaff=r.getHomeCareStaff();
 		loadUnloadRegistration=r.getloadUnloadRegistrationTime();// load unloading time
+		waitingTimeToPenalize=r.getwaitingTimeToPenalize();
 		amountParamedics=r.getAmountParamedic();
 		driver=r.getAmountDriver();
 		idleTime=r.getIdleTime();
+		driverCost=r.driverCost;// los paramedicos que salen del depot
+		homeCareStaffCost=r.driverCost;// los paramedicos que salen del depot
+		
 		copyEdges(r.edges); // edges list
 		copyCouples(r.jobsList); // subjobs list (pick up and delivary)
 		copySubJobs(r.subJobsList); // subjobs list (pick up and delivary)
@@ -49,6 +57,9 @@ public class Route {
 		}
 
 	}
+
+
+
 
 
 	private void copyPart(LinkedList<Parts> linkedList) {
@@ -126,7 +137,9 @@ public class Route {
 	public void setAmountDriver(double d) {this.driver = d;}
 	public void setIdleTime(double idleTime) {this.idleTime = idleTime;}
 	public void setIloadUnloadRegistrationTime(double i) {this.loadUnloadRegistration = i;}
-
+	public void setdriverCost(double i) {this.driverCost = i;}
+	public void sethomeCareStaffCost(double i) {this.homeCareStaffCost = i;}
+	public void setwaitingTimeToPenalize(double wt) {waitingTimeToPenalize=wt;}
 
 	// Getters
 	public HashMap<String, SubJobs> getJobsDirectory(){return positionJobs;}
@@ -148,7 +161,10 @@ public class Route {
 	public double getIdleTime() {return idleTime;}
 	public double getloadUnloadRegistrationTime() {return loadUnloadRegistration;}
 	public double getDriverTime() {return travelTimeDriver;}
+	public double getwaitingTimeToPenalize() {	return waitingTimeToPenalize;}
 	
+	public double getdriverCost() {return driverCost;}
+	public double gethomeCareStaffCost() {return homeCareStaffCost;}
 	// Auxiliar methods
 
 	public void computeTravelTime(Inputs inp) {
@@ -215,6 +231,8 @@ public class Route {
 			//this.computePassenger();
 			this.computeDriverTravelTime(inp);
 			
+			this.computePenalizationParameters();
+			
 			// duration route
 			double duration= this.getServiceTime()+this.getTravelTime()+this.getWaitingTime()+this.getloadUnloadRegistrationTime();
 			this.setDurationRoute(subJobsList.get(subJobsList.size()-1).getDepartureTime()-subJobsList.get(0).getDepartureTime());
@@ -223,6 +241,18 @@ public class Route {
 			updatingJobsList();	// actualizar la lista de directorio de trabajos
 		}
 	}
+
+
+	private void computePenalizationParameters() {
+		double penalization=0;
+		for(SubJobs s:this.getSubJobsList()) {
+			penalization+=	s.getAdditionalWaintingTime();
+		}
+		this.setwaitingTimeToPenalize(penalization);
+	}
+
+
+
 
 
 	private void computeWaitingTime(Test test) {

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /*
  * This class separate the jobs into pick up and delivery tasks. Save the list of jobs per pairs
@@ -7,8 +8,9 @@ public class SubJobs extends Jobs {
 	
 	Edge preEdge;
 	Edge postEdge;
-	
+	double additionalWaintingTime=0;
 	private ArrayList<Jobs> jobList= new ArrayList<Jobs>();
+	private double[] frequencyRoute;
 
 
 	public SubJobs(Jobs present,Jobs future, SubRoute wr) {
@@ -39,15 +41,17 @@ public class SubJobs extends Jobs {
 	}
 
 	// Getters
-	public ArrayList<Jobs> getJobList() {
-		return jobList;
-	}
-	
+	public ArrayList<Jobs> getJobList() {return jobList;}
+	public Edge getPreEdge() {return preEdge;}
+	public Edge getPostEdge() {return postEdge;}
+	public double getAdditionalWaintingTime() {return additionalWaintingTime;}
+	public double getFrecuencyRoute(int i){return frequencyRoute[i];}
+	public double[] getFrecuencyRoute(){return frequencyRoute;}
+	public double getAdditionaWaitingTime() {return additionalWaintingTime;}
 	// Setters
-	public void setJobList(ArrayList<Jobs> jobList) {
-		this.jobList = jobList;
-	}
-
+	public void setJobList(ArrayList<Jobs> jobList) {this.jobList = jobList;}
+	public void setFrecuencyRoute(double[] fr) {this.frequencyRoute = fr;}
+	public void setAdditionalWaitingTime(double time) {this.additionalWaintingTime = time;}
 
 	public String toString() 
 	{   String s = "";

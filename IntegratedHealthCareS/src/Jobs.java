@@ -23,6 +23,10 @@ public class Jobs {
 	private double sortETWSizeCriterion; // sort criterion the size of time window and the earliest time
 	private double sortLTWSizeCriterion; // sort criterion the size of time window and the latest time
 	private int totalPeople=0; // people involven in the service:
+	// vehicle 
+	private double vehicleArrivalTime=0; // time for vehicle
+	private double vehicleDepartureTime=0; // time for vehicle
+	
 	// preparation time
 	private double loadUnloadRegistrationTime=0;
 	private double loadUnloadTime=0;
@@ -77,6 +81,8 @@ public class Jobs {
 		this.reqQualification = i.getReqQualification();
 		this.serviceTime = i.getReqTime();
 		this.walkingTime=i.walkingTime;
+		vehicleDepartureTime=i.getVehicleDepartureTime();
+		this.vehicleArrivalTime=i.vehicleArrivalTime;
 		waitingTime=i.waitingTime;
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
@@ -106,10 +112,12 @@ public class Jobs {
 		this.softendTime = i.getEndTime();
 		this.reqQualification = i.getReqQualification();
 		this.serviceTime = i.getReqTime();
+		this.vehicleArrivalTime=i.vehicleArrivalTime;
 		this.departureTime=i.departureTime;
 		this.walkingTime=i.walkingTime;
 		this.arrivalTime=i.arrivalTime;
 		this.departureTime=i.departureTime;
+		vehicleDepartureTime=i.getVehicleDepartureTime();
 		this.loadUnloadRegistrationTime=i.getloadUnloadRegistrationTime();
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
@@ -147,10 +155,11 @@ public class Jobs {
 	public void setMedicalCentre(boolean mc) {this.isMedicalCentre = mc;}
 	public void setReqQualification(int qualification) {reqQualification = qualification;}
 	public void setarrivalTime(double arrival) {arrivalTime=arrival;}
+	public void setvehicleArrivalTime(double arrival) {vehicleArrivalTime=arrival;}
 	public void setdepartureTime(double departure) {departureTime=departure;}
+	public void setVehicledepartureTime(double departure) {vehicleDepartureTime=departure;}
 	public void setIDcouple(int couple) {idCouple=couple;}
-	public void setWaitingTime(double w) {
-		this.waitingTime = w;}
+	public void setWaitingTime(double w) {this.waitingTime = w;}
 	public void setWaitingTime(double arrivalTime, double startService ) {
 		waitingTime=0;
 		if(arrivalTime<startService) {
@@ -175,7 +184,9 @@ public class Jobs {
 	public double getDepartureTime() {return departureTime;}
 	public double getloadUnloadRegistrationTime() {return loadUnloadRegistrationTime;}
 	public double getloadUnloadTime() {return loadUnloadTime;}
+	public double getVehicleArrivalTime() {return vehicleArrivalTime;}
 	
+	public double getVehicleDepartureTime() {return vehicleDepartureTime;}
 	public int getIDcouple() {return idCouple;}
 	public double getEndTime() {return hardendTime;}
 	public double getSoftStartTime() {return this.softstartTime;}

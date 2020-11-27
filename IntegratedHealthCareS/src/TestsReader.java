@@ -31,7 +31,9 @@ public class TestsReader {
                     int loadPatient= in.nextInt();
                     int loadHomeCare= in.nextInt();
                     int patientRegistrationTime=in.nextInt();
-                    Test aTest = new Test(instanceName, maxTime, seed,workingTime, routeLenght,walking2jobs,  detour,  cumulativeWalkingTime, cumulativeWaitingTime,loadPatient, loadHomeCare , patientRegistrationTime);
+                    double driverObjective=in.nextInt();
+                    double homeCareObjective=in.nextInt();
+                    Test aTest = new Test(instanceName, maxTime, seed,workingTime, routeLenght,walking2jobs,  detour,  cumulativeWalkingTime, cumulativeWaitingTime,loadPatient, loadHomeCare , patientRegistrationTime,driverObjective,homeCareObjective);
                     list.add(aTest);
                 }
             }

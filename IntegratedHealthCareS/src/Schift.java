@@ -14,6 +14,7 @@ public class Schift {
 	private  Route route; // the shift is a route in order to count the working hours
 	private  ArrayList<Parts> routeParts= new ArrayList<>(); // the shift is a route in order to count the working hours
 	private  ArrayList<Parts> routeParts1= new ArrayList<Parts>();
+	private  ArrayList<Edge> listConnections= new ArrayList<Edge>();
 
 	// debo cambiar tambien la siguiente
 	private  HashMap<String, Parts> listParts= new HashMap<>(); // the shift is a route in order to count the working hours
@@ -61,6 +62,7 @@ public class Schift {
 		homecareStaffSchift=schiftRoute.isHomecareStaffSchift();
 		driver=schiftRoute.isDriverSchift();
 		route=schiftRoute.getRoute(); // the shift is a route in order to count the working hours
+		listConnections=schiftRoute.getConnections();
 		for(Parts a:schiftRoute.getlistParts().values()) {
 			Parts newParts=new Parts (a);
 			key= "T"+id+"P"+id;
@@ -93,6 +95,8 @@ public class Schift {
 	public int getId() {return id;}
 	public int getQualificationLevel() {return qualificationLevel;}
 	public String getKey() {return key;}
+	public ArrayList<Edge> getConnections() {return listConnections;}
+	
 
 
 
