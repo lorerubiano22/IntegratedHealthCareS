@@ -47,10 +47,11 @@ public class DrivingRoutes {
 		rn=r;
 		this.subJobsList=subJobsList;
 		this.subroutes=subroutes;
+		if(this.subroutes.getWalkingRoutes()!=null) {
 		for(SubRoute wr:this.subroutes.getWalkingRoutes()) {
 			Jobs startNode=wr.getJobSequence().get(0);
 			jobsInWalkingRoute.put(startNode.getId(), wr);
-		}
+		}}
 	}
 
 	public void generateAfeasibleSolution() { 
@@ -4390,7 +4391,7 @@ public class DrivingRoutes {
 
 		//Qualification level =0
 		ArrayList<Parts> qualification0= assigmentParamedic(q0,clasification0);
-
+		missingAssigment(qualification0,clasification0);
 		//Qualification level from 1 to 3
 		ArrayList<Parts> qualification1= assigmentParamedic(q1,clasification1); // here are not considering working hours
 		missingAssigment(qualification1,clasification1);
