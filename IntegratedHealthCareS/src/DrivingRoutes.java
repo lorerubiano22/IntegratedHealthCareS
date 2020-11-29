@@ -61,11 +61,6 @@ public class DrivingRoutes {
 	}
 
 	public void generateAfeasibleSolution() { 
-		// Solution < set routes. 
-		// Route<- partial shifts. 
-		// Shifts <- set of jobs (working hours, qualification, tw)
-		// Shifts <- set of subjobs (pick up and drop-off: 1/2 people at a location:medical centre/patient home/ client home / depot )
-		// 1. Initial feasible solution
 		initialSol= createInitialSolution(); // la ruta ya deberia tener los arrival times
 		System.out.println(initialSol.toString());
 		solution= assigningRoutesToDrivers(initialSol);
@@ -141,12 +136,14 @@ public class DrivingRoutes {
 				missing.put(j.getId(), j);
 			}
 		}
+		if(subroutes.getWalkingRoutes()!=null) {
 		for(SubRoute r:subroutes.getWalkingRoutes()) {
 			for(Jobs j:r.getJobSequence()) {
 				if(j.getId()!=1) {
 					missing.remove(j.getId());
 				}
 			}
+		}
 		}
 		for(Route r:initialSol2.getRoutes()) {
 			for(SubJobs j:r.getSubJobsList()) {
@@ -189,6 +186,9 @@ public class DrivingRoutes {
 		Solution sol=new Solution (copySolution);
 		computationFrequencyRoute(copySolution);
 		computingPenalization(copySolution);
+		VNS alg= new VNS(this,test,inp);
+		Solution newSol= alg.solvns(copySolution);
+		
 		return sol;
 	}
 
@@ -5175,7 +5175,12 @@ public class DrivingRoutes {
 
 
 	private void homeCareDropOff(SubJobs dropOff) {
-		dropOff.setTotalPeople(-1);
+		if(dropOff.isPatient()) {
+			
+		}
+		if(dropOff.isMedicalCentre()) {
+			dropOff.setTotalPeople(-2);
+		}
 		dropOff.setClient(true);
 		// 1. Setting the start service time -- startServiceTime
 		dropOff.setStartServiceTime(dropOff.getEndTime());
@@ -5698,5 +5703,8 @@ public class DrivingRoutes {
 	// getters 
 	public Solution getInitialSol() {return initialSol;}
 	public Solution getSol() {return solution;}
+	public HashMap<String, Couple> getCoupleList() {return coupleList;}
+	
+	
 
 }

@@ -75,7 +75,7 @@ public class Couple {
 	public void setIdCouple(int id) {this.id=id;}
 	public void setJobList(ArrayList<Jobs> list) {jobList=list;}
 	public void setStartEndNodes(ArrayList<Jobs> firstLastNode) {startEndNodes=firstLastNode;}
-
+    public void setDetour(double time) {detour=time;}
 	// Getters
 	public Jobs getPresent() {	return present;}
 	public int getIdCouple() {return id;}

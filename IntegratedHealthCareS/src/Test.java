@@ -1,3 +1,5 @@
+import umontreal.iro.lecuyer.rng.RandomStream;
+import umontreal.iro.lecuyer.rng.RandomStreamBase;
 
 public class Test {
 	/* INSTANCE FIELDS AND CONSTRUCTOR */
@@ -5,7 +7,7 @@ public class Test {
 	private final double testTime; // Max. cost allowed for any single route
 	private final long seed; // Seed value for the Random Number Generator
 	private final double workingTime;
-
+private RandomStream rng;
 	private final double walking2jobs;
 	private final double detour;
 	private final double cumulativeWalkingTime;
@@ -52,6 +54,8 @@ public class Test {
 	public int getloadTimePatient() {return loadTimePatient;}
 	public int getloadTimeHomeCareStaff() {return loadTimeHomeCareStaff;}
 	public int getRegistrationTime() {return patientRegistrationTime;}
+	 public RandomStream getRandomStream() {return rng;}
+	public void setRandomStream(RandomStreamBase stream) {rng=stream;}
 
 
 

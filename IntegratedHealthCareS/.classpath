@@ -21,5 +21,7 @@
 	<classpathentry kind="lib" path="lib/xprm.jar"/>
 	<classpathentry kind="lib" path="lib/xprs-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/xprs.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Lorena/Documents/wokspace_Java_BOKU2/Libraries/log4j-1.2.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Lorena/Documents/wokspace_Java_BOKU2/Libraries/ssj-2.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
