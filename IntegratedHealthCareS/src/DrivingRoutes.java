@@ -4814,6 +4814,9 @@ public class DrivingRoutes {
 		}
 		// se guarda los schift
 		for(Jobs j:clasification3) { // iterate over jobs
+			if(j.getId()==9) {
+				System.out.println(" Turn ");
+			}
 			for(Parts paramedic:qualificationParamedic) {
 				System.out.println(" Turn ");
 				printing(paramedic);
@@ -5348,6 +5351,7 @@ public class DrivingRoutes {
 		int position=-1;
 		SubJobs j=pickUpDropOff.getListSubJobs().get(0);
 		SubJobs k=pickUpDropOff.getListSubJobs().get(pickUpDropOff.getListSubJobs().size()-1);
+		if(j.isClient() && k.isClient() ) {
 		// se intenta insertar antes - El trabajo importante es j porque k es la continuación
 		double tv=inp.getCarCost().getCost(k.getId()-1, firstInRoute.getId()-1);
 		double departureK=firstInRoute.getArrivalTime()-tv;
@@ -5364,9 +5368,13 @@ public class DrivingRoutes {
 				sj.setStartServiceTime(sj.getstartServiceTime()-deltaStartServiceTime);
 				sj.setEndServiceTime(sj.getendServiceTime()-deltaStartServiceTime);
 				sj.setdepartureTime(sj.getDepartureTime()-deltaStartServiceTime);
+				if(sj.isClient() && sj.getTotalPeople()>0) {
+					sj.setStartTime(sj.getstartServiceTime());
+					sj.setEndTime(sj.getstartServiceTime());
+				}
 			}	
 		}
-
+	}
 		return position;
 	}
 

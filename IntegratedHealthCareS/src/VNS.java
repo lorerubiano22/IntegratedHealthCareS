@@ -41,17 +41,16 @@ public class VNS {
 
 	private void updateSolution(Solution sol) {
 		// creación de partes
-	
-		double pickUppatient=0;
+
 		SubJobs depotStart=new SubJobs(inp.getNodes().get(0));
-		
+
 		for(Route r:sol.getRoutes()) {
 			totalPersonalFromDepot(depotStart,r);
 			settingParts(depotStart,r);
-			
+
 		}
 		// cuantificación de costos
-		
+
 	}
 
 	private void settingParts(SubJobs depotStart, Route r) {
@@ -76,7 +75,7 @@ public class VNS {
 			if(amountParamedic==0 && amountHomeCareStaff==0) {
 				r.getPartsRoute().add(part);
 				part= new Parts();
-				
+
 			}
 		}
 		if(amountParamedic!=0 && amountHomeCareStaff!=0 && !part.getListSubJobs().isEmpty()) {
@@ -93,24 +92,24 @@ public class VNS {
 		double amountHomeCareStaff=0;
 		double dropOffHomeCare=0;
 		double pickUppatient=0;
-		
-			for(SubJobs j:r.getSubJobsList()) {
-				if(j.isClient()) {
-					dropOffHomeCare+=j.getTotalPeople();
-					if(amountHomeCareStaff<Math.abs(dropOffHomeCare)) {
-						amountHomeCareStaff++;
-					}
-				}
-				if(j.isPatient() ) {
-					pickUppatient+=j.getTotalPeople();
-					if(amountParamedic<Math.abs(pickUppatient)) {
-						amountParamedic++;
-					}
+
+		for(SubJobs j:r.getSubJobsList()) {
+			if(j.isClient()) {
+				dropOffHomeCare+=j.getTotalPeople();
+				if(amountHomeCareStaff<Math.abs(dropOffHomeCare)) {
+					amountHomeCareStaff++;
 				}
 			}
-			r.setAmountParamedic(amountParamedic);
-			r.setHomeCareStaff(amountHomeCareStaff);
-			depotStart.setTotalPeople((int)(amountParamedic+amountHomeCareStaff));
+			if(j.isPatient() ) {
+				pickUppatient+=j.getTotalPeople();
+				if(amountParamedic<Math.abs(pickUppatient)) {
+					amountParamedic++;
+				}
+			}
+		}
+		r.setAmountParamedic(amountParamedic);
+		r.setHomeCareStaff(amountHomeCareStaff);
+		depotStart.setTotalPeople((int)(amountParamedic+amountHomeCareStaff));
 	}
 
 	private Solution swaping(Solution solCopy) {
@@ -142,7 +141,7 @@ public class VNS {
 			otherRoute =false;
 			routesListToMerge.add(routes.get(index));
 		}
-		
+
 		LinkedList<Route> newRoutes=mergingRoutes(routesListToMerge);
 		// en su defecto se forman dos rutas
 		if(!newRoutes.isEmpty()) {
@@ -170,7 +169,7 @@ public class VNS {
 			int index =0;
 			do {
 				index = this.rng.nextInt(routes.size()-1);
-				
+
 			}
 			while(routesListToMerge.contains(routes.get(index)));	
 			routesListToMerge.add(routes.get(index));
@@ -198,10 +197,84 @@ public class VNS {
 		newRoutes.add(newRoute);
 		ArrayList<SubJobs> patients= selectingPatients(routesListToMerge);
 		patients.sort(Jobs.SORT_BY_STARTW);
-		ArrayList<SubJobs> clients= selectingClients(newRoutes);
-		clients.sort(Jobs.TWSIZE_Early);
+		ArrayList<SubJobs> clients= selectingClients(routesListToMerge);
+		clients.sort(Jobs.SORT_BY_STARTW);
 		HashMap<String,SubJobs> jobsToInsert= listJobs(patients,clients);
 
+		assigmentPatients(patients,jobsToInsert,newRoute,newRoutes);
+		assigmentClients(clients,jobsToInsert,newRoute,newRoutes);
+
+		if(newRoutes.size()>routesListToMerge.size()) {
+			newRoutes.clear();	
+		}
+
+		return newRoutes;
+	}
+
+	private void assigmentClients(ArrayList<SubJobs> clients, HashMap<String, SubJobs> jobsToInsert, Route newRoute,
+			LinkedList<Route> newRoutes) {
+		ArrayList<SubJobs> clientsHardTimeWindow= selectingclientsHardTimeWindow(clients);
+		ArrayList<SubJobs> clientsPickUps= selectingclientsPickUps(clients);
+		clientsHardTimeWindow.sort(Jobs.SORT_BY_STARTW);
+		
+		for(SubJobs p:clientsHardTimeWindow) { // assigning clients hard time window
+			if(jobsToInsert.containsKey(p.getSubJobKey())) {
+				insertingClients(newRoute,p,newRoutes);
+				updatingList(jobsToInsert,p);
+			}
+
+		}
+		for(SubJobs p:clientsPickUps) { // assigning clients hard time window
+			if(jobsToInsert.containsKey(p.getSubJobKey())) {
+				insertingClients(newRoute,p,newRoutes);
+				updatingList(jobsToInsert,p);
+			}
+		}
+		
+	}
+
+	private ArrayList<SubJobs> selectingclientsPickUps(ArrayList<SubJobs> clients) {
+		ArrayList<SubJobs> clientsHardTimeWindow= new ArrayList<SubJobs>();
+		for(SubJobs j: clients) {
+			if(j.getTotalPeople()>0){
+				clientsHardTimeWindow.add(j);
+			}
+		}
+		return clientsHardTimeWindow;
+	}
+
+	private void insertingClients(Route route, SubJobs p, LinkedList<Route> newRoutes) {
+		boolean inserted= false;
+		SubJobs j1=(SubJobs)this.drivingRoutes.getCoupleList().get(p.getSubJobKey()).getStartEndNodes().get(1);
+		SubJobs j2=(SubJobs)this.drivingRoutes.getCoupleList().get(p.getSubJobKey()).getStartEndNodes().get(0);
+
+		if(route.getSubJobsList().isEmpty()) {	
+			route.getSubJobsList().add(j1);
+			route.getSubJobsList().add(j2);
+		}
+		else { // iterando sobre la ruta
+			inserted=iteratingOverRoute(route,j1,j2);
+		}
+		if(!inserted) {
+			Route newRoute= new Route();
+			newRoutes.add(newRoute);
+			newRoute.getSubJobsList().add(j1);
+			newRoute.getSubJobsList().add(j2);
+		}
+	}
+
+	private ArrayList<SubJobs> selectingclientsHardTimeWindow(ArrayList<SubJobs> clients) {
+		ArrayList<SubJobs> clientsHardTimeWindow= new ArrayList<SubJobs>();
+		for(SubJobs j: clients) {
+			if(j.getTotalPeople()<0){
+				clientsHardTimeWindow.add(j);
+			}
+		}
+		return clientsHardTimeWindow;
+	}
+
+	private void assigmentPatients(ArrayList<SubJobs> patients, HashMap<String, SubJobs> jobsToInsert, Route newRoute,
+			LinkedList<Route> newRoutes) {
 		for(SubJobs p:patients) { // assigning patients
 			if(jobsToInsert.containsKey(p.getSubJobKey())) {
 				insertingPatients(newRoute,p,newRoutes);
@@ -209,12 +282,8 @@ public class VNS {
 			}
 
 		}
-		if(newRoutes.size()>routesListToMerge.size()) {
-			newRoutes.clear();	
-		}
-
-		return newRoutes;
 	}
+
 
 	private void updatingList(HashMap<String, SubJobs> jobsToInsert, SubJobs p) {
 		SubJobs j1=(SubJobs)this.drivingRoutes.getCoupleList().get(p.getSubJobKey()).getStartEndNodes().get(1);
@@ -271,6 +340,8 @@ public class VNS {
 		return inserted;
 	}
 
+
+
 	private boolean insideRoute(Route route, SubJobs j1, SubJobs j2) {
 		boolean inserted= false;
 		for(int i=0;i<route.getSubJobsList().size()-1;i++) {
@@ -296,9 +367,14 @@ public class VNS {
 				for(int i=startIteration+1;i<route.getSubJobsList().size()-1;i++) {
 					SubJobs a=route.getSubJobsList().get(i);
 					SubJobs b=route.getSubJobsList().get(i+1);		
-					if(a.getDepartureTime()<=j1.getArrivalTime() && j1.getDepartureTime()<=b.getArrivalTime()) {
+					if(a.getDepartureTime()<=j2.getArrivalTime() && j2.getDepartureTime()<=b.getArrivalTime()) {
 						if(vehicleCapacity(route,j1,startIteration+1,j2,i+1)) {
 							inserted= true;
+						}
+						if(inserted) {
+							route.getSubJobsList().add(startIteration+1,j1);
+							route.getSubJobsList().add(i+2,j2);
+							break;
 						}
 					}
 				}
@@ -361,16 +437,23 @@ public class VNS {
 			route.getSubJobsList().add(0,j2);
 			route.getSubJobsList().add(0,j1);
 		}
+
+		// cambiando la hora de j2
+		//double tvj2firstJob
+
 		return inserted;
 	}
 
 	private ArrayList<SubJobs> selectingClients(LinkedList<Route> newRoutes) {
 		ArrayList<SubJobs> clients= new ArrayList<SubJobs>();
 		for(Route r: newRoutes) {
-			if(r.getHomeCareStaff()>0) {
-				for(SubJobs j:r.getSubJobsList()) {
-					clients.add(j);}
+
+			for(SubJobs j:r.getSubJobsList()) {
+				if(j.isClient()) {
+					clients.add(j);
+				}
 			}
+
 		}
 		return clients;
 	}
@@ -378,10 +461,12 @@ public class VNS {
 	private ArrayList<SubJobs> selectingPatients(LinkedList<Route> newRoutes) {
 		ArrayList<SubJobs> patients= new ArrayList<SubJobs>();
 		for(Route r: newRoutes) {
-			if(r.getAmountParamedic()>0) {
-				for(SubJobs j:r.getSubJobsList()) {
+
+			for(SubJobs j:r.getSubJobsList()) {
+				if(!j.isClient()) {
 					patients.add(j);}
 			}
+
 		}
 		return patients;
 	}
