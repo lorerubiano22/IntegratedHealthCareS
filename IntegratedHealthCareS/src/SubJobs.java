@@ -9,6 +9,7 @@ public class SubJobs extends Jobs {
 	Edge preEdge;
 	Edge postEdge;
 	double additionalWaintingTime=0;
+	double timeWindowViolation=0;
 	private ArrayList<Jobs> jobList= new ArrayList<Jobs>();
 	private double[] frequencyRoute;
 
@@ -48,11 +49,15 @@ public class SubJobs extends Jobs {
 	public double getFrecuencyRoute(int i){return frequencyRoute[i];}
 	public double[] getFrecuencyRoute(){return frequencyRoute;}
 	public double getAdditionaWaitingTime() {return additionalWaintingTime;}
+	public double getTimeWindowViolation() {return timeWindowViolation;}
+	
 	// Setters
 	public void setJobList(ArrayList<Jobs> jobList) {this.jobList = jobList;}
 	public void setFrecuencyRoute(double[] fr) {this.frequencyRoute = fr;}
 	public void setAdditionalWaitingTime(double time) {this.additionalWaintingTime = time;}
-
+	public void setTimeWindowViolation(double time) {this.timeWindowViolation = time;}
+	
+	
 	public String toString() 
 	{   String s = "";
 	s = s.concat("\nId: " + (this.getSubJobKey()));

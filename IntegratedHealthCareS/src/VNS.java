@@ -24,12 +24,14 @@ public class VNS {
 	public Solution solvns(Solution copySolution) {
 		Solution sol=null;
 		Solution solCopy=new Solution(copySolution);
+		
 		for(int i=0; i<100 ;i++){
 			sol= shaking(new Solution (solCopy));
 			updateSolution(sol);
 			System.out.println("shaking");
 			System.out.println(sol.toString());
 			sol= swaping(sol);
+			sol.checkingSolution(inp,test,drivingRoutes.getobsInWalkingRoute());
 			updateSolution(sol);
 			System.out.println("swaping");
 			System.out.println(sol.toString());
@@ -38,6 +40,9 @@ public class VNS {
 		}
 		return sol;
 	}
+
+	
+
 
 	private void updateSolution(Solution sol) {
 		// creación de partes
@@ -216,7 +221,7 @@ public class VNS {
 		ArrayList<SubJobs> clientsHardTimeWindow= selectingclientsHardTimeWindow(clients);
 		ArrayList<SubJobs> clientsPickUps= selectingclientsPickUps(clients);
 		clientsHardTimeWindow.sort(Jobs.SORT_BY_STARTW);
-		
+
 		for(SubJobs p:clientsHardTimeWindow) { // assigning clients hard time window
 			if(jobsToInsert.containsKey(p.getSubJobKey())) {
 				insertingClients(newRoute,p,newRoutes);
@@ -230,7 +235,7 @@ public class VNS {
 				updatingList(jobsToInsert,p);
 			}
 		}
-		
+
 	}
 
 	private ArrayList<SubJobs> selectingclientsPickUps(ArrayList<SubJobs> clients) {
@@ -276,6 +281,9 @@ public class VNS {
 	private void assigmentPatients(ArrayList<SubJobs> patients, HashMap<String, SubJobs> jobsToInsert, Route newRoute,
 			LinkedList<Route> newRoutes) {
 		for(SubJobs p:patients) { // assigning patients
+			if(p.getSubJobKey().equals("P71")) {
+				System.out.println("stop");
+			}
 			if(jobsToInsert.containsKey(p.getSubJobKey())) {
 				insertingPatients(newRoute,p,newRoutes);
 				updatingList(jobsToInsert,p);
@@ -309,20 +317,30 @@ public class VNS {
 		SubJobs j2=(SubJobs)this.drivingRoutes.getCoupleList().get(p.getSubJobKey()).getStartEndNodes().get(0);
 
 		if(route.getSubJobsList().isEmpty()) {	
-			route.getSubJobsList().add(j1);
-			route.getSubJobsList().add(j2);
+			insertingCouple(route,-1,-1,j1,j2,inp,test);
 		}
 		else { // iterando sobre la ruta
 			inserted=iteratingOverRoute(route,j1,j2);
 		}
 		if(!inserted) {
 			Route newRoute= new Route();
+			insertingCouple(newRoute,-1,-1,j1,j2,inp,test);
 			newRoutes.add(newRoute);
-			newRoute.getSubJobsList().add(j1);
-			newRoute.getSubJobsList().add(j2);
 		}
 
 
+	}
+
+	private void insertingCouple(Route newRoute, int positionj1, int positionj2, SubJobs j1, SubJobs j2, Inputs inp2, Test test2) {
+		if(positionj1==-1 && positionj2==-1) {
+			newRoute.getSubJobsList().add(j1);
+			newRoute.getSubJobsList().add(j2);}
+		else {
+			newRoute.getSubJobsList().add(positionj1,j1);
+			newRoute.getSubJobsList().add(positionj2,j2);
+		}
+		Edge e= new Edge(j1,j2,inp,test);
+		newRoute.getEdges().put(e.getEdgeKey(), e);
 	}
 
 	private boolean iteratingOverRoute(Route route, SubJobs j1, SubJobs j2) {
@@ -335,7 +353,7 @@ public class VNS {
 			inserted=insideRoute(route,j1,j2);
 		}
 		else {
-
+			// infeasibility
 		}
 		return inserted;
 	}
@@ -372,8 +390,9 @@ public class VNS {
 							inserted= true;
 						}
 						if(inserted) {
-							route.getSubJobsList().add(startIteration+1,j1);
-							route.getSubJobsList().add(i+2,j2);
+							//route.getSubJobsList().add(startIteration+1,j1);
+							//route.getSubJobsList().add(i+2,j2);
+							insertingCouple(route,startIteration+1,i+2,j1,j2,inp,test);
 							break;
 						}
 					}
@@ -422,8 +441,9 @@ public class VNS {
 		SubJobs lastJob=route.getSubJobsList().get(route.getSubJobsList().size()-1);
 		if(lastJob.getDepartureTime()<=j1.getArrivalTime()) { // inserted as the first job
 			inserted=true;
-			route.getSubJobsList().add(j1);
-			route.getSubJobsList().add(j2);
+			insertingCouple(route,-1,-1,j1,j2,inp,test);
+			//route.getSubJobsList().add(j1);
+			//route.getSubJobsList().add(j2);
 
 		}
 		return inserted;
@@ -434,8 +454,9 @@ public class VNS {
 		SubJobs firstJob=route.getSubJobsList().get(0);
 		if(j2.getDepartureTime()<=firstJob.getArrivalTime()) { // inserted as the first job
 			inserted=true;
-			route.getSubJobsList().add(0,j2);
-			route.getSubJobsList().add(0,j1);
+			insertingCouple(route,0,1,j1,j2,inp,test);
+			//route.getSubJobsList().add(0,j2);
+			//route.getSubJobsList().add(0,j1);
 		}
 
 		// cambiando la hora de j2

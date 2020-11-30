@@ -27,9 +27,10 @@ public class Route {
 	private double  loadUnloadRegistration=0; 
 	private double driverCost=0;// los paramedicos que salen del depot
 	private double homeCareStaffCost=0;// los paramedicos que salen del depot
-	private double waitingTimeToPenalize=0;
-	
-	
+	private double additionalWaitingTime=0;
+	double timeWindowViolation=0;
+	double detourViolation=0;
+
 	// Constructors
 	public Route(Route r) {
 		id=r.getIdRoute();
@@ -40,13 +41,13 @@ public class Route {
 		passengers = r.getPassengers(); // route total demand
 		homeCareStaff=r.getHomeCareStaff();
 		loadUnloadRegistration=r.getloadUnloadRegistrationTime();// load unloading time
-		waitingTimeToPenalize=r.getwaitingTimeToPenalize();
+		additionalWaitingTime=r.getAdditionalwaitingTime();
 		amountParamedics=r.getAmountParamedic();
 		driver=r.getAmountDriver();
 		idleTime=r.getIdleTime();
 		driverCost=r.driverCost;// los paramedicos que salen del depot
 		homeCareStaffCost=r.driverCost;// los paramedicos que salen del depot
-		
+
 		copyEdges(r.edges); // edges list
 		copyCouples(r.jobsList); // subjobs list (pick up and delivary)
 		copySubJobs(r.subJobsList); // subjobs list (pick up and delivary)
@@ -139,13 +140,15 @@ public class Route {
 	public void setIloadUnloadRegistrationTime(double i) {this.loadUnloadRegistration = i;}
 	public void setdriverCost(double i) {this.driverCost = i;}
 	public void sethomeCareStaffCost(double i) {this.homeCareStaffCost = i;}
-	public void setwaitingTimeToPenalize(double wt) {waitingTimeToPenalize=wt;}
-
+	public void setAdditionalWaitingTime(double wt) {additionalWaitingTime=wt;}
+	public void settimeWindowViolation(double wt) {timeWindowViolation=wt;}
+	public void setdetourViolation(double detour) {detourViolation= detour;}
 	// Getters
 	public HashMap<String, SubJobs> getJobsDirectory(){return positionJobs;}
 	public double getDurationRoute() {return durationRoute;}
 	public double getServiceTime() {return serviceTime;}
 	public double getWaitingTime() {return waitingTime;}
+	public double gettimeWindowViolation() {return timeWindowViolation;}
 	public double getTravelTime() {return travelTime;}
 	public int getIdRoute() {return id;}
 	public int getPassengers() {return passengers;}
@@ -161,10 +164,12 @@ public class Route {
 	public double getIdleTime() {return idleTime;}
 	public double getloadUnloadRegistrationTime() {return loadUnloadRegistration;}
 	public double getDriverTime() {return travelTimeDriver;}
-	public double getwaitingTimeToPenalize() {	return waitingTimeToPenalize;}
-	
+	public double getAdditionalwaitingTime() {	return additionalWaitingTime;}
+	public double getdetourViolation() {	return detourViolation;}
 	public double getdriverCost() {return driverCost;}
 	public double gethomeCareStaffCost() {return homeCareStaffCost;}
+
+
 	// Auxiliar methods
 
 	public void computeTravelTime(Inputs inp) {
@@ -192,8 +197,8 @@ public class Route {
 					travelTimeDuration+=tvToDepot;
 					travelTimeDuration+=tvFromoDepot;
 				}
-//				else{double time=inp.getCarCost().getCost(jNode.getId()-1, kNode.getId()-1);
-//				travelTimeDuration+=time;}
+				//				else{double time=inp.getCarCost().getCost(jNode.getId()-1, kNode.getId()-1);
+				//				travelTimeDuration+=time;}
 			}
 		}
 		travelTimeDriver=travelTimeDuration+travelTime;
@@ -211,13 +216,13 @@ public class Route {
 		// Consider the list of jobs positions
 		// reading part
 		subJobsList.clear();
-	
+
 		for(Parts part:this.getPartsRoute()) {
 			Parts partObject= new Parts(part);
 			for(SubJobs sj:partObject.getListSubJobs()) {
 				if(sj.getId()!=1) {
-				subJobsList.add(sj);
-				positionJobs.put(sj.getSubJobKey(),sj);
+					subJobsList.add(sj);
+					positionJobs.put(sj.getSubJobKey(),sj);
 				}
 			}	
 		}
@@ -230,9 +235,9 @@ public class Route {
 			this.computeTravelTime(inp);
 			//this.computePassenger();
 			this.computeDriverTravelTime(inp);
-			
+
 			this.computePenalizationParameters();
-			
+
 			// duration route
 			double duration= this.getServiceTime()+this.getTravelTime()+this.getWaitingTime()+this.getloadUnloadRegistrationTime();
 			this.setDurationRoute(subJobsList.get(subJobsList.size()-1).getDepartureTime()-subJobsList.get(0).getDepartureTime());
@@ -248,7 +253,7 @@ public class Route {
 		for(SubJobs s:this.getSubJobsList()) {
 			penalization+=	s.getAdditionalWaintingTime();
 		}
-		this.setwaitingTimeToPenalize(penalization);
+		this.setAdditionalWaitingTime(penalization);
 	}
 
 
@@ -284,10 +289,10 @@ public class Route {
 		this.setIloadUnloadRegistrationTime(loadRegistrationTime);
 	}
 
-	private void computeServiceTime(Inputs inp, HashMap<Integer, SubRoute> jobsInWalkingRoute) {
+	public void computeServiceTime(Inputs inp, HashMap<Integer, SubRoute> jobsInWalkingRoute) {
 		double service=0;
 		HashMap<Integer, Jobs> assigned=new HashMap<Integer, Jobs>();
-		
+
 		for(Jobs j:this.positionJobs.values() ) {
 			if(j.getId()==12 || j.getId()==17) {
 				System.out.println(j.toString());
@@ -299,10 +304,10 @@ public class Route {
 				}
 			}
 			else {
-			assigned.put(j.getId(), j);
+				assigned.put(j.getId(), j);
 			}
 		}
-		
+
 		for(Jobs j:assigned.values() ) {
 			if(j.getId()==27 || j.getId()==13) {
 				System.out.println(j.toString());
@@ -357,6 +362,130 @@ public class Route {
 		}
 		return toRmove;
 	}
+
+
+
+
+
+	public void checkingTimesRoute(Test test, Inputs inp) {
+
+		for(int i=1;i<this.getSubJobsList().size();i++) {
+			SubJobs a=this.getSubJobsList().get(i-1);
+			SubJobs b=this.getSubJobsList().get(i);
+			double tv=inp.getCarCost().getCost(a.getId()-1, b.getId()-1);
+
+			// los tiempos definitivos, los tiempos reales 
+			double arrivalTimeVehicle=a.getDepartureTime()+tv;
+			double startServiceTime=Math.max(arrivalTimeVehicle+a.getloadUnloadRegistrationTime()+a.getloadUnloadTime(),b.getStartTime());
+			double endServiceTime=startServiceTime+b.getReqTime();
+			double departureServiceTime=arrivalTimeVehicle+a.getloadUnloadTime();
+			b.setvehicleArrivalTime(arrivalTimeVehicle);
+			b.setStartServiceTime(startServiceTime);
+			b.setEndServiceTime(endServiceTime);
+			b.setVehicledepartureTime(departureServiceTime);
+			System.out.println(b.toString());
+		}
+		System.out.println(this.toString());
+	}
+
+
+
+
+
+	public void checkingTimeWindows(Test test, Inputs inp) {
+		double penalization=0;
+		double penalizationRoute=0;
+		for(SubJobs j:this.getSubJobsList()) {
+			if(j.isClient() || j.isMedicalCentre()) {
+				if(j.getTotalPeople()<0) {// drop-off
+					if(j.getstartServiceTime()>j.getEndTime()) {
+						penalization+=j.getEndTime()-j.getstartServiceTime();
+						penalizationRoute+=penalization;
+					}
+					j.setTimeWindowViolation(penalization);
+
+				}
+			}
+
+		}
+		this.settimeWindowViolation(penalizationRoute);
+		System.out.println(this.toString());
+	}
+
+	public void checkingWaitingTimes(Test test, Inputs inp) {
+		double penalization=0;
+		double penalizationRoute=0;
+		double additionalWaitingRoute=0;
+		for(SubJobs j:this.getSubJobsList()) { // se producen despues de terminar un servicio
+			if(j.getVehicleArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime()<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
+				penalization=j.getstartServiceTime()-(j.getVehicleArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime());
+			}
+
+			else { // llega antes el personal tiene que esperar al vehiculo
+				if(j.getVehicleArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime()>j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
+					if(j.getTotalPeople()>0) {
+						penalization=j.getstartServiceTime()-(j.getVehicleArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime());}
+					penalizationRoute+=penalization;
+					if(penalization>test.getCumulativeWaitingTime()) {
+						additionalWaitingRoute+=test.getCumulativeWaitingTime()-penalization;
+					}
+				}
+			}
+			j.setAdditionalWaitingTime(penalization);
+		}
+		this.setWaitingTime(penalizationRoute);
+		this.setAdditionalWaitingTime(additionalWaitingRoute);
+		System.out.println(this.toString());
+	}
+
+
+
+
+
+	public void checkingDetour(Test test, Inputs inp) {
+		double penalization=0;
+		double penalizationRotue=0;
+		// calculating detour
+		computingDetours(inp);
+		// calculating additional times per edge
+		for(Edge e:this.getEdges().values()) {
+			if(e.gettravelTimeInRoute()>e.getDetour()) {
+				penalization=e.gettravelTimeInRoute()-e.getDetour();
+				penalizationRotue+=penalization;
+			}
+			e.setadditionalTime(penalization);
+		}
+		this.setdetourViolation(penalizationRotue);
+		
+	}
+
+
+
+
+
+	private void computingDetours(Inputs inp) {
+	for(Edge e:this.getEdges().values()) {
+		double travelTime=0;
+		SubJobs origen=e.getOrigin();
+		SubJobs end=e.getEnd();
+		for(int i=1; i<this.getSubJobsList().size();i++) { // iterating over the rotue
+			SubJobs r=this.getSubJobsList().get(i-1);
+			SubJobs s=this.getSubJobsList().get(i);
+			if(r.getSubJobKey().equals(origen.getSubJobKey())) {
+				travelTime+=inp.getCarCost().getCost(r.getId()-1, s.getId()-1);
+			}
+			if(s.getSubJobKey().equals(end.getSubJobKey())) {
+				break;
+			}
+		}
+		e.setTravelTimeInRoute(travelTime);
+	}
+		// seleccionar la lista de ejes en la ruta 
+		// determinar cual es la distancia del eje
+		// set el tiempo en la información del eje
+		
+	}
+
 
 
 

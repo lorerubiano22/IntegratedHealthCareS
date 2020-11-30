@@ -77,13 +77,18 @@ public class DrivingRoutes {
 		assigmentJobsToQualifications(clasification);
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		insertingDepotConnections();
-		Solution initialSol= solutionInformation(); // this is the initial solution in which each personal has a vehicle assigned
+		Solution initialSol= solutionInformation(); 
+		
+		initialSol.timesInitialArrivalDepartureVehicle();
+		initialSol.checkingSolution(inp,test,jobsInWalkingRoute);
+		initialSol.computeCosts(inp,test);
 		savingInformationSchifts(initialSol);
-		Solution startSolution= new Solution(initialSol);
+		
 		double serviceTime=checkServiceTimes(initialSol);
 		boolean areAllJobsAssigned=checkAssigment(initialSol);
 		System.out.println(initialSol.toString());
-		return startSolution;
+		
+		return new Solution(initialSol);
 	}
 
 
@@ -160,18 +165,16 @@ public class DrivingRoutes {
 
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
 		Solution copySolution= new Solution(initialSol); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
-		computingObjectives(initialSol);
+		
 		Solution alternativeSolution= assigmentTurnsToVehicles(copySolution);
-
+		alternativeSolution.checkingSolution(inp,test,jobsInWalkingRoute);
 		Solution sol1= treatment2(initialSol);
-		updatingSolution(sol1);
-
+		sol1.timesInitialArrivalDepartureVehicle();
+		sol1.checkingSolution(inp,test,jobsInWalkingRoute);
+		sol1.computeCosts(inp,test);
 		boolean areAllJobsAssigned=checkAssigment(sol1);
 		Solution sol2= treatment1(initialSol);
 		areAllJobsAssigned=checkAssigment(sol2);
-		//updatingSolution(sol2);
-		//areAllJobsAssigned=checkAssigment(sol2);
-		///if(sol1.getDurationSolution()<sol2.getDurationSolution())return sol1; 
 		return sol1;
 	}
 
@@ -219,27 +222,7 @@ public class DrivingRoutes {
 		}	
 	}
 
-	private void computingObjectives(Solution initialSol2) {
-		double driverCost=0;
-		double personalCost=0;
-		double wtpenalization=0;
-		for(Route r:initialSol2.getRoutes()) {
-			computingObjectives(r);
-			driverCost+=r.getdriverCost();
-			personalCost+=r.gethomeCareStaffCost();
-			wtpenalization+=r.getwaitingTimeToPenalize();
-		}
-		initialSol2.setObjFunctionDriver(driverCost+wtpenalization);
-		initialSol2.setObjFunctionHomeCareStaff(personalCost+wtpenalization);
-		initialSol2.setwaitingTimeToPenalize(wtpenalization);
-	}
 
-	private void computingObjectives(Route r) {
-		r.setdriverCost(r.getTravelTime());
-		r.sethomeCareStaffCost(r.getTravelTime()+r.getWaitingTime());
-		
-		
-	}
 
 	private ArrayList<SubJobs> selectingHeadsSchifts(LinkedList<Route> linkedList) {
 		ArrayList <SubJobs> heads = new ArrayList <SubJobs>();
@@ -286,12 +269,16 @@ public class DrivingRoutes {
 			Solution presolhomeCareStaff=mergingTurnos(initialSol);
 			Solution newInitialSolution=mergeSolutions(presolpatientsRoute,presolhomeCareStaff);
 			newSolution= mergingRoutes(newInitialSolution); 
-			updatingSolution(newSolution);
+			newSolution.timesInitialArrivalDepartureVehicle();
+			newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
+			newSolution.computeCosts(inp,test);
 			merge= checkingSubJobs(initialSol,newSolution);
 		}
 		else{
 			newSolution= mergingRoutes(copySolution); // las rutas se mezclan por partes
-			updatingSolution(newSolution);
+			newSolution.timesInitialArrivalDepartureVehicle();
+			newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
+			newSolution.computeCosts(inp,test);
 			merge= checkingSubJobs(initialSol,newSolution);
 		}
 
@@ -310,10 +297,10 @@ public class DrivingRoutes {
 		}
 		merge= checkingSubJobs(initialSol,newSolution);
 		//Solution solFixedTime=insertTWNarrow(initialSol); // insertar la 
+		newSolution.timesInitialArrivalDepartureVehicle();
+		newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
+		newSolution.computeCosts(inp,test);
 
-
-
-		updatingSolution(newSolution);
 		return newSolution;
 	}
 
@@ -334,10 +321,9 @@ public class DrivingRoutes {
 		}
 		boolean merge= checkingSubJobs(initialSol,newSolution);
 		//Solution solFixedTime=insertTWNarrow(initialSol); // insertar la 
-
-
-
-		updatingSolution(newSolution);
+		newSolution.timesInitialArrivalDepartureVehicle();
+		newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
+		newSolution.computeCosts(inp,test);
 		return newSolution;
 	}
 
@@ -363,7 +349,9 @@ public class DrivingRoutes {
 		for(Route r: routeToEliminate) {
 			Sol.getRoutes().remove(r);	
 		}
-		updatingSolution(Sol);
+		Sol.timesInitialArrivalDepartureVehicle();
+		Sol.checkingSolution(inp,test,jobsInWalkingRoute);
+		Sol.computeCosts(inp,test);
 		return Sol;
 	}
 
@@ -417,7 +405,9 @@ public class DrivingRoutes {
 					sol.getRoutes().add(s);
 				}
 			}
-			updatingSolution(sol);
+			sol.timesInitialArrivalDepartureVehicle();
+			sol.checkingSolution(inp,test,jobsInWalkingRoute);
+			sol.computeCosts(inp,test);
 		}
 		return sol;
 	}
@@ -1125,8 +1115,9 @@ public class DrivingRoutes {
 	private Solution mergingRoutes(Solution copySolution) {
 		// revisar la capacidad del vehículo en tiempos de 
 		Solution Sol= interMergingParts(copySolution); // 1 merging parts (without complete parts)
-
-		updatingSolution(Sol);
+		Sol.timesInitialArrivalDepartureVehicle();
+		Sol.checkingSolution(inp,test,jobsInWalkingRoute);
+		Sol.computeCosts(inp,test);
 
 		settingNewPart(Sol);
 
@@ -1137,7 +1128,9 @@ public class DrivingRoutes {
 
 
 		Solution newSol= intraMergingParts(Sol); // 2 merging parts (splited the parts) // here the detours are considered
-		updatingSolution(newSol);
+		newSol.timesInitialArrivalDepartureVehicle();
+		newSol.checkingSolution(inp,test,jobsInWalkingRoute);
+		newSol.computeCosts(inp,test);
 		merge= checkingSubJobs(Sol,newSol);
 		//Solution reducingRoutes= slackingTimes(newSol);
 
@@ -1147,23 +1140,7 @@ public class DrivingRoutes {
 		return newSol;
 	}
 
-	private Solution slackingTimes(Solution Sol) {
-		Solution newSol= new Solution(Sol);
-		// se seleccional las rutas potenciales a eliminar
-		ArrayList<Route> potencialRoutesToRemove=selectingRouteWithdependentJobs(newSol); // es importante que sólo trabajos relacionados al home health care service
-		// los trabajos contenidos en la rutas a eliminar se tienen que reasignar
-		ArrayList<SubJobs> subJobsToRelocate=extractingSubJobs(potencialRoutesToRemove);
-		// seleccionar los trabajos y reubicar y uno a uno intentar insertarlos
-		for(SubJobs s:subJobsToRelocate) {
-			// llamar la ruta que tiene
-			Route routeToAjust=callingRoutePair(newSol,s);
-			if(routeToAjust!=null) {
-				routeToAjust=insertingSubJobs(routeToAjust,s);
-			}
-		}
-		// update the routes
-		return newSol;
-	}
+	
 
 	private Route callingRoutePair(Solution newSol, SubJobs s) {
 		Route r=null;
@@ -1189,11 +1166,6 @@ public class DrivingRoutes {
 		return r;
 	}
 
-	private Route insertingSubJobs(Route currentRoutes, SubJobs s) {
-		Route r= new Route();
-
-		return currentRoutes;
-	}
 
 	private ArrayList<SubJobs> extractingSubJobs(ArrayList<Route> potencialRoutesToRemove) {
 		ArrayList<SubJobs> subJobsToRelocate=new ArrayList<SubJobs>();
@@ -3170,16 +3142,6 @@ public class DrivingRoutes {
 		}
 	}
 
-	private void updatingSolution(Solution copySolution) {
-		//		copySolution.getRoutes().clear();
-		//		for(Route r:routeVehicleList) {
-		//			copySolution.getRoutes().add(r);
-		//		}
-		computeSolutionCost(copySolution);
-
-		//transferPartsInformation(routeVehicleList);
-
-	}
 
 	private void transferPartsInformation(ArrayList<Route> routeVehicleList2) {
 		for(Route r:routeVehicleList2 ) {
@@ -3722,7 +3684,7 @@ public class DrivingRoutes {
 		}
 		System.out.println(initialSol);
 		// Computar costos asociados a la solucion
-		computeSolutionCost(initialSol);
+		//computeSolutionCost(initialSol);
 		System.out.println(initialSol);
 		// la lista de trabajos asociados a la ruta
 
@@ -3740,48 +3702,6 @@ public class DrivingRoutes {
 		initialSol.setHomeCareStaff(homeCoreStaff);
 		initialSol.setParamedic(paramedic);
 		return initialSol;
-	}
-
-	private void computeSolutionCost(Solution initialSol) {
-		// sólo se considera la driving route
-		// update each route
-		// 1. Compute waiting time
-		//int passengers=0;
-		double durationSolution = 0.0; // Travel distance = waiting time + driving time
-		double waiting=0;
-		double idleTime=0;
-		double serviceTime=0;
-		double drivingTime=0;
-		double paramedic=0;// los paramedicos que salen del depot
-		double homeCareStaff=0;// los paramedicos que salen del depot
-		double drivertime=0;// los paramedicos que salen del depot
-		int i=-1;
-
-		for(Route r:initialSol.getRoutes()) {
-			i++;
-			r.setIdRoute(i);
-			r.updateRouteFromParts(inp,test,jobsInWalkingRoute);
-			System.out.println(r.toString());
-			idleTime+=r.getIdleTime();
-			waiting+=r.getWaitingTime(); // waiting time
-			serviceTime+=r.getServiceTime(); // 2. Service time 
-			drivingTime+=r.getTravelTime(); // 3. Travel time
-			//passengers+=r.getPassengers();// 4. Passengers
-			durationSolution+=r.getDurationRoute();
-			drivertime+=r.getDriverTime();
-			paramedic+=r.getAmountParamedic();
-			homeCareStaff+=r.getHomeCareStaff();
-		}
-		// 3. Setting values to a solution
-		initialSol.setIdleTime(idleTime);
-		initialSol.setWaitingTime(waiting);
-		initialSol.setServiceTime(serviceTime);
-		initialSol.setdrivingTime(drivingTime);
-		//initialSol.setPassengers(passengers);
-		initialSol.setDurationSolution(durationSolution);
-		initialSol.setParamedic(paramedic);
-		initialSol.setHomeCareStaff(homeCareStaff);
-		System.out.println(initialSol.toString());
 	}
 
 
@@ -5712,6 +5632,7 @@ public class DrivingRoutes {
 	public Solution getInitialSol() {return initialSol;}
 	public Solution getSol() {return solution;}
 	public HashMap<String, Couple> getCoupleList() {return coupleList;}
+	public  HashMap<Integer, SubRoute> getobsInWalkingRoute(){return jobsInWalkingRoute;}
 	
 	
 
