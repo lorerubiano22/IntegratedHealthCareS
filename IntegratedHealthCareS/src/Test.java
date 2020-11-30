@@ -29,7 +29,7 @@ private RandomStream rng;
 		this.routeLenght=routeLenght;
 		this.workingTime=workingTime;
 		this.walking2jobs=walking2jobs;
-		this.detour=1+detour;
+		this.detour=detour;
 		this.cumulativeWalkingTime=cumulativeWalkingTime;
 		this.cumulativeWaitingTime=cumulativeWaitingTime;
 		this.loadTimePatient= p; 

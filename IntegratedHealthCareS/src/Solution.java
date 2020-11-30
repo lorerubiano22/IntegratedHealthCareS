@@ -136,11 +136,9 @@ public class Solution {
 
 
 	public void checkingSolution(Inputs inp, Test test, HashMap<Integer, SubRoute> jobsInWalkingRoute) {
-		double timeWindowViolation=0;
-		double waitingTimeViolation=0;
-		double detourViolation=0;
-
+	
 		for(Route r: this.getRoutes()) {
+			r.setDurationRoute(r.getSubJobsList().getLast().getDepartureTime()-r.getSubJobsList().getFirst().getArrivalTime());
 			r.computeServiceTime(inp,jobsInWalkingRoute);
 			r.checkingTimesRoute(test,inp);
 			// revisar las ventanas de tiempo si se pueden mover
@@ -149,12 +147,12 @@ public class Solution {
 			r.checkingWaitingTimes(test,inp);
 			// revisar los detours
 			r.checkingDetour(test,inp);	
-			timeWindowViolation+=r.gettimeWindowViolation();
-			waitingTimeViolation=r.getAdditionalwaitingTime();
-			detourViolation=r.getdetourViolation();
+			// metrics
+			
+			
 		}
 
-
+		this.computeCosts( inp,  test);
 
 	}
 
@@ -196,7 +194,9 @@ public class Solution {
 			additionalWaitingTime+=r.getAdditionalwaitingTime();
 			timeWindowViolation+=r.gettimeWindowViolation();
 			detourViolation+=r.getdetourViolation();
+			durationSolution+=r.getDurationRoute();
 		}
+		this.setDurationSolution(durationSolution);
 		this.setWaitingTime(waitingTime);
 		this.setServiceTime(serviceTime);
 		this.setdrivingTime(drivingTime);

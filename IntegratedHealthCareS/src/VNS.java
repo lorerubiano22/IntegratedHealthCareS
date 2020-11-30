@@ -28,9 +28,12 @@ public class VNS {
 		for(int i=0; i<100 ;i++){
 			sol= shaking(new Solution (solCopy));
 			updateSolution(sol);
+			sol.checkingSolution(inp,test,drivingRoutes.getobsInWalkingRoute());
+			
 			System.out.println("shaking");
 			System.out.println(sol.toString());
 			sol= swaping(sol);
+			updateSolution(sol);
 			sol.checkingSolution(inp,test,drivingRoutes.getobsInWalkingRoute());
 			updateSolution(sol);
 			System.out.println("swaping");

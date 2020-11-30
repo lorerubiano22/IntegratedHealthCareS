@@ -81,7 +81,7 @@ public class DrivingRoutes {
 		
 		initialSol.timesInitialArrivalDepartureVehicle();
 		initialSol.checkingSolution(inp,test,jobsInWalkingRoute);
-		initialSol.computeCosts(inp,test);
+		//initialSol.computeCosts(inp,test);
 		savingInformationSchifts(initialSol);
 		
 		double serviceTime=checkServiceTimes(initialSol);
@@ -271,14 +271,14 @@ public class DrivingRoutes {
 			newSolution= mergingRoutes(newInitialSolution); 
 			newSolution.timesInitialArrivalDepartureVehicle();
 			newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
-			newSolution.computeCosts(inp,test);
+			//newSolution.computeCosts(inp,test);
 			merge= checkingSubJobs(initialSol,newSolution);
 		}
 		else{
 			newSolution= mergingRoutes(copySolution); // las rutas se mezclan por partes
 			newSolution.timesInitialArrivalDepartureVehicle();
 			newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
-			newSolution.computeCosts(inp,test);
+			//newSolution.computeCosts(inp,test);
 			merge= checkingSubJobs(initialSol,newSolution);
 		}
 
@@ -299,7 +299,7 @@ public class DrivingRoutes {
 		//Solution solFixedTime=insertTWNarrow(initialSol); // insertar la 
 		newSolution.timesInitialArrivalDepartureVehicle();
 		newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
-		newSolution.computeCosts(inp,test);
+	
 
 		return newSolution;
 	}
@@ -323,7 +323,7 @@ public class DrivingRoutes {
 		//Solution solFixedTime=insertTWNarrow(initialSol); // insertar la 
 		newSolution.timesInitialArrivalDepartureVehicle();
 		newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
-		newSolution.computeCosts(inp,test);
+	//	newSolution.computeCosts(inp,test);
 		return newSolution;
 	}
 
@@ -3611,62 +3611,7 @@ public class DrivingRoutes {
 		return merging;
 	}
 
-	private ArrayList<SubJobs> onlyJobs(ArrayList<SubJobs> part) {
-		ArrayList<SubJobs> newPart=new ArrayList<SubJobs> ();
-		if(part.get(0).getId()==1) {// depot
-			for(int i=1;i<part.size();i++) {
-				newPart.add(part.get(i));
-			}
-		}
-		else {
-			// check si el ultimo nodo es el depot
-			int indexLast=part.size();
-			if(part.get(indexLast-1).getId()==1) {
-				for(int i=0;i<part.size()-1;i++) {
-					newPart.add(part.get(i));
-				}
-
-			}
-			else {
-				for(int i=0;i<part.size();i++) {
-					newPart.add(part.get(i));
-				}
-			}
-		}
-		return newPart;
-	}
-
-	private ArrayList<Route> selectinglowQualification(ArrayList<Route> routes) {
-		ArrayList<Route> homeCareStaffRoutes = new ArrayList<Route>();
-		for(Route r:routes ) {
-			if(r.getSubJobsList().get(0).getReqQualification()==1) {
-				homeCareStaffRoutes.add(r);
-			}
-		}
-		return homeCareStaffRoutes;
-	}
-
-	private ArrayList<Route> selectingMediumQualification(ArrayList<Route> routes) {
-		ArrayList<Route> homeCareStaffRoutes = new ArrayList<Route>();
-		for(Route r:routes ) {
-			if(r.getSubJobsList().get(1).getReqQualification()==2) {
-				homeCareStaffRoutes.add(r);
-			}
-		}
-		return homeCareStaffRoutes;
-	}
-
-
-
-	private ArrayList<Route> selectingHomeCareStaffRoutes() {
-		ArrayList<Route> homeCareStaffRoutes = new ArrayList<Route>();
-		for(Route r:routeList ) {
-			if(r.getSubJobsList().get(1).isClient()) {
-				homeCareStaffRoutes.add(r);
-			}
-		}
-		return homeCareStaffRoutes;
-	}
+	
 
 	private Solution solutionInformation() {
 		Solution initialSol= new Solution();
@@ -4465,7 +4410,16 @@ public class DrivingRoutes {
 				r.getEdges().put(e.getEdgeKey(), e);
 
 			}
+			
+			SubJobs depotStart=r.getPartsRoute().get(0).getListSubJobs().get(0);
+			Edge e = new Edge(depotStart,r.getSubJobsList().get(0),inp,test);
+			r.getEdges().put(e.getEdgeKey(), e);
+			SubJobs depotEnd=r.getPartsRoute().get(r.getPartsRoute().size()-1).getListSubJobs().get(0);
+			e = new Edge(r.getSubJobsList().get(r.getSubJobsList().size()-1),depotEnd,inp,test);
+			r.getEdges().put(e.getEdgeKey(), e);
 		}
+		
+		
 	}
 
 	private void timeStartEndRoutes() {

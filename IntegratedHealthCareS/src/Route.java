@@ -446,7 +446,7 @@ public class Route {
 		double penalization=0;
 		double penalizationRotue=0;
 		// calculating detour
-		computingDetours(inp);
+		computingDetours(inp,test);
 		// calculating additional times per edge
 		for(Edge e:this.getEdges().values()) {
 			if(e.gettravelTimeInRoute()>e.getDetour()) {
@@ -463,15 +463,30 @@ public class Route {
 
 
 
-	private void computingDetours(Inputs inp) {
-	for(Edge e:this.getEdges().values()) {
+	private void computingDetours(Inputs inp, Test test) {
+	String depotS="P1";
+	String depotConnection=depotS+this.getSubJobsList().getFirst().getSubJobKey();
+	if(!this.getEdges().containsKey(depotConnection)) {
+		SubJobs depotStart=this.getPartsRoute().get(0).getListSubJobs().get(0);
+		Edge e = new Edge(depotStart,this.getSubJobsList().get(0),inp,test);
+		this.getEdges().put(e.getEdgeKey(), e);
+		SubJobs depotEnd=this.getPartsRoute().get(this.getPartsRoute().size()-1).getListSubJobs().get(0);
+		e = new Edge(this.getSubJobsList().get(this.getSubJobsList().size()-1),depotEnd,inp,test);
+		this.getEdges().put(e.getEdgeKey(), e);
+	}
+		for(Edge e:this.getEdges().values()) {
 		double travelTime=0;
+		boolean startCount=false;
 		SubJobs origen=e.getOrigin();
 		SubJobs end=e.getEnd();
 		for(int i=1; i<this.getSubJobsList().size();i++) { // iterating over the rotue
 			SubJobs r=this.getSubJobsList().get(i-1);
 			SubJobs s=this.getSubJobsList().get(i);
+			
 			if(r.getSubJobKey().equals(origen.getSubJobKey())) {
+				startCount=true;
+			}
+			if(startCount) {
 				travelTime+=inp.getCarCost().getCost(r.getId()-1, s.getId()-1);
 			}
 			if(s.getSubJobKey().equals(end.getSubJobKey())) {
@@ -480,9 +495,8 @@ public class Route {
 		}
 		e.setTravelTimeInRoute(travelTime);
 	}
-		// seleccionar la lista de ejes en la ruta 
-		// determinar cual es la distancia del eje
-		// set el tiempo en la información del eje
+		// agregar los ejes del depot
+	
 		
 	}
 
