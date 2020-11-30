@@ -39,7 +39,10 @@ public class VNS {
 			System.out.println("swaping");
 			System.out.println(sol.toString());
 			solCopy=new Solution(sol);
-			//sol= chain(sol); // mezclar por partes
+
+// operators
+			
+			
 		}
 		return sol;
 	}
