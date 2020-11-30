@@ -164,18 +164,39 @@ public class DrivingRoutes {
 	}
 
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
-		Solution copySolution= new Solution(initialSol); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
+		Solution startingSol=new Solution(initialSol);
+		startingSol.timesInitialArrivalDepartureVehicle();
+		Solution newSol=null;
+	
+		Solution copySolution= new Solution(startingSol); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
 		
-		Solution alternativeSolution= assigmentTurnsToVehicles(copySolution);
-		alternativeSolution.checkingSolution(inp,test,jobsInWalkingRoute);
-		Solution sol1= treatment2(initialSol);
-		sol1.timesInitialArrivalDepartureVehicle();
+		Solution sol1= treatment2(copySolution);
 		sol1.checkingSolution(inp,test,jobsInWalkingRoute);
-		sol1.computeCosts(inp,test);
 		boolean areAllJobsAssigned=checkAssigment(sol1);
-		Solution sol2= treatment1(initialSol);
-		areAllJobsAssigned=checkAssigment(sol2);
-		return sol1;
+		
+		if(sol1.gethomeCareStaffCost()<startingSol.gethomeCareStaffCost()) {
+			newSol=new Solution (sol1);
+			startingSol=new Solution (sol1);
+		}
+		else {
+			newSol=new Solution (startingSol);
+		}
+		Solution sol2= treatment1(newSol);
+		sol1.checkingSolution(inp,test,jobsInWalkingRoute);
+		areAllJobsAssigned=checkAssigment(newSol);
+		if(sol2.gethomeCareStaffCost()<startingSol.gethomeCareStaffCost()) {
+			newSol=new Solution (sol2);
+			startingSol=new Solution (sol2);
+		}
+		
+		Solution alternativeSolution= assigmentTurnsToVehicles(newSol);
+		alternativeSolution.checkingSolution(inp,test,jobsInWalkingRoute);
+		
+		if(alternativeSolution.gethomeCareStaffCost()<startingSol.gethomeCareStaffCost()) {
+			newSol=new Solution (alternativeSolution);
+			startingSol=new Solution (alternativeSolution);
+		}
+		return newSol;
 	}
 
 

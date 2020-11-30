@@ -22,6 +22,7 @@ public class Solution {
 	private double additionalWaitingTime=0; // 
 	double timeWindowViolation=0;
 	double detourViolation=0;
+	double penalization=0;
 
 	public Solution(Solution initialSol) {
 		id=initialSol.id; // solution ID
@@ -39,6 +40,9 @@ public class Solution {
 		paramedic=initialSol.paramedic;// los paramedicos que salen del depot
 		homeCareStaff=initialSol.homeCareStaff;// los paramedicos que salen del depot
 		additionalWaitingTime=initialSol.additionalWaitingTime;
+		timeWindowViolation=initialSol.timeWindowViolation;
+		detourViolation=initialSol.detourViolation;
+		penalization=initialSol.penalization;
 	}
 
 
@@ -205,9 +209,12 @@ public class Solution {
 		this.setwAdditionalWaitingTime(additionalWaitingTime);
 		this.setdetourViolation(detourViolation);
 
+		// penalization
 		// cost <- driver : driving cost  // home care staff and paramedic <- driving cost + waiting time
 		driverCost=this.getdrivingTime();// los paramedicos que salen del depot
 		this.setdriverCost(driverCost);
+		
+		
 		// computing costo for medical staff paramedic and home care staff
 		double travelTimeMedicalStaff=0;
 		for(Route r: this.getRoutes()) {
