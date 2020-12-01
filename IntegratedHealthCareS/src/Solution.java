@@ -20,9 +20,10 @@ public class Solution {
 	private double driverCost=0;// los paramedicos que salen del depot
 	private double homeCareStaffCost=0;// los paramedicos que salen del depot
 	private double additionalWaitingTime=0; // 
-	double timeWindowViolation=0;
-	double detourViolation=0;
-	double penalization=0;
+	private double timeWindowViolation=0;
+	private double detourViolation=0;
+	private double penalization=0;
+	private double objectiveFunction=0;
 
 	public Solution(Solution initialSol) {
 		id=initialSol.id; // solution ID
@@ -43,6 +44,7 @@ public class Solution {
 		timeWindowViolation=initialSol.timeWindowViolation;
 		detourViolation=initialSol.detourViolation;
 		penalization=initialSol.penalization;
+		objectiveFunction=initialSol.objectiveFunction;
 	}
 
 
@@ -57,7 +59,7 @@ public class Solution {
 	public void setId(long id) {this.id = id;}
 	public void setDurationSolution(double costs) {this.durationSolution = costs;}
 	public void setRoutes(LinkedList<Route> routes) {this.routes = routes;}
-
+	public void setObjectiveFunction(double of) {this.objectiveFunction = of;}
 	public void setPassengers(int p) {this.passengers = p;}
 
 	public void setParamedic(double w) {paramedic=w;}
@@ -86,6 +88,7 @@ public class Solution {
 	public double geAdditionalWaitingTime() {return additionalWaitingTime;}
 	public double getimeWindowViolation() {return timeWindowViolation;}
 	public double getdetourViolation() {	return detourViolation;}
+	public double getobjectiveFunction() {	return objectiveFunction;}
 
 	// auxiliar methods
 
@@ -105,14 +108,10 @@ public class Solution {
 	s = s.concat("\nFO: Duration: " + durationSolution);
 	s = s.concat("\nFO: Travel time: " + drivingTime);
 	s = s.concat("\nWalking time: " + walkingTime);
-	s = s.concat("\n Total passengers: " + passengers);
-	s = s.concat("\n Total paramedic: " + paramedic);
-	s = s.concat("\n Total home care staff: " + homeCareStaff);
-	s = s.concat("\n Idle time: " + idleTimeSol);
 	s = s.concat("\n Waiting time: " + waitingTime);
+	s= s.concat("\n medical staff cost: "+ homeCareStaffCost);
+	s= s.concat("\n driver cost: "+ driverCost);
 	s= s.concat("\n waiting Time to penalize: "+ additionalWaitingTime);
-	s = s.concat("\n Driver time: " + driverTimeSol);
-	s= s.concat("\n Service time: "+  serviceTime);
 	s = s.concat("\n List of jobs: ");
 	for(Route r:routes) {
 		if(!r.getSubJobsList().isEmpty()) {
@@ -121,10 +120,9 @@ public class Solution {
 			s= s.concat(" waitingTime: "+ r.getWaitingTime());
 			s= s.concat(" serviceTime: "+ r.getServiceTime());
 			s= s.concat(" waiting Time to penalize: "+ r.getAdditionalwaitingTime());
-			s= s.concat(" IdleTime: "+ r.getIdleTime());
 			s= s.concat(" durationRoute: "+ r.getDurationRoute());
-			s= s.concat("\n homeCareSaff amount: "+ r.getHomeCareStaff());
-			s= s.concat(" paramedic amount: "+ r.getAmountParamedic());
+			s= s.concat("\n medical staff cost: "+ r.gethomeCareStaffCost());
+			s= s.concat("\n driver cost: "+ r.getdriverCost());
 			s= s.concat("\n");
 			for(Parts p:r.getPartsRoute()) {
 				for(SubJobs j:p.getListSubJobs()) {	
@@ -140,8 +138,10 @@ public class Solution {
 
 
 	public void checkingSolution(Inputs inp, Test test, HashMap<Integer, SubRoute> jobsInWalkingRoute) {
-	
+	int id=-1;
 		for(Route r: this.getRoutes()) {
+			id++;
+			r.setIdRoute(id);
 			r.setDurationRoute(r.getSubJobsList().getLast().getDepartureTime()-r.getSubJobsList().getFirst().getArrivalTime());
 			r.computeServiceTime(inp,jobsInWalkingRoute);
 			r.checkingTimesRoute(test,inp);
@@ -153,13 +153,43 @@ public class Solution {
 			r.checkingDetour(test,inp);	
 			// metrics
 			
-			
+			computeStartTimeRoute(r.getSubJobsList().get(0),r,inp,test);
+
+			computeEndTimeRoute(r.getSubJobsList().get(r.getSubJobsList().size()-1),r,inp,test);
+
 		}
 
 		this.computeCosts( inp,  test);
 
 	}
 
+	private void computeEndTimeRoute(SubJobs lastJob, Route r, Inputs inp, Test test) {
+		// 1. Compute travel time
+		SubJobs depot=r.getPartsRoute().get(r.getPartsRoute().size()-1).getListSubJobs().get(0);
+		double tv=inp.getCarCost().getCost(lastJob.getId()-1, depot.getId()-1);
+		double arrivalTime=	lastJob.getDepartureTime()+tv;
+		depot.setarrivalTime(arrivalTime);
+		depot.setdepartureTime(arrivalTime);
+		depot.setdepartureTime(arrivalTime);
+		depot.setStartServiceTime(arrivalTime);
+		depot.setEndServiceTime(arrivalTime);
+		depot.setserviceTime(0);
+		System.out.println(r.toString());
+	}
+		private void computeStartTimeRoute(SubJobs firstJob, Route r, Inputs inp, Test test) {
+		// 1. Compute travel time
+		SubJobs depot=r.getPartsRoute().get(0).getListSubJobs().get(0);
+		double tv=inp.getCarCost().getCost(depot.getId()-1,firstJob.getId()-1);
+		double arrivalTime=	firstJob.getArrivalTime()-tv-test.getloadTimeHomeCareStaff();
+		depot.setarrivalTime(arrivalTime);
+		depot.setdepartureTime(arrivalTime);
+		depot.setStartServiceTime(arrivalTime);
+		depot.setEndServiceTime(arrivalTime);
+		depot.setserviceTime(0);
+		System.out.println(r.toString());
+	}
+		
+		
 
 	public void timesInitialArrivalDepartureVehicle() {
 		for(Route r:this.getRoutes()) {
@@ -208,8 +238,17 @@ public class Solution {
 		this.setParamedic(homeCareStaff);
 		this.setwAdditionalWaitingTime(additionalWaitingTime);
 		this.setdetourViolation(detourViolation);
+		this.settimeWindowViolation(timeWindowViolation);
 
 		// penalization
+		double penalization=0;
+		if(test.gethomeCareStaffObjective()==1) {
+			penalization=additionalWaitingTime+detourViolation+timeWindowViolation+1000*this.getRoutes().size();
+		}
+		else {
+			penalization=detourViolation+timeWindowViolation+1000*this.getRoutes().size();
+		}
+		
 		// cost <- driver : driving cost  // home care staff and paramedic <- driving cost + waiting time
 		driverCost=this.getdrivingTime();// los paramedicos que salen del depot
 		this.setdriverCost(driverCost);
@@ -224,6 +263,14 @@ public class Solution {
 		}
 		homeCareStaffCost=travelTimeMedicalStaff+this.waitingTime;// los paramedicos que salen del depot
 	this.sethomeCareStaffCost(homeCareStaffCost);
+	
+	if(test.gethomeCareStaffObjective()==1) {
+		objectiveFunction=this.homeCareStaffCost+penalization;
+	}
+	else {
+		objectiveFunction=this.driverCost+penalization;
+	}
+	
 	}
 
 

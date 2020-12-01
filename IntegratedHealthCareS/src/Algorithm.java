@@ -15,6 +15,8 @@ public class Algorithm {
 	private WalkingRoutes subroutes;
 	private DrivingRoutes drivingRoute;
 	private Solution initialSolution=null;
+	private Solution solution=null;
+	private Solution newSolution=null;
 	private Solution bestSolution=null;
 	private  ArrayList<Couple> subJobsList= new ArrayList<Couple>();
 
@@ -24,24 +26,55 @@ public class Algorithm {
 	public Algorithm(Test t, Inputs i, Random r) {
 		test = t;
 		input = i;
+		for(int iter=0;iter<200;iter++) {
 		subroutes = new WalkingRoutes(input, r, t, i.getNodes()); // stage 1: Creation of walking routes
 		//updateHomeCareStaffJobs();
 		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,subroutes); // stage 2: Creation of driving routes
 		drivingRoute.generateAfeasibleSolution();
 		//iterations++;
-		setInitialSolution(drivingRoute.getInitialSol());
 		setBestSolution(drivingRoute.getSol());
+		setInitialSolution(drivingRoute.getInitialSol());
+		
+	}
 		//initialSolution.computeMetricsSolution(input, test);
 		//Interaction stages= new Interaction(routes,subJobsList, input, r, t);// Iteration between stage 1 und stage 2: from the current walking routes split and define new ones
 		//routes= stages.getBestRoutes();
 		//subroutes= stages.getBestWalkingRoutes();
 	}
 
-	private void setBestSolution(Solution sol) {bestSolution=sol;
-	addingWaitingTime(sol);
-	sol.setId(iterations);
-	sol.setWalkingTime(subroutes.getdurationWalkingRoute());
+	private void setBestSolution(Solution sol) {
+	
+   if(solution==null) {
+	solution=new Solution (sol);
+	bestSolution=new Solution (sol);
+	addingWaitingTime(solution);
+	solution.setId(iterations);
+	solution.setWalkingTime(subroutes.getdurationWalkingRoute());
+	setInitialSolution(drivingRoute.getInitialSol());
+	
+	addingWaitingTime(bestSolution);
+	bestSolution.setId(iterations);
+	bestSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
+	setInitialSolution(drivingRoute.getInitialSol());
+   }
+   else {
+	   newSolution=new Solution (sol);
+	   addingWaitingTime(sol);
+	   newSolution.setId(iterations);
+	   newSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
+		if(newSolution.getobjectiveFunction()<solution.getobjectiveFunction()) {
+			bestSolution=new Solution (newSolution);
+			addingWaitingTime(bestSolution);
+			bestSolution.setId(iterations);
+			bestSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
+			solution=new Solution (newSolution);
+			addingWaitingTime(solution);
+			solution.setId(iterations);
+			solution.setWalkingTime(subroutes.getdurationWalkingRoute());
+			setInitialSolution(drivingRoute.getInitialSol());  
+		}
+   }
 	}
 
 	public void setInitialSolution(Solution initialSolution) {

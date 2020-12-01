@@ -216,7 +216,17 @@ public class Route {
 		// Consider the list of jobs positions
 		// reading part
 		subJobsList.clear();
-
+		
+		LinkedList<Parts> partInRoute= new LinkedList<Parts>();
+		for(Parts part:this.getPartsRoute()) {
+			if(!part.getListSubJobs().isEmpty()) {
+				partInRoute.add(part);
+			}
+		}
+		this.getPartsRoute().clear();
+		for(Parts p:partInRoute) {
+			this.getPartsRoute().add(p);
+		}
 		for(Parts part:this.getPartsRoute()) {
 			Parts partObject= new Parts(part);
 			for(SubJobs sj:partObject.getListSubJobs()) {
@@ -226,6 +236,7 @@ public class Route {
 				}
 			}	
 		}
+		
 		if(this.getPartsRoute().size()>2 && !this.getSubJobsList().isEmpty()) {
 			// service time
 			this.computeServiceTime(inp,jobsInWalkingRoute);

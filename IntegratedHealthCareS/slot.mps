@@ -69,8 +69,7 @@ COLUMNS
     WR_(10)   slot_36   1
     WR_(10)   *OBJ*     1.00003e+006
     WR_(11)   slot_7    1
-    WR_(11)   slot_28   1
-    WR_(11)   *OBJ*     76
+    WR_(11)   *OBJ*     1.00005e+006
     WR_(12)   slot_8    1
     WR_(12)   slot_27   1
     WR_(12)   slot_36   1
@@ -91,8 +90,7 @@ COLUMNS
     WR_(17)   slot_16   1
     WR_(17)   *OBJ*     1.00009e+006
     WR_(18)   slot_17   1
-    WR_(18)   slot_26   1
-    WR_(18)   *OBJ*     96
+    WR_(18)   *OBJ*     1.00003e+006
     WR_(19)   slot_18   1
     WR_(19)   *OBJ*     1.00006e+006
     WR_(20)   slot_19   1

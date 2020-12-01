@@ -25,7 +25,7 @@ public class VNS {
 		Solution sol=null;
 		Solution solCopy=new Solution(copySolution);
 		
-		for(int i=0; i<100 ;i++){
+		for(int i=0; i<10 ;i++){
 			sol= shaking(new Solution (solCopy));
 			updateSolution(sol);
 			sol.checkingSolution(inp,test,drivingRoutes.getobsInWalkingRoute());
