@@ -340,8 +340,8 @@ public class Route {
 	s = s.concat("\njobs: ");
 	for(Parts p:this.getPartsRoute()) {
 		for(SubJobs j:p.getListSubJobs()) {
-			s = s.concat("\nID " + j.getSubJobKey() + " arrival time "+ j.getArrivalTime()+ " departure time "+ j.getDepartureTime()+ " start service time" + j.getstartServiceTime()+ " req time " + j.getReqTime()+ " waiting time " + j.getWaitingTime());	
-		}
+			s = s.concat(" ( " + j.getSubJobKey()+" A  "+j.getArrivalTime()+", "+j.getVehicleArrivalTime()+"  B  "+j.getstartServiceTime()+", "+j.getPossibleStartServiceTime()+"   D  "+j.getDepartureTime()+", "+j.getVehicleDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
+				}
 		s = s.concat("\n\n");
 	}
 	return s;
@@ -409,7 +409,7 @@ public class Route {
 		for(SubJobs j:this.getSubJobsList()) {
 			if(j.isClient() || j.isMedicalCentre()) {
 				if(j.getTotalPeople()<0) {// drop-off
-					if(j.getstartServiceTime()>j.getEndTime()) {
+					if(j.getPossibleStartServiceTime()>j.getEndTime()) {
 						penalization+=j.getEndTime()-j.getstartServiceTime();
 						penalizationRoute+=penalization;
 					}
@@ -428,7 +428,7 @@ public class Route {
 		double penalizationRoute=0;
 		double additionalWaitingRoute=0;
 		for(SubJobs j:this.getSubJobsList()) { // se producen despues de terminar un servicio
-			if(j.getVehicleArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime()<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
+			if(j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime()<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
 				penalization=j.getstartServiceTime()-(j.getVehicleArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime());
 			}
 
@@ -438,7 +438,7 @@ public class Route {
 						penalization=j.getstartServiceTime()-(j.getVehicleArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime());}
 					penalizationRoute+=penalization;
 					if(penalization>test.getCumulativeWaitingTime()) {
-						additionalWaitingRoute+=test.getCumulativeWaitingTime()-penalization;
+						additionalWaitingRoute+=Math.abs(test.getCumulativeWaitingTime()-penalization);
 					}
 				}
 			}

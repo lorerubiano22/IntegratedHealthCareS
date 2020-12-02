@@ -10,16 +10,20 @@ public class SubJobs extends Jobs {
 	Edge postEdge;
 	double additionalWaintingTime=0;
 	double timeWindowViolation=0;
-	private ArrayList<Jobs> jobList= new ArrayList<Jobs>();
+	//private ArrayList<Jobs> jobList= new ArrayList<Jobs>();
 	private double[] frequencyRoute;
+	private double possibleStartServiceTime;
+	private double possibleEndServiceTime;
 
 
 	public SubJobs(Jobs present,Jobs future, SubRoute wr) {
 		super(present.getId(), present.getStartTime(), present.getEndTime(),present.getReqQualification(),present.getReqTime()); 
 		present.setPair(future);
-		for(Jobs j:wr.getJobSequence()) {
-			jobList.add(j);
-		}	
+		present.setWalkingRoute(wr.getJobSequence());
+		future.setWalkingRoute(wr.getJobSequence());
+//		for(Jobs j:wr.getJobSequence()) {
+//			jobList.add(j);
+//		}	
 	}
 
 	public SubJobs(Jobs present,Jobs future) {
@@ -38,11 +42,12 @@ public class SubJobs extends Jobs {
 		this.setMedicalCentre(j.isMedicalCentre());
 		this.setIdUser(j.getIdUser());
 		this.setTotalPeople(j.getTotalPeople());
+		this.setloadUnloadTime(j.getloadUnloadTime());
 		this.setloadUnloadRegistrationTime(j.getloadUnloadRegistrationTime());
 	}
 
 	// Getters
-	public ArrayList<Jobs> getJobList() {return jobList;}
+	//public ArrayList<Jobs> getJobList() {return jobList;}
 	public Edge getPreEdge() {return preEdge;}
 	public Edge getPostEdge() {return postEdge;}
 	public double getAdditionalWaintingTime() {return additionalWaintingTime;}
@@ -50,13 +55,18 @@ public class SubJobs extends Jobs {
 	public double[] getFrecuencyRoute(){return frequencyRoute;}
 	public double getAdditionaWaitingTime() {return additionalWaintingTime;}
 	public double getTimeWindowViolation() {return timeWindowViolation;}
+	public double getPossibleEndServiceTime() {return possibleEndServiceTime;}
+
+	public double getPossibleStartServiceTime() {return possibleStartServiceTime;}
 	
 	// Setters
-	public void setJobList(ArrayList<Jobs> jobList) {this.jobList = jobList;}
+	//public void setJobList(ArrayList<Jobs> jobList) {this.jobList = jobList;}
 	public void setFrecuencyRoute(double[] fr) {this.frequencyRoute = fr;}
 	public void setAdditionalWaitingTime(double time) {this.additionalWaintingTime = time;}
 	public void setTimeWindowViolation(double time) {this.timeWindowViolation = time;}
-	
+	public void setPossibleEndServiceTime(double end) {possibleEndServiceTime=end;}
+
+	public void setPossibleStartServiceTime(double start) {	possibleStartServiceTime=start;}
 	
 	public String toString() 
 	{   String s = "";
@@ -71,6 +81,8 @@ public class SubJobs extends Jobs {
 	s = s.concat("\n preparation time: " + (this.getloadUnloadRegistrationTime()));
 	return s;
 	}
+
+
 
 
 

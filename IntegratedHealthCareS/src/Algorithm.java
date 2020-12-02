@@ -129,8 +129,14 @@ public class Algorithm {
 			j.setIdCouple(i);
 			subJobsList.add(j);
 			if(j.getPresent().getStartTime()>j.getFuture().getStartTime()) {
-				System.out.println("Error");}
+				System.out.println("Error");
+				}
 		}	
+		for(Couple j:subJobsList) {
+			if(j.getPresent().getId()==35) {
+				System.out.println("Error");
+			}
+		}
 
 	}
 
@@ -162,42 +168,8 @@ public class Algorithm {
 
 
 
-	private void computingTimeWindowMedicalCentrePatientSubJob(Couple pairMedicalCentrePatient, Jobs j) {
-		// Time window
-		// 1. Present Job: pick patient and paramedic at medical centre
-		// required time before the service starts
-		double treatmentDuration=j.getReqTime();
-		pairMedicalCentrePatient.getPresent().setStartTime(j.getStartTime()+(int)treatmentDuration); // earliest
-		pairMedicalCentrePatient.getPresent().setEndTime(j.getStartTime()+(int)treatmentDuration+test.getCumulativeWaitingTime()); // latest
-		// Service time: start time and duration service
-		pairMedicalCentrePatient.getPresent().setStartServiceTime(pairMedicalCentrePatient.getPresent().getEndTime()); // start time <- latest time
-		pairMedicalCentrePatient.getPresent().setserviceTime(test.getloadTimePatient()); // duration service
-
-		// 2. Future Job: drop patient up time is set assuming a direct connection from patient home to medical centre
-		// required time before the service starts
-		double dHomeMedicalCentrePatient= input.getCarCost().getCost(pairMedicalCentrePatient.getPresent().getId()-1, pairMedicalCentrePatient.getFuture().getId()-1);	
-		double dropOffTime= pairMedicalCentrePatient.getPresent().getstartServiceTime()+(int)pairMedicalCentrePatient.getPresent().getReqTime()+dHomeMedicalCentrePatient;
-		pairMedicalCentrePatient.getFuture().setStartTime(dropOffTime);		
-		pairMedicalCentrePatient.getFuture().setEndTime(dropOffTime); // considering the possibility that patient and paramedic have to wait at medical centre
-		// Service time: start time and duration service
-		pairMedicalCentrePatient.getFuture().setStartServiceTime(pairMedicalCentrePatient.getFuture().getEndTime()); // start time <- latest time
-		pairMedicalCentrePatient.getFuture().setserviceTime(test.getloadTimePatient());
-	}
 
 
-	private Couple creatingCoupleMedicalCentreToPatientHome(Jobs j) {
-		//j.getsubJobPair(): Medical centre
-		// j - location: Patient home
-
-		Jobs presentJob= new Jobs(j.getsubJobPair().getId(), j.getStartTime(),j.getEndTime(), j.getReqQualification(), j.getReqTime());// medical centre - pick up
-		presentJob.setMedicalCentre(true);
-		Jobs futureJob= new Jobs(j); // patient home - drop off
-		futureJob.setPatient(true);
-		presentJob.setPair(futureJob);
-		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1); // setting the time for picking up the patient and paramedic at medical centre
-		Couple pairMedicalCentrePatient=creatingPairMedicalCentrePatient(presentJob,futureJob, directConnectionDistance);
-		return pairMedicalCentrePatient;
-	}
 
 	private void settingPeopleInSubJob(Couple pairPatientMedicalCentre, int i, int j) {
 		pairPatientMedicalCentre.getPresent().setTotalPeople(i); // 1 persona porque se recoge sólo al paciente
@@ -236,7 +208,10 @@ public class Algorithm {
 		// j.getsubJobPair()- location: Medical centre
 		Jobs presentJob= new Jobs(j);// Patient home - pick up
 		presentJob.setPatient(true);
+		presentJob.setloadUnloadTime(test.getloadTimePatient());
 		Jobs futureJob= new Jobs(j.getsubJobPair().getId(), j.getStartTime(),j.getEndTime(), j.getReqQualification(), j.getReqTime()); // medical centre - drop-off 
+		futureJob.setloadUnloadTime(test.getloadTimePatient());
+		futureJob.setloadUnloadRegistrationTime(test.getRegistrationTime());
 		futureJob.setMedicalCentre(true);
 		presentJob.setPair(futureJob);
 		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1); // setting the time for picking up the patient at home patient
@@ -277,7 +252,8 @@ public class Algorithm {
 		// the time for the future task is modified to consider the registration time
 		// start time= doctor appointment - registration time
 		futureJob.setTimeWindowsDropOffMedicalCentre(test.getRegistrationTime());
-
+		futureJob.setloadUnloadTime(test.getloadTimePatient());
+		futureJob.setloadUnloadRegistrationTime(test.getRegistrationTime());
 		// DEFINITION OF PRESENT TASK<- PICK UP PATIENT AT MEDICAL CENTRE
 		// 2. Set the time for pick up patient at the patient home = doctor appointment time  - max(detour, direct connection) - load time - tiempo de registro
 		presentJob.setTimeWindowsPickUpMedicalCentre(futureJob.getStartTime(),directConnectionDistance,test.getCumulativeWaitingTime());
@@ -305,6 +281,7 @@ public class Algorithm {
 			if(!jobsInWalkingRoutes.containsKey(j.getId())) { // only jobs which are not in a walking route	
 				Jobs presentJob= new Jobs(j);
 				presentJob.setClient(true);
+				presentJob.setloadUnloadTime(test.getloadTimeHomeCareStaff());
 				Jobs futureJob= creatingSubPairJOb(j);
 				//0. creation of couple
 				Couple pickUpDropOff= creatingCoupleforIndividualJobs(presentJob,futureJob); // individula jobs <- not walking routes
@@ -329,6 +306,7 @@ public class Algorithm {
 		double pickUpTimeLate=j.getstartServiceTime()+j.getReqTime()+test.getCumulativeWaitingTime();
 		Jobs futureJob= new Jobs(j.getId(),pickUpTimeEarly,pickUpTimeLate,j.getReqQualification(),test.getloadTimeHomeCareStaff()); 
 		futureJob.setClient(true);
+		futureJob.setloadUnloadTime(test.getloadTimeHomeCareStaff());
 		j.setPair(futureJob);
 		return futureJob;
 	}
@@ -417,6 +395,7 @@ public class Algorithm {
 	private Jobs creatinngFutureJobFromWR(Jobs present,Jobs pickUpNode) {
 		double previousTime= pickUpNode.getstartServiceTime();
 		Jobs future= new Jobs(pickUpNode.getId(),previousTime,previousTime ,pickUpNode.getReqQualification(), test.getloadTimeHomeCareStaff()); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
+		future.setloadUnloadTime(test.getloadTimeHomeCareStaff());
 		return future;
 	}
 
@@ -425,6 +404,7 @@ public class Algorithm {
 	private Jobs creatinngPresentJobFromWR(Jobs dropOffNode, double walkingRouteLength) {
 		// start when the service
 		Jobs present= new Jobs(dropOffNode.getId(),dropOffNode.getStartTime(),dropOffNode.getEndTime() ,dropOffNode.getReqQualification(), walkingRouteLength); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
+		present.setloadUnloadTime(test.getloadTimeHomeCareStaff());
 		return present;
 	}
 

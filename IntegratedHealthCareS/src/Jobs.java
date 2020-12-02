@@ -40,10 +40,11 @@ public class Jobs {
 	private boolean isPatient;// type of job in the system- patient job at patient home
 	private boolean isMedicalCentre;// type of job in the system- patient job at medical centre home
 	private boolean isClient;// type of job in the system- patient job at client home
-	private ArrayList<Jobs> assignedJob= new ArrayList<Jobs>();
+	private ArrayList<Jobs> assignedJob= new ArrayList<Jobs>(); // Walking Route
 	private int idCouple=0;
 	private HashMap<Integer,SubJobs> subJobs= new HashMap<>();
 	// Constructors
+	private LinkedList<Jobs> walkingRoute;
 
 	public Jobs(int id, double startTime, double endTime, int reqQualification,
 			double reqTime) {
@@ -97,7 +98,8 @@ public class Jobs {
 		totalPeople=i.getTotalPeople();
 		subJobKey=i.subJobKey;
 		if(i.subJobPair!=null) {
-		subJobPair=new Jobs(i.subJobPair);}
+		subJobPair=new Jobs(i.subJobPair);
+		}
 		subJobs= new HashMap<>();
 		for(SubJobs j:i.getSubJobs().values()){
 			subJobs.put(j.getId(), new SubJobs(j));
@@ -132,6 +134,7 @@ public class Jobs {
 		totalPeople=i.getTotalPeople();
 		if(i.subJobPair!=null) {
 			subJobPair=new Jobs(i.subJobPair);}
+		walkingRoute=i.getWalkingRoute();
 	}
 
 	/* SET METHODS */
@@ -160,6 +163,7 @@ public class Jobs {
 	public void setVehicledepartureTime(double departure) {vehicleDepartureTime=departure;}
 	public void setIDcouple(int couple) {idCouple=couple;}
 	public void setWaitingTime(double w) {this.waitingTime = w;}
+	public void setWalkingRoute(LinkedList<Jobs> w) {this.walkingRoute = w;}
 	public void setWaitingTime(double arrivalTime, double startService ) {
 		waitingTime=0;
 		if(arrivalTime<startService) {
@@ -185,7 +189,7 @@ public class Jobs {
 	public double getloadUnloadRegistrationTime() {return loadUnloadRegistrationTime;}
 	public double getloadUnloadTime() {return loadUnloadTime;}
 	public double getVehicleArrivalTime() {return vehicleArrivalTime;}
-	
+	public LinkedList<Jobs> getWalkingRoute() {return walkingRoute;}
 	public double getVehicleDepartureTime() {return vehicleDepartureTime;}
 	public int getIDcouple() {return idCouple;}
 	public double getEndTime() {return hardendTime;}
@@ -217,6 +221,7 @@ public class Jobs {
 		// aca se considera el waiting time pensando en el tiempo max permitido que el paciente puede estar en el centro médico
 		this.setStartTime(this.getEndTime()-cumulativeWaitingTime);
 	}
+	
 	public void setIdUser(int id) {idUser= id;}
 	public void setPair(Jobs pickUp) {this.subJobPair=pickUp;
 	if(pickUp.isMedicalCentre) {
@@ -250,9 +255,9 @@ public class Jobs {
 	public static Comparator<Jobs> SORT_BY_ENDTW = new Comparator<Jobs>() {
 		@Override
 		public int compare(Jobs o1, Jobs o2) {
-			if (o1.getEndTime() < o2.getEndTime())
-				return 1;
 			if (o1.getEndTime() > o2.getEndTime())
+				return 1;
+			if (o1.getEndTime() < o2.getEndTime())
 				return -1;
 			return 0;
 		}

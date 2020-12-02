@@ -4,9 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import umontreal.iro.lecuyer.rng.LFSR113;
-import umontreal.iro.lecuyer.rng.RandomStreamBase;
-
 
 public class WalkingRoutes {
 	// Walking route attributes:+
@@ -36,12 +33,6 @@ public class WalkingRoutes {
 		jobList= new ArrayList<Jobs>();
 		inp=input;
 		test=t;
-		
-		rn=new Random(t.getSeed());
-		RandomStreamBase stream = new LFSR113(); // L'Ecuyer stream
-		t.setRandomStream(stream);
-		
-		
 		for(Jobs i: inp.getclients().values()) {// List a client jobs
 			if(i.getReqQualification()!=0) {
 				i.setStartServiceTime(i.getStartTime()); // the start time of the service  is fixed as the earliest time
@@ -390,9 +381,7 @@ public class WalkingRoutes {
 
 	private void jobsInsertion(String serviceStartTime) {
 		for(Jobs job:jobList) {
-			for(int iter=0;iter<jobSlots.size()*2;iter++) {
-				int index = this.rn.nextInt(jobSlots.size()-1);
-				SubRoute wr=jobSlots.get(index);
+			for(SubRoute wr:jobSlots) {
 				computeRouteDurtion(wr);
 				if(wr.getSlotID()==9) {
 					System.out.println("\nRoute\n");

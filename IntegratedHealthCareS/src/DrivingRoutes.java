@@ -202,35 +202,45 @@ public class DrivingRoutes {
 			newSol=new Solution (startingSol);
 		}
 		
-		Solution sol1= treatment2(startingSol);
-		sol1.checkingSolution(inp,test,jobsInWalkingRoute);
-		boolean areAllJobsAssigned=checkAssigment(sol1);
+		Solution s1= shaking(newSol);
+		System.out.println(s1.toString());
+		s1.checkingSolution(inp,test,jobsInWalkingRoute);
+		System.out.println(s1.toString());
 
-		
-		if(sol1.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
-			newSol=new Solution (sol1);
-			startingSol=new Solution (sol1);
+		if(s1.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
+			newSol=new Solution (s1);
+			startingSol=new Solution (s1);
 		}
 		
-		Solution sol2= treatment1(newSol);
-		sol2.checkingSolution(inp,test,jobsInWalkingRoute);
-		areAllJobsAssigned=checkAssigment(sol2);
-		if(sol2.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
-			newSol=new Solution (sol2);
-			startingSol=new Solution (sol2);
-		}
-		
-		
-		
-		Solution alternativeSolution= assigmentTurnsToVehicles(newSol);
-		alternativeSolution.checkingSolution(inp,test,jobsInWalkingRoute);
-
-		if(alternativeSolution.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
-			newSol=new Solution (alternativeSolution);
-			startingSol=new Solution (alternativeSolution);
-		}
+//		Solution sol1= treatment2(startingSol);
+//		sol1.checkingSolution(inp,test,jobsInWalkingRoute);
+//		boolean areAllJobsAssigned=checkAssigment(sol1);
+//
+//		
+//		if(sol1.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
+//			newSol=new Solution (sol1);
+//			startingSol=new Solution (sol1);
+//		}
+//		
+//		Solution sol2= treatment1(newSol);
+//		sol2.checkingSolution(inp,test,jobsInWalkingRoute);
+//		areAllJobsAssigned=checkAssigment(sol2);
+//		if(sol2.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
+//			newSol=new Solution (sol2);
+//			startingSol=new Solution (sol2);
+//		}
+//		
+//		
+//		
+//		Solution alternativeSolution= assigmentTurnsToVehicles(newSol);
+//		alternativeSolution.checkingSolution(inp,test,jobsInWalkingRoute);
+//
+//		if(alternativeSolution.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
+//			newSol=new Solution (alternativeSolution);
+//			startingSol=new Solution (alternativeSolution);
+//		}
 		copySolution= new Solution(newSol);
-		 areAllJobsAssigned=checkAssigment(sol1);
+		 boolean areAllJobsAssigned=checkAssigment(newSol);
 	}
 		return newSol;
 	}
@@ -241,6 +251,14 @@ public class DrivingRoutes {
 
 
 
+
+	private Solution shaking(Solution copySolution) {
+		VNS alg= new VNS(this,test,inp);
+		
+		Solution newSol= alg.destructionSolution(copySolution);
+		
+		return newSol;
+	}
 
 	private Solution treatment0(Solution initialSol2) {
 		Solution copySolution= new Solution(initialSol2); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
@@ -5060,6 +5078,7 @@ public class DrivingRoutes {
 		// 2. Generation del drop off at medical centre
 		Jobs patient= new Jobs(inp.getNodes().get(j.getIdUser()-1));
 		SubJobs dropOffMedicalCentre= new SubJobs(j);
+		
 		settingTimeDropOffPatientParamedicSubJob(dropOffMedicalCentre,j);
 
 
@@ -5095,6 +5114,7 @@ public class DrivingRoutes {
 		//()--------------(j)-------------(dropOffPatientHome)
 		dropOffPatientHome.setTotalPeople(-1);
 		dropOffPatientHome.setPatient(true);
+		dropOffPatientHome.setloadUnloadTime(test.getloadTimePatient());
 		// 1. Setting the start service time -- startServiceTime
 		double travel=inp.getCarCost().getCost(pickUpMedicalCentre.getId()-1, dropOffPatientHome.getId()-1); // es necesario considerar el travel time porque involucra dos locaciones
 		double arrivalTime=pickUpMedicalCentre.getDepartureTime()+travel;  // load al lugar de la cita medica
@@ -5113,7 +5133,8 @@ public class DrivingRoutes {
 	private void settingTimePickUpPatientParamedicSubJob(SubJobs pickUpMedicalCentre, Jobs j) {
 		//()--------------(pickUpMedicalCentre=j)-------------()-------------()
 		pickUpMedicalCentre.setTotalPeople(2); // 5. Setting the total people (+) pick up   (-) drop-off
-		pickUpMedicalCentre.setMedicalCentre(true);	
+		pickUpMedicalCentre.setMedicalCentre(true);
+		pickUpMedicalCentre.setloadUnloadTime(test.getloadTimePatient());
 		pickUpMedicalCentre.setserviceTime(j.getReqTime());
 		j.setserviceTime(0);
 		pickUpMedicalCentre.setStartTime(j.getDepartureTime()+pickUpMedicalCentre.getReqTime());
@@ -5129,6 +5150,8 @@ public class DrivingRoutes {
 	private void settingTimeDropOffPatientParamedicSubJob(SubJobs dropOffMedicalCentre, Jobs j) { // hard time window
 		//()-------------(dropOffMedicalCentre=j)-------------()-------------()
 		dropOffMedicalCentre.setTotalPeople(-2);	// 5. Setting the total people (+) pick up   (-) drop-off
+		dropOffMedicalCentre.setloadUnloadTime(test.getloadTimePatient());
+		dropOffMedicalCentre.setloadUnloadRegistrationTime(test.getRegistrationTime());
 		dropOffMedicalCentre.setMedicalCentre(true);
 		dropOffMedicalCentre.setStartServiceTime(j.getEndTime());// 1. Setting the start service time -- startServiceTime
 		// 2. Set ArrivalTime
@@ -5143,6 +5166,7 @@ public class DrivingRoutes {
 		// 5. Setting the total people (+) pick up   (-) drop-off
 		pickUpPatientHome.setTotalPeople(1);
 		pickUpPatientHome.setPatient(true);
+		pickUpPatientHome.setloadUnloadTime(test.getloadTimePatient());
 		double travel=inp.getCarCost().getCost(pickUpPatientHome.getId()-1, j.getId()-1); // es necesario considerar el travel time porque involucra dos locaciones
 		double departureTimeAtMedicalCentre=j.getArrivalTime()-travel;  // load al lugar de la cita medica
 		pickUpPatientHome.setEndServiceTime(departureTimeAtMedicalCentre);

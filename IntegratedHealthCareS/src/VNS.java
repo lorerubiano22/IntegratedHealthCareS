@@ -421,6 +421,10 @@ public class VNS {
 			}
 			newSubJobsList.add(job);
 		}
+		if(positionJ1==positionJ2 && positionJ1==-1) {
+			newSubJobsList.add(j1);
+			newSubJobsList.add(j2);
+		}
 
 		int passegers=0;
 		int action=0;
@@ -496,6 +500,92 @@ public class VNS {
 
 		}
 		return patients;
+	}
+
+	public Solution destructionSolution(Solution copySolution) {
+		Solution sol= new Solution();
+		 // se selecciona un porcentaje aleatorio de rutas y se insertan de acuerdo a la hora de empezar el servicio
+		LinkedList<Route> routes= copySolution.getRoutes();
+		LinkedList<Route> routesListToMerge= new LinkedList<Route>();
+		int totalRoutesToMerge=2;
+		for(int i=0; i<totalRoutesToMerge;i++) {
+			int index =0;
+			do {
+				index = this.rng.nextInt(routes.size()-1);
+
+			}
+			while(routesListToMerge.contains(routes.get(index)));	
+			routesListToMerge.add(routes.get(index));
+		}
+		// se intentan unificar
+		LinkedList<Route> newRoutes=stackingRoutes(routesListToMerge);
+		if(!newRoutes.isEmpty()) {
+			for(Route r: routesListToMerge) {
+				routes.remove(r);
+			}
+			for(Route r: newRoutes) {
+				routes.add(r);
+			}
+		}
+		for(Route r: routes) {
+			sol.getRoutes().add(r);
+		}
+		updateSolution(sol);
+		return sol;
+	}
+
+	private LinkedList<Route> stackingRoutes(LinkedList<Route> routesListToMerge) {
+		LinkedList<Route> newRoutes= new LinkedList<Route>();
+		ArrayList<SubJobs> subJobsList= new ArrayList<SubJobs>();
+		HashMap<String,SubJobs> missingJobs= new HashMap<>();
+		for(Route r: routesListToMerge) {
+			for(SubJobs j:r.getSubJobsList()) {
+				subJobsList.add(j);
+				missingJobs.put(j.getSubJobKey(), j);
+			}
+		}
+		subJobsList.sort(Jobs.SORT_BY_ENDTW);
+		
+		Route newR=new Route();
+		newRoutes.add(newR);
+		for(SubJobs j:subJobsList) {
+			if(missingJobs.containsKey(j.getSubJobKey())) {
+			boolean inserted= stackingJob(newR,j,missingJobs);
+			if(!inserted) {
+				newR=new Route();
+				newRoutes.add(newR);
+				inserted= stackingJob(newR,j,missingJobs);
+			}
+		}
+		}
+		if(newRoutes.size()>routesListToMerge.size()) {
+			newRoutes.clear();
+		}
+		return newRoutes;
+	}
+
+	private boolean stackingJob(Route newR, SubJobs j, HashMap<String, SubJobs> missingJobs) {
+		boolean inserted=false;
+		SubJobs j1=(SubJobs)this.drivingRoutes.getCoupleList().get(j.getSubJobKey()).getStartEndNodes().get(1);
+		SubJobs j2=(SubJobs)this.drivingRoutes.getCoupleList().get(j.getSubJobKey()).getStartEndNodes().get(0);
+		if(newR.getSubJobsList().isEmpty()) {
+			inserted=true;
+			newR.getSubJobsList().add(j1);
+			newR.getSubJobsList().add(j2);
+			missingJobs.remove(j1.getSubJobKey());
+			missingJobs.remove(j2.getSubJobKey());
+		}
+		else {
+			if(vehicleCapacity(newR, j1, -1, j2, -1)) {
+				inserted=true;
+				newR.getSubJobsList().add(j1);
+				newR.getSubJobsList().add(j2);
+				missingJobs.remove(j1.getSubJobKey());
+				missingJobs.remove(j2.getSubJobKey());
+			}
+			
+		}
+		return inserted;
 	}
 
 }

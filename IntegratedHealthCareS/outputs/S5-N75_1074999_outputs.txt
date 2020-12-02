@@ -21,6 +21,16 @@ Edge total of job in the walking route: 2
 Edge route duration (service+ walking time): 142.0, 
 ID route: 1
 Required Qualification: 3
+ duration walking route: 76.0
+ cumulative walking time: 1.0
+ cumulative service time: 75.0
+ cumulative waiting time: 0.0
+ start service time: 900.0
+Edge total of job in the walking route: 2
+ List of jobs:  j_( Id8  A  899.0 , B_ 900.0 ) TW[630.0;900.0] j_( Id29  A  946.0 , B_ 946.0 ) TW[900.0;1170.0]
+Edge route duration (service+ walking time): 76.0, 
+ID route: 2
+Required Qualification: 3
  duration walking route: 186.0
  cumulative walking time: 6.0
  cumulative service time: 180.0
@@ -29,7 +39,7 @@ Required Qualification: 3
 Edge total of job in the walking route: 3
  List of jobs:  j_( Id9  A  899.0 , B_ 900.0 ) TW[630.0;900.0] j_( Id37  A  961.0 , B_ 961.0 ) TW[360.0;1170.0] j_( Id28  A  996.0 , B_ 996.0 ) TW[900.0;1170.0]
 Edge route duration (service+ walking time): 186.0, 
-ID route: 2
+ID route: 3
 Required Qualification: 2
  duration walking route: 216.0
  cumulative walking time: 6.0
@@ -38,7 +48,17 @@ Required Qualification: 2
  start service time: 900.0
 Edge total of job in the walking route: 4
  List of jobs:  j_( Id10  A  899.0 , B_ 900.0 ) TW[630.0;900.0] j_( Id13  A  932.0 , B_ 932.0 ) TW[360.0;1170.0] j_( Id3  A  964.0 , B_ 964.0 ) TW[900.0;1170.0] j_( Id12  A  1041.0 , B_ 1041.0 ) TW[900.0;1170.0]
-Edge route duration (service+ walking time): 216.0]
+Edge route duration (service+ walking time): 216.0, 
+ID route: 4
+Required Qualification: 1
+ duration walking route: 96.0
+ cumulative walking time: 6.0
+ cumulative service time: 90.0
+ cumulative waiting time: 0.0
+ start service time: 900.0
+Edge total of job in the walking route: 2
+ List of jobs:  j_( Id18  A  899.0 , B_ 900.0 ) TW[630.0;900.0] j_( Id27  A  936.0 , B_ 936.0 ) TW[900.0;1170.0]
+Edge route duration (service+ walking time): 96.0]
 
 --------------------------------------------
 Driving Routes
@@ -48,12 +68,12 @@ Driving Routes
 
 
 ID Solution: 1
-FO: Duration: 20818.0
-FO: Travel time: 1035.0
-Walking time: 544.0
+FO: Duration: 21165.0
+FO: Travel time: 1103.0
+Walking time: 716.0
  Waiting time: 0.0
- medical staff cost: 956.0
- driver cost: 1035.0
+ medical staff cost: 1041.0
+ driver cost: 1103.0
  waiting Time to penalize: 0.0
  List of jobs: 
  Route: 0 travelTime: 31.0 waitingTime: 0.0 serviceTime: 135.0 waiting Time to penalize: 0.0 durationRoute: 329.0
@@ -656,19 +676,25 @@ Walking time: 544.0
 
 
 
- Route: 20 travelTime: 20.0 waitingTime: 0.0 serviceTime: 180.0 waiting Time to penalize: 0.0 durationRoute: 271.0
+ Route: 20 travelTime: 33.0 waitingTime: 0.0 serviceTime: 150.0 waiting Time to penalize: 0.0 durationRoute: 330.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  436.0  B  436.0   D  436.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  375.0  B  375.0   D  375.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P64 A  439.0  B  441.0   D  441.0  reqTime_0.0  TW [441.0;441.0]) 
- ( D4864 A  446.0  B  463.0   D  463.0  reqTime_0.0  TW [463.0;463.0]) 
+ ( P71 A  380.0  B  382.0   D  382.0  reqTime_0.0  TW [382.0;382.0]) 
+ ( D4871 A  386.0  B  403.0   D  403.0  reqTime_0.0  TW [403.0;403.0]) 
 
 
- ( P4864 A  583.0  B  583.0   D  585.0  reqTime_120.0  TW [583.0;583.0]) 
- ( D64 A  589.0  B  589.0   D  591.0  reqTime_0.0  TW [589.0;589.0]) 
- ( P75 A  595.0  B  622.0   D  622.0  reqTime_0.0  TW [622.0;622.0]) 
+ ( P4871 A  433.0  B  433.0   D  435.0  reqTime_30.0  TW [433.0;433.0]) 
+ ( D71 A  440.0  B  440.0   D  442.0  reqTime_0.0  TW [440.0;440.0]) 
+ ( P52 A  446.0  B  502.0   D  502.0  reqTime_0.0  TW [502.0;502.0]) 
+ ( D4752 A  506.0  B  523.0   D  523.0  reqTime_0.0  TW [523.0;523.0]) 
+
+
+ ( P4752 A  583.0  B  583.0   D  585.0  reqTime_60.0  TW [583.0;583.0]) 
+ ( D52 A  589.0  B  589.0   D  591.0  reqTime_0.0  TW [589.0;589.0]) 
+ ( P75 A  596.0  B  622.0   D  622.0  reqTime_0.0  TW [622.0;622.0]) 
  ( D4575 A  626.0  B  643.0   D  643.0  reqTime_0.0  TW [643.0;643.0]) 
 
 
@@ -680,19 +706,25 @@ Walking time: 544.0
 
 
 
- Route: 21 travelTime: 28.0 waitingTime: 0.0 serviceTime: 120.0 waiting Time to penalize: 0.0 durationRoute: 246.0
+ Route: 21 travelTime: 25.0 waitingTime: 0.0 serviceTime: 180.0 waiting Time to penalize: 0.0 durationRoute: 301.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  434.0  B  434.0   D  434.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  373.0  B  373.0   D  373.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P68 A  436.0  B  438.0   D  438.0  reqTime_0.0  TW [438.0;438.0]) 
- ( D4568 A  446.0  B  463.0   D  463.0  reqTime_0.0  TW [463.0;463.0]) 
+ ( P54 A  381.0  B  383.0   D  383.0  reqTime_0.0  TW [383.0;383.0]) 
+ ( D4954 A  386.0  B  403.0   D  403.0  reqTime_0.0  TW [403.0;403.0]) 
 
 
- ( P4568 A  553.0  B  553.0   D  555.0  reqTime_90.0  TW [553.0;553.0]) 
- ( D68 A  562.0  B  562.0   D  564.0  reqTime_0.0  TW [562.0;562.0]) 
- ( P55 A  568.0  B  622.0   D  622.0  reqTime_0.0  TW [622.0;622.0]) 
+ ( P4954 A  493.0  B  493.0   D  495.0  reqTime_90.0  TW [493.0;493.0]) 
+ ( D54 A  498.0  B  498.0   D  500.0  reqTime_0.0  TW [498.0;498.0]) 
+ ( P58 A  502.0  B  503.0   D  503.0  reqTime_0.0  TW [503.0;503.0]) 
+ ( D4658 A  506.0  B  523.0   D  523.0  reqTime_0.0  TW [523.0;523.0]) 
+
+
+ ( P4658 A  583.0  B  583.0   D  585.0  reqTime_60.0  TW [583.0;583.0]) 
+ ( D58 A  588.0  B  588.0   D  590.0  reqTime_0.0  TW [588.0;588.0]) 
+ ( P55 A  592.0  B  622.0   D  622.0  reqTime_0.0  TW [622.0;622.0]) 
  ( D5055 A  626.0  B  643.0   D  643.0  reqTime_0.0  TW [643.0;643.0]) 
 
 
@@ -704,25 +736,25 @@ Walking time: 544.0
 
 
 
- Route: 22 travelTime: 26.0 waitingTime: 0.0 serviceTime: 150.0 waiting Time to penalize: 0.0 durationRoute: 270.0
+ Route: 22 travelTime: 31.0 waitingTime: 0.0 serviceTime: 150.0 waiting Time to penalize: 0.0 durationRoute: 331.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  434.0  B  434.0   D  434.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  375.0  B  375.0   D  375.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P72 A  441.0  B  443.0   D  443.0  reqTime_0.0  TW [443.0;443.0]) 
- ( D4972 A  446.0  B  463.0   D  463.0  reqTime_0.0  TW [463.0;463.0]) 
+ ( P71 A  380.0  B  382.0   D  382.0  reqTime_0.0  TW [382.0;382.0]) 
+ ( D4871 A  386.0  B  403.0   D  403.0  reqTime_0.0  TW [403.0;403.0]) 
 
 
- ( P4972 A  493.0  B  493.0   D  495.0  reqTime_30.0  TW [493.0;493.0]) 
- ( D72 A  499.0  B  499.0   D  501.0  reqTime_0.0  TW [499.0;499.0]) 
- ( P58 A  503.0  B  503.0   D  503.0  reqTime_0.0  TW [503.0;503.0]) 
- ( D4658 A  506.0  B  523.0   D  523.0  reqTime_0.0  TW [523.0;523.0]) 
+ ( P4871 A  433.0  B  433.0   D  435.0  reqTime_30.0  TW [433.0;433.0]) 
+ ( D71 A  440.0  B  440.0   D  442.0  reqTime_0.0  TW [440.0;440.0]) 
+ ( P60 A  444.0  B  502.0   D  502.0  reqTime_0.0  TW [502.0;502.0]) 
+ ( D4860 A  506.0  B  523.0   D  523.0  reqTime_0.0  TW [523.0;523.0]) 
 
 
- ( P4658 A  583.0  B  583.0   D  585.0  reqTime_60.0  TW [583.0;583.0]) 
- ( D58 A  588.0  B  588.0   D  590.0  reqTime_0.0  TW [588.0;588.0]) 
- ( P61 A  593.0  B  622.0   D  622.0  reqTime_0.0  TW [622.0;622.0]) 
+ ( P4860 A  583.0  B  583.0   D  585.0  reqTime_60.0  TW [583.0;583.0]) 
+ ( D60 A  589.0  B  589.0   D  591.0  reqTime_0.0  TW [589.0;589.0]) 
+ ( P61 A  595.0  B  622.0   D  622.0  reqTime_0.0  TW [622.0;622.0]) 
  ( D4961 A  626.0  B  643.0   D  643.0  reqTime_0.0  TW [643.0;643.0]) 
 
 
@@ -734,25 +766,25 @@ Walking time: 544.0
 
 
 
- Route: 23 travelTime: 29.0 waitingTime: 0.0 serviceTime: 180.0 waiting Time to penalize: 0.0 durationRoute: 299.0
+ Route: 23 travelTime: 23.0 waitingTime: 0.0 serviceTime: 210.0 waiting Time to penalize: 0.0 durationRoute: 359.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  437.0  B  437.0   D  437.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  373.0  B  373.0   D  373.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P51 A  441.0  B  443.0   D  443.0  reqTime_0.0  TW [443.0;443.0]) 
- ( D4651 A  446.0  B  463.0   D  463.0  reqTime_0.0  TW [463.0;463.0]) 
+ ( P54 A  381.0  B  383.0   D  383.0  reqTime_0.0  TW [383.0;383.0]) 
+ ( D4954 A  386.0  B  403.0   D  403.0  reqTime_0.0  TW [403.0;403.0]) 
 
 
- ( P4651 A  523.0  B  523.0   D  525.0  reqTime_60.0  TW [523.0;523.0]) 
- ( D51 A  529.0  B  529.0   D  531.0  reqTime_0.0  TW [529.0;529.0]) 
- ( P65 A  536.0  B  561.0   D  561.0  reqTime_0.0  TW [561.0;561.0]) 
- ( D4965 A  566.0  B  583.0   D  583.0  reqTime_0.0  TW [583.0;583.0]) 
+ ( P4954 A  493.0  B  493.0   D  495.0  reqTime_90.0  TW [493.0;493.0]) 
+ ( D54 A  498.0  B  498.0   D  500.0  reqTime_0.0  TW [498.0;498.0]) 
+ ( P62 A  502.0  B  503.0   D  503.0  reqTime_0.0  TW [503.0;503.0]) 
+ ( D5062 A  506.0  B  523.0   D  523.0  reqTime_0.0  TW [523.0;523.0]) 
 
 
- ( P4965 A  613.0  B  613.0   D  615.0  reqTime_30.0  TW [613.0;613.0]) 
- ( D65 A  620.0  B  620.0   D  622.0  reqTime_0.0  TW [620.0;620.0]) 
- ( P63 A  624.0  B  624.0   D  624.0  reqTime_0.0  TW [624.0;624.0]) 
+ ( P5062 A  553.0  B  553.0   D  555.0  reqTime_30.0  TW [553.0;553.0]) 
+ ( D62 A  558.0  B  558.0   D  560.0  reqTime_0.0  TW [558.0;558.0]) 
+ ( P63 A  564.0  B  624.0   D  624.0  reqTime_0.0  TW [624.0;624.0]) 
  ( D4463 A  626.0  B  643.0   D  643.0  reqTime_0.0  TW [643.0;643.0]) 
 
 
@@ -764,77 +796,63 @@ Walking time: 544.0
 
 
 
- Route: 24 travelTime: 29.0 waitingTime: 0.0 serviceTime: 90.0 waiting Time to penalize: 0.0 durationRoute: 185.0
+ Route: 24 travelTime: 31.0 waitingTime: 0.0 serviceTime: 135.0 waiting Time to penalize: 0.0 durationRoute: 329.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  432.0  B  432.0   D  432.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  375.0  B  375.0   D  375.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P59 A  439.0  B  441.0   D  441.0  reqTime_0.0  TW [441.0;441.0]) 
- ( D4759 A  446.0  B  463.0   D  463.0  reqTime_0.0  TW [463.0;463.0]) 
+ ( P71 A  380.0  B  382.0   D  382.0  reqTime_0.0  TW [382.0;382.0]) 
+ ( D4871 A  386.0  B  403.0   D  403.0  reqTime_0.0  TW [403.0;403.0]) 
 
 
- ( P4759 A  523.0  B  523.0   D  525.0  reqTime_60.0  TW [523.0;523.0]) 
- ( D59 A  528.0  B  528.0   D  530.0  reqTime_0.0  TW [528.0;528.0]) 
- ( P66 A  537.0  B  559.0   D  559.0  reqTime_0.0  TW [559.0;559.0]) 
- ( D5066 A  566.0  B  583.0   D  583.0  reqTime_0.0  TW [583.0;583.0]) 
+ ( P4871 A  433.0  B  433.0   D  435.0  reqTime_30.0  TW [433.0;433.0]) 
+ ( D71 A  440.0  B  440.0   D  442.0  reqTime_0.0  TW [440.0;440.0]) 
+ ( P69 A  445.0  B  500.0   D  500.0  reqTime_0.0  TW [500.0;500.0]) 
+ ( D4669 A  506.0  B  523.0   D  523.0  reqTime_0.0  TW [523.0;523.0]) 
 
 
- ( P5066 A  613.0  B  613.0   D  615.0  reqTime_30.0  TW [613.0;613.0]) 
- ( D66 A  622.0  B  622.0   D  624.0  reqTime_0.0  TW [622.0;622.0]) 
+ ( P4669 A  568.0  B  568.0   D  570.0  reqTime_45.0  TW [568.0;568.0]) 
+ ( D69 A  575.0  B  575.0   D  577.0  reqTime_0.0  TW [575.0;575.0]) 
+ ( P67 A  581.0  B  624.0   D  624.0  reqTime_0.0  TW [624.0;624.0]) 
+ ( D4467 A  626.0  B  643.0   D  643.0  reqTime_0.0  TW [643.0;643.0]) 
 
 
- ( P1 A  627.0  B  627.0   D  627.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P4467 A  703.0  B  703.0   D  705.0  reqTime_60.0  TW [703.0;703.0]) 
+ ( D67 A  707.0  B  707.0   D  709.0  reqTime_0.0  TW [707.0;707.0]) 
+
+
+ ( P1 A  713.0  B  713.0   D  713.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
- Route: 0 travelTime: 24.0 waitingTime: 0.0 serviceTime: 330.0 waiting Time to penalize: 0.0 durationRoute: 572.0
+ Route: 0 travelTime: 23.0 waitingTime: 0.0 serviceTime: 390.0 waiting Time to penalize: 0.0 durationRoute: 567.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  623.0  B  623.0   D  623.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  630.0  B  630.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D26 A  629.0  B  630.0   D  630.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D25 A  634.0  B  635.0   D  635.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( D15 A  633.0  B  634.0   D  634.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D24 A  637.0  B  638.0   D  638.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D22 A  640.0  B  641.0   D  641.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P22 A  671.0  B  671.0   D  672.0  reqTime_30.0  TW [671.0;671.0]) 
- ( P26 A  720.0  B  720.0   D  721.0  reqTime_90.0  TW [720.0;720.0]) 
- ( P15 A  724.0  B  724.0   D  725.0  reqTime_90.0  TW [724.0;724.0]) 
+ ( P25 A  695.0  B  695.0   D  696.0  reqTime_60.0  TW [695.0;695.0]) 
+ ( D24 A  699.0  B  699.0   D  700.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P24 A  728.0  B  728.0   D  729.0  reqTime_90.0  TW [728.0;728.0]) 
- ( D30 A  1169.0  B  1170.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+ ( P24 A  790.0  B  790.0   D  791.0  reqTime_90.0  TW [790.0;790.0]) 
+ ( D23 A  795.0  B  795.0   D  796.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P30 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+ ( P23 A  856.0  B  856.0   D  857.0  reqTime_60.0  TW [856.0;856.0]) 
+ ( D22 A  863.0  B  863.0   D  864.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P22 A  894.0  B  894.0   D  895.0  reqTime_30.0  TW [894.0;894.0]) 
+ ( D20 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
-
- Route: 1 travelTime: 28.0 waitingTime: 0.0 serviceTime: 360.0 waiting Time to penalize: 0.0 durationRoute: 572.0
- medical staff cost: 0.0
- driver cost: 0.0
- ( P1 A  625.0  B  625.0   D  625.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
- ( D17 A  629.0  B  630.0   D  630.0  reqTime_0.0  TW [630.0;900.0]) 
-
-
- ( D19 A  631.0  B  632.0   D  632.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D23 A  674.0  B  675.0   D  675.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D20 A  680.0  B  681.0   D  681.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P19 A  692.0  B  692.0   D  693.0  reqTime_60.0  TW [692.0;692.0]) 
- ( P17 A  720.0  B  720.0   D  721.0  reqTime_90.0  TW [720.0;720.0]) 
- ( P23 A  735.0  B  735.0   D  736.0  reqTime_60.0  TW [735.0;735.0]) 
-
-
- ( P20 A  801.0  B  801.0   D  802.0  reqTime_120.0  TW [801.0;801.0]) 
- ( D38 A  1169.0  B  1170.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+ ( P20 A  1020.0  B  1020.0   D  1021.0  reqTime_120.0  TW [1020.0;1020.0]) 
+ ( D38 A  1027.0  B  1027.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
 
 
  ( P38 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
@@ -844,23 +862,29 @@ Walking time: 544.0
 
 
 
- Route: 2 travelTime: 24.0 waitingTime: 0.0 serviceTime: 270.0 waiting Time to penalize: 0.0 durationRoute: 572.0
+ Route: 1 travelTime: 23.0 waitingTime: 0.0 serviceTime: 360.0 waiting Time to penalize: 0.0 durationRoute: 566.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  625.0  B  625.0   D  625.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  631.0  B  631.0   D  631.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D25 A  629.0  B  630.0   D  630.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D19 A  635.0  B  636.0   D  636.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( D15 A  633.0  B  634.0   D  634.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D24 A  637.0  B  638.0   D  638.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P25 A  690.0  B  690.0   D  691.0  reqTime_60.0  TW [690.0;690.0]) 
- ( P15 A  724.0  B  724.0   D  725.0  reqTime_90.0  TW [724.0;724.0]) 
+ ( P19 A  696.0  B  696.0   D  697.0  reqTime_60.0  TW [696.0;696.0]) 
+ ( D15 A  700.0  B  700.0   D  701.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P24 A  728.0  B  728.0   D  729.0  reqTime_90.0  TW [728.0;728.0]) 
- ( D40 A  1169.0  B  1170.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+ ( P15 A  791.0  B  791.0   D  792.0  reqTime_90.0  TW [791.0;791.0]) 
+ ( D18 A  796.0  B  796.0   D  797.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P27 A  893.0  B  893.0   D  894.0  reqTime_96.0  TW [893.0;893.0]) 
+ ( D26 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P26 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
+ ( D40 A  1000.0  B  1000.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
 
 
  ( P40 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
@@ -870,28 +894,28 @@ Walking time: 544.0
 
 
 
- Route: 3 travelTime: 15.0 waitingTime: 0.0 serviceTime: 360.0 waiting Time to penalize: 0.0 durationRoute: 560.0
+ Route: 2 travelTime: 24.0 waitingTime: 0.0 serviceTime: 330.0 waiting Time to penalize: 0.0 durationRoute: 569.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  634.0  B  634.0   D  634.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  625.0  B  625.0   D  625.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D22 A  641.0  B  642.0   D  642.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D22 A  632.0  B  633.0   D  633.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P22 A  672.0  B  672.0   D  673.0  reqTime_30.0  TW [672.0;672.0]) 
- ( D20 A  677.0  B  677.0   D  678.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P22 A  663.0  B  663.0   D  664.0  reqTime_30.0  TW [663.0;663.0]) 
+ ( D23 A  670.0  B  670.0   D  671.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P20 A  798.0  B  798.0   D  799.0  reqTime_120.0  TW [798.0;798.0]) 
- ( D19 A  802.0  B  802.0   D  803.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P23 A  731.0  B  731.0   D  732.0  reqTime_60.0  TW [731.0;731.0]) 
+ ( D22 A  738.0  B  738.0   D  739.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P19 A  863.0  B  863.0   D  864.0  reqTime_60.0  TW [863.0;863.0]) 
- ( D18 A  866.0  B  866.0   D  867.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P22 A  769.0  B  769.0   D  770.0  reqTime_30.0  TW [769.0;769.0]) 
+ ( D20 A  774.0  B  774.0   D  775.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P18 A  897.0  B  897.0   D  898.0  reqTime_30.0  TW [897.0;897.0]) 
+ ( P20 A  895.0  B  895.0   D  896.0  reqTime_120.0  TW [895.0;895.0]) 
  ( D17 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
@@ -906,28 +930,286 @@ Walking time: 544.0
 
 
 
- Route: 4 travelTime: 24.0 waitingTime: 0.0 serviceTime: 285.0 waiting Time to penalize: 0.0 durationRoute: 606.0
+ Route: 3 travelTime: 20.0 waitingTime: 0.0 serviceTime: 360.0 waiting Time to penalize: 0.0 durationRoute: 565.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  592.0  B  592.0   D  592.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  633.0  B  633.0   D  633.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D16 A  555.0  B  556.0   D  556.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( D18 A  636.0  B  637.0   D  637.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P16 A  586.0  B  586.0   D  587.0  reqTime_30.0  TW [586.0;586.0]) 
- ( D4 A  552.0  B  553.0   D  553.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P27 A  733.0  B  733.0   D  734.0  reqTime_96.0  TW [733.0;733.0]) 
+ ( D26 A  739.0  B  739.0   D  740.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( D15 A  633.0  B  634.0   D  634.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P4 A  628.0  B  628.0   D  629.0  reqTime_75.0  TW [628.0;628.0]) 
+ ( P26 A  830.0  B  830.0   D  831.0  reqTime_90.0  TW [830.0;830.0]) 
+ ( D25 A  834.0  B  834.0   D  835.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( D22 A  640.0  B  641.0   D  641.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P22 A  671.0  B  671.0   D  672.0  reqTime_30.0  TW [671.0;671.0]) 
+ ( P25 A  895.0  B  895.0   D  896.0  reqTime_60.0  TW [895.0;895.0]) 
+ ( D24 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P15 A  724.0  B  724.0   D  725.0  reqTime_90.0  TW [724.0;724.0]) 
+ ( P24 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
+ ( D42 A  998.0  B  998.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+
+
+ ( P42 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+
+
+ ( P1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 4 travelTime: 23.0 waitingTime: 0.0 serviceTime: 360.0 waiting Time to penalize: 0.0 durationRoute: 564.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  630.0  B  630.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D22 A  637.0  B  638.0   D  638.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P22 A  668.0  B  668.0   D  669.0  reqTime_30.0  TW [668.0;668.0]) 
+ ( D23 A  675.0  B  675.0   D  676.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P23 A  736.0  B  736.0   D  737.0  reqTime_60.0  TW [736.0;736.0]) 
+ ( D19 A  741.0  B  741.0   D  742.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P19 A  802.0  B  802.0   D  803.0  reqTime_60.0  TW [802.0;802.0]) 
+ ( D17 A  804.0  B  804.0   D  805.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P17 A  895.0  B  895.0   D  896.0  reqTime_90.0  TW [895.0;895.0]) 
+ ( D15 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P15 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
+ ( D43 A  1000.0  B  1000.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+
+
+ ( P43 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+
+
+ ( P1 A  1206.0  B  1206.0   D  1206.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 5 travelTime: 13.0 waitingTime: 0.0 serviceTime: 390.0 waiting Time to penalize: 0.0 durationRoute: 559.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  636.0  B  636.0   D  636.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D26 A  642.0  B  643.0   D  643.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P26 A  733.0  B  733.0   D  734.0  reqTime_90.0  TW [733.0;733.0]) 
+ ( D25 A  737.0  B  737.0   D  738.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P25 A  798.0  B  798.0   D  799.0  reqTime_60.0  TW [798.0;798.0]) 
+ ( D24 A  802.0  B  802.0   D  803.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P24 A  893.0  B  893.0   D  894.0  reqTime_90.0  TW [893.0;893.0]) 
+ ( D20 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P20 A  1020.0  B  1020.0   D  1021.0  reqTime_120.0  TW [1020.0;1020.0]) 
+ ( D30 A  1023.0  B  1023.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+
+
+ ( P30 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+
+
+ ( P1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 6 travelTime: 15.0 waitingTime: 0.0 serviceTime: 360.0 waiting Time to penalize: 0.0 durationRoute: 556.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  641.0  B  641.0   D  641.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D19 A  645.0  B  646.0   D  646.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P19 A  706.0  B  706.0   D  707.0  reqTime_60.0  TW [706.0;706.0]) 
+ ( D17 A  708.0  B  708.0   D  709.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P17 A  799.0  B  799.0   D  800.0  reqTime_90.0  TW [799.0;799.0]) 
+ ( D15 A  803.0  B  803.0   D  804.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P15 A  894.0  B  894.0   D  895.0  reqTime_90.0  TW [894.0;894.0]) 
+ ( D18 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P27 A  996.0  B  996.0   D  997.0  reqTime_96.0  TW [996.0;996.0]) 
+ ( D38 A  1002.0  B  1002.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+
+
+ ( P38 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+
+
+ ( P1 A  1204.0  B  1204.0   D  1204.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 7 travelTime: 24.0 waitingTime: 0.0 serviceTime: 390.0 waiting Time to penalize: 0.0 durationRoute: 565.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  629.0  B  629.0   D  629.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D22 A  636.0  B  637.0   D  637.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P22 A  667.0  B  667.0   D  668.0  reqTime_30.0  TW [667.0;667.0]) 
+ ( D25 A  671.0  B  671.0   D  672.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P25 A  732.0  B  732.0   D  733.0  reqTime_60.0  TW [732.0;732.0]) 
+ ( D24 A  736.0  B  736.0   D  737.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P24 A  827.0  B  827.0   D  828.0  reqTime_90.0  TW [827.0;827.0]) 
+ ( D23 A  832.0  B  832.0   D  833.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P23 A  893.0  B  893.0   D  894.0  reqTime_60.0  TW [893.0;893.0]) 
+ ( D20 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P20 A  1020.0  B  1020.0   D  1021.0  reqTime_120.0  TW [1020.0;1020.0]) 
+ ( D40 A  1030.0  B  1030.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+
+
+ ( P40 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+
+
+ ( P1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 8 travelTime: 22.0 waitingTime: 0.0 serviceTime: 360.0 waiting Time to penalize: 0.0 durationRoute: 566.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  631.0  B  631.0   D  631.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D19 A  635.0  B  636.0   D  636.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P19 A  696.0  B  696.0   D  697.0  reqTime_60.0  TW [696.0;696.0]) 
+ ( D15 A  700.0  B  700.0   D  701.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P15 A  791.0  B  791.0   D  792.0  reqTime_90.0  TW [791.0;791.0]) 
+ ( D18 A  796.0  B  796.0   D  797.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P27 A  893.0  B  893.0   D  894.0  reqTime_96.0  TW [893.0;893.0]) 
+ ( D26 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P26 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
+ ( D41 A  999.0  B  999.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+
+
+ ( P41 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+
+
+ ( P1 A  1204.0  B  1204.0   D  1204.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 9 travelTime: 17.0 waitingTime: 0.0 serviceTime: 360.0 waiting Time to penalize: 0.0 durationRoute: 560.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  637.0  B  637.0   D  637.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D25 A  641.0  B  642.0   D  642.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P25 A  702.0  B  702.0   D  703.0  reqTime_60.0  TW [702.0;702.0]) 
+ ( D23 A  707.0  B  707.0   D  708.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P23 A  768.0  B  768.0   D  769.0  reqTime_60.0  TW [768.0;768.0]) 
+ ( D20 A  774.0  B  774.0   D  775.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P20 A  895.0  B  895.0   D  896.0  reqTime_120.0  TW [895.0;895.0]) 
+ ( D17 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P17 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
+ ( D42 A  996.0  B  996.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+
+
+ ( P42 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+
+
+ ( P1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 10 travelTime: 22.0 waitingTime: 0.0 serviceTime: 360.0 waiting Time to penalize: 0.0 durationRoute: 566.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  631.0  B  631.0   D  631.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D19 A  635.0  B  636.0   D  636.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P19 A  696.0  B  696.0   D  697.0  reqTime_60.0  TW [696.0;696.0]) 
+ ( D18 A  699.0  B  699.0   D  700.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P27 A  796.0  B  796.0   D  797.0  reqTime_96.0  TW [796.0;796.0]) 
+ ( D26 A  802.0  B  802.0   D  803.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P26 A  893.0  B  893.0   D  894.0  reqTime_90.0  TW [893.0;893.0]) 
+ ( D24 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P24 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
+ ( D43 A  999.0  B  999.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+
+
+ ( P43 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+
+
+ ( P1 A  1206.0  B  1206.0   D  1206.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 11 travelTime: 22.0 waitingTime: 0.0 serviceTime: 255.0 waiting Time to penalize: 0.0 durationRoute: 575.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  623.0  B  623.0   D  623.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D16 A  608.0  B  609.0   D  609.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D4 A  611.0  B  612.0   D  612.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( D18 A  643.0  B  644.0   D  644.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P16 A  639.0  B  639.0   D  640.0  reqTime_30.0  TW [639.0;639.0]) 
+ ( P4 A  687.0  B  687.0   D  688.0  reqTime_75.0  TW [687.0;687.0]) 
+
+
+ ( P27 A  740.0  B  740.0   D  741.0  reqTime_96.0  TW [740.0;740.0]) 
  ( D14 A  899.0  B  900.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
@@ -942,355 +1224,369 @@ Walking time: 544.0
 
 
 
- Route: 5 travelTime: 44.0 waitingTime: 0.0 serviceTime: 465.0 waiting Time to penalize: 0.0 durationRoute: 618.0
+ Route: 12 travelTime: 14.0 waitingTime: 0.0 serviceTime: 135.0 waiting Time to penalize: 0.0 durationRoute: 562.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  580.0  B  580.0   D  580.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  366.0  B  366.0   D  366.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D16 A  555.0  B  556.0   D  556.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( D16 A  369.0  B  370.0   D  370.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D4 A  552.0  B  553.0   D  553.0  reqTime_0.0  TW [360.0;630.0]) 
- ( P16 A  586.0  B  586.0   D  587.0  reqTime_30.0  TW [586.0;586.0]) 
+ ( P16 A  400.0  B  400.0   D  401.0  reqTime_30.0  TW [400.0;400.0]) 
+ ( D4 A  403.0  B  403.0   D  404.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D25 A  629.0  B  630.0   D  630.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D22 A  640.0  B  641.0   D  641.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D24 A  637.0  B  638.0   D  638.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P4 A  628.0  B  628.0   D  629.0  reqTime_75.0  TW [628.0;628.0]) 
- ( P22 A  671.0  B  671.0   D  672.0  reqTime_30.0  TW [671.0;671.0]) 
- ( D20 A  680.0  B  681.0   D  681.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P25 A  690.0  B  690.0   D  691.0  reqTime_60.0  TW [690.0;690.0]) 
- ( P24 A  728.0  B  728.0   D  729.0  reqTime_90.0  TW [728.0;728.0]) 
+ ( P4 A  479.0  B  479.0   D  480.0  reqTime_75.0  TW [479.0;479.0]) 
+ ( D16 A  482.0  B  482.0   D  483.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P20 A  801.0  B  801.0   D  802.0  reqTime_120.0  TW [801.0;801.0]) 
+ ( P16 A  513.0  B  513.0   D  514.0  reqTime_30.0  TW [513.0;513.0]) 
+ ( D4 A  516.0  B  516.0   D  517.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P4 A  592.0  B  592.0   D  593.0  reqTime_75.0  TW [592.0;592.0]) 
+ ( D16 A  595.0  B  595.0   D  596.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P16 A  626.0  B  626.0   D  627.0  reqTime_30.0  TW [626.0;626.0]) 
+ ( D4 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P4 A  705.0  B  705.0   D  706.0  reqTime_75.0  TW [705.0;705.0]) 
+ ( D14 A  710.0  B  710.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P14 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
+
+
+ ( P1 A  936.0  B  936.0   D  936.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 13 travelTime: 14.0 waitingTime: 0.0 serviceTime: 135.0 waiting Time to penalize: 0.0 durationRoute: 562.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  366.0  B  366.0   D  366.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D16 A  369.0  B  370.0   D  370.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P16 A  400.0  B  400.0   D  401.0  reqTime_30.0  TW [400.0;400.0]) 
+ ( D4 A  403.0  B  403.0   D  404.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P4 A  479.0  B  479.0   D  480.0  reqTime_75.0  TW [479.0;479.0]) 
+ ( D16 A  482.0  B  482.0   D  483.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P16 A  513.0  B  513.0   D  514.0  reqTime_30.0  TW [513.0;513.0]) 
+ ( D4 A  516.0  B  516.0   D  517.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P4 A  592.0  B  592.0   D  593.0  reqTime_75.0  TW [592.0;592.0]) 
+ ( D16 A  595.0  B  595.0   D  596.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P16 A  626.0  B  626.0   D  627.0  reqTime_30.0  TW [626.0;626.0]) 
+ ( D4 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P4 A  705.0  B  705.0   D  706.0  reqTime_75.0  TW [705.0;705.0]) 
+ ( D14 A  710.0  B  710.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P14 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
+
+
+ ( P1 A  936.0  B  936.0   D  936.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 14 travelTime: 14.0 waitingTime: 0.0 serviceTime: 135.0 waiting Time to penalize: 0.0 durationRoute: 562.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  366.0  B  366.0   D  366.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D16 A  369.0  B  370.0   D  370.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P16 A  400.0  B  400.0   D  401.0  reqTime_30.0  TW [400.0;400.0]) 
+ ( D4 A  403.0  B  403.0   D  404.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P4 A  479.0  B  479.0   D  480.0  reqTime_75.0  TW [479.0;479.0]) 
+ ( D16 A  482.0  B  482.0   D  483.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P16 A  513.0  B  513.0   D  514.0  reqTime_30.0  TW [513.0;513.0]) 
+ ( D4 A  516.0  B  516.0   D  517.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P4 A  592.0  B  592.0   D  593.0  reqTime_75.0  TW [592.0;592.0]) 
+ ( D16 A  595.0  B  595.0   D  596.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P16 A  626.0  B  626.0   D  627.0  reqTime_30.0  TW [626.0;626.0]) 
+ ( D4 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P4 A  705.0  B  705.0   D  706.0  reqTime_75.0  TW [705.0;705.0]) 
+ ( D14 A  710.0  B  710.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P14 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
+
+
+ ( P1 A  936.0  B  936.0   D  936.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 15 travelTime: 28.0 waitingTime: 0.0 serviceTime: 375.0 waiting Time to penalize: 0.0 durationRoute: 323.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  605.0  B  605.0   D  605.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D16 A  608.0  B  609.0   D  609.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D4 A  611.0  B  612.0   D  612.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( D17 A  630.0  B  631.0   D  631.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D19 A  632.0  B  633.0   D  633.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P16 A  639.0  B  639.0   D  640.0  reqTime_30.0  TW [639.0;639.0]) 
+ ( D15 A  652.0  B  653.0   D  653.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P4 A  687.0  B  687.0   D  688.0  reqTime_75.0  TW [687.0;687.0]) 
+ ( P19 A  693.0  B  693.0   D  694.0  reqTime_60.0  TW [693.0;693.0]) 
+ ( P17 A  721.0  B  721.0   D  722.0  reqTime_90.0  TW [721.0;721.0]) 
+
+
+ ( P15 A  743.0  B  743.0   D  744.0  reqTime_90.0  TW [743.0;743.0]) 
  ( D14 A  899.0  B  900.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
  ( P14 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
- ( D38 A  1169.0  B  1170.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
 
 
- ( P38 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
-
-
- ( P1 A  1204.0  B  1204.0   D  1204.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  936.0  B  936.0   D  936.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
- Route: 6 travelTime: 45.0 waitingTime: 0.0 serviceTime: 525.0 waiting Time to penalize: 0.0 durationRoute: 637.0
+ Route: 16 travelTime: 14.0 waitingTime: 0.0 serviceTime: 135.0 waiting Time to penalize: 0.0 durationRoute: 562.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  559.0  B  559.0   D  559.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  366.0  B  366.0   D  366.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D4 A  552.0  B  553.0   D  553.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( D16 A  369.0  B  370.0   D  370.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D16 A  555.0  B  556.0   D  556.0  reqTime_0.0  TW [360.0;630.0]) 
- ( P16 A  586.0  B  586.0   D  587.0  reqTime_30.0  TW [586.0;586.0]) 
+ ( P16 A  400.0  B  400.0   D  401.0  reqTime_30.0  TW [400.0;400.0]) 
+ ( D4 A  403.0  B  403.0   D  404.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D17 A  629.0  B  630.0   D  630.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D19 A  631.0  B  632.0   D  632.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D18 A  635.0  B  636.0   D  636.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P4 A  628.0  B  628.0   D  629.0  reqTime_75.0  TW [628.0;628.0]) 
- ( P18 A  666.0  B  666.0   D  667.0  reqTime_30.0  TW [666.0;666.0]) 
- ( D23 A  674.0  B  675.0   D  675.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D20 A  680.0  B  681.0   D  681.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P19 A  692.0  B  692.0   D  693.0  reqTime_60.0  TW [692.0;692.0]) 
- ( P17 A  720.0  B  720.0   D  721.0  reqTime_90.0  TW [720.0;720.0]) 
- ( P23 A  735.0  B  735.0   D  736.0  reqTime_60.0  TW [735.0;735.0]) 
+ ( P4 A  479.0  B  479.0   D  480.0  reqTime_75.0  TW [479.0;479.0]) 
+ ( D16 A  482.0  B  482.0   D  483.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P20 A  801.0  B  801.0   D  802.0  reqTime_120.0  TW [801.0;801.0]) 
- ( D14 A  899.0  B  900.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P16 A  513.0  B  513.0   D  514.0  reqTime_30.0  TW [513.0;513.0]) 
+ ( D4 A  516.0  B  516.0   D  517.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P4 A  592.0  B  592.0   D  593.0  reqTime_75.0  TW [592.0;592.0]) 
+ ( D16 A  595.0  B  595.0   D  596.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P16 A  626.0  B  626.0   D  627.0  reqTime_30.0  TW [626.0;626.0]) 
+ ( D4 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P4 A  705.0  B  705.0   D  706.0  reqTime_75.0  TW [705.0;705.0]) 
+ ( D14 A  710.0  B  710.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
  ( P14 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
- ( D42 A  1169.0  B  1170.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
 
 
- ( P42 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
-
-
- ( P1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  936.0  B  936.0   D  936.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
- Route: 7 travelTime: 34.0 waitingTime: 0.0 serviceTime: 555.0 waiting Time to penalize: 0.0 durationRoute: 676.0
+ Route: 17 travelTime: 14.0 waitingTime: 0.0 serviceTime: 135.0 waiting Time to penalize: 0.0 durationRoute: 562.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  552.0  B  552.0   D  552.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  366.0  B  366.0   D  366.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D16 A  555.0  B  556.0   D  556.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( D16 A  369.0  B  370.0   D  370.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D4 A  552.0  B  553.0   D  553.0  reqTime_0.0  TW [360.0;630.0]) 
- ( P16 A  586.0  B  586.0   D  587.0  reqTime_30.0  TW [586.0;586.0]) 
+ ( P16 A  400.0  B  400.0   D  401.0  reqTime_30.0  TW [400.0;400.0]) 
+ ( D4 A  403.0  B  403.0   D  404.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P4 A  628.0  B  628.0   D  629.0  reqTime_75.0  TW [628.0;628.0]) 
- ( D23 A  674.0  B  675.0   D  675.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P4 A  479.0  B  479.0   D  480.0  reqTime_75.0  TW [479.0;479.0]) 
+ ( D16 A  482.0  B  482.0   D  483.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D20 A  680.0  B  681.0   D  681.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P23 A  735.0  B  735.0   D  736.0  reqTime_60.0  TW [735.0;735.0]) 
+ ( P16 A  513.0  B  513.0   D  514.0  reqTime_30.0  TW [513.0;513.0]) 
+ ( D4 A  516.0  B  516.0   D  517.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P20 A  801.0  B  801.0   D  802.0  reqTime_120.0  TW [801.0;801.0]) 
- ( D10 A  899.0  B  900.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P4 A  592.0  B  592.0   D  593.0  reqTime_75.0  TW [592.0;592.0]) 
+ ( D16 A  595.0  B  595.0   D  596.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P12 A  1116.0  B  1116.0   D  1117.0  reqTime_216.0  TW [1116.0;1116.0]) 
- ( D27 A  1169.0  B  1170.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+ ( P16 A  626.0  B  626.0   D  627.0  reqTime_30.0  TW [626.0;626.0]) 
+ ( D4 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P27 A  1230.0  B  1230.0   D  1231.0  reqTime_60.0  TW [1230.0;1230.0]) 
+ ( P4 A  705.0  B  705.0   D  706.0  reqTime_75.0  TW [705.0;705.0]) 
+ ( D14 A  710.0  B  710.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P1 A  1234.0  B  1234.0   D  1234.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P14 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
+
+
+ ( P1 A  936.0  B  936.0   D  936.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
- Route: 8 travelTime: 8.0 waitingTime: 0.0 serviceTime: 390.0 waiting Time to penalize: 0.0 durationRoute: 587.0
+ Route: 18 travelTime: 14.0 waitingTime: 0.0 serviceTime: 135.0 waiting Time to penalize: 0.0 durationRoute: 562.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  637.0  B  637.0   D  637.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  366.0  B  366.0   D  366.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D14 A  644.0  B  645.0   D  645.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D16 A  369.0  B  370.0   D  370.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P14 A  675.0  B  675.0   D  676.0  reqTime_30.0  TW [675.0;675.0]) 
- ( D10 A  677.0  B  677.0   D  678.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P16 A  400.0  B  400.0   D  401.0  reqTime_30.0  TW [400.0;400.0]) 
+ ( D4 A  403.0  B  403.0   D  404.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P12 A  894.0  B  894.0   D  895.0  reqTime_216.0  TW [894.0;894.0]) 
- ( D36 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P4 A  479.0  B  479.0   D  480.0  reqTime_75.0  TW [479.0;479.0]) 
+ ( D16 A  482.0  B  482.0   D  483.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P36 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
- ( D6 A  993.0  B  993.0   D  1170.0  reqTime_0.0  TW [360.0;1170.0]) 
+ ( P16 A  513.0  B  513.0   D  514.0  reqTime_30.0  TW [513.0;513.0]) 
+ ( D4 A  516.0  B  516.0   D  517.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P6 A  1230.0  B  1230.0   D  1231.0  reqTime_60.0  TW [1230.0;1230.0]) 
+ ( P4 A  592.0  B  592.0   D  593.0  reqTime_75.0  TW [592.0;592.0]) 
+ ( D16 A  595.0  B  595.0   D  596.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P1 A  1233.0  B  1233.0   D  1233.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P16 A  626.0  B  626.0   D  627.0  reqTime_30.0  TW [626.0;626.0]) 
+ ( D4 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P4 A  705.0  B  705.0   D  706.0  reqTime_75.0  TW [705.0;705.0]) 
+ ( D14 A  710.0  B  710.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P14 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
+
+
+ ( P1 A  936.0  B  936.0   D  936.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
- Route: 9 travelTime: 8.0 waitingTime: 0.0 serviceTime: 390.0 waiting Time to penalize: 0.0 durationRoute: 587.0
+ Route: 19 travelTime: 8.0 waitingTime: 0.0 serviceTime: 210.0 waiting Time to penalize: 0.0 durationRoute: 493.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  637.0  B  637.0   D  637.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  479.0  B  479.0   D  479.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D14 A  644.0  B  645.0   D  645.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D35 A  484.0  B  485.0   D  485.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P14 A  675.0  B  675.0   D  676.0  reqTime_30.0  TW [675.0;675.0]) 
- ( D10 A  677.0  B  677.0   D  678.0  reqTime_0.0  TW [630.0;900.0]) 
-
-
- ( P12 A  894.0  B  894.0   D  895.0  reqTime_216.0  TW [894.0;894.0]) 
- ( D36 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
-
-
- ( P36 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
- ( D6 A  993.0  B  993.0   D  1170.0  reqTime_0.0  TW [360.0;1170.0]) 
-
-
- ( P6 A  1230.0  B  1230.0   D  1231.0  reqTime_60.0  TW [1230.0;1230.0]) 
-
-
- ( P1 A  1233.0  B  1233.0   D  1233.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
-
- Route: 10 travelTime: 8.0 waitingTime: 0.0 serviceTime: 390.0 waiting Time to penalize: 0.0 durationRoute: 587.0
- medical staff cost: 0.0
- driver cost: 0.0
- ( P1 A  637.0  B  637.0   D  637.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
- ( D14 A  644.0  B  645.0   D  645.0  reqTime_0.0  TW [630.0;900.0]) 
-
-
- ( P14 A  675.0  B  675.0   D  676.0  reqTime_30.0  TW [675.0;675.0]) 
- ( D10 A  677.0  B  677.0   D  678.0  reqTime_0.0  TW [630.0;900.0]) 
-
-
- ( P12 A  894.0  B  894.0   D  895.0  reqTime_216.0  TW [894.0;894.0]) 
- ( D36 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
-
-
- ( P36 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
- ( D6 A  993.0  B  993.0   D  1170.0  reqTime_0.0  TW [360.0;1170.0]) 
-
-
- ( P6 A  1230.0  B  1230.0   D  1231.0  reqTime_60.0  TW [1230.0;1230.0]) 
-
-
- ( P1 A  1233.0  B  1233.0   D  1233.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
-
- Route: 11 travelTime: 8.0 waitingTime: 0.0 serviceTime: 390.0 waiting Time to penalize: 0.0 durationRoute: 587.0
- medical staff cost: 0.0
- driver cost: 0.0
- ( P1 A  637.0  B  637.0   D  637.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
- ( D14 A  644.0  B  645.0   D  645.0  reqTime_0.0  TW [630.0;900.0]) 
-
-
- ( P14 A  675.0  B  675.0   D  676.0  reqTime_30.0  TW [675.0;675.0]) 
- ( D10 A  677.0  B  677.0   D  678.0  reqTime_0.0  TW [630.0;900.0]) 
-
-
- ( P12 A  894.0  B  894.0   D  895.0  reqTime_216.0  TW [894.0;894.0]) 
- ( D36 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
-
-
- ( P36 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
- ( D6 A  993.0  B  993.0   D  1170.0  reqTime_0.0  TW [360.0;1170.0]) 
-
-
- ( P6 A  1230.0  B  1230.0   D  1231.0  reqTime_60.0  TW [1230.0;1230.0]) 
-
-
- ( P1 A  1233.0  B  1233.0   D  1233.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
-
- Route: 12 travelTime: 29.0 waitingTime: 0.0 serviceTime: 510.0 waiting Time to penalize: 0.0 durationRoute: 602.0
- medical staff cost: 0.0
- driver cost: 0.0
- ( P1 A  624.0  B  624.0   D  624.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
- ( D35 A  629.0  B  630.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
- ( D17 A  629.0  B  630.0   D  630.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D26 A  629.0  B  630.0   D  630.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D15 A  633.0  B  634.0   D  634.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P17 A  720.0  B  720.0   D  721.0  reqTime_90.0  TW [720.0;720.0]) 
- ( P26 A  720.0  B  720.0   D  721.0  reqTime_90.0  TW [720.0;720.0]) 
- ( P15 A  724.0  B  724.0   D  725.0  reqTime_90.0  TW [724.0;724.0]) 
+ ( P31 A  627.0  B  627.0   D  628.0  reqTime_142.0  TW [627.0;627.0]) 
+ ( D35 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
  ( P31 A  772.0  B  772.0   D  773.0  reqTime_142.0  TW [772.0;772.0]) 
- ( D8 A  899.0  B  900.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D8 A  777.0  B  777.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P8 A  945.0  B  945.0   D  946.0  reqTime_45.0  TW [945.0;945.0]) 
- ( D27 A  1169.0  B  1170.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+ ( P29 A  976.0  B  976.0   D  977.0  reqTime_76.0  TW [976.0;976.0]) 
 
 
- ( P27 A  1230.0  B  1230.0   D  1231.0  reqTime_60.0  TW [1230.0;1230.0]) 
-
-
- ( P1 A  1234.0  B  1234.0   D  1234.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  982.0  B  982.0   D  982.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
- Route: 13 travelTime: 41.0 waitingTime: 0.0 serviceTime: 465.0 waiting Time to penalize: 0.0 durationRoute: 572.0
+ Route: 20 travelTime: 7.0 waitingTime: 0.0 serviceTime: 165.0 waiting Time to penalize: 0.0 durationRoute: 447.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  624.0  B  624.0   D  624.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  479.0  B  479.0   D  479.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D35 A  629.0  B  630.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( D35 A  484.0  B  485.0   D  485.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D24 A  637.0  B  638.0   D  638.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D23 A  674.0  B  675.0   D  675.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D20 A  680.0  B  681.0   D  681.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P24 A  728.0  B  728.0   D  729.0  reqTime_90.0  TW [728.0;728.0]) 
- ( P23 A  735.0  B  735.0   D  736.0  reqTime_60.0  TW [735.0;735.0]) 
+ ( P31 A  627.0  B  627.0   D  628.0  reqTime_142.0  TW [627.0;627.0]) 
+ ( D35 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
  ( P31 A  772.0  B  772.0   D  773.0  reqTime_142.0  TW [772.0;772.0]) 
-
-
- ( P20 A  801.0  B  801.0   D  802.0  reqTime_120.0  TW [801.0;801.0]) 
- ( D11 A  899.0  B  900.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D11 A  777.0  B  777.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
  ( P11 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
- ( D40 A  1169.0  B  1170.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
 
 
- ( P40 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
-
-
- ( P1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  935.0  B  935.0   D  935.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
- Route: 14 travelTime: 29.0 waitingTime: 0.0 serviceTime: 420.0 waiting Time to penalize: 0.0 durationRoute: 572.0
+ Route: 21 travelTime: 8.0 waitingTime: 0.0 serviceTime: 210.0 waiting Time to penalize: 0.0 durationRoute: 493.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  624.0  B  624.0   D  624.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  479.0  B  479.0   D  479.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D35 A  629.0  B  630.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( D35 A  484.0  B  485.0   D  485.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D15 A  633.0  B  634.0   D  634.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D24 A  637.0  B  638.0   D  638.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D22 A  640.0  B  641.0   D  641.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P22 A  671.0  B  671.0   D  672.0  reqTime_30.0  TW [671.0;671.0]) 
- ( P15 A  724.0  B  724.0   D  725.0  reqTime_90.0  TW [724.0;724.0]) 
- ( P24 A  728.0  B  728.0   D  729.0  reqTime_90.0  TW [728.0;728.0]) 
+ ( P31 A  627.0  B  627.0   D  628.0  reqTime_142.0  TW [627.0;627.0]) 
+ ( D35 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
  ( P31 A  772.0  B  772.0   D  773.0  reqTime_142.0  TW [772.0;772.0]) 
- ( D8 A  899.0  B  900.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D8 A  777.0  B  777.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P8 A  945.0  B  945.0   D  946.0  reqTime_45.0  TW [945.0;945.0]) 
- ( D41 A  1169.0  B  1170.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+ ( P29 A  976.0  B  976.0   D  977.0  reqTime_76.0  TW [976.0;976.0]) 
 
 
- ( P41 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
-
-
- ( P1 A  1204.0  B  1204.0   D  1204.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  982.0  B  982.0   D  982.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
- Route: 15 travelTime: 22.0 waitingTime: 0.0 serviceTime: 315.0 waiting Time to penalize: 0.0 durationRoute: 572.0
+ Route: 22 travelTime: 7.0 waitingTime: 0.0 serviceTime: 165.0 waiting Time to penalize: 0.0 durationRoute: 447.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  624.0  B  624.0   D  624.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  479.0  B  479.0   D  479.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D35 A  629.0  B  630.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( D35 A  484.0  B  485.0   D  485.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D15 A  633.0  B  634.0   D  634.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D22 A  640.0  B  641.0   D  641.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P22 A  671.0  B  671.0   D  672.0  reqTime_30.0  TW [671.0;671.0]) 
- ( P15 A  724.0  B  724.0   D  725.0  reqTime_90.0  TW [724.0;724.0]) 
+ ( P31 A  627.0  B  627.0   D  628.0  reqTime_142.0  TW [627.0;627.0]) 
+ ( D35 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
  ( P31 A  772.0  B  772.0   D  773.0  reqTime_142.0  TW [772.0;772.0]) 
- ( D11 A  899.0  B  900.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D11 A  777.0  B  777.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
  ( P11 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
- ( D43 A  1169.0  B  1170.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
 
 
- ( P43 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
-
-
- ( P1 A  1206.0  B  1206.0   D  1206.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  935.0  B  935.0   D  935.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
@@ -1300,15 +1596,15 @@ Walking time: 544.0
 
 
 ID Solution: 1
-FO: Duration: 5429.0
-FO: Travel time: 364.0
-Walking time: 544.0
+FO: Duration: 4165.0
+FO: Travel time: 194.0
+Walking time: 716.0
  Waiting time: 0.0
- medical staff cost: 344.0
- driver cost: 364.0
+ medical staff cost: 175.0
+ driver cost: 194.0
  waiting Time to penalize: 0.0
  List of jobs: 
- Route: 0 travelTime: 90.0 waitingTime: 0.0 serviceTime: 615.0 waiting Time to penalize: 0.0 durationRoute: 881.0
+ Route: 0 travelTime: 61.0 waitingTime: 0.0 serviceTime: 405.0 waiting Time to penalize: 0.0 durationRoute: 821.0
  medical staff cost: 0.0
  driver cost: 0.0
  ( P1 A  375.0  B  375.0   D  375.0  reqTime_0.0  TW [360.0;630.0]) 
@@ -1330,246 +1626,166 @@ Walking time: 544.0
  ( D4467 A  626.0  B  643.0   D  628.0  reqTime_0.0  TW [643.0;643.0]) 
 
 
- ( D6 A  672.0  B  634.0   D  673.0  reqTime_0.0  TW [360.0;1170.0]) 
- ( D10 A  677.0  B  676.0   D  678.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D18 A  636.0  B  634.0   D  637.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D19 A  645.0  B  639.0   D  646.0  reqTime_0.0  TW [630.0;900.0]) 
  ( P4467 A  703.0  B  703.0   D  705.0  reqTime_60.0  TW [703.0;703.0]) 
 
 
  ( D67 A  707.0  B  707.0   D  709.0  reqTime_0.0  TW [707.0;707.0]) 
- ( P6 A  733.0  B  733.0   D  734.0  reqTime_60.0  TW [733.0;733.0]) 
+ ( P27 A  893.0  B  893.0   D  894.0  reqTime_96.0  TW [893.0;893.0]) 
 
 
- ( D32 A  738.0  B  738.0   D  739.0  reqTime_0.0  TW [360.0;1170.0]) 
- ( P32 A  829.0  B  829.0   D  830.0  reqTime_90.0  TW [829.0;829.0]) 
-
-
- ( D6 A  835.0  B  835.0   D  836.0  reqTime_0.0  TW [360.0;1170.0]) 
- ( P12 A  894.0  B  894.0   D  895.0  reqTime_216.0  TW [894.0;894.0]) 
-
-
- ( D36 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
  ( P36 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
+ ( P43 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
 
 
- ( D32 A  994.0  B  994.0   D  995.0  reqTime_0.0  TW [360.0;1170.0]) 
- ( P40 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
-
-
- ( P32 A  1260.0  B  1260.0   D  1261.0  reqTime_90.0  TW [1260.0;1260.0]) 
-
-
- ( D1 A  1267.0  B  1267.0   D  1267.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( D1 A  1206.0  B  1206.0   D  1206.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
- Route: 1 travelTime: 76.0 waitingTime: 0.0 serviceTime: 600.0 waiting Time to penalize: 0.0 durationRoute: 850.0
+ Route: 1 travelTime: 32.0 waitingTime: 0.0 serviceTime: 450.0 waiting Time to penalize: 0.0 durationRoute: 559.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  373.0  B  373.0   D  373.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  636.0  B  636.0   D  636.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( P54 A  381.0  B  383.0   D  383.0  reqTime_0.0  TW [383.0;383.0]) 
- ( D4954 A  386.0  B  403.0   D  388.0  reqTime_0.0  TW [403.0;403.0]) 
+ ( D26 A  642.0  B  643.0   D  643.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( P64 A  439.0  B  441.0   D  441.0  reqTime_0.0  TW [441.0;441.0]) 
- ( D4864 A  446.0  B  463.0   D  448.0  reqTime_0.0  TW [463.0;463.0]) 
- ( P4954 A  493.0  B  493.0   D  495.0  reqTime_90.0  TW [493.0;493.0]) 
- ( D54 A  498.0  B  498.0   D  500.0  reqTime_0.0  TW [498.0;498.0]) 
-
-
- ( P53 A  500.0  B  501.0   D  502.0  reqTime_0.0  TW [501.0;501.0]) 
- ( D4853 A  506.0  B  523.0   D  508.0  reqTime_0.0  TW [523.0;523.0]) 
- ( P4770 A  553.0  B  553.0   D  555.0  reqTime_30.0  TW [553.0;553.0]) 
- ( D70 A  558.0  B  558.0   D  560.0  reqTime_0.0  TW [558.0;558.0]) 
-
-
- ( P56 A  563.0  B  563.0   D  565.0  reqTime_0.0  TW [563.0;563.0]) 
- ( D4456 A  566.0  B  583.0   D  568.0  reqTime_0.0  TW [583.0;583.0]) 
- ( P4853 A  598.0  B  598.0   D  600.0  reqTime_75.0  TW [598.0;598.0]) 
- ( D53 A  604.0  B  604.0   D  606.0  reqTime_0.0  TW [604.0;604.0]) 
-
-
- ( P73 A  613.0  B  620.0   D  615.0  reqTime_0.0  TW [620.0;620.0]) 
- ( D5073 A  626.0  B  643.0   D  628.0  reqTime_0.0  TW [643.0;643.0]) 
- ( P5073 A  733.0  B  733.0   D  735.0  reqTime_90.0  TW [733.0;733.0]) 
- ( D73 A  742.0  B  742.0   D  744.0  reqTime_0.0  TW [742.0;742.0]) 
-
-
- ( P26 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
- ( D27 A  996.0  B  996.0   D  997.0  reqTime_0.0  TW [900.0;1170.0]) 
-
-
- ( P27 A  1230.0  B  1230.0   D  1231.0  reqTime_60.0  TW [1230.0;1230.0]) 
-
-
- ( D1 A  1234.0  B  1234.0   D  1234.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
-
- Route: 2 travelTime: 69.0 waitingTime: 0.0 serviceTime: 420.0 waiting Time to penalize: 0.0 durationRoute: 760.0
- medical staff cost: 0.0
- driver cost: 0.0
- ( P1 A  437.0  B  437.0   D  437.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
- ( P51 A  441.0  B  443.0   D  443.0  reqTime_0.0  TW [443.0;443.0]) 
- ( D4651 A  446.0  B  463.0   D  448.0  reqTime_0.0  TW [463.0;463.0]) 
-
-
- ( D35 A  484.0  B  456.0   D  485.0  reqTime_0.0  TW [360.0;630.0]) 
- ( P4651 A  523.0  B  523.0   D  525.0  reqTime_60.0  TW [523.0;523.0]) 
- ( D51 A  529.0  B  529.0   D  531.0  reqTime_0.0  TW [529.0;529.0]) 
-
-
- ( P65 A  536.0  B  561.0   D  538.0  reqTime_0.0  TW [561.0;561.0]) 
- ( D4965 A  566.0  B  583.0   D  568.0  reqTime_0.0  TW [583.0;583.0]) 
- ( P4965 A  613.0  B  613.0   D  615.0  reqTime_30.0  TW [613.0;613.0]) 
- ( D65 A  620.0  B  620.0   D  622.0  reqTime_0.0  TW [620.0;620.0]) 
-
-
- ( P63 A  624.0  B  624.0   D  626.0  reqTime_0.0  TW [624.0;624.0]) 
- ( D4463 A  626.0  B  643.0   D  628.0  reqTime_0.0  TW [643.0;643.0]) 
- ( P4463 A  733.0  B  733.0   D  735.0  reqTime_90.0  TW [733.0;733.0]) 
- ( D63 A  738.0  B  738.0   D  740.0  reqTime_0.0  TW [738.0;738.0]) 
-
-
- ( P11 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
- ( P8 A  945.0  B  945.0   D  946.0  reqTime_45.0  TW [945.0;945.0]) 
- ( D40 A  1169.0  B  956.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
- ( P40 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
-
-
- ( D1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
-
- Route: 3 travelTime: 56.0 waitingTime: 0.0 serviceTime: 375.0 waiting Time to penalize: 0.0 durationRoute: 762.0
- medical staff cost: 0.0
- driver cost: 0.0
- ( P1 A  432.0  B  432.0   D  432.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
- ( P59 A  439.0  B  441.0   D  441.0  reqTime_0.0  TW [441.0;441.0]) 
- ( D4759 A  446.0  B  463.0   D  448.0  reqTime_0.0  TW [463.0;463.0]) 
-
-
- ( P4759 A  523.0  B  523.0   D  525.0  reqTime_60.0  TW [523.0;523.0]) 
- ( D59 A  528.0  B  528.0   D  530.0  reqTime_0.0  TW [528.0;528.0]) 
- ( P66 A  537.0  B  559.0   D  539.0  reqTime_0.0  TW [559.0;559.0]) 
- ( D5066 A  566.0  B  583.0   D  568.0  reqTime_0.0  TW [583.0;583.0]) 
-
-
- ( P5066 A  613.0  B  613.0   D  615.0  reqTime_30.0  TW [613.0;613.0]) 
- ( D66 A  622.0  B  622.0   D  624.0  reqTime_0.0  TW [622.0;622.0]) 
- ( P4456 A  628.0  B  630.0   D  630.0  reqTime_45.0  TW [628.0;628.0]) 
- ( D56 A  633.0  B  633.0   D  635.0  reqTime_0.0  TW [633.0;633.0]) 
- ( D18 A  636.0  B  640.0   D  637.0  reqTime_0.0  TW [630.0;900.0]) 
- ( D25 A  641.0  B  639.0   D  642.0  reqTime_0.0  TW [630.0;900.0]) 
-
-
- ( D22 A  672.0  B  645.0   D  673.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P22 A  703.0  B  703.0   D  704.0  reqTime_30.0  TW [703.0;703.0]) 
-
-
- ( D18 A  771.0  B  709.0   D  772.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P18 A  802.0  B  802.0   D  803.0  reqTime_30.0  TW [802.0;802.0]) 
-
-
+ ( P19 A  802.0  B  802.0   D  803.0  reqTime_60.0  TW [802.0;802.0]) 
  ( D17 A  804.0  B  804.0   D  805.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P17 A  895.0  B  895.0   D  896.0  reqTime_90.0  TW [895.0;895.0]) 
 
 
- ( D30 A  994.0  B  900.0   D  995.0  reqTime_0.0  TW [900.0;1170.0]) 
+ ( P27 A  893.0  B  893.0   D  894.0  reqTime_96.0  TW [893.0;893.0]) 
+ ( D26 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P15 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
+ ( D43 A  1000.0  B  1000.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+
+
  ( P30 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
 
 
- ( D1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
- Route: 4 travelTime: 15.0 waitingTime: 0.0 serviceTime: 345.0 waiting Time to penalize: 0.0 durationRoute: 810.0
+ Route: 2 travelTime: 27.0 waitingTime: 0.0 serviceTime: 405.0 waiting Time to penalize: 0.0 durationRoute: 833.0
  medical staff cost: 0.0
  driver cost: 0.0
- ( P1 A  355.0  B  355.0   D  355.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  365.0  B  365.0   D  365.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D4 A  360.0  B  361.0   D  361.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( D16 A  368.0  B  369.0   D  369.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
- ( D16 A  363.0  B  363.0   D  364.0  reqTime_0.0  TW [360.0;630.0]) 
- ( P16 A  394.0  B  394.0   D  395.0  reqTime_30.0  TW [394.0;394.0]) 
+ ( D4 A  365.0  B  371.0   D  366.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P16 A  399.0  B  399.0   D  400.0  reqTime_30.0  TW [399.0;399.0]) 
 
 
- ( P4 A  436.0  B  436.0   D  437.0  reqTime_75.0  TW [436.0;436.0]) 
- ( D19 A  630.0  B  630.0   D  631.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P4 A  441.0  B  441.0   D  442.0  reqTime_75.0  TW [441.0;441.0]) 
+ ( D17 A  633.0  B  630.0   D  634.0  reqTime_0.0  TW [630.0;900.0]) 
 
 
- ( D14 A  644.0  B  633.0   D  645.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P14 A  675.0  B  675.0   D  676.0  reqTime_30.0  TW [675.0;675.0]) 
+ ( D19 A  631.0  B  635.0   D  632.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D18 A  635.0  B  634.0   D  636.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P19 A  692.0  B  692.0   D  693.0  reqTime_60.0  TW [692.0;692.0]) 
+ ( P17 A  724.0  B  724.0   D  725.0  reqTime_90.0  TW [724.0;724.0]) 
 
 
- ( D36 A  899.0  B  680.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P27 A  732.0  B  732.0   D  733.0  reqTime_96.0  TW [732.0;732.0]) 
+ ( D14 A  899.0  B  738.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P14 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
+ ( D30 A  1169.0  B  934.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+
+
+ ( P30 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+
+
+ ( P1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 3 travelTime: 34.0 waitingTime: 0.0 serviceTime: 480.0 waiting Time to penalize: 0.0 durationRoute: 518.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  678.0  B  678.0   D  678.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D24 A  683.0  B  684.0   D  684.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P25 A  690.0  B  690.0   D  691.0  reqTime_60.0  TW [690.0;690.0]) 
+ ( D22 A  719.0  B  694.0   D  720.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( D23 A  726.0  B  726.0   D  727.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( D20 A  732.0  B  732.0   D  733.0  reqTime_0.0  TW [630.0;900.0]) 
+ ( P22 A  750.0  B  750.0   D  751.0  reqTime_30.0  TW [750.0;750.0]) 
+ ( P24 A  774.0  B  774.0   D  775.0  reqTime_90.0  TW [774.0;774.0]) 
+
+
+ ( P23 A  787.0  B  787.0   D  788.0  reqTime_60.0  TW [787.0;787.0]) 
  ( P36 A  990.0  B  990.0   D  991.0  reqTime_90.0  TW [990.0;990.0]) 
-
-
- ( D27 A  1169.0  B  993.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
-
-
- ( D1 A  1173.0  B  1173.0   D  1173.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
-
- Route: 5 travelTime: 14.0 waitingTime: 0.0 serviceTime: 240.0 waiting Time to penalize: 0.0 durationRoute: 606.0
- medical staff cost: 0.0
- driver cost: 0.0
- ( P1 A  558.0  B  558.0   D  558.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
- ( D32 A  564.0  B  565.0   D  565.0  reqTime_0.0  TW [360.0;1170.0]) 
-
-
- ( P26 A  725.0  B  725.0   D  726.0  reqTime_90.0  TW [725.0;725.0]) 
- ( D11 A  899.0  B  731.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
-
-
- ( D42 A  1169.0  B  907.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
-
-
- ( D1 A  1174.0  B  1174.0   D  1174.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
-
- Route: 6 travelTime: 44.0 waitingTime: 0.0 serviceTime: 450.0 waiting Time to penalize: 0.0 durationRoute: 760.0
- medical staff cost: 0.0
- driver cost: 0.0
- ( P1 A  434.0  B  434.0   D  434.0  reqTime_0.0  TW [360.0;630.0]) 
-
-
- ( P72 A  441.0  B  443.0   D  443.0  reqTime_0.0  TW [443.0;443.0]) 
- ( D4972 A  446.0  B  463.0   D  463.0  reqTime_0.0  TW [463.0;463.0]) 
-
-
- ( P4557 A  553.0  B  553.0   D  555.0  reqTime_30.0  TW [553.0;553.0]) 
- ( D57 A  558.0  B  558.0   D  560.0  reqTime_0.0  TW [558.0;558.0]) 
- ( P74 A  564.0  B  623.0   D  566.0  reqTime_0.0  TW [623.0;623.0]) 
- ( D4474 A  626.0  B  643.0   D  628.0  reqTime_0.0  TW [643.0;643.0]) 
-
-
- ( P4474 A  673.0  B  673.0   D  675.0  reqTime_30.0  TW [673.0;673.0]) 
- ( D74 A  678.0  B  678.0   D  680.0  reqTime_0.0  TW [678.0;678.0]) 
- ( P25 A  732.0  B  732.0   D  733.0  reqTime_60.0  TW [732.0;732.0]) 
- ( D24 A  736.0  B  736.0   D  737.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P24 A  827.0  B  827.0   D  828.0  reqTime_90.0  TW [827.0;827.0]) 
- ( D23 A  832.0  B  832.0   D  833.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P23 A  893.0  B  893.0   D  894.0  reqTime_60.0  TW [893.0;893.0]) 
- ( D20 A  899.0  B  899.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
- ( P20 A  1020.0  B  1020.0   D  1021.0  reqTime_120.0  TW [1020.0;1020.0]) 
- ( D38 A  1027.0  B  1027.0   D  1028.0  reqTime_0.0  TW [900.0;1170.0]) 
  ( P38 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
 
 
- ( D1 A  1204.0  B  1204.0   D  1204.0  reqTime_0.0  TW [360.0;630.0]) 
+ ( P1 A  1204.0  B  1204.0   D  1204.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 4 travelTime: 25.0 waitingTime: 0.0 serviceTime: 270.0 waiting Time to penalize: 0.0 durationRoute: 717.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  479.0  B  479.0   D  479.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D35 A  484.0  B  485.0   D  485.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P31 A  627.0  B  627.0   D  628.0  reqTime_142.0  TW [627.0;627.0]) 
+ ( D35 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P31 A  772.0  B  772.0   D  773.0  reqTime_142.0  TW [772.0;772.0]) 
+ ( D8 A  777.0  B  777.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P11 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
+ ( P29 A  976.0  B  976.0   D  977.0  reqTime_76.0  TW [976.0;976.0]) 
+ ( D40 A  1169.0  B  987.0   D  1170.0  reqTime_0.0  TW [900.0;1170.0]) 
+ ( P40 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+
+
+ ( P1 A  1205.0  B  1205.0   D  1205.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+
+ Route: 5 travelTime: 15.0 waitingTime: 0.0 serviceTime: 195.0 waiting Time to penalize: 0.0 durationRoute: 717.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  479.0  B  479.0   D  479.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( D35 A  484.0  B  485.0   D  485.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P31 A  627.0  B  627.0   D  628.0  reqTime_142.0  TW [627.0;627.0]) 
+ ( D35 A  629.0  B  629.0   D  630.0  reqTime_0.0  TW [360.0;630.0]) 
+
+
+ ( P31 A  772.0  B  772.0   D  773.0  reqTime_142.0  TW [772.0;772.0]) 
+ ( D11 A  777.0  B  777.0   D  900.0  reqTime_0.0  TW [630.0;900.0]) 
+
+
+ ( P11 A  930.0  B  930.0   D  931.0  reqTime_30.0  TW [930.0;930.0]) 
+ ( P43 A  1200.0  B  1200.0   D  1201.0  reqTime_30.0  TW [1200.0;1200.0]) 
+
+
+ ( P1 A  1206.0  B  1206.0   D  1206.0  reqTime_0.0  TW [360.0;630.0]) 
 
 
 
@@ -1577,4 +1793,4 @@ Walking time: 544.0
 
  pc Time:
 
-285003.0213
+8941891.0024
