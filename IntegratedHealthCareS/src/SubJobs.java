@@ -5,15 +5,15 @@ import java.util.HashMap;
  * This class separate the jobs into pick up and delivery tasks. Save the list of jobs per pairs
  */
 public class SubJobs extends Jobs {
-	
+
 	Edge preEdge;
 	Edge postEdge;
 	double additionalWaintingTime=0;
 	double timeWindowViolation=0;
 	//private ArrayList<Jobs> jobList= new ArrayList<Jobs>();
 	private double[] frequencyRoute;
-	private double possibleStartServiceTime;
-	private double possibleEndServiceTime;
+//	private double possibleStartServiceTime;
+//	private double possibleEndServiceTime;
 
 
 	public SubJobs(Jobs present,Jobs future, SubRoute wr) {
@@ -21,9 +21,9 @@ public class SubJobs extends Jobs {
 		present.setPair(future);
 		present.setWalkingRoute(wr.getJobSequence());
 		future.setWalkingRoute(wr.getJobSequence());
-//		for(Jobs j:wr.getJobSequence()) {
-//			jobList.add(j);
-//		}	
+		//		for(Jobs j:wr.getJobSequence()) {
+		//			jobList.add(j);
+		//		}	
 	}
 
 	public SubJobs(Jobs present,Jobs future) {
@@ -44,6 +44,9 @@ public class SubJobs extends Jobs {
 		this.setTotalPeople(j.getTotalPeople());
 		this.setloadUnloadTime(j.getloadUnloadTime());
 		this.setloadUnloadRegistrationTime(j.getloadUnloadRegistrationTime());
+		this.setdeltaArrivalDeparture(j.getdeltaArrivalDeparture());
+		this.setdeltaArrivalStartServiceTime(j.getdeltaArrivalStartServiceTime());
+		this.setdeltarStartServiceTimeEndServiceTime(j.getdeltarStartServiceTimeEndServiceTime());
 	}
 
 	// Getters
@@ -55,19 +58,19 @@ public class SubJobs extends Jobs {
 	public double[] getFrecuencyRoute(){return frequencyRoute;}
 	public double getAdditionaWaitingTime() {return additionalWaintingTime;}
 	public double getTimeWindowViolation() {return timeWindowViolation;}
-	public double getPossibleEndServiceTime() {return possibleEndServiceTime;}
+//	public double getPossibleEndServiceTime() {return possibleEndServiceTime;}
+//
+//	public double getPossibleStartServiceTime() {return possibleStartServiceTime;}
 
-	public double getPossibleStartServiceTime() {return possibleStartServiceTime;}
-	
 	// Setters
 	//public void setJobList(ArrayList<Jobs> jobList) {this.jobList = jobList;}
 	public void setFrecuencyRoute(double[] fr) {this.frequencyRoute = fr;}
 	public void setAdditionalWaitingTime(double time) {this.additionalWaintingTime = time;}
 	public void setTimeWindowViolation(double time) {this.timeWindowViolation = time;}
-	public void setPossibleEndServiceTime(double end) {possibleEndServiceTime=end;}
+//	public void setPossibleEndServiceTime(double end) {possibleEndServiceTime=end;}
+//
+//	public void setPossibleStartServiceTime(double start) {	possibleStartServiceTime=start;}
 
-	public void setPossibleStartServiceTime(double start) {	possibleStartServiceTime=start;}
-	
 	public String toString() 
 	{   String s = "";
 	s = s.concat("\nId: " + (this.getSubJobKey()));

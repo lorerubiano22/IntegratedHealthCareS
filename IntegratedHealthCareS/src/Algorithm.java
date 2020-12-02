@@ -26,7 +26,7 @@ public class Algorithm {
 	public Algorithm(Test t, Inputs i, Random r) {
 		test = t;
 		input = i;
-		for(int iter=0;iter<200;iter++) {
+		//for(int iter=0;iter<200;iter++) {
 		subroutes = new WalkingRoutes(input, r, t, i.getNodes()); // stage 1: Creation of walking routes
 		//updateHomeCareStaffJobs();
 		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
@@ -36,7 +36,7 @@ public class Algorithm {
 		setBestSolution(drivingRoute.getSol());
 		setInitialSolution(drivingRoute.getInitialSol());
 		
-	}
+	//}
 		//initialSolution.computeMetricsSolution(input, test);
 		//Interaction stages= new Interaction(routes,subJobsList, input, r, t);// Iteration between stage 1 und stage 2: from the current walking routes split and define new ones
 		//routes= stages.getBestRoutes();

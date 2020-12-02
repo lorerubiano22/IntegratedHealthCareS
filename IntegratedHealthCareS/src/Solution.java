@@ -112,6 +112,7 @@ public class Solution {
 	s= s.concat("\n medical staff cost: "+ homeCareStaffCost);
 	s= s.concat("\n driver cost: "+ driverCost);
 	s= s.concat("\n waiting Time to penalize: "+ additionalWaitingTime);
+	s= s.concat(" Detour: "+ detourViolation);
 	s = s.concat("\n List of jobs: ");
 	for(Route r:routes) {
 		if(!r.getSubJobsList().isEmpty()) {
@@ -119,6 +120,7 @@ public class Solution {
 			s= s.concat(" travelTime: "+ r.getTravelTime());
 			s= s.concat(" waitingTime: "+ r.getWaitingTime());
 			s= s.concat(" serviceTime: "+ r.getServiceTime());
+			s= s.concat(" detour: "+ r.getdetourViolation());
 			s= s.concat(" waiting Time to penalize: "+ r.getAdditionalwaitingTime());
 			s= s.concat(" durationRoute: "+ r.getDurationRoute());
 			s= s.concat("\n medical staff cost: "+ r.gethomeCareStaffCost());
@@ -126,11 +128,10 @@ public class Solution {
 			s= s.concat("\n");
 			for(Parts p:r.getPartsRoute()) {
 				for(SubJobs j:p.getListSubJobs()) {	
-					s = s.concat(" ( " + j.getSubJobKey()+" A  "+j.getArrivalTime()+", "+j.getVehicleArrivalTime()+"  B  "+j.getstartServiceTime()+", "+j.getPossibleStartServiceTime()+"   D  "+j.getDepartureTime()+", "+j.getVehicleDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
+					s = s.concat(" ( " + j.getSubJobKey()+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
 				}
 				s = s.concat("\n\n");
 			}
-
 		}	
 	}
 	return s;
@@ -142,6 +143,8 @@ public class Solution {
 		int id=-1;
 		for(Route r: this.getRoutes()) {
 			id++;
+			computeStartTimeRoute(r.getSubJobsList().get(0),r,inp,test);
+			computeEndTimeRoute(r.getSubJobsList().get(r.getSubJobsList().size()-1),r,inp,test);
 			r.setIdRoute(id);
 			r.setDurationRoute(r.getSubJobsList().getLast().getDepartureTime()-r.getSubJobsList().getFirst().getArrivalTime());
 			r.computeServiceTime(inp,jobsInWalkingRoute);
@@ -152,11 +155,20 @@ public class Solution {
 			r.checkingWaitingTimes(test,inp);
 			// revisar los detours
 			r.checkingDetour(test,inp);	
-			// metrics
-			computeStartTimeRoute(r.getSubJobsList().get(0),r,inp,test);
-			computeEndTimeRoute(r.getSubJobsList().get(r.getSubJobsList().size()-1),r,inp,test);
+			// metrics Home- care staff cost
+			r.computeHomCareStaffCost();
 			System.out.println(this.toString());
 		}
+
+		//waitingTime+=r.getWaitingTime();
+		//serviceTime+=r.getServiceTime();
+		//		drivingTime+=r.getTravelTime();
+		//		paramedic+=r.getAmountParamedic();
+		//		homeCareStaff+=r.getHomeCareStaff();
+		//		additionalWaitingTime+=r.getAdditionalwaitingTime();
+		//		timeWindowViolation+=r.gettimeWindowViolation();
+		//		detourViolation+=r.getdetourViolation();
+		//		durationSolution+=r.getDurationRoute();
 
 		this.computeCosts( inp,  test);
 
@@ -167,26 +179,23 @@ public class Solution {
 			for(int i=1;i<r.getSubJobsList().size();i++) {
 				SubJobs nodeI=r.getSubJobsList().get(i-1);
 				SubJobs nodeJ=r.getSubJobsList().get(i);
-				double deltaArrivalDeparture=nodeI.getDepartureTime()-nodeI.getArrivalTime();
-				double deltaArrivalStartServiceTime=nodeI.getstartServiceTime()-nodeI.getArrivalTime();
-				double deltarStartServiceTimeEndServiceTime=nodeI.getendServiceTime()-nodeI.getstartServiceTime();
-
+			
 				double tv=inp.getCarCost().getCost(nodeI.getId()-1, nodeJ.getId()-1);
 				double possibleArrival=nodeI.getArrivalTime()+tv;
-				double possibleStartServiceTime= Math.max(possibleArrival+deltaArrivalStartServiceTime, nodeI.getStartTime());
-				double possibleEndServiceTime= possibleStartServiceTime+deltarStartServiceTimeEndServiceTime;
-				double possibleDepartureTime=possibleArrival+deltaArrivalDeparture;
+				double possibleStartServiceTime= Math.max(possibleArrival+nodeI.getdeltaArrivalDeparture(), nodeI.getStartTime());
+				double possibleEndServiceTime= possibleStartServiceTime+nodeI.getdeltaArrivalStartServiceTime();
+				double possibleDepartureTime=possibleArrival+nodeI.getdeltarStartServiceTimeEndServiceTime();
 
 				// setting new times for nodeI
-				nodeI.setvehicleArrivalTime(possibleArrival);
-				nodeI.setPossibleStartServiceTime(possibleStartServiceTime);
-				nodeI.setPossibleEndServiceTime(possibleEndServiceTime);
-				nodeI.setVehicledepartureTime(possibleDepartureTime);
-				
-//				nodeI.setarrivalTime(possibleArrival);
-//				nodeI.setStartServiceTime(possibleStartServiceTime);
-//				nodeI.setEndServiceTime(possibleEndServiceTime);
-//				nodeI.setdepartureTime(possibleDepartureTime);
+//				nodeI.setvehicleArrivalTime(possibleArrival);
+//				nodeI.setPossibleStartServiceTime(possibleStartServiceTime);
+//				nodeI.setPossibleEndServiceTime(possibleEndServiceTime);
+//				nodeI.setVehicledepartureTime(possibleDepartureTime);
+			
+								nodeI.setarrivalTime(possibleArrival);
+								nodeI.setStartServiceTime(possibleStartServiceTime);
+								nodeI.setEndServiceTime(possibleEndServiceTime);
+								nodeI.setdepartureTime(possibleDepartureTime);
 			}
 		}
 		System.out.println(this.toString());
@@ -221,17 +230,7 @@ public class Solution {
 
 
 
-	public void timesInitialArrivalDepartureVehicle() {
-		for(Route r:this.getRoutes()) {
-			for(SubJobs j:r.getSubJobsList()) {
-				j.setvehicleArrivalTime(j.getArrivalTime());
-				j.setVehicledepartureTime(j.getDepartureTime());
-				j.setPossibleStartServiceTime(j.getstartServiceTime());
-				j.setPossibleEndServiceTime(j.getendServiceTime());
-			}
-		}
-
-	}
+	
 
 
 	public void computeCosts(Inputs inp, Test test) {
@@ -273,14 +272,15 @@ public class Solution {
 		this.settimeWindowViolation(timeWindowViolation);
 
 		// penalization
-		double penalization=0;
-		if(test.gethomeCareStaffObjective()==1) {
-			penalization=additionalWaitingTime+detourViolation+timeWindowViolation+1000*this.getRoutes().size();
-		}
-		else {
-			penalization=detourViolation+timeWindowViolation+1000*this.getRoutes().size();
-		}
+		//		double penalization=0;
+		//		if(test.gethomeCareStaffObjective()==1) {
+		//			penalization=additionalWaitingTime+detourViolation+timeWindowViolation+1000*this.getRoutes().size();
+		//		}
+		//		else {
+		//			penalization=detourViolation+timeWindowViolation+1000*this.getRoutes().size();
+		//		}
 
+		double penalization=additionalWaitingTime+detourViolation+timeWindowViolation+1000*this.getRoutes().size();
 		// cost <- driver : driving cost  // home care staff and paramedic <- driving cost + waiting time
 		driverCost=this.getdrivingTime();// los paramedicos que salen del depot
 		this.setdriverCost(driverCost);

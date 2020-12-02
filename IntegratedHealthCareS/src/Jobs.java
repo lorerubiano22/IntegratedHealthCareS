@@ -24,8 +24,8 @@ public class Jobs {
 	private double sortLTWSizeCriterion; // sort criterion the size of time window and the latest time
 	private int totalPeople=0; // people involven in the service:
 	// vehicle 
-	private double vehicleArrivalTime=0; // time for vehicle
-	private double vehicleDepartureTime=0; // time for vehicle
+//	private double vehicleArrivalTime=0; // time for vehicle
+//	private double vehicleDepartureTime=0; // time for vehicle
 	
 	// preparation time
 	private double loadUnloadRegistrationTime=0;
@@ -45,7 +45,11 @@ public class Jobs {
 	private HashMap<Integer,SubJobs> subJobs= new HashMap<>();
 	// Constructors
 	private LinkedList<Jobs> walkingRoute;
-
+	private double deltaArrivalDeparture=0;
+	private double deltaArrivalStartServiceTime=0;
+	private double deltarStartServiceTimeEndServiceTime=0;
+	
+	
 	public Jobs(int id, double startTime, double endTime, int reqQualification,
 			double reqTime) {
 		this(id,startTime,endTime,reqQualification,reqTime,new LinkedList<Jobs>());
@@ -82,8 +86,8 @@ public class Jobs {
 		this.reqQualification = i.getReqQualification();
 		this.serviceTime = i.getReqTime();
 		this.walkingTime=i.walkingTime;
-		vehicleDepartureTime=i.getVehicleDepartureTime();
-		this.vehicleArrivalTime=i.vehicleArrivalTime;
+//		vehicleDepartureTime=i.getVehicleDepartureTime();
+//		this.vehicleArrivalTime=i.vehicleArrivalTime;
 		waitingTime=i.waitingTime;
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
@@ -104,6 +108,9 @@ public class Jobs {
 		for(SubJobs j:i.getSubJobs().values()){
 			subJobs.put(j.getId(), new SubJobs(j));
 		}
+		deltaArrivalDeparture=i.deltaArrivalDeparture;
+		deltaArrivalStartServiceTime=i.deltaArrivalStartServiceTime;
+		deltarStartServiceTimeEndServiceTime=i.deltarStartServiceTimeEndServiceTime;
 	}
 
 	public Jobs(Jobs i) {
@@ -114,12 +121,12 @@ public class Jobs {
 		this.softendTime = i.getEndTime();
 		this.reqQualification = i.getReqQualification();
 		this.serviceTime = i.getReqTime();
-		this.vehicleArrivalTime=i.vehicleArrivalTime;
+//		this.vehicleArrivalTime=i.vehicleArrivalTime;
 		this.departureTime=i.departureTime;
 		this.walkingTime=i.walkingTime;
 		this.arrivalTime=i.arrivalTime;
 		this.departureTime=i.departureTime;
-		vehicleDepartureTime=i.getVehicleDepartureTime();
+//		vehicleDepartureTime=i.getVehicleDepartureTime();
 		this.loadUnloadRegistrationTime=i.getloadUnloadRegistrationTime();
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
@@ -135,10 +142,17 @@ public class Jobs {
 		if(i.subJobPair!=null) {
 			subJobPair=new Jobs(i.subJobPair);}
 		walkingRoute=i.getWalkingRoute();
+		deltaArrivalDeparture=i.deltaArrivalDeparture;
+		deltaArrivalStartServiceTime=i.deltaArrivalStartServiceTime;
+		deltarStartServiceTimeEndServiceTime=i.deltarStartServiceTimeEndServiceTime;
+		
 	}
 
 	/* SET METHODS */
-
+	public void setdeltaArrivalDeparture(double a) {this.deltaArrivalDeparture = a;}
+	public void setdeltaArrivalStartServiceTime(double a) {this.deltaArrivalStartServiceTime = a;}
+	public void setdeltarStartServiceTimeEndServiceTime(double a) {this.deltarStartServiceTimeEndServiceTime = a;}
+	
 	public void setAssignedJobToMedicalCentre(ArrayList<Jobs> jobs) {this.assignedJob = jobs;}
 	public void setServerd(boolean isServerd) {this.isServerd = isServerd;}
 	public void setTotalPeople(int i) {	
@@ -158,9 +172,9 @@ public class Jobs {
 	public void setMedicalCentre(boolean mc) {this.isMedicalCentre = mc;}
 	public void setReqQualification(int qualification) {reqQualification = qualification;}
 	public void setarrivalTime(double arrival) {arrivalTime=arrival;}
-	public void setvehicleArrivalTime(double arrival) {vehicleArrivalTime=arrival;}
+//	public void setvehicleArrivalTime(double arrival) {vehicleArrivalTime=arrival;}
 	public void setdepartureTime(double departure) {departureTime=departure;}
-	public void setVehicledepartureTime(double departure) {vehicleDepartureTime=departure;}
+//	public void setVehicledepartureTime(double departure) {vehicleDepartureTime=departure;}
 	public void setIDcouple(int couple) {idCouple=couple;}
 	public void setWaitingTime(double w) {this.waitingTime = w;}
 	public void setWalkingRoute(LinkedList<Jobs> w) {this.walkingRoute = w;}
@@ -171,13 +185,15 @@ public class Jobs {
 		}
 	}
 
-
+	
 	/* GET METHODS */
 	public boolean isServerd() {return isServerd;}
 	public boolean isPatient() {return isPatient;}
 	public boolean isMedicalCentre() {return isMedicalCentre;	}
 	public boolean isClient() {return isClient;}	
-
+	public double getdeltaArrivalDeparture() {return deltaArrivalDeparture;}
+	public double getdeltaArrivalStartServiceTime() {return deltaArrivalStartServiceTime;}
+	public double getdeltarStartServiceTimeEndServiceTime() {return deltarStartServiceTimeEndServiceTime;}
 
 	public String getSubJobKey() { return subJobKey;}
 	public int getId() { return id;}
@@ -188,9 +204,9 @@ public class Jobs {
 	public double getDepartureTime() {return departureTime;}
 	public double getloadUnloadRegistrationTime() {return loadUnloadRegistrationTime;}
 	public double getloadUnloadTime() {return loadUnloadTime;}
-	public double getVehicleArrivalTime() {return vehicleArrivalTime;}
+//	public double getVehicleArrivalTime() {return vehicleArrivalTime;}
 	public LinkedList<Jobs> getWalkingRoute() {return walkingRoute;}
-	public double getVehicleDepartureTime() {return vehicleDepartureTime;}
+//	public double getVehicleDepartureTime() {return vehicleDepartureTime;}
 	public int getIDcouple() {return idCouple;}
 	public double getEndTime() {return hardendTime;}
 	public double getSoftStartTime() {return this.softstartTime;}
@@ -219,7 +235,7 @@ public class Jobs {
 	public void setTimeWindowsPickUpMedicalCentre(double startTime, int maxDetourDirectConnection, double cumulativeWaitingTime) {
 		this.setEndTime(startTime-maxDetourDirectConnection);
 		// aca se considera el waiting time pensando en el tiempo max permitido que el paciente puede estar en el centro médico
-		this.setStartTime(this.getEndTime()-cumulativeWaitingTime);
+		this.setStartTime(this.getEndTime());
 	}
 	
 	public void setIdUser(int id) {idUser= id;}

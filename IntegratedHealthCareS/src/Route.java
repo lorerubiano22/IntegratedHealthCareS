@@ -340,8 +340,8 @@ public class Route {
 	s = s.concat("\njobs: ");
 	for(Parts p:this.getPartsRoute()) {
 		for(SubJobs j:p.getListSubJobs()) {
-			s = s.concat(" ( " + j.getSubJobKey()+" A  "+j.getArrivalTime()+", "+j.getVehicleArrivalTime()+"  B  "+j.getstartServiceTime()+", "+j.getPossibleStartServiceTime()+"   D  "+j.getDepartureTime()+", "+j.getVehicleDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
-				}
+			s = s.concat(" ( " + j.getSubJobKey()+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
+						}
 		s = s.concat("\n\n");
 	}
 	return s;
@@ -390,10 +390,10 @@ public class Route {
 			double startServiceTime=Math.max(arrivalTimeVehicle+a.getloadUnloadRegistrationTime()+a.getloadUnloadTime(),b.getStartTime());
 			double endServiceTime=startServiceTime+b.getReqTime();
 			double departureServiceTime=arrivalTimeVehicle+a.getloadUnloadTime();
-			b.setvehicleArrivalTime(arrivalTimeVehicle);
+			b.setarrivalTime(arrivalTimeVehicle);
 			b.setStartServiceTime(startServiceTime);
 			b.setEndServiceTime(endServiceTime);
-			b.setVehicledepartureTime(departureServiceTime);
+			b.setdepartureTime(departureServiceTime);
 			System.out.println(b.toString());
 		}
 		System.out.println(this.toString());
@@ -409,7 +409,7 @@ public class Route {
 		for(SubJobs j:this.getSubJobsList()) {
 			if(j.isClient() || j.isMedicalCentre()) {
 				if(j.getTotalPeople()<0) {// drop-off
-					if(j.getPossibleStartServiceTime()>j.getEndTime()) {
+					if(j.getstartServiceTime()>j.getEndTime()) {
 						penalization+=j.getEndTime()-j.getstartServiceTime();
 						penalizationRoute+=penalization;
 					}
@@ -428,21 +428,22 @@ public class Route {
 		double penalizationRoute=0;
 		double additionalWaitingRoute=0;
 		for(SubJobs j:this.getSubJobsList()) { // se producen despues de terminar un servicio
-			if(j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime()<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
-				penalization=j.getstartServiceTime()-(j.getVehicleArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime());
+			if((j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
+				penalization=j.getstartServiceTime()-(j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime());
 			}
 
 			else { // llega antes el personal tiene que esperar al vehiculo
-				if(j.getVehicleArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime()>j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
+				if((j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime())>j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
 					if(j.getTotalPeople()>0) {
-						penalization=j.getstartServiceTime()-(j.getVehicleArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime());}
+						penalization=(j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime())-j.getstartServiceTime();}
 					penalizationRoute+=penalization;
 					if(penalization>test.getCumulativeWaitingTime()) {
 						additionalWaitingRoute+=Math.abs(test.getCumulativeWaitingTime()-penalization);
 					}
 				}
 			}
-			j.setAdditionalWaitingTime(penalization);
+			j.setWaitingTime(penalization);
+			j.setAdditionalWaitingTime(additionalWaitingRoute);
 		}
 		this.setWaitingTime(penalizationRoute);
 		this.setAdditionalWaitingTime(additionalWaitingRoute);
@@ -508,6 +509,18 @@ public class Route {
 	}
 		// agregar los ejes del depot
 	
+		
+	}
+
+
+
+
+
+	public void computeHomCareStaffCost() {
+		double distance=0;
+		for(Edge e:this.edges.values()) {
+			distance+=e.gettravelTimeInRoute();
+		}
 		
 	}
 

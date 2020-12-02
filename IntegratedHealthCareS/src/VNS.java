@@ -502,66 +502,97 @@ public class VNS {
 		return patients;
 	}
 
-	public Solution destructionSolution(Solution copySolution) {
-		Solution sol= new Solution();
-		 // se selecciona un porcentaje aleatorio de rutas y se insertan de acuerdo a la hora de empezar el servicio
-		LinkedList<Route> routes= copySolution.getRoutes();
-		LinkedList<Route> routesListToMerge= new LinkedList<Route>();
-		int totalRoutesToMerge=2;
-		for(int i=0; i<totalRoutesToMerge;i++) {
-			int index =0;
-			do {
-				index = this.rng.nextInt(routes.size()-1);
+//	public Solution destructionSolution(Solution copySolution) {
+//		Solution sol= new Solution();
+//		 // se selecciona un porcentaje aleatorio de rutas y se insertan de acuerdo a la hora de empezar el servicio
+//		LinkedList<Route> routes= copySolution.getRoutes();
+//		LinkedList<Route> routesListToMerge= new LinkedList<Route>();
+//		int totalRoutesToMerge=2;
+//		for(int i=0; i<totalRoutesToMerge;i++) {
+//			int index =0;
+//			do {
+//				index = this.rng.nextInt(routes.size()-1);
+//
+//			}
+//			while(routesListToMerge.contains(routes.get(index)));	
+//			routesListToMerge.add(routes.get(index));
+//		}
+//		// se intentan unificar
+//		LinkedList<Route> newRoutes=stackingRoutes(routesListToMerge);
+//		if(!newRoutes.isEmpty()) {
+//			for(Route r: routesListToMerge) {
+//				routes.remove(r);
+//			}
+//			for(Route r: newRoutes) {
+//				routes.add(r);
+//			}
+//		}
+//		for(Route r: routes) {
+//			sol.getRoutes().add(r);
+//		}
+//		updateSolution(sol);
+//		return sol;
+//	}
 
+//	private LinkedList<Route> stackingRoutes(LinkedList<Route> routesListToMerge) {
+//		LinkedList<Route> newRoutes= new LinkedList<Route>();
+//		ArrayList<SubJobs> subJobsList= new ArrayList<SubJobs>();
+//		ArrayList<SubJobs> dropOffPatients= selectingDropoffPatientsMC(routesListToMerge);
+//		ArrayList<SubJobs> pickUpPatients= selectingPickUpPatientsMC(routesListToMerge);
+//		dropOffPatients.sort(Jobs.SORT_BY_STARTW);
+//		
+//		
+//		
+//		
+//		pickUpPatients.sort(Jobs.SORT_BY_STARTW);
+//		ArrayList<SubJobs> clients= selectingClients(routesListToMerge);
+//		clients.sort(Jobs.SORT_BY_STARTW);
+//		HashMap<String,SubJobs> jobsToInsert= listJobs(patients,clients);
+//
+//		
+//		Route newR=new Route();
+//		newRoutes.add(newR);
+//		for(SubJobs j:subJobsList) {
+//			if(jobsToInsert.containsKey(j.getSubJobKey())) {
+//			boolean inserted= stackingJob(newR,j,missingJobs);
+//			if(!inserted) {
+//				newR=new Route();
+//				newRoutes.add(newR);
+//				inserted= stackingJob(newR,j,missingJobs);
+//			}
+//		}
+//		}
+//		if(newRoutes.size()>routesListToMerge.size()) {
+//			newRoutes.clear();
+//		}
+//		return newRoutes;
+//	}
+
+	private ArrayList<SubJobs> selectingPickUpPatientsMC(LinkedList<Route> routesListToMerge) {
+		ArrayList<SubJobs> patients= new ArrayList<SubJobs>();
+		for(Route r: routesListToMerge) {
+
+			for(SubJobs j:r.getSubJobsList()) {
+				if(j.isMedicalCentre() && j.getTotalPeople()>0) {
+					patients.add(j);}
 			}
-			while(routesListToMerge.contains(routes.get(index)));	
-			routesListToMerge.add(routes.get(index));
+
 		}
-		// se intentan unificar
-		LinkedList<Route> newRoutes=stackingRoutes(routesListToMerge);
-		if(!newRoutes.isEmpty()) {
-			for(Route r: routesListToMerge) {
-				routes.remove(r);
-			}
-			for(Route r: newRoutes) {
-				routes.add(r);
-			}
-		}
-		for(Route r: routes) {
-			sol.getRoutes().add(r);
-		}
-		updateSolution(sol);
-		return sol;
+		return patients;
 	}
 
-	private LinkedList<Route> stackingRoutes(LinkedList<Route> routesListToMerge) {
-		LinkedList<Route> newRoutes= new LinkedList<Route>();
-		ArrayList<SubJobs> subJobsList= new ArrayList<SubJobs>();
-		HashMap<String,SubJobs> missingJobs= new HashMap<>();
+
+	private ArrayList<SubJobs> selectingDropoffPatientsMC(LinkedList<Route> routesListToMerge) {
+		ArrayList<SubJobs> patients= new ArrayList<SubJobs>();
 		for(Route r: routesListToMerge) {
+
 			for(SubJobs j:r.getSubJobsList()) {
-				subJobsList.add(j);
-				missingJobs.put(j.getSubJobKey(), j);
+				if(j.isMedicalCentre() && j.getTotalPeople()<0 ) {
+					patients.add(j);}
 			}
+
 		}
-		subJobsList.sort(Jobs.SORT_BY_ENDTW);
-		
-		Route newR=new Route();
-		newRoutes.add(newR);
-		for(SubJobs j:subJobsList) {
-			if(missingJobs.containsKey(j.getSubJobKey())) {
-			boolean inserted= stackingJob(newR,j,missingJobs);
-			if(!inserted) {
-				newR=new Route();
-				newRoutes.add(newR);
-				inserted= stackingJob(newR,j,missingJobs);
-			}
-		}
-		}
-		if(newRoutes.size()>routesListToMerge.size()) {
-			newRoutes.clear();
-		}
-		return newRoutes;
+		return patients;
 	}
 
 	private boolean stackingJob(Route newR, SubJobs j, HashMap<String, SubJobs> missingJobs) {
