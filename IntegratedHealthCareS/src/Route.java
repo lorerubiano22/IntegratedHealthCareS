@@ -236,6 +236,7 @@ public class Route {
 				}
 			}	
 		}
+	
 		
 		if(this.getPartsRoute().size()>2 && !this.getSubJobsList().isEmpty()) {
 			// service time
@@ -410,7 +411,7 @@ public class Route {
 			if(j.isClient() || j.isMedicalCentre()) {
 				if(j.getTotalPeople()<0) {// drop-off
 					if(j.getstartServiceTime()>j.getEndTime()) {
-						penalization+=j.getEndTime()-j.getstartServiceTime();
+						penalization+=Math.abs(j.getEndTime()-j.getstartServiceTime());
 						penalizationRoute+=penalization;
 					}
 					j.setTimeWindowViolation(penalization);
