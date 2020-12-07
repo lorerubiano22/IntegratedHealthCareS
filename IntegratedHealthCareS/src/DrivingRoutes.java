@@ -38,11 +38,11 @@ public class DrivingRoutes {
 	private HashMap<Integer, Jobs>checkedFutureJobs=new HashMap<Integer, Jobs>();
 	private ArrayList<Parts> schift= new ArrayList<>();
 	private ArrayList<Schift>splittedSchift= new ArrayList<Schift>();
-	
+
 	// list of assigned jobs to vehícules _ option 1
 	ArrayList<Parts> sequenceVehicles= new ArrayList<>(); // turn for paramedics
-	
-	
+
+
 	// list of assigned jobs qualification paramedics
 	ArrayList<Parts> qualificationParamedic= new ArrayList<>(); // turn for paramedics
 	ArrayList<ArrayList<SubJobs>> qualification1= new ArrayList<>();  // turn for home care staff 1
@@ -109,7 +109,7 @@ public class DrivingRoutes {
 		assigmentJobsToVehicles(clasification);
 		assigmentJobsToQualifications(clasification);
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
-		insertingDepotConnections();
+		ArrayList<Route> route=insertingDepotConnections(schift);
 		Solution initialSol= solutionInformation(); 
 		System.out.println(initialSol.toString());
 		initialSol.checkingSolution(inp,test,jobsInWalkingRoute);
@@ -4953,9 +4953,32 @@ public class DrivingRoutes {
 
 		assigmentClientsDropOff(q0,clasification1);
 		missingAssigment(qualification01,clasification1);
-for(Parts p: sequenceVehicles) {
-	System.out.println(p.toString());
-}
+		ArrayList<Parts> partsList = new ArrayList<>();
+		for(Parts p: sequenceVehicles) {
+			if(!p.getListSubJobs().isEmpty()) {
+				partsList.add(p);
+				System.out.println(p.toString());
+			}
+		}
+		sequenceVehicles.clear();
+		for(Parts p: partsList) {			
+			sequenceVehicles.add(p);
+		}
+
+
+		ArrayList<Route> route=insertingDepotConnections(sequenceVehicles);
+
+
+		for(Route r:route ) {
+			System.out.println(r.toString());
+		}
+
+		System.out.println("Stop");
+		System.out.println(initialSol.toString());
+		Solution initialSol= solutionInformation(); 
+
+		initialSol.checkingSolution(inp,test,jobsInWalkingRoute);
+
 		//Qualification level from 1 to 3
 		ArrayList<Parts> qualification1= assigmentParamedic(q1,clasification1); // here are not considering working hours
 		missingAssigment(qualification1,clasification1);
@@ -5029,6 +5052,8 @@ for(Parts p: sequenceVehicles) {
 		ArrayList<SubJobs> listSubJobsDropOff= new ArrayList<SubJobs>();
 		ArrayList<SubJobs> listSubJobsPickUp= new ArrayList<SubJobs>();
 		HashMap<String,SubJobs> pickUpDirectory= new HashMap<>();
+		
+		
 		for(Jobs j:clasification3) { // generating List of jobs
 			Parts p=disaggregatedJob(j);
 			System.out.println(p.toString());
@@ -5061,7 +5086,7 @@ for(Parts p: sequenceVehicles) {
 				}
 				else { // iterating over the route
 					insertesed=insertingPairSubJobsDropOffClient(j,paramedic);
-					
+
 					if(insertesed) {
 						secondPart=insertingPairSubJobsPickUpClient(pickUp,paramedic);
 						if(secondPart) {
@@ -5084,6 +5109,7 @@ for(Parts p: sequenceVehicles) {
 				break;
 			}
 		}
+		
 		for(SubJobs pickUp:listSubJobsPickUp) {
 			if(pickUpDirectory.containsKey(pickUp.getSubJobKey())) {
 				boolean insertesed=false;
@@ -5316,16 +5342,16 @@ for(Parts p: sequenceVehicles) {
 				paramedic.getListSubJobs().add(position,jpresent);
 				merge=true;
 				// checking SecondPart
-//				SubJobs pickUp=(SubJobs)c.getStartEndNodes().get(0);
-//				
-//				
-//				merge=insertingPairSubJobsPickUpClient(pickUp,paramedic);
-//
-//				jpresent.setarrivalTime(possibleArrival);
-//				jpresent.setStartServiceTime(possibleArrival+jpresent.getdeltaArrivalStartServiceTime());
-//				jpresent.setEndServiceTime(possibleArrival+jpresent.getdeltarStartServiceTimeEndServiceTime());
-//				jpresent.setdepartureTime(possibleArrival+jpresent.getdeltaArrivalDeparture());
-//				paramedic.getListSubJobs().add(position,jpresent);
+				//				SubJobs pickUp=(SubJobs)c.getStartEndNodes().get(0);
+				//				
+				//				
+				//				merge=insertingPairSubJobsPickUpClient(pickUp,paramedic);
+				//
+				//				jpresent.setarrivalTime(possibleArrival);
+				//				jpresent.setStartServiceTime(possibleArrival+jpresent.getdeltaArrivalStartServiceTime());
+				//				jpresent.setEndServiceTime(possibleArrival+jpresent.getdeltarStartServiceTimeEndServiceTime());
+				//				jpresent.setdepartureTime(possibleArrival+jpresent.getdeltaArrivalDeparture());
+				//				paramedic.getListSubJobs().add(position,jpresent);
 
 			}
 		}
@@ -5944,33 +5970,35 @@ for(Parts p: sequenceVehicles) {
 		return copy;
 	}
 
-	private void insertingDepotConnections() {
+	private ArrayList<Route> insertingDepotConnections(ArrayList<Parts> schift2) {
 		// 1. each turn is a route
-		for(Parts turn:schift ) { // cada turno se convertira en una ruta
-			makeTurnInRoute(turn);
+		ArrayList<Route> route= new ArrayList<Route>();
+		for(Parts turn:schift2 ) { // cada turno se convertira en una ruta
+			makeTurnInRoute(turn,route);
 		}
 		// 2. compute the the start and end time of route
-		timeStartEndRoutes();
+		timeStartEndRoutes(route);
 		//3. compute the connections between SubJobs
-		settingEdges();
-		creatingSchifts();
+		settingEdges(route);
+		creatingSchifts(route);
 		for(Route r:routeList) {
 			System.out.println(r.toString());
 		}
 		System.out.println("Stop");
+		return route;
 	}
 
-	private void creatingSchifts() {
+	private void creatingSchifts(ArrayList<Route> route) {
 		int intRoute=0;
-		for(Route r:routeList) {
+		for(Route r:route) {
 			intRoute++;
 			Schift personnal= new Schift(r,intRoute);
 			r.setSchiftRoute(personnal);
 		}
 	}
 
-	private void settingEdges() {
-		for(Route r:routeList) {
+	private void settingEdges(ArrayList<Route> route) {
+		for(Route r:route) {
 			for(int i=1;i<r.getSubJobsList().size()-1;i++) {
 				SubJobs previous=r.getSubJobsList().get(i-1);
 				SubJobs job=r.getSubJobsList().get(i);
@@ -5990,9 +6018,9 @@ for(Parts p: sequenceVehicles) {
 
 	}
 
-	private void timeStartEndRoutes() {
+	private void timeStartEndRoutes(ArrayList<Route> route) {
 		// 1. computing times Route
-		for(Route r:this.routeList) {
+		for(Route r:route) {
 			//1. start time
 			SubJobs firstJob=r.getSubJobsList().get(0); // it is not the depot node
 			computeStartTimeRoute(firstJob,r);
@@ -6031,9 +6059,10 @@ for(Parts p: sequenceVehicles) {
 		System.out.println(r.toString());
 	}
 
-	private void makeTurnInRoute(Parts turn) { // crea tantas rutas como son posibles
+	private void makeTurnInRoute(Parts turn, ArrayList<Route> route) { // crea tantas rutas como son posibles
 		// la creación de estas rutas lo que hace es identificar las partes de cada turno
 		// pero en esencia sólo deberia agregar el deport
+
 		System.out.println(turn.toString());
 		//	calling depot
 		//Jobs depot=inp.getNodes().get(0);
@@ -6048,7 +6077,7 @@ for(Parts p: sequenceVehicles) {
 		partEnd.add(depotEnd);
 		Parts partObject= new Parts();
 		Route r= new Route();
-		routeList.add(r);
+		route.add(r);
 		partObject.setListSubJobs(partStart,inp,test);
 		r.getPartsRoute().add(partObject);
 
