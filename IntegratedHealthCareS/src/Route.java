@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -524,6 +525,47 @@ public class Route {
 		}
 		
 	}
+	
+	
+    public static Comparator<Route> SORT_BY_EarlyJob = new Comparator<Route>() { 
+
+        @Override 
+
+        public int compare(Route r1, Route r2) { 
+
+            if (r1.getSubJobsList().get(0).getstartServiceTime() < r2.getSubJobsList().get(0).getstartServiceTime()) 
+
+                return 1; 
+
+            if (r1.getSubJobsList().get(0).getstartServiceTime() > r2.getSubJobsList().get(0).getstartServiceTime()) 
+
+                return -1; 
+
+            return 0; 
+
+        } 
+
+    }; 
+    
+    public static Comparator<Route> SORT_BY_RouteLength = new Comparator<Route>() { 
+
+        @Override 
+
+        public int compare(Route r1, Route r2) { 
+
+            if (r1.getDurationRoute() > r2.getDurationRoute() ) 
+
+                return 1; 
+
+            if (r1.getDurationRoute() < r2.getDurationRoute() ) 
+
+                return -1; 
+
+            return 0; 
+
+        } 
+
+    }; 
 
 
 

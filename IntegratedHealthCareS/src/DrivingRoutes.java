@@ -4968,11 +4968,13 @@ public class DrivingRoutes {
 
 
 		ArrayList<Route> route=insertingDepotConnections(sequenceVehicles);
-
+		route.sort(Route.SORT_BY_RouteLength);
 
 		for(Route r:route ) {
 			System.out.println(r.toString());
 		}
+		
+		
 
 		System.out.println("Stop");
 		System.out.println(initialSol.toString());
