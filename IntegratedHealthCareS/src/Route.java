@@ -553,11 +553,11 @@ public class Route {
 
         public int compare(Route r1, Route r2) { 
 
-            if (r1.getDurationRoute() > r2.getDurationRoute() ) 
+            if (r1.getSubJobsList().size() > r2.getSubJobsList().size() ) 
 
                 return 1; 
 
-            if (r1.getDurationRoute() < r2.getDurationRoute() ) 
+            if (r1.getSubJobsList().size() <= r2.getSubJobsList().size() ) 
 
                 return -1; 
 

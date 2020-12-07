@@ -110,7 +110,7 @@ public class DrivingRoutes {
 		assigmentJobsToQualifications(clasification);
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		ArrayList<Route> route=insertingDepotConnections(schift);
-		Solution initialSol= solutionInformation(); 
+		Solution initialSol= solutionInformation(routeList); 
 		System.out.println(initialSol.toString());
 		initialSol.checkingSolution(inp,test,jobsInWalkingRoute);
 		System.out.println(initialSol.toString());
@@ -4487,11 +4487,11 @@ public class DrivingRoutes {
 
 
 
-	private Solution solutionInformation() {
+	private Solution solutionInformation(ArrayList<Route> routeList2) {
 		Solution initialSol= new Solution();
 		int routeN=-1;
 
-		for(Route r:routeList ) {
+		for(Route r:routeList2 ) {
 			routeN++;
 			if(!r.getSubJobsList().isEmpty()) {
 				System.out.println(r.toString());
@@ -4507,13 +4507,13 @@ public class DrivingRoutes {
 		System.out.println(initialSol);
 		// la lista de trabajos asociados a la ruta
 
-		transferPartsInformation(routeList);
+		transferPartsInformation(routeList2);
 
 		// list passengers
 		double paramedic=0;
 		double homeCoreStaff=0;
 		double driver=0;
-		for(Route r:routeList) {
+		for(Route r:routeList2) {
 			paramedic+=r.getAmountParamedic();
 			homeCoreStaff+=r.getHomeCareStaff();
 			driver+=r.getAmountDriver();
@@ -4956,16 +4956,16 @@ public class DrivingRoutes {
 
 
 		ArrayList<Route> route=insertingDepotConnections(sequenceVehicles);
-
-		Solution newSol= new Solution();
-		System.out.println(newSol.toString());
+		Solution newSol= solutionInformation(route); 
+	
 		newSol.checkingSolution(inp,test,jobsInWalkingRoute);
 		for(Route r: route) {
 			newSol.getRoutes().add(r);
 		}
-
+// creación de partes
+		
 		newSol.checkingSolution(inp, test, jobsInWalkingRoute);
-
+		System.out.println(newSol.toString());
 		Solution mergingRoutes= checkingMergingRoutes(newSol);
 		
 		System.out.println("Stop");
@@ -4981,6 +4981,11 @@ public class DrivingRoutes {
 		ArrayList<Route> routeCopy=copyListRoute(s);
 		routeCopy.sort(Route.SORT_BY_RouteLength);
 
+		for(Route routeSol:s.getRoutes()) {
+	for(Route r:routeCopy) {
+		boolean merging=insertingPartIntoPart(routeSol,r);
+		System.out.println("merging :" +merging);	}
+}
 		
 		
 		
