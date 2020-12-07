@@ -565,7 +565,49 @@ public class Route {
 
         } 
 
-    }; 
+    };
+
+	
+
+
+
+	public void updateRouteFromSubJobs(Inputs inp, Test test, HashMap<Integer, SubRoute> jobsInWalkingRoute,
+			ArrayList<SubJobs> partStart, ArrayList<SubJobs> partEnd, ArrayList<SubJobs> listSubJobs) {
+		this.getPartsRoute().clear();
+		Parts partObject= new Parts();
+		
+		partObject.setListSubJobs(partStart,inp,test);
+		this.getPartsRoute().add(partObject);
+
+		// 1. hacer las partes
+		double passengers=1;
+		ArrayList<SubJobs> part= new ArrayList<SubJobs>();
+		part= new ArrayList<SubJobs>();
+		partObject= new Parts();
+		this.getPartsRoute().add(partObject);
+		for(int i=0;i<listSubJobs.size();i++) {
+			SubJobs sj=listSubJobs.get(i);
+			passengers+=sj.getTotalPeople();
+			if(passengers!=0) {
+				partObject.getListSubJobs().add(sj);
+				if(i==listSubJobs.size()-1) {
+					this.updateRouteFromParts(inp,test,jobsInWalkingRoute);
+					System.out.println(this.toString());
+				}
+			}
+			else {
+				partObject.getListSubJobs().add(sj);
+				partObject= new Parts();
+				this.getPartsRoute().add(partObject);
+				System.out.println(this.toString());
+			}		
+		}
+		partObject= new Parts();
+		partObject.setListSubJobs(partEnd,inp,test);
+		this.getPartsRoute().add(partObject);
+		this.updateRouteFromParts(inp,test,jobsInWalkingRoute);
+		
+	} 
 
 
 

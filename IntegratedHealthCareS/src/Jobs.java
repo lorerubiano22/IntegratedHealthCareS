@@ -279,6 +279,30 @@ public class Jobs {
 		}
 
 	};
+	
+	public static Comparator<Jobs> SORT_BY_STARTSERVICETIME = new Comparator<Jobs>() {
+		@Override
+		public int compare(Jobs o1, Jobs o2) {
+			if (o1.getstartServiceTime() > o2.getstartServiceTime() )
+				return 1;
+			if (o1.getstartServiceTime()  < o2.getstartServiceTime() )
+				return -1;
+			return 0;
+		}
+
+	};
+	
+	public static Comparator<Jobs> SORT_BY_ARRIVALTIME = new Comparator<Jobs>() {
+		@Override
+		public int compare(Jobs o1, Jobs o2) {
+			if (o1.getArrivalTime() > o2.getArrivalTime() )
+				return 1;
+			if (o1.getArrivalTime()  < o2.getArrivalTime() )
+				return -1;
+			return 0;
+		}
+
+	};
 
 
 	public static Comparator<Jobs> SKILLS = new Comparator<Jobs>() {
