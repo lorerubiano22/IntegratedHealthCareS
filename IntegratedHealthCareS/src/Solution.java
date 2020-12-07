@@ -129,7 +129,7 @@ public class Solution {
 			s= s.concat("\n");
 			for(Parts p:r.getPartsRoute()) {
 				for(SubJobs j:p.getListSubJobs()) {	
-					s = s.concat(" ( " + j.getSubJobKey()+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
+					s = s.concat(" ( " + j.getSubJobKey()+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+"waitingTime"+j.getWaitingTime()+") \n");
 				}
 				s = s.concat("\n\n");
 			}

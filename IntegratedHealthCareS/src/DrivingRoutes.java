@@ -4960,21 +4960,19 @@ public class DrivingRoutes {
 		Solution newSol= solutionInformation(route); 
 
 		newSol.checkingSolution(inp,test,jobsInWalkingRoute);
-		for(Route r: route) {
-			newSol.getRoutes().add(r);
-		}
+		
 
 
 
-		newSol.checkingSolution(inp, test, jobsInWalkingRoute);
+	
 		System.out.println(newSol.toString());
 		Solution mergingRoutes= checkingMergingRoutes(newSol);
-
+		mergingRoutes.checkingSolution(inp, test, jobsInWalkingRoute);
 		System.out.println("Stop");
 		System.out.println(newSol.toString());
 
 
-		return newSol;
+		return mergingRoutes;
 
 	}
 
