@@ -145,6 +145,7 @@ public class DrivingRoutes {
 
 	private ArrayList<Parts> generatingPoolRoutes() {
 		ArrayList<Parts> routesPool = new ArrayList<>();
+
 		// 2. Iterativamente se intenta insertar
 
 		ArrayList<SubJobs> listSubJobsDropOff= new ArrayList<SubJobs>();	
@@ -160,44 +161,270 @@ public class DrivingRoutes {
 			routesPool.add(newRoute);
 		}
 		listSubJobsDropOff.sort(Jobs.SORT_BY_STARTW);
-		
-		for(Parts paramedic:routesPool) {
+
 		for(SubJobs j:listSubJobsDropOff) {
-			if(!paramedic.getDirectorySubjobs().containsKey(j.getSubJobKey())) {
-				boolean insertesed=false;
-				if(paramedic.getListSubJobs().isEmpty()) {
-					insertesed=true;
-					Couple c= dropoffpatientMedicalCentre.get(j.getSubJobKey());
-					SubJobs present=(SubJobs)c.getStartEndNodes().get(1);
-					SubJobs future=(SubJobs)c.getStartEndNodes().get(0);
-					paramedic.getListSubJobs().add(present);
-					paramedic.getListSubJobs().add(future);
-					paramedic.getDirectorySubjobs().put(present.getSubJobKey(), present);
-					paramedic.getDirectorySubjobs().put(future.getSubJobKey(), future);
-					System.out.println("Stop");
-					break;
-				}
-				else { // iterating over the route
-					insertesed=insertingPairSubJobsDropOffPickUpPatient(j,paramedic);
-					if(insertesed) {
-						break;
+			for(Parts paramedic:routesPool) {
+				if(!paramedic.getDirectorySubjobs().containsKey(j.getSubJobKey())) {
+					boolean insertesed=false;
+					if(paramedic.getListSubJobs().isEmpty()) {
+						insertesed=true;
+						Couple c= dropoffpatientMedicalCentre.get(j.getSubJobKey());
+						SubJobs present=(SubJobs)c.getStartEndNodes().get(1);
+						SubJobs future=(SubJobs)c.getStartEndNodes().get(0);
+						paramedic.getListSubJobs().add(present);
+						paramedic.getListSubJobs().add(future);
+						paramedic.getDirectorySubjobs().put(present.getSubJobKey(),present);
+						paramedic.getDirectorySubjobs().put(future.getSubJobKey(),future);
+						System.out.println("Stop");
+						//break;
+					}
+					else { // iterating over the route
+						insertesed=insertingPairSubJobsDropOffPickUpPatient(j,paramedic);
+						//					if(insertesed) {
+						//						break;
+						//					}
 					}
 				}
-		}
 			}
 		}
-		
-		
-		
+
+		System.out.println("routes Pool" + routesPool);
+		System.out.println("routes Pool");	
+
 		// PACIETES pick up
 		ArrayList<SubJobs> listSubJobsPickUp= new ArrayList<SubJobs>();
 
-		
-		
+
+		for(Couple dropOff:pickpatientMedicalCentre.values()) {
+			SubJobs pickUpPatient=(SubJobs)dropOff.getStartEndNodes().get(1);
+			listSubJobsPickUp.add(pickUpPatient);
+		}
+		listSubJobsPickUp.sort(Jobs.SORT_BY_STARTW);
+
+		//	newRoutes
+		for(SubJobs pickUp:listSubJobsPickUp) {
+			boolean insertesed=false;
+			if(pickUp.getSubJobKey().equals("P4871")) {
+				System.out.println("Stop");
+			}
+			for(Parts paramedic:routesPool) {
+				if(paramedic.getDirectorySubjobs().containsKey(pickUp.getSubJobKey())) {
+					if(paramedic.getListSubJobs().isEmpty()) {
+						insertesed=true;
+						Couple c= pickpatientMedicalCentre.get(pickUp.getSubJobKey());
+						SubJobs present=(SubJobs)c.getStartEndNodes().get(1);
+						SubJobs future=(SubJobs)c.getStartEndNodes().get(0);
+						paramedic.getListSubJobs().add(present);
+						paramedic.getListSubJobs().add(future);
+						paramedic.getDirectorySubjobs().put(present.getSubJobKey(),present);
+						paramedic.getDirectorySubjobs().put(future.getSubJobKey(),future);
+						//break;
+					}
+					else { // iterating over the route
+						insertesed=insertingPairSubJobsPickUpDropOffPatient(pickUp,paramedic);
+						//					if(insertesed) {
+						//						break;
+						//					}
+					}
+				}
+			}
+		}
+		System.out.println("routes Pool" + routesPool);
+		System.out.println("routes Pool");
+
+
+
 		// CLIENTES drop off
 
+		listSubJobsDropOff.clear();
+		listSubJobsPickUp.clear();
+		HashMap<String,SubJobs> pickUpDirectory= new HashMap<>();
+
+		for(Couple dropOff:dropoffHomeCareStaff.values()) {
+			SubJobs dropOffHomeHealthCare=(SubJobs)dropOff.getStartEndNodes().get(1);
+			listSubJobsDropOff.add(dropOffHomeHealthCare);
+		}
+		for(Couple dropOff:pickUpHomeCareStaff.values()) {
+			SubJobs pickUpHomeHealthCare=(SubJobs)dropOff.getStartEndNodes().get(0);
+			listSubJobsPickUp.add(pickUpHomeHealthCare);
+			pickUpDirectory.put(pickUpHomeHealthCare.getSubJobKey(), pickUpHomeHealthCare);
+		}
+
+
+		listSubJobsDropOff.sort(Jobs.SORT_BY_STARTW);
+		listSubJobsPickUp.sort(Jobs.SORT_BY_STARTW);
+
+
+		// clients
+
+
+		for(SubJobs j:listSubJobsDropOff) {
+			if(j.getSubJobKey().equals("D5")) {
+				System.out.println(j.toString());
+			}
+			boolean insertesed=false;
+			boolean secondPart=false;
+			Couple c= dropoffHomeCareStaff.get(j.getSubJobKey());
+			SubJobs present=(SubJobs)c.getStartEndNodes().get(1);
+			SubJobs pickUp=(SubJobs)c.getStartEndNodes().get(0);
+			for(Parts paramedic:routesPool) {
+				if(paramedic.getListSubJobs().isEmpty()) {
+
+					insertesed=true;
+					paramedic.getListSubJobs().add(present);
+					paramedic.getListSubJobs().add(pickUp);
+					paramedic.getDirectorySubjobs().put(present.getSubJobKey(), present);
+					paramedic.getDirectorySubjobs().put(pickUp.getSubJobKey(), pickUp);
+					pickUpDirectory.remove(pickUp.getSubJobKey());
+					System.out.println("Stop");
+					//break;
+				}
+				else { // iterating over the route
+					insertesed=insertingPairSubJobsDropOffClient(j,paramedic);
+
+					if(insertesed) {
+						secondPart=insertingPairSubJobsPickUpClient(pickUp,paramedic);
+						if(secondPart) {
+							pickUpDirectory.remove(pickUp.getSubJobKey());
+						}
+						//	break;
+					}
+				}
+			}
+			if(!insertesed) {
+				if(present.getSubJobKey().equals("D26")) {
+					System.out.println("Stop");	
+				}
+				Parts newPart=new Parts();
+				newPart.getListSubJobs().add(present);
+				newPart.getListSubJobs().add(pickUp);
+				newPart.getDirectorySubjobs().put(present.getSubJobKey(),present);
+				newPart.getDirectorySubjobs().put(pickUp.getSubJobKey(),pickUp);
+				pickUpDirectory.remove(pickUp.getSubJobKey());
+				System.out.println("Stop");
+				routesPool.add(newPart);
+				//break;
+			}
+		}
+		//newRoutes
+		//	routesPool.add(newPart);
+		System.out.println("routes Pool" + routesPool);
+		System.out.println("routes Pool");
+
 		// CLIENTES pick up
+
+		for(SubJobs pickUp:listSubJobsPickUp) {
+			if(pickUp.getSubJobKey().equals("P22")) {
+				System.out.println("Stop");
+			}
+			if(!pickUpDirectory.containsKey(pickUp.getSubJobKey())) {
+				boolean insertesed=false;
+				for(Parts paramedic:routesPool) {
+					Couple c= pickUpHomeCareStaff.get(pickUp.getSubJobKey());
+					SubJobs present=(SubJobs)c.getStartEndNodes().get(0);
+					//SubJobs future=(SubJobs)c.getStartEndNodes().get(0);
+					if(paramedic.getListSubJobs().isEmpty()) {
+						insertesed=true;
+						paramedic.getListSubJobs().add(present);
+						paramedic.getDirectorySubjobs().put(present.getSubJobKey(),present);
+						System.out.println("Stop");
+						//break;
+					}
+					else { // iterating over the route
+						insertesed=insertingPairSubJobsPickUpClient(pickUp,paramedic);
+						if(insertesed) {
+							//break;
+						}
+					}
+				}
+				if(!insertesed) {
+					if(pickUp.getSubJobKey().equals("P22")) {
+						System.out.println("Stop");
+					}
+					Parts newPart=new Parts();
+					newPart.getListSubJobs().add(pickUp);
+					newPart.getDirectorySubjobs().put(pickUp.getSubJobKey(),pickUp);
+					System.out.println("Stop");
+					routesPool.add(newPart);
+					//	break;
+
+				}
+			}
+		}
+
+		System.out.println("routes Pool" + routesPool);
+		System.out.println("routes Pool");
+		integratingPools(routesPool);
 		return routesPool;
+	}
+
+	private void integratingPools(ArrayList<Parts> routesPool) {
+		ArrayList<Parts> newRoutes = new ArrayList<>();
+		for(Parts p: routesPool) {
+			newRoutes.add(p);
+		}
+		HashMap<String,SubJobs> totalJobs= new HashMap<>();
+		for(Parts p1: newRoutes) {// merging route
+			for(Parts p2: newRoutes) {
+				if(p1!=p2) {
+					totalJobs= selectingListSubJobs(p1,p2);
+					ArrayList<SubJobs> list=gettingSubJobsList(p1,p2);
+					ArrayList<SubJobs> route=new ArrayList<SubJobs>();
+					HashMap<String,SubJobs> jobDirectory= new HashMap<>();
+					route.add(list.get(0));
+					for(int i=1;i<list.size();i++) {
+						SubJobs jobI= list.get(i-1);
+						SubJobs jobJ=list.get(i);
+						if(!jobDirectory.containsKey(jobJ.getSubJobKey())) {
+							double tv=inp.getCarCost().getCost(jobI.getId()-1, jobJ.getId()-1);
+							if(jobI.getDepartureTime()+tv<=jobJ.getArrivalTime() ) {
+								route.add(jobJ);
+								jobDirectory.put(jobJ.getSubJobKey(), jobJ);
+								if(!vehicleCapacityPart(route)) {
+									route.remove(jobJ);
+									jobDirectory.remove(jobJ.getSubJobKey());
+									break;
+								}
+							}
+							else {
+								break;
+							}
+						}
+						if(route.size()==totalJobs.size()) {
+							Parts p= new Parts();
+							p.setListSubJobs(route, inp, test);
+							routesPool.add(p);
+						}
+
+					}
+				}
+			}	
+		}
+	}
+
+	private HashMap<String, SubJobs> selectingListSubJobs(Parts p1, Parts p2) {
+		HashMap<String, SubJobs> list= new HashMap<String, SubJobs>();
+		for(SubJobs j:p1.getListSubJobs()) {
+			if(!list.containsKey(j.getSubJobKey())) {
+				list.put(j.getSubJobKey(), j);}
+		}
+		for(SubJobs j:p2.getListSubJobs()) {
+			if(!list.containsKey(j.getSubJobKey())) {
+				list.put(j.getSubJobKey(), j);}
+		}
+		return list;
+	}
+
+	private ArrayList<SubJobs> gettingSubJobsList(Parts p1, Parts p2) {
+		ArrayList<SubJobs> subJobsList= new ArrayList<SubJobs> ();
+		for(SubJobs j:p1.getListSubJobs()) {
+			subJobsList.add(j);
+		}
+		for(SubJobs j:p2.getListSubJobs()) {
+			subJobsList.add(j);
+		}
+		subJobsList.sort(Jobs.SORT_BY_STARTSERVICETIME);
+		return subJobsList;
 	}
 
 	private void savingInformationSchifts(Solution initialSol2) {
@@ -5139,8 +5366,6 @@ public class DrivingRoutes {
 		ArrayList<SubJobs> listSubJobsDropOff= new ArrayList<SubJobs>();
 		ArrayList<SubJobs> listSubJobsPickUp= new ArrayList<SubJobs>();
 		HashMap<String,SubJobs> pickUpDirectory= new HashMap<>();
-
-
 		for(Jobs j:clasification3) { // generating List of jobs
 			Parts p=disaggregatedJob(j);
 			System.out.println(p.toString());
