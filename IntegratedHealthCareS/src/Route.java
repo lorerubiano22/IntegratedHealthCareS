@@ -430,14 +430,14 @@ public class Route {
 		double penalizationRoute=0;
 		double additionalWaitingRoute=0;
 		for(SubJobs j:this.getSubJobsList()) { // se producen despues de terminar un servicio
-			if((j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
+			if((j.getArrivalTime()+j.getdeltaArrivalStartServiceTime())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
 				penalization=j.getstartServiceTime()-(j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime());
 			}
 
 			else { // llega antes el personal tiene que esperar al vehiculo
-				if((j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime())>j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
+				if((j.getArrivalTime()+j.getdeltaArrivalStartServiceTime())>j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
 					if(j.getTotalPeople()>0) {
-						penalization=(j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime())-j.getstartServiceTime();}
+						penalization=(j.getArrivalTime()+j.getdeltaArrivalStartServiceTime())-j.getstartServiceTime();}
 					penalizationRoute+=penalization;
 					if(penalization>test.getCumulativeWaitingTime()) {
 						additionalWaitingRoute+=Math.abs(test.getCumulativeWaitingTime()-penalization);
