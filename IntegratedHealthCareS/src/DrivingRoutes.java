@@ -107,6 +107,7 @@ public class DrivingRoutes {
 		settingStartServiceTime(); // late time - the start service time is fixed for the jobs which have a hard time window
 		//	settingDeltas
 		Solution sol1=assigmentJobsToVehicles(clasification);
+		Solution sol2= creatingPoolRoute();
 		assigmentJobsToQualifications(clasification);
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		ArrayList<Route> route=insertingDepotConnections(schift);
@@ -126,6 +127,78 @@ public class DrivingRoutes {
 
 
 
+
+	private Solution creatingPoolRoute() {
+		Solution sol= new Solution();
+
+		// PACIETES drop off
+		// 1. Creación de tantas rutas como trabajos se tienen 2. Cada trabajo se ubica en la mejor posición
+		ArrayList<Parts> routesPool= generatingPoolRoutes();
+
+
+
+
+		//ArrayList<Parts> selectedRoutes = selectingBestCombiantionRoutes();
+		//ArrayList<Parts> individualRoutes = singleJobRoute();
+		return sol;
+	}
+
+	private ArrayList<Parts> generatingPoolRoutes() {
+		ArrayList<Parts> routesPool = new ArrayList<>();
+		// 2. Iterativamente se intenta insertar
+
+		ArrayList<SubJobs> listSubJobsDropOff= new ArrayList<SubJobs>();	
+		for(Couple dropOff:dropoffpatientMedicalCentre.values()) {
+			SubJobs pickUpPatient=(SubJobs)dropOff.getStartEndNodes().get(1);
+			SubJobs dropOffPatient=(SubJobs)dropOff.getStartEndNodes().get(0);
+			listSubJobsDropOff.add(dropOffPatient);
+			Parts newRoute= new Parts();
+			newRoute.getListSubJobs().add(pickUpPatient);
+			newRoute.getListSubJobs().add(dropOffPatient);
+			newRoute.getDirectorySubjobs().put(pickUpPatient.getSubJobKey(), pickUpPatient);
+			newRoute.getDirectorySubjobs().put(dropOffPatient.getSubJobKey(), dropOffPatient);
+			routesPool.add(newRoute);
+		}
+		listSubJobsDropOff.sort(Jobs.SORT_BY_STARTW);
+		
+		for(Parts paramedic:routesPool) {
+		for(SubJobs j:listSubJobsDropOff) {
+			if(!paramedic.getDirectorySubjobs().containsKey(j.getSubJobKey())) {
+				boolean insertesed=false;
+				if(paramedic.getListSubJobs().isEmpty()) {
+					insertesed=true;
+					Couple c= dropoffpatientMedicalCentre.get(j.getSubJobKey());
+					SubJobs present=(SubJobs)c.getStartEndNodes().get(1);
+					SubJobs future=(SubJobs)c.getStartEndNodes().get(0);
+					paramedic.getListSubJobs().add(present);
+					paramedic.getListSubJobs().add(future);
+					paramedic.getDirectorySubjobs().put(present.getSubJobKey(), present);
+					paramedic.getDirectorySubjobs().put(future.getSubJobKey(), future);
+					System.out.println("Stop");
+					break;
+				}
+				else { // iterating over the route
+					insertesed=insertingPairSubJobsDropOffPickUpPatient(j,paramedic);
+					if(insertesed) {
+						break;
+					}
+				}
+		}
+			}
+		}
+		
+		
+		
+		// PACIETES pick up
+		ArrayList<SubJobs> listSubJobsPickUp= new ArrayList<SubJobs>();
+
+		
+		
+		// CLIENTES drop off
+
+		// CLIENTES pick up
+		return routesPool;
+	}
 
 	private void savingInformationSchifts(Solution initialSol2) {
 		for(Route r:initialSol2.getRoutes()) {
@@ -4960,11 +5033,9 @@ public class DrivingRoutes {
 		Solution newSol= solutionInformation(route); 
 
 		newSol.checkingSolution(inp,test,jobsInWalkingRoute);
-		
 
 
 
-	
 		System.out.println(newSol.toString());
 		Solution mergingRoutes= checkingMergingRoutes(newSol);
 		mergingRoutes.checkingSolution(inp, test, jobsInWalkingRoute);
@@ -5093,7 +5164,7 @@ public class DrivingRoutes {
 			SubJobs pickUp=(SubJobs)c.getStartEndNodes().get(0);
 			for(Parts paramedic:sequenceVehicles) {
 				if(paramedic.getListSubJobs().isEmpty()) {
-					
+
 					insertesed=true;
 					paramedic.getListSubJobs().add(present);
 					paramedic.getListSubJobs().add(pickUp);
@@ -5230,7 +5301,7 @@ public class DrivingRoutes {
 					break;
 				}
 				else { // iterating over the route
-					 insertesed=insertingPairSubJobsPickUpDropOffPatient(pickUp,paramedic);
+					insertesed=insertingPairSubJobsPickUpDropOffPatient(pickUp,paramedic);
 					if(insertesed) {
 						break;
 					}
@@ -5265,6 +5336,8 @@ public class DrivingRoutes {
 					merge=true;
 					paramedic.getListSubJobs().add(present);
 					paramedic.getListSubJobs().add(future);
+					paramedic.getDirectorySubjobs().put(present.getSubJobKey(), present);
+					paramedic.getDirectorySubjobs().put(future.getSubJobKey(), future);
 				}
 			}
 		}
@@ -5512,6 +5585,8 @@ public class DrivingRoutes {
 							SubJobs future=(SubJobs)c.getStartEndNodes().get(0);
 							paramedic.getListSubJobs().add(position,future);
 							paramedic.getListSubJobs().add(i+1,present);
+							paramedic.getDirectorySubjobs().put(present.getSubJobKey(), present);
+							paramedic.getDirectorySubjobs().put(future.getSubJobKey(), future);
 							break;
 						}
 						else {
