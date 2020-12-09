@@ -117,7 +117,7 @@ public class Solution {
 	s = s.concat("\n List of jobs: ");
 	for(Route r:routes) {
 		if(!r.getSubJobsList().isEmpty()) {
-//			s= s.concat("\n Route: "+ r.getIdRoute());
+			s= s.concat("\n Route: "+ r.getIdRoute());
 //			s= s.concat(" travelTime: "+ r.getTravelTime());
 //			s= s.concat(" waitingTime: "+ r.getWaitingTime());
 //			s= s.concat(" serviceTime: "+ r.getServiceTime());
