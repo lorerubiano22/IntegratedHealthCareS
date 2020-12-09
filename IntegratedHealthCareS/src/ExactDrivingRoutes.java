@@ -67,6 +67,8 @@ public class ExactDrivingRoutes {
 		
 		selectionDrivingRoutes(listSubJobs,newSol.getRoutes());
 		
+		
+		
 	}
 
 

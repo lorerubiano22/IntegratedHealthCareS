@@ -117,15 +117,15 @@ public class Solution {
 	s = s.concat("\n List of jobs: ");
 	for(Route r:routes) {
 		if(!r.getSubJobsList().isEmpty()) {
-			s= s.concat("\n Route: "+ r.getIdRoute());
-			s= s.concat(" travelTime: "+ r.getTravelTime());
-			s= s.concat(" waitingTime: "+ r.getWaitingTime());
-			s= s.concat(" serviceTime: "+ r.getServiceTime());
-			s= s.concat(" detour: "+ r.getdetourViolation());
-			s= s.concat(" waiting Time to penalize: "+ r.getAdditionalwaitingTime());
-			s= s.concat(" durationRoute: "+ r.getDurationRoute());
-			s= s.concat("\n medical staff cost: "+ r.gethomeCareStaffCost());
-			s= s.concat("\n driver cost: "+ r.getdriverCost());
+//			s= s.concat("\n Route: "+ r.getIdRoute());
+//			s= s.concat(" travelTime: "+ r.getTravelTime());
+//			s= s.concat(" waitingTime: "+ r.getWaitingTime());
+//			s= s.concat(" serviceTime: "+ r.getServiceTime());
+//			s= s.concat(" detour: "+ r.getdetourViolation());
+//			s= s.concat(" waiting Time to penalize: "+ r.getAdditionalwaitingTime());
+//			s= s.concat(" durationRoute: "+ r.getDurationRoute());
+//			s= s.concat("\n medical staff cost: "+ r.gethomeCareStaffCost());
+//			s= s.concat("\n driver cost: "+ r.getdriverCost());
 			s= s.concat("\n");
 			for(Parts p:r.getPartsRoute()) {
 				for(SubJobs j:p.getListSubJobs()) {	
@@ -160,6 +160,7 @@ public class Solution {
 			r.computeHomCareStaffCost();
 			System.out.println(this.toString());
 			r.updatingJobsList();
+			r.totalMedicalStaff();
 		}
 
 		//waitingTime+=r.getWaitingTime();

@@ -334,15 +334,23 @@ public class Route {
 
 	public String toString() 
 	{   String s = "";
-	s = s.concat("\nRute duration: " + (this.getDurationRoute()));
-	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
-	s = s.concat("\nRute service time: " + (this.getServiceTime()));
-	s = s.concat("\nRute idle time: " + (this.getIdleTime()));
-	s = s.concat("\nRuta passengers:" + this.getPassengers());
+//	s = s.concat("\nRute duration: " + (this.getDurationRoute()));
+//	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
+//	s = s.concat("\nRute service time: " + (this.getServiceTime()));
+//	s = s.concat("\nRute idle time: " + (this.getIdleTime()));
+//	s = s.concat("\nRuta home care staff:" + this.getHomeCareStaff());
+//	s = s.concat("\nRuta paramedic staff:" + this.getAmountParamedic());
 	s = s.concat("\njobs: ");
 	for(Parts p:this.getPartsRoute()) {
 		for(SubJobs j:p.getListSubJobs()) {
-			s = s.concat(" ( " + j.getSubJobKey()+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
+			String type="";
+			if(j.isClient()) {
+				type="c";
+			}
+			if(j.isPatient()) {
+				type="p";
+			}
+			s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
 						}
 		s = s.concat("\n\n");
 	}
@@ -606,6 +614,52 @@ public class Route {
 		partObject.setListSubJobs(partEnd,inp,test);
 		this.getPartsRoute().add(partObject);
 		this.updateRouteFromParts(inp,test,jobsInWalkingRoute);
+		
+	}
+
+
+
+
+
+	public void totalMedicalStaff() {
+		double homeCareStaff=0;
+		double paramedic=0;
+		
+		double auxhhc=0;
+		double auxparamedic=0;
+		for(SubJobs j:this.getSubJobsList()) {
+			if(j.getTotalPeople()>0 && j.isPatient()) {
+				auxparamedic+=j.getTotalPeople();
+				if(auxparamedic!=0) {
+					paramedic++;
+				}
+			}
+			if(j.getTotalPeople()<0 && j.isPatient()) {
+				auxparamedic+=j.getTotalPeople();
+			}
+			
+			if(j.getTotalPeople()<0 && j.isClient()) {
+				auxhhc+=j.getTotalPeople();
+				if(auxhhc!=0) {
+					homeCareStaff++;
+				}
+			}
+			if(j.getTotalPeople()>0 && j.isClient()) {
+				auxhhc+=j.getTotalPeople();
+			}
+			
+		}
+//		if(auxhhc>homeCareStaff) {
+//			homeCareStaff=auxhhc;
+//		}
+//		if(auxparamedic>paramedic) {
+//			paramedic=auxparamedic;
+//		}
+		this.setAmountParamedic(auxparamedic);
+		this.setHomeCareStaff(homeCareStaff);
+		System.out.println("total HHC"+ homeCareStaff);
+		System.out.println("total Paramedic"+ paramedic);
+		System.out.println("total");
 		
 	} 
 

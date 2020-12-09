@@ -102,21 +102,32 @@ public class DrivingRoutes {
 	private Solution createInitialSolution() {
 		// creationRoutes(); // create as many routes as there are vehicles
 		// iteratively insert couples - here should be a destructive and constructive method 
+		Solution initialSol= null;
 		ArrayList<ArrayList<Couple>> clasification= clasificationjob(); // classification according to the job qualification
 		// Los tiempos de las ventanas de tiempo son menores que la hora de inicio del servicio porque considera el tiempo del registro y el tiempo de carga y descarga del personal
 		settingStartServiceTime(); // late time - the start service time is fixed for the jobs which have a hard time window
 		//	settingDeltas
 		Solution sol1=assigmentJobsToVehicles(clasification);
 		Solution sol2= creatingPoolRoute(sol1);
+		if(sol1.getDurationSolution()<sol2.getDurationSolution()) {
+			initialSol=new Solution(sol1);
+		}
+		else {
+			initialSol=new Solution(sol2);
+		}
 		assigmentJobsToQualifications(clasification);
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		ArrayList<Route> route=insertingDepotConnections(schift);
-		Solution initialSol= solutionInformation(routeList); 
-		System.out.println(initialSol.toString());
-		initialSol.checkingSolution(inp,test,jobsInWalkingRoute);
-		System.out.println(initialSol.toString());
+		Solution sol3= solutionInformation(route); 
+		sol3.checkingSolution(inp,test,jobsInWalkingRoute);
+		System.out.println(sol3.toString());
 		//initialSol.computeCosts(inp,test);
-		savingInformationSchifts(initialSol);
+		savingInformationSchifts(sol3);
+		if(sol3.getDurationSolution()<initialSol.getDurationSolution()) {
+			initialSol=new Solution(sol3);
+		}
+		System.out.println(initialSol.toString());
+		
 
 		double serviceTime=checkServiceTimes(initialSol);
 		boolean areAllJobsAssigned=checkAssigment(initialSol);
@@ -134,12 +145,11 @@ public class DrivingRoutes {
 		// PACIETES drop off
 		// 1. Creación de tantas rutas como trabajos se tienen 2. Cada trabajo se ubica en la mejor posición
 		ArrayList<Parts> routesPool= generatingPoolRoutes();
-		ArrayList<Route> selectedRoutes = selectingBestCombinationRoutes(routesPool,sol1);
-		//ArrayList<Parts> individualRoutes = singleJobRoute();
+		sol = selectingBestCombinationRoutes(routesPool,sol1);
 		return sol;
 	}
 
-	private ArrayList<Route> selectingBestCombinationRoutes(ArrayList<Parts> routesPool, Solution sol1) {
+	private Solution selectingBestCombinationRoutes(ArrayList<Parts> routesPool, Solution sol1) {
 		ArrayList<Route> route=insertingDepotConnections(routesPool);
 		// creación de partes
 		Solution newSol= solutionInformation(route); 
@@ -148,26 +158,24 @@ public class DrivingRoutes {
 		for(Route r:sol1.getRoutes()) {
 			newSol.getRoutes().add(r);
 		}
-	
+
 		HashMap<String, SubJobs> missingJobs= new HashMap<String, SubJobs>();
 		HashMap<String, SubJobs> sameJobs= new HashMap<String, SubJobs>();
-		for(Route r:sol1.getRoutes()) {
-			for(SubJobs j:r.getSubJobsList()) {
-				sameJobs.put(j.getSubJobKey(), j);
-			}
-		}
-		
-		
-		for(Route r:newSol.getRoutes()) {
-			for(SubJobs j:r.getSubJobsList()) {
-				if(!sameJobs.containsKey(j.getSubJobKey())) {
-					missingJobs.put(j.getSubJobKey(), j);
-				}
-			}
-		}
+	
 		//ExactDrivingRoutes xpressPoolRoutes= new ExactDrivingRoutes(sol1);
 		ExactDrivingRoutes xpressPoolRoutes= new ExactDrivingRoutes(newSol);
-		return null;
+		
+
+		for(Route r: xpressPoolRoutes.getDrivingRoutes()) {
+			if(xpressPoolRoutes.getDrivingRoutes().indexOf(r)==12) {
+				System.out.println(r.toString());
+			}
+			r.totalMedicalStaff();
+		}
+		
+		Solution sol= solutionInformation(xpressPoolRoutes.getDrivingRoutes()); 
+		sol.checkingSolution(inp,test,jobsInWalkingRoute);
+		return sol;
 	}
 
 	private ArrayList<Parts> generatingPoolRoutes() {
@@ -533,7 +541,7 @@ public class DrivingRoutes {
 		Solution newSol=null;
 
 		Solution copySolution= new Solution(startingSol); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
-		for(int iter=0;iter<10;iter++) {
+		for(int iter=0;iter<100;iter++) {
 			if(iter==1) {
 				System.out.println(copySolution.toString());
 			}
@@ -1895,6 +1903,8 @@ public class DrivingRoutes {
 
 	private boolean vehicleCapacityPart(ArrayList<SubJobs> list) {
 		boolean enoughCapacity=false;
+		boolean enoughDepot=false;
+		boolean feasible=false;
 		int passegers=0;
 		int action=0;
 		for(SubJobs s: list) {
@@ -1911,8 +1921,63 @@ public class DrivingRoutes {
 		else {
 			enoughCapacity=true;
 		}
+
+		enoughDepot=goingoutFromDepot(list);
+
+		if(enoughCapacity && enoughDepot) {
+			feasible=true;
+		}
+		return feasible;
+	}
+
+	private boolean goingoutFromDepot(ArrayList<SubJobs> list) {
+		boolean enoughCapacity=false;
+
+		double homeCareStaff=0;
+		double paramedic=0;
+
+		double auxhhc=0;
+		double auxparamedic=0;
+		for(SubJobs j:list) {
+			if(j.getTotalPeople()>0 && j.isPatient()) {
+				auxparamedic+=j.getTotalPeople();
+				if(auxparamedic!=0) {
+					paramedic++;
+				}
+			}
+			if(j.getTotalPeople()<0 && j.isPatient()) {
+				auxparamedic+=j.getTotalPeople();
+			}
+
+			if(j.getTotalPeople()<0 && j.isClient()) {
+				auxhhc+=j.getTotalPeople();
+				if(auxhhc!=0) {
+					homeCareStaff++;
+				}
+			}
+			if(j.getTotalPeople()>0 && j.isClient()) {
+				auxhhc+=j.getTotalPeople();
+			}
+
+		}
+		if(auxhhc>homeCareStaff) {
+			homeCareStaff=auxhhc;
+		}
+		if(auxparamedic>paramedic) {
+			paramedic=auxparamedic;
+		}
+		if((paramedic+homeCareStaff)<=inp.getVehicles().get(0).getMaxCapacity()) {
+			enoughCapacity=true;
+		}
+		System.out.println("total HHC"+ homeCareStaff);
+		System.out.println("total Paramedic"+ paramedic);
+		System.out.println("total");
+
+
 		return enoughCapacity;
 	}
+
+
 
 	private boolean earlyInsertion(SubJobs toInsert, Edge edgeShortPart, ArrayList<Parts> partsList) {
 		boolean merge=false;
@@ -5619,7 +5684,7 @@ public class DrivingRoutes {
 				for(SubJobs inRoute:paramedic.getListSubJobs()) {
 					preliminarySubJobList.add(inRoute);
 				}
-				
+
 				Couple c= new Couple(dropoffHomeCareStaff.get(j.getSubJobKey()), inp,test);
 				SubJobs present=(SubJobs)c.getStartEndNodes().get(1);
 				preliminarySubJobList.add(present);
