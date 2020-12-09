@@ -107,14 +107,14 @@ public class DrivingRoutes {
 		// Los tiempos de las ventanas de tiempo son menores que la hora de inicio del servicio porque considera el tiempo del registro y el tiempo de carga y descarga del personal
 		settingStartServiceTime(); // late time - the start service time is fixed for the jobs which have a hard time window
 		//	settingDeltas
-		Solution sol1=assigmentJobsToVehicles(clasification);
-		Solution sol2= creatingPoolRoute(sol1);
-		if(sol1.getDurationSolution()<sol2.getDurationSolution()) {
-			initialSol=new Solution(sol1);
-		}
-		else {
-			initialSol=new Solution(sol2);
-		}
+//		Solution sol1=assigmentJobsToVehicles(clasification);
+//		Solution sol2= creatingPoolRoute(sol1);
+//		if(sol1.getDurationSolution()<sol2.getDurationSolution()) {
+//			initialSol=new Solution(sol1);
+//		}
+//		else {
+//			initialSol=new Solution(sol2);
+//		}
 		assigmentJobsToQualifications(clasification);
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		ArrayList<Route> route=insertingDepotConnections(schift);
@@ -198,9 +198,6 @@ public class DrivingRoutes {
 		listSubJobsDropOff.sort(Jobs.SORT_BY_STARTW);
 
 		for(SubJobs j:listSubJobsDropOff) {
-			if(j.getSubJobKey().equals("P32")) {
-				System.out.println("Stop");
-			}
 			for(Parts paramedic:routesPool) {
 				if(!paramedic.getDirectorySubjobs().containsKey(j.getSubJobKey())) {
 					boolean insertesed=false;
@@ -6080,7 +6077,6 @@ public class DrivingRoutes {
 						jpresent.setStartServiceTime(possibleArrival+jpresent.getdeltaArrivalStartServiceTime());
 						jpresent.setEndServiceTime(possibleArrival+jpresent.getdeltarStartServiceTimeEndServiceTime());
 						jpresent.setdepartureTime(possibleArrival+jpresent.getdeltaArrivalDeparture());
-
 						paramedic.getListSubJobs().add(position,jpresent);
 						paramedic.getListSubJobs().add(jfuture);
 					}
@@ -6147,9 +6143,6 @@ public class DrivingRoutes {
 				schift.add(newParts);
 			}
 		}
-
-
-
 
 		// home care staff
 		for(Parts schifts:qualification1) {
@@ -6752,7 +6745,7 @@ public class DrivingRoutes {
 		}
 		// se guarda los schift
 		for(Jobs j:clasification3) { // iterate over jobs
-			if(j.getId()==9) {
+			if(j.getId()==4) {
 				System.out.println(" Turn ");
 			}
 			for(Parts paramedic:qualificationParamedic) {
@@ -7339,7 +7332,7 @@ public class DrivingRoutes {
 			double departureK=firstInRoute.getArrivalTime()-tv;
 			double deltaStartServiceDeparture = k.getDepartureTime()-k.getstartServiceTime();
 			double startServiceTimeK=departureK-deltaStartServiceDeparture;
-			double deltaArrivalStartServiceK = k.getArrivalTime()-k.getstartServiceTime();
+			double deltaArrivalStartServiceK = k.getstartServiceTime()-k.getArrivalTime();
 			double arrivalTimeK=startServiceTimeK-deltaArrivalStartServiceK;
 			double hardStartServiceTime=arrivalTimeK-k.getReqTime();
 			if(hardStartServiceTime>j.getStartTime() && hardStartServiceTime<j.getEndTime()) {

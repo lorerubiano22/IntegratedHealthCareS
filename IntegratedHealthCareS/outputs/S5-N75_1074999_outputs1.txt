@@ -71,12 +71,11 @@ ID Solution: 1
 FO: Duration: 12744.0
 FO: Travel time: 221.0
 Walking time: 716.0
- Waiting time: 0.0
  medical staff cost: 115.0
- driver cost: 221.0
- time window violation: 6764.0
- waiting Time to penalize: 0.0 Detour: 0.0
+ driver cost: 221.
+ waiting Time to penalize: 0.0 Detour to penalize: 0.0
  List of jobs: 
+ Route: 0
  ( P1 A  375.0  B  375.0   D  375.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -92,6 +91,7 @@ Walking time: 716.0
 
 
 
+ Route: 1
  ( P1 A  373.0  B  373.0   D  373.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -107,6 +107,7 @@ Walking time: 716.0
 
 
 
+ Route: 2
  ( P1 A  436.0  B  436.0   D  436.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -122,6 +123,7 @@ Walking time: 716.0
 
 
 
+ Route: 3
  ( P1 A  434.0  B  434.0   D  434.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -137,6 +139,7 @@ Walking time: 716.0
 
 
 
+ Route: 4
  ( P1 A  434.0  B  434.0   D  434.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -152,6 +155,7 @@ Walking time: 716.0
 
 
 
+ Route: 5
  ( P1 A  437.0  B  437.0   D  437.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -167,6 +171,7 @@ Walking time: 716.0
 
 
 
+ Route: 6
  ( P1 A  432.0  B  432.0   D  432.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -182,6 +187,7 @@ Walking time: 716.0
 
 
 
+ Route: 7
  ( P1 A  495.0  B  495.0   D  495.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -197,6 +203,7 @@ Walking time: 716.0
 
 
 
+ Route: 8
  ( P1 A  498.0  B  498.0   D  498.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -212,6 +219,7 @@ Walking time: 716.0
 
 
 
+ Route: 9
  ( P1 A  493.0  B  493.0   D  493.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -227,6 +235,7 @@ Walking time: 716.0
 
 
 
+ Route: 10
  ( P1 A  492.0  B  492.0   D  492.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -242,6 +251,7 @@ Walking time: 716.0
 
 
 
+ Route: 11
  ( P1 A  494.0  B  494.0   D  494.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -257,6 +267,7 @@ Walking time: 716.0
 
 
 
+ Route: 12
  ( P1 A  495.0  B  495.0   D  495.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -272,6 +283,7 @@ Walking time: 716.0
 
 
 
+ Route: 13
  ( P1 A  496.0  B  496.0   D  496.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -287,6 +299,7 @@ Walking time: 716.0
 
 
 
+ Route: 14
  ( P1 A  494.0  B  494.0   D  494.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -302,6 +315,7 @@ Walking time: 716.0
 
 
 
+ Route: 15
  ( P1 A  551.0  B  551.0   D  551.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -317,6 +331,7 @@ Walking time: 716.0
 
 
 
+ Route: 16
  ( P1 A  553.0  B  553.0   D  553.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -332,6 +347,7 @@ Walking time: 716.0
 
 
 
+ Route: 17
  ( P1 A  556.0  B  556.0   D  556.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -347,6 +363,7 @@ Walking time: 716.0
 
 
 
+ Route: 18
  ( P1 A  617.0  B  617.0   D  617.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -362,6 +379,7 @@ Walking time: 716.0
 
 
 
+ Route: 19
  ( P1 A  615.0  B  615.0   D  615.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -377,6 +395,7 @@ Walking time: 716.0
 
 
 
+ Route: 20
  ( P1 A  617.0  B  617.0   D  617.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -392,6 +411,7 @@ Walking time: 716.0
 
 
 
+ Route: 21
  ( P1 A  614.0  B  614.0   D  614.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -407,6 +427,7 @@ Walking time: 716.0
 
 
 
+ Route: 22
  ( P1 A  615.0  B  615.0   D  615.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -422,6 +443,7 @@ Walking time: 716.0
 
 
 
+ Route: 23
  ( P1 A  613.0  B  613.0   D  613.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -437,6 +459,7 @@ Walking time: 716.0
 
 
 
+ Route: 24
  ( P1 A  614.0  B  614.0   D  614.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -452,6 +475,7 @@ Walking time: 716.0
 
 
 
+ Route: 25
  ( P1 A  896.0  B  896.0   D  896.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -465,6 +489,7 @@ Walking time: 716.0
 
 
 
+ Route: 26
  ( P1 A  893.0  B  893.0   D  893.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -478,6 +503,7 @@ Walking time: 716.0
 
 
 
+ Route: 27
  ( P1 A  895.0  B  895.0   D  895.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -491,6 +517,7 @@ Walking time: 716.0
 
 
 
+ Route: 28
  ( P1 A  895.0  B  895.0   D  895.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -504,6 +531,7 @@ Walking time: 716.0
 
 
 
+ Route: 29
  ( P1 A  893.0  B  893.0   D  893.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -517,6 +545,7 @@ Walking time: 716.0
 
 
 
+ Route: 30
  ( P1 A  892.0  B  892.0   D  892.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -530,6 +559,7 @@ Walking time: 716.0
 
 
 
+ Route: 31
  ( P1 A  896.0  B  896.0   D  896.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -543,6 +573,7 @@ Walking time: 716.0
 
 
 
+ Route: 32
  ( P1 A  894.0  B  894.0   D  894.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -556,6 +587,7 @@ Walking time: 716.0
 
 
 
+ Route: 33
  ( P1 A  895.0  B  895.0   D  895.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -569,6 +601,7 @@ Walking time: 716.0
 
 
 
+ Route: 34
  ( P1 A  893.0  B  893.0   D  893.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -582,6 +615,7 @@ Walking time: 716.0
 
 
 
+ Route: 35
  ( P1 A  1164.0  B  1164.0   D  1164.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -595,6 +629,7 @@ Walking time: 716.0
 
 
 
+ Route: 36
  ( P1 A  1165.0  B  1165.0   D  1165.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -608,6 +643,7 @@ Walking time: 716.0
 
 
 
+ Route: 37
  ( P1 A  626.0  B  626.0   D  626.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -621,6 +657,7 @@ Walking time: 716.0
 
 
 
+ Route: 38
  ( P1 A  894.0  B  894.0   D  894.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -634,6 +671,7 @@ Walking time: 716.0
 
 
 
+ Route: 39
  ( P1 A  892.0  B  892.0   D  892.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -647,6 +685,7 @@ Walking time: 716.0
 
 
 
+ Route: 40
  ( P1 A  895.0  B  895.0   D  895.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -660,6 +699,7 @@ Walking time: 716.0
 
 
 
+ Route: 41
  ( P1 A  1163.0  B  1163.0   D  1163.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -673,6 +713,7 @@ Walking time: 716.0
 
 
 
+ Route: 42
  ( P1 A  1087.0  B  1087.0   D  1087.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -698,6 +739,7 @@ Walking time: 716.0
 
 
 
+ Route: 43
  ( P1 A  893.0  B  893.0   D  893.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -711,6 +753,7 @@ Walking time: 716.0
 
 
 
+ Route: 44
  ( P1 A  892.0  B  892.0   D  892.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -724,6 +767,7 @@ Walking time: 716.0
 
 
 
+ Route: 45
  ( P1 A  894.0  B  894.0   D  894.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -746,12 +790,11 @@ ID Solution: 1
 FO: Duration: 12868.0
 FO: Travel time: 345.0
 Walking time: 716.0
- Waiting time: 0.0
  medical staff cost: 313.0
- driver cost: 345.0
- time window violation: 6764.0
- waiting Time to penalize: 0.0 Detour: 227.55999999999997
+ driver cost: 345.
+ waiting Time to penalize: 0.0 Detour to penalize: 227.55999999999997
  List of jobs: 
+ Route: 0
  ( P1 A  375.0  B  375.0   D  375.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -805,6 +848,7 @@ Walking time: 716.0
 
 
 
+ Route: 1
  ( P1 A  373.0  B  373.0   D  373.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -858,6 +902,7 @@ Walking time: 716.0
 
 
 
+ Route: 2
  ( P1 A  434.0  B  434.0   D  434.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -903,6 +948,7 @@ Walking time: 716.0
 
 
 
+ Route: 3
  ( P1 A  437.0  B  437.0   D  437.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -940,6 +986,7 @@ Walking time: 716.0
 
 
 
+ Route: 4
  ( P1 A  432.0  B  432.0   D  432.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -977,6 +1024,7 @@ Walking time: 716.0
 
 
 
+ Route: 5
  ( P1 A  495.0  B  495.0   D  495.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1006,6 +1054,7 @@ Walking time: 716.0
 
 
 
+ Route: 6
  ( P1 A  496.0  B  496.0   D  496.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1035,6 +1084,7 @@ Walking time: 716.0
 
 
 
+ Route: 7
  ( P1 A  494.0  B  494.0   D  494.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1059,6 +1109,7 @@ Walking time: 716.0
 
 
 
+ Route: 8
  ( D1 A  895.0  B  895.0   D  895.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1072,6 +1123,7 @@ Walking time: 716.0
 
 
 
+ Route: 9
  ( P1 A  893.0  B  893.0   D  893.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1085,6 +1137,7 @@ Walking time: 716.0
 
 
 
+ Route: 10
  ( D1 A  1165.0  B  1165.0   D  1165.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1098,6 +1151,7 @@ Walking time: 716.0
 
 
 
+ Route: 11
  ( P1 A  627.0  B  627.0   D  627.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1114,6 +1168,7 @@ Walking time: 716.0
 
 
 
+ Route: 12
  ( D1 A  894.0  B  894.0   D  894.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1127,6 +1182,7 @@ Walking time: 716.0
 
 
 
+ Route: 13
  ( P1 A  892.0  B  892.0   D  892.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1140,6 +1196,7 @@ Walking time: 716.0
 
 
 
+ Route: 14
  ( D1 A  895.0  B  895.0   D  895.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1153,6 +1210,7 @@ Walking time: 716.0
 
 
 
+ Route: 15
  ( D1 A  1163.0  B  1163.0   D  1163.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1166,6 +1224,7 @@ Walking time: 716.0
 
 
 
+ Route: 16
  ( D1 A  1087.0  B  1087.0   D  1087.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1191,6 +1250,7 @@ Walking time: 716.0
 
 
 
+ Route: 17
  ( D1 A  893.0  B  893.0   D  893.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1204,6 +1264,7 @@ Walking time: 716.0
 
 
 
+ Route: 18
  ( D1 A  892.0  B  892.0   D  892.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1217,6 +1278,7 @@ Walking time: 716.0
 
 
 
+ Route: 19
  ( P1 A  894.0  B  894.0   D  894.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 
 
 
@@ -1234,4 +1296,4 @@ Walking time: 716.0
 
  pc Time:
 
-348661.0097
+176950.7112
