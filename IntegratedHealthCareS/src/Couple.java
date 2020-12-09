@@ -71,6 +71,21 @@ public class Couple {
 		future.setReqQualification(qualification);
 	}
 
+	public Couple(Couple couple, Inputs inp, Test test) {
+		present=new SubJobs(couple.getPresent());
+		future=new SubJobs(couple.getFuture());
+		jobList= new ArrayList<Jobs>(); 
+		detour=(int)inp.getCarCost().getCost(present.getId()-1, future.getId()-1)*(test.getDetour());
+		directConnection=inp.getCarCost().getCost(present.getId()-1, future.getId()-1);	
+		qualification=Math.max(present.getReqQualification(), future.getReqQualification());
+		startEndNodes.add(future);
+		startEndNodes.add(present);	
+		present.setReqQualification(qualification);
+		future.setReqQualification(qualification);
+	}
+
+
+
 	// Setter
 	public void setIdCouple(int id) {this.id=id;}
 	public void setJobList(ArrayList<Jobs> list) {jobList=list;}

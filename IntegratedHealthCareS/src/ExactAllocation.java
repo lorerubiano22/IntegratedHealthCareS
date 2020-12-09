@@ -21,10 +21,8 @@ public class ExactAllocation {
 	int n = 0; // total of jobs
 	public LinkedList<Jobs> jobsList;
 	public LinkedList<Jobs> proposedSequence;
-	private Test test;
 	private Inputs input;
 	private LinkedList<SubRoute> walkingRoutes= new LinkedList<SubRoute>(); // list of selected walking routes
-	private SubRoute subR;
 	
 	// slots selection
 	XPRBvar[] WR;// Variable <-Binary. 1 if the slot is selected i is assigned to position j
@@ -44,7 +42,6 @@ public class ExactAllocation {
 	XPRBprob p;
 
 	public ExactAllocation(Test t, Inputs inp) {
-		test = t;
 		input = inp;
 		bcl = new XPRB();
 		p = bcl.newProb("Schedulling");

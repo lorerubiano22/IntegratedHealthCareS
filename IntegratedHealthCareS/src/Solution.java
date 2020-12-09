@@ -159,6 +159,7 @@ public class Solution {
 			// metrics Home- care staff cost
 			r.computeHomCareStaffCost();
 			System.out.println(this.toString());
+			r.updatingJobsList();
 		}
 
 		//waitingTime+=r.getWaitingTime();
