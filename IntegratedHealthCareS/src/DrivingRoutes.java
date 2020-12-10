@@ -133,7 +133,6 @@ public class DrivingRoutes {
 		double serviceTime=checkServiceTimes(initialSol);
 		boolean areAllJobsAssigned=checkAssigment(initialSol);
 		System.out.println(initialSol.toString());
-
 		return new Solution(initialSol);
 	}
 
@@ -188,6 +187,9 @@ public class DrivingRoutes {
 		}
 		// se guarda los schift
 		for(Jobs j:clasification3) { // iterate over jobs
+			if(j.getId()==21) {
+				System.out.println(" Turn ");	
+			}
 			for(Parts paramedic:qualificationMedicalStaff) {
 				System.out.println(" Turn ");
 				printing(paramedic);
@@ -208,6 +210,7 @@ public class DrivingRoutes {
 			SubJobs s2=(SubJobs)coupleListSolution.get(j.getSubJobKey()).getFuture();
 			homeCare.getListSubJobs().add(s1);
 			homeCare.getListSubJobs().add(s2);
+			Parts pickUpDropOff=disaggregatedJob(j,coupleListSolution);
 			inserted=true;
 		}
 		else { // inside the array there are more jobs
@@ -309,6 +312,9 @@ public class DrivingRoutes {
 		HashMap<String, Couple> coupleListSolution= new HashMap<> ();
 		for(Route r: sol3.getRoutes()) {
 			for(SubJobs sj: r.getSubJobsList()) {
+				if(sj.getId()==21) {
+					System.out.println(sj.toString());
+				}
 				subJobsList.put(sj.getSubJobKey(), sj);
 			}	
 		}
@@ -349,6 +355,18 @@ public class DrivingRoutes {
 
 		HashMap<String, SubJobs> missingJobs= new HashMap<String, SubJobs>();
 		HashMap<String, SubJobs> sameJobs= new HashMap<String, SubJobs>();
+for(Route r:sol1.getRoutes()) {
+	for(SubJobs j:r.getSubJobsList()) {
+		sameJobs.put(j.getSubJobKey(), j);
+	}	
+}
+for(Route r:newSol.getRoutes()) {
+	for(SubJobs j:r.getSubJobsList()) {
+		if(!sameJobs.containsKey(j.getSubJobKey())) {
+			missingJobs.put(j.getSubJobKey(), j);}
+	}	
+}
+		
 
 		//ExactDrivingRoutes xpressPoolRoutes= new ExactDrivingRoutes(sol1);
 		ExactDrivingRoutes xpressPoolRoutes= new ExactDrivingRoutes(newSol);
@@ -5720,13 +5738,16 @@ public class DrivingRoutes {
 		
 		listSubJobsPickUp.sort(Jobs.SORT_BY_STARTW);
 		
-		for(SubJobs pickUp:listSubJobsPickUp) {
-			if(pickUp.getSubJobKey().equals("P38")) {
+		for(SubJobs present:listSubJobsPickUp) {
+			if(present.getSubJobKey().equals("P38")) {
 				System.out.println("Stop");
 			}
-			Couple c= new Couple(pickUpHomeCareStaff.get(pickUp.getSubJobKey()), inp,test);
-			SubJobs present=(SubJobs)c.getStartEndNodes().get(0);
-			if(pickUpDirectory.containsKey(pickUp.getSubJobKey())) {
+			if(present.getId()==21) {
+				System.out.println("Stop");
+			}
+//			Couple c= new Couple(pickUpHomeCareStaff.get(pickUp.getSubJobKey()), inp,test);
+//			SubJobs present=(SubJobs)c.getStartEndNodes().get(0);
+			if(pickUpDirectory.containsKey(present.getSubJobKey())) {
 				boolean insertesed=false;
 				for(Parts paramedic:sequenceVehicles) {
 					
@@ -6249,8 +6270,6 @@ public class DrivingRoutes {
 							jfuture.setdepartureTime(possibleArrivalDropOff+jpresent.getdeltaArrivalDeparture());
 							paramedic.getListSubJobs().add(position,jpresent);
 							paramedic.getListSubJobs().add(i+1,jfuture);
-
-
 							break;
 						}
 						else {
@@ -7314,19 +7333,19 @@ public class DrivingRoutes {
 		homeCarePickUp(dropOff,pickUp);
 
 		// delta time: present
-		double deltaArrivalDeparture=dropOff.getDepartureTime()-dropOff.getArrivalTime();
-		double deltaArrivalStartServiceTime=dropOff.getstartServiceTime()-dropOff.getArrivalTime();
-		double deltarStartServiceTimeEndServiceTime=dropOff.getendServiceTime()-dropOff.getstartServiceTime();
-		dropOff.setdeltaArrivalDeparture(deltaArrivalDeparture);
-		dropOff.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
-		dropOff.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
+//		double deltaArrivalDeparture=dropOff.getDepartureTime()-dropOff.getArrivalTime();
+//		double deltaArrivalStartServiceTime=dropOff.getstartServiceTime()-dropOff.getArrivalTime();
+//		double deltarStartServiceTimeEndServiceTime=dropOff.getendServiceTime()-dropOff.getstartServiceTime();
+//		dropOff.setdeltaArrivalDeparture(deltaArrivalDeparture);
+//		dropOff.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+//		dropOff.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
 		// delta tiempo: future
-		deltaArrivalDeparture=pickUp.getDepartureTime()-pickUp.getArrivalTime();
-		deltaArrivalStartServiceTime=pickUp.getstartServiceTime()-pickUp.getArrivalTime();
-		deltarStartServiceTimeEndServiceTime=pickUp.getendServiceTime()-pickUp.getstartServiceTime();
-		pickUp.setdeltaArrivalDeparture(deltaArrivalDeparture);
-		pickUp.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
-		pickUp.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
+//		deltaArrivalDeparture=pickUp.getDepartureTime()-pickUp.getArrivalTime();
+//		deltaArrivalStartServiceTime=pickUp.getstartServiceTime()-pickUp.getArrivalTime();
+//		deltarStartServiceTimeEndServiceTime=pickUp.getendServiceTime()-pickUp.getstartServiceTime();
+//		pickUp.setdeltaArrivalDeparture(deltaArrivalDeparture);
+//		pickUp.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+//		pickUp.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
 
 	}
 

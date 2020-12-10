@@ -203,7 +203,9 @@ public class Solution {
 			for(int i= r.getSubJobsList().size()-1;i>0;i--) {
 				SubJobs ref=r.getSubJobsList().get(i);// following job
 				SubJobs changing=r.getSubJobsList().get(i-1);// following job
-				
+				if(changing.getId()==21) {
+					System.out.println("Stop");
+				}
 				double arrivalTimeRef= ref.getArrivalTime();
 				double tvRefChanging=inp.getCarCost().getCost(changing.getId()-1, ref.getId()-1);
 				double possibleDeparture=arrivalTimeRef-tvRefChanging;
