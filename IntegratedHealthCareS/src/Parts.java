@@ -107,7 +107,7 @@ public class Parts {
 	s = s.concat("\n List of jobs: ");
 	s= s.concat("\n");
 	for(SubJobs j:this.getListSubJobs()) {	
-		s = s.concat(" ( " + j.getSubJobKey()+", A_"+j.getArrivalTime()+", B_"+j.getstartServiceTime()+" D_"+j.getDepartureTime()+" TW ["+j.getStartTime()+","+j.getEndTime()+"] "+", reqTime_"+j.getReqTime()+") \n");
+		s = s.concat(" ( " + j.getSubJobKey()+", A_"+j.getArrivalTime()+", B_"+j.getstartServiceTime()+" end serv "+ j.getendServiceTime()+" D_"+j.getDepartureTime()+" TW ["+j.getStartTime()+","+j.getEndTime()+"] "+", reqTime_"+j.getReqTime()+") \n");
 	}
 	return s;
 	}

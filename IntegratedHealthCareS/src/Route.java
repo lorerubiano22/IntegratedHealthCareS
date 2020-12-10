@@ -350,7 +350,7 @@ public class Route {
 			if(j.isPatient()) {
 				type="p";
 			}
-			s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
+			s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+ "end service "+ j.getendServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
 						}
 		s = s.concat("\n\n");
 	}

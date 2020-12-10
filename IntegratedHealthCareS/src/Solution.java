@@ -178,26 +178,66 @@ public class Solution {
 	}
 
 	private void slackMethod(Inputs inp, Test test) {
+//		for(Route r:this.getRoutes()) {
+//			for(int i=1;i<r.getSubJobsList().size();i++) {
+//				SubJobs nodeI=r.getSubJobsList().get(i-1);
+//				SubJobs nodeJ=r.getSubJobsList().get(i);
+//			
+//				double tv=inp.getCarCost().getCost(nodeI.getId()-1, nodeJ.getId()-1);
+//				double possibleArrival=nodeI.getDepartureTime()+tv;
+//				double possibleStartServiceTime= Math.max(possibleArrival+nodeJ.getdeltaArrivalStartServiceTime(), nodeJ.getStartTime());
+//				double possibleEndServiceTime= possibleStartServiceTime+nodeJ.getdeltarStartServiceTimeEndServiceTime();
+//				double possibleDepartureTime=possibleArrival+nodeJ.getdeltaArrivalDeparture();
+//			if(possibleStartServiceTime!=nodeJ.getstartServiceTime() && nodeJ.getstartServiceTime()>nodeJ.getEndTime()) {
+//				System.out.println(nodeI.toString());
+//			}
+//			nodeJ.setarrivalTime(possibleArrival);
+//			nodeJ.setStartServiceTime(possibleStartServiceTime);
+//			nodeJ.setEndServiceTime(possibleEndServiceTime);
+//			nodeJ.setdepartureTime(possibleDepartureTime);
+//			}
+//		}
+//		System.out.println(this.toString());
 		for(Route r:this.getRoutes()) {
-			for(int i=1;i<r.getSubJobsList().size();i++) {
-				SubJobs nodeI=r.getSubJobsList().get(i-1);
-				SubJobs nodeJ=r.getSubJobsList().get(i);
-			
-				double tv=inp.getCarCost().getCost(nodeI.getId()-1, nodeJ.getId()-1);
-				double possibleArrival=nodeI.getDepartureTime()+tv;
-				double possibleStartServiceTime= Math.max(possibleArrival+nodeJ.getdeltaArrivalStartServiceTime(), nodeJ.getStartTime());
-				double possibleEndServiceTime= possibleStartServiceTime+nodeJ.getdeltarStartServiceTimeEndServiceTime();
-				double possibleDepartureTime=possibleArrival+nodeJ.getdeltaArrivalDeparture();
-			if(possibleStartServiceTime!=nodeJ.getstartServiceTime() && nodeJ.getstartServiceTime()>nodeJ.getEndTime()) {
-				System.out.println(nodeI.toString());
+			if(r.getSubJobsList().size()>2) {
+			for(int i= r.getSubJobsList().size()-1;i>0;i--) {
+				SubJobs ref=r.getSubJobsList().get(i);// following job
+				SubJobs changing=r.getSubJobsList().get(i-1);// following job
+				
+				double arrivalTimeRef= ref.getArrivalTime();
+				double tvRefChanging=inp.getCarCost().getCost(changing.getId()-1, ref.getId()-1);
+				double possibleDeparture=arrivalTimeRef-tvRefChanging;
+				double possibleArrivalTime=possibleDeparture-changing.getdeltaArrivalDeparture();
+				double possibleStartService=possibleArrivalTime-changing.getdeltaArrivalStartServiceTime();
+				double startService=changing.getstartServiceTime();
+				if(changing.getstartServiceTime()>=changing.getStartTime() && changing.getendServiceTime()<=changing.getEndTime()) {
+					if(possibleStartService>=changing.getStartTime() && possibleStartService<=changing.getEndTime()) {
+						startService= Math.max(changing.getstartServiceTime(), possibleStartService);
+					}
+				}
+				else {
+					if(changing.getstartServiceTime()>=changing.getEndTime()) {
+						startService= Math.min(changing.getstartServiceTime(), possibleStartService);
+					}
+					else {
+						if(changing.getstartServiceTime()<changing.getStartTime()) {
+							startService= Math.max(changing.getstartServiceTime(), possibleStartService);
+						}
+					}
+				}
+				double arrivalTime=startService-changing.getdeltaArrivalStartServiceTime();
+				double departureTime=arrivalTime+changing.getdeltaArrivalDeparture();
+				double endServiceTime=startService+changing.getdeltarStartServiceTimeEndServiceTime();
+				changing.setStartServiceTime(startService);
+				changing.setarrivalTime(arrivalTime);
+				changing.setdepartureTime(departureTime);
+				changing.setEndServiceTime(endServiceTime);
 			}
-			nodeJ.setarrivalTime(possibleArrival);
-			nodeJ.setStartServiceTime(possibleStartServiceTime);
-			nodeJ.setEndServiceTime(possibleEndServiceTime);
-			nodeJ.setdepartureTime(possibleDepartureTime);
 			}
+		System.out.println(r.toString());
+		System.out.println("close");
 		}
-		System.out.println(this.toString());
+		
 	}
 
 

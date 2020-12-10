@@ -292,6 +292,18 @@ public class Jobs {
 
 	};
 	
+	public static Comparator<Jobs> SORT_BY_ENDSERVICETIME = new Comparator<Jobs>() {
+		@Override
+		public int compare(Jobs o1, Jobs o2) {
+			if (o1.getendServiceTime() > o2.getendServiceTime())
+				return 1;
+			if (o1.getendServiceTime()  < o2.getendServiceTime() )
+				return -1;
+			return 0;
+		}
+
+	};
+	
 	public static Comparator<Jobs> SORT_BY_ARRIVALTIME = new Comparator<Jobs>() {
 		@Override
 		public int compare(Jobs o1, Jobs o2) {
