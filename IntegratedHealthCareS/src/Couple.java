@@ -12,7 +12,7 @@ public class Couple {
 	private ArrayList<Jobs> jobList= new ArrayList<Jobs>();// in case that it this request means a walking route
 	private ArrayList<Jobs> startEndNodes= new ArrayList<Jobs>() ;// in case that it this request means a walking route
 
-	public Couple(Jobs j, Jobs j2, int directConnectionDistance, double percentage) {
+	public Couple(Jobs j, Jobs j2, double directConnectionDistance, double percentage) {
 		present=j;
 		future=j2;
 		detour=(int)directConnectionDistance*(percentage);

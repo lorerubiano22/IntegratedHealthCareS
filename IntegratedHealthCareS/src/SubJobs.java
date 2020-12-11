@@ -41,7 +41,7 @@ public class SubJobs extends Jobs {
 		this.setClient(j.isClient());
 		this.setMedicalCentre(j.isMedicalCentre());
 		this.setIdUser(j.getIdUser());
-		this.setTotalPeople(j.getTotalPeople());
+		//this.setTotalPeople(j.getTotalPeople());
 		this.setloadUnloadTime(j.getloadUnloadTime());
 		this.setloadUnloadRegistrationTime(j.getloadUnloadRegistrationTime());
 		this.setdeltaArrivalDeparture(j.getdeltaArrivalDeparture());

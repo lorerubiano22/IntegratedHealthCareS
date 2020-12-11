@@ -18,7 +18,7 @@ public class Algorithm {
 	private Solution solution=null;
 	private Solution newSolution=null;
 	private Solution bestSolution=null;
-	private  ArrayList<Couple> subJobsList= new ArrayList<Couple>();
+	private  HashMap<String,Couple> subJobsList= new HashMap<String,Couple>();
 
 
 
@@ -35,8 +35,8 @@ public class Algorithm {
 		//iterations++;
 		setBestSolution(drivingRoute.getSol());
 		setInitialSolution(drivingRoute.getInitialSol());
-		
-	//}
+
+		//}
 		//initialSolution.computeMetricsSolution(input, test);
 		//Interaction stages= new Interaction(routes,subJobsList, input, r, t);// Iteration between stage 1 und stage 2: from the current walking routes split and define new ones
 		//routes= stages.getBestRoutes();
@@ -44,37 +44,37 @@ public class Algorithm {
 	}
 
 	private void setBestSolution(Solution sol) {
-	
-   if(solution==null) {
-	solution=new Solution (sol);
-	bestSolution=new Solution (sol);
-	addingWaitingTime(solution);
-	solution.setId(iterations);
-	solution.setWalkingTime(subroutes.getdurationWalkingRoute());
-	setInitialSolution(drivingRoute.getInitialSol());
-	
-	addingWaitingTime(bestSolution);
-	bestSolution.setId(iterations);
-	bestSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
-	setInitialSolution(drivingRoute.getInitialSol());
-   }
-   else {
-	   newSolution=new Solution (sol);
-	   addingWaitingTime(sol);
-	   newSolution.setId(iterations);
-	   newSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
-		if(newSolution.getobjectiveFunction()<solution.getobjectiveFunction()) {
-			bestSolution=new Solution (newSolution);
-			addingWaitingTime(bestSolution);
-			bestSolution.setId(iterations);
-			bestSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
-			solution=new Solution (newSolution);
+
+		if(solution==null) {
+			solution=new Solution (sol);
+			bestSolution=new Solution (sol);
 			addingWaitingTime(solution);
 			solution.setId(iterations);
 			solution.setWalkingTime(subroutes.getdurationWalkingRoute());
-			setInitialSolution(drivingRoute.getInitialSol());  
+			setInitialSolution(drivingRoute.getInitialSol());
+
+			addingWaitingTime(bestSolution);
+			bestSolution.setId(iterations);
+			bestSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
+			setInitialSolution(drivingRoute.getInitialSol());
 		}
-   }
+		else {
+			newSolution=new Solution (sol);
+			addingWaitingTime(sol);
+			newSolution.setId(iterations);
+			newSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
+			if(newSolution.getobjectiveFunction()<solution.getobjectiveFunction()) {
+				bestSolution=new Solution (newSolution);
+				addingWaitingTime(bestSolution);
+				bestSolution.setId(iterations);
+				bestSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
+				solution=new Solution (newSolution);
+				addingWaitingTime(solution);
+				solution.setId(iterations);
+				solution.setWalkingTime(subroutes.getdurationWalkingRoute());
+				setInitialSolution(drivingRoute.getInitialSol());  
+			}
+		}
 	}
 
 	public void setInitialSolution(Solution initialSolution) {
@@ -116,10 +116,11 @@ public class Algorithm {
 			j.setIdCouple(i);
 			j.getPresent().setIDcouple(i);
 			j.getFuture().setIDcouple(i);
-			subJobsList.add(j);
+			subJobsList.put(j.getPresent().getSubJobKey(),j);
+			subJobsList.put(j.getFuture().getSubJobKey(),j);
 			if(j.getPresent().getStartTime()>j.getFuture().getStartTime()) {
 				System.out.println("Error");
-				}
+			}
 
 		}
 
@@ -127,13 +128,9 @@ public class Algorithm {
 			i++;
 			System.out.println(j.toString());
 			j.setIdCouple(i);
-			subJobsList.add(j);
+			subJobsList.put(j.getPresent().getSubJobKey(),j);
+			subJobsList.put(j.getFuture().getSubJobKey(),j);
 			if(j.getPresent().getStartTime()>j.getFuture().getStartTime()) {
-				System.out.println("Error");
-				}
-		}	
-		for(Couple j:subJobsList) {
-			if(j.getPresent().getId()==35) {
 				System.out.println("Error");
 			}
 		}
@@ -157,7 +154,19 @@ public class Algorithm {
 			// 3. checking information
 			System.out.println(pairPatientMedicalCentre.toString());
 			// 4. adding couple
+			if(pairPatientMedicalCentre.getPresent().getstartServiceTime()>pairPatientMedicalCentre.getFuture().getstartServiceTime()) { // control
+				System.out.println("error");
+			}
+			// patient medical centre ---- going ----> patient home
+
+			Couple pairMedicalCentrePatient= creatingPairMedicalCentrePatient(pairPatientMedicalCentre);
+			creatingCouplePatientHomeToMedicalCentre(j); 
+			coupleFromPatientsRequest.add(pairMedicalCentrePatient);
 			coupleFromPatientsRequest.add(pairPatientMedicalCentre);
+			
+			if(pairMedicalCentrePatient.getPresent().getstartServiceTime()>pairMedicalCentrePatient.getFuture().getstartServiceTime()) { // control
+				System.out.println("error");
+			}
 		}
 		return coupleFromPatientsRequest;
 	}
@@ -182,24 +191,54 @@ public class Algorithm {
 		// Time window
 		// 1. Future Job: drop-off patient and paramedic at medical centre
 		// required time before the service starts
-		int previousTime=test.getRegistrationTime()+test.getloadTimePatient();
-		pairPatientMedicalCentre.getFuture().setStartTime(j.getStartTime()-previousTime); // earliest
-		pairPatientMedicalCentre.getFuture().setEndTime(j.getStartTime()-previousTime); // latest
+		pairPatientMedicalCentre.getFuture().setloadUnloadTime(test.getloadTimePatient());
+		pairPatientMedicalCentre.getFuture().setloadUnloadRegistrationTime(test.getRegistrationTime());
+
+		pairPatientMedicalCentre.getFuture().setStartTime(j.getStartTime()); // earliest
+		pairPatientMedicalCentre.getFuture().setEndTime(j.getEndTime()); // latest
 		// Service time: start time and duration service
-		pairPatientMedicalCentre.getFuture().setStartServiceTime(j.getStartTime()); // start time
+		pairPatientMedicalCentre.getFuture().setStartServiceTime(j.getEndTime()); // start time
 		pairPatientMedicalCentre.getFuture().setserviceTime(j.getReqTime()); // duration service
+		// set arrival at node drop off medical centre
+		pairPatientMedicalCentre.getFuture().setarrivalTime(pairPatientMedicalCentre.getFuture().getstartServiceTime()-(pairPatientMedicalCentre.getFuture().getloadUnloadRegistrationTime()+pairPatientMedicalCentre.getFuture().getloadUnloadTime()));
+		pairPatientMedicalCentre.getFuture().setdepartureTime(pairPatientMedicalCentre.getFuture().getArrivalTime()+pairPatientMedicalCentre.getFuture().getloadUnloadTime());
+		pairPatientMedicalCentre.getFuture().setEndServiceTime(pairPatientMedicalCentre.getFuture().getstartServiceTime()+pairPatientMedicalCentre.getFuture().getReqTime());
+
+
 
 
 		// 2. Present Job: pick patient up time is set assuming a direct connection from patient home to medical centre
 		// required time before the service starts
-		int dPatientHomeMedicalCentre= input.getCarCost().getCost(pairPatientMedicalCentre.getPresent().getId()-1, pairPatientMedicalCentre.getFuture().getId()-1);	
-		previousTime=test.getloadTimePatient()+dPatientHomeMedicalCentre;
-		double pickUpTime=Math.max(0,pairPatientMedicalCentre.getFuture().getStartTime()-previousTime); // considera el porque es el que tiene cargado el tiempo de registro
-		pairPatientMedicalCentre.getPresent().setStartTime(pickUpTime);
-		pairPatientMedicalCentre.getPresent().setEndTime(pickUpTime);
+		pairPatientMedicalCentre.getPresent().setloadUnloadTime(test.getloadTimePatient());
+		double tv=input.getCarCost().getCost(pairPatientMedicalCentre.getPresent().getId()-1, pairPatientMedicalCentre.getFuture().getId()-1)*test.getDetour();	
+		pairPatientMedicalCentre.getPresent().setStartTime(pairPatientMedicalCentre.getFuture().getArrivalTime()-tv);
+		pairPatientMedicalCentre.getPresent().setEndTime(pairPatientMedicalCentre.getFuture().getArrivalTime()-tv);
 		// Service time: start time and duration service
-		pairPatientMedicalCentre.getPresent().setStartServiceTime(pickUpTime);
-		pairPatientMedicalCentre.getPresent().setserviceTime(test.getloadTimePatient());
+		pairPatientMedicalCentre.getPresent().setStartServiceTime(pairPatientMedicalCentre.getFuture().getArrivalTime()-tv);
+		pairPatientMedicalCentre.getPresent().setEndServiceTime(pairPatientMedicalCentre.getPresent().getstartServiceTime());
+		pairPatientMedicalCentre.getPresent().setarrivalTime(pairPatientMedicalCentre.getPresent().getendServiceTime());
+		pairPatientMedicalCentre.getPresent().setdepartureTime(pairPatientMedicalCentre.getPresent().getArrivalTime()+pairPatientMedicalCentre.getPresent().getloadUnloadTime());
+
+
+
+
+
+		// present
+		double deltaArrivalDeparture=pairPatientMedicalCentre.getPresent().getDepartureTime()-pairPatientMedicalCentre.getPresent().getArrivalTime();
+		double deltaArrivalStartServiceTime=pairPatientMedicalCentre.getPresent().getstartServiceTime()-pairPatientMedicalCentre.getPresent().getArrivalTime();
+		double deltarStartServiceTimeEndServiceTime=pairPatientMedicalCentre.getPresent().getendServiceTime()-pairPatientMedicalCentre.getPresent().getstartServiceTime();
+		pairPatientMedicalCentre.getPresent().setdeltaArrivalDeparture(deltaArrivalDeparture);
+		pairPatientMedicalCentre.getPresent().setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+		pairPatientMedicalCentre.getPresent().setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
+
+
+		// future
+		deltaArrivalDeparture=pairPatientMedicalCentre.getFuture().getDepartureTime()-pairPatientMedicalCentre.getFuture().getArrivalTime();
+		deltaArrivalStartServiceTime=pairPatientMedicalCentre.getFuture().getstartServiceTime()-pairPatientMedicalCentre.getFuture().getArrivalTime();
+		deltarStartServiceTimeEndServiceTime=pairPatientMedicalCentre.getFuture().getendServiceTime()-pairPatientMedicalCentre.getFuture().getstartServiceTime();
+		pairPatientMedicalCentre.getFuture().setdeltaArrivalDeparture(deltaArrivalDeparture);
+		pairPatientMedicalCentre.getFuture().setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+		pairPatientMedicalCentre.getFuture().setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
 
 	}
 
@@ -216,6 +255,24 @@ public class Algorithm {
 		presentJob.setPair(futureJob);
 		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1); // setting the time for picking up the patient at home patient
 		Couple pairPatientMedicalCentre=creatingPairPatientMedicalCentre(presentJob,futureJob, directConnectionDistance);
+
+		// present
+		double deltaArrivalDeparture=presentJob.getDepartureTime()-presentJob.getArrivalTime();
+		double deltaArrivalStartServiceTime=presentJob.getstartServiceTime()-presentJob.getArrivalTime();
+		double deltarStartServiceTimeEndServiceTime=presentJob.getendServiceTime()-presentJob.getstartServiceTime();
+		presentJob.setdeltaArrivalDeparture(deltaArrivalDeparture);
+		presentJob.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+		presentJob.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
+
+
+		// future
+		deltaArrivalDeparture=futureJob.getDepartureTime()-futureJob.getArrivalTime();
+		deltaArrivalStartServiceTime=futureJob.getstartServiceTime()-futureJob.getArrivalTime();
+		deltarStartServiceTimeEndServiceTime=futureJob.getendServiceTime()-futureJob.getstartServiceTime();
+		futureJob.setdeltaArrivalDeparture(deltaArrivalDeparture);
+		futureJob.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+		futureJob.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
+
 		return pairPatientMedicalCentre;
 	}
 
@@ -224,27 +281,64 @@ public class Algorithm {
 	presentJob<- es el nodo en donde el paciente es recogido para ser llevado al centro médico
 	futureJob<- es el centro médico en donde será dejado el paciente
 	 */
-	private Couple creatingPairMedicalCentrePatient(Jobs presentJob, Jobs futureJob, int directConnectionDistance) {
+	private Couple creatingPairMedicalCentrePatient(Couple pairPatientMedicalCentre) {
 
 		// 1. Calculate the time for piking up the patient and paramedic
 		// DEFINITION OF FUTURE TASK<- DROP-OFF PATIENT AND PARAMEDIC AT MEDICAL CENTRE
 		// the time for the future task is modified to consider the registration time
 		// start time= doctor appointment - registration time
-		futureJob.setStartTime(futureJob.getStartTime()-test.getRegistrationTime());
 
-		// DEFINITION OF PRESENT TASK<- PICK UP PATIENT AT MEDICAL CENTRE
-		// 2. Set the time for pick up patient at the patient home = doctor appointment time  - max(detour, direct connection) - load time - tiempo de registro
-		double fixedTime=futureJob.getStartTime()-directConnectionDistance- test.getloadTimePatient(); // doctor appointment
-		presentJob.setStartTime(fixedTime);
+		Jobs present= new Jobs(pairPatientMedicalCentre.getFuture());// pick up at medical centre
+		settingInformationPatientPickUpMC(present);	
+		Jobs future= new Jobs(pairPatientMedicalCentre.getPresent());// drop off patient home
+		settingInformationPatientDropOffHome(present,future);	
 
-
+		double tv= input.getCarCost().getCost(present.getId()-1, future.getId()-1);
 		// DEFINITION OF A COUPLE
 		// 3. creation of the coupe
-		Couple presentCouple= new Couple(presentJob,futureJob, directConnectionDistance,test.getDetour());
+		Couple presentCouple= new Couple(present,future, tv,test.getDetour());
 
 		return presentCouple;
 	}
 
+
+	private void settingInformationPatientDropOffHome(Jobs present, Jobs dropOffPatientHome) {
+		dropOffPatientHome.setTotalPeople(-1);
+		dropOffPatientHome.setPatient(true);
+		dropOffPatientHome.setloadUnloadTime(test.getloadTimePatient());
+		// 1. Setting the start service time -- startServiceTime
+		double travel=input.getCarCost().getCost(present.getId()-1, dropOffPatientHome.getId()-1)*test.getDetour(); // es necesario considerar el travel time porque involucra dos locaciones
+		dropOffPatientHome.setStartTime(present.getendServiceTime()+travel);
+		dropOffPatientHome.setEndTime(dropOffPatientHome.getStartTime());// departure from patient home - el tiempo de viaje - el tiempo necesario para cargar los pacientes al vehículo
+		dropOffPatientHome.setStartServiceTime(dropOffPatientHome.getEndTime());
+		dropOffPatientHome.setarrivalTime(dropOffPatientHome.getstartServiceTime());
+		dropOffPatientHome.setdepartureTime(dropOffPatientHome.getstartServiceTime()+dropOffPatientHome.getloadUnloadTime());
+		dropOffPatientHome.setserviceTime(0);	
+
+
+	}
+
+	private void settingInformationPatientPickUpMC(Jobs pickUpMedicalCentre) {
+		pickUpMedicalCentre.setTotalPeople(2); // 5. Setting the total people (+) pick up   (-) drop-off
+		pickUpMedicalCentre.setMedicalCentre(true);
+		pickUpMedicalCentre.setloadUnloadTime(test.getloadTimePatient());
+		pickUpMedicalCentre.setStartTime(pickUpMedicalCentre.getendServiceTime());
+		pickUpMedicalCentre.setEndTime(pickUpMedicalCentre.getStartTime()+test.getCumulativeWaitingTime());
+		// 1. Setting the start service time -- startServiceTime
+		pickUpMedicalCentre.setStartServiceTime(pickUpMedicalCentre.getEndTime());
+		pickUpMedicalCentre.setarrivalTime(pickUpMedicalCentre.getstartServiceTime());
+		// 3. Set el fin del servicio
+		pickUpMedicalCentre.setEndServiceTime(pickUpMedicalCentre.getstartServiceTime());
+		pickUpMedicalCentre.setdepartureTime(pickUpMedicalCentre.getArrivalTime()+pickUpMedicalCentre.getloadUnloadTime());
+
+		// delta
+
+	}
+
+	private void settingInformationPatientPickUp(Jobs present) {
+		// TODO Auto-generated method stub
+
+	}
 
 	private Couple creatingPairPatientMedicalCentre(Jobs presentJob, Jobs futureJob, int directConnectionDistance) {
 		// 1. Calculate the time for piking up the patient
@@ -273,41 +367,85 @@ public class Algorithm {
 		convertingWalkingRoutesInOneTask(coupleFromWalkingRoutes);
 		// Individual client JOBS
 		if(!input.getclients().isEmpty()) {
-		for(Jobs j: input.getclients().values()) {
-			if(j.getId()==3) {
-				System.out.println("stop");
-			}
-			// Creating the request for picking up the nurse
-			if(!jobsInWalkingRoutes.containsKey(j.getId())) { // only jobs which are not in a walking route	
-				Jobs presentJob= new Jobs(j);
-				presentJob.setClient(true);
-				presentJob.setloadUnloadTime(test.getloadTimeHomeCareStaff());
-				Jobs futureJob= creatingSubPairJOb(j);
-				//0. creation of couple
-				Couple pickUpDropOff= creatingCoupleforIndividualJobs(presentJob,futureJob); // individula jobs <- not walking routes
-				// 1. fixing time windows
-				//computingTimeatClientHomeSubJob(pickUpDropOff,j); // considering the load un loading time
-				// 2. fixing number of people involved
-				settingPeopleInSubJob(pickUpDropOff, -1,+1); //- drop-off #personas + pick up #personas
-				// 3. checking information
-				System.out.println(pickUpDropOff.toString());
-				// 4. adding couple
-				coupleFromWalkingRoutes.add(pickUpDropOff);
+			for(Jobs j: input.getclients().values()) {
+				if(j.getId()==1) {
+					System.out.println("stop");
+				}
+				// Creating the request for picking up the nurse
+				if(!jobsInWalkingRoutes.containsKey(j.getId())) { // only jobs which are not in a walking route	
+					Jobs presentJob= new Jobs(j);
+
+
+					presentJob.setClient(true);
+					presentJob.setloadUnloadTime(test.getloadTimeHomeCareStaff());
+					settingPresentTimeClient(presentJob);
+					Jobs futureJob= creatingSubPairJOb(j);
+					//0. creation of couple
+					Couple pickUpDropOff= creatingCoupleforIndividualJobs(presentJob,futureJob); // individula jobs <- not walking routes
+					// 1. fixing time windows
+					//computingTimeatClientHomeSubJob(pickUpDropOff,j); // considering the load un loading time
+					// 2. fixing number of people involved
+					settingPeopleInSubJob(pickUpDropOff, -1,+1); //- drop-off #personas + pick up #personas
+					// 3. setting time information
+					//settingTimeInformation(pickUpDropOff);
+					// 4. adding couple
+					if(presentJob.getstartServiceTime()>futureJob.getstartServiceTime()) { // control
+						System.out.println("error");
+					}
+					coupleFromWalkingRoutes.add(pickUpDropOff);
+				}
 			}
 		}
-	}
 		// create in the class Couple a constructor for setting the walking routes
 		return coupleFromWalkingRoutes;
 	}
 
 
+	private void settingPresentTimeClient(Jobs presentJob) {
+		presentJob.setStartServiceTime(presentJob.getEndTime());
+		double arrival=presentJob.getstartServiceTime()-presentJob.getloadUnloadTime();
+		double departure=presentJob.getstartServiceTime();	
+		presentJob.setarrivalTime(arrival);
+		presentJob.setdepartureTime(departure);
+		presentJob.setEndServiceTime(presentJob.getstartServiceTime()+presentJob.getReqTime());
+
+		///
+		presentJob.setTotalPeople(-1);
+		presentJob.setClient(true);
+		presentJob.setloadUnloadTime(test.getloadTimeHomeCareStaff());
+		// 1. Setting the start service time -- startServiceTime
+		presentJob.setStartServiceTime(presentJob.getEndTime());
+		// 2. Set ArrivalTime
+		presentJob.setarrivalTime(presentJob.getstartServiceTime()-presentJob.getloadUnloadTime());
+		// 3. Set el fin del servicio
+		presentJob.setEndServiceTime(presentJob.getstartServiceTime()+presentJob.getReqTime());	
+		presentJob.setdepartureTime(presentJob.getArrivalTime()+presentJob.getloadUnloadTime());
+
+
+		// present
+		//		double deltaArrivalDeparture=presentJob.getDepartureTime()-presentJob.getArrivalTime();
+		//		double deltaArrivalStartServiceTime=presentJob.getstartServiceTime()-presentJob.getArrivalTime();
+		//		double deltarStartServiceTimeEndServiceTime=presentJob.getendServiceTime()-presentJob.getstartServiceTime();
+		//		presentJob.setdeltaArrivalDeparture(deltaArrivalDeparture);
+		//		presentJob.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+		//		presentJob.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
+
+	}
+
+
+
 	private Jobs creatingSubPairJOb(Jobs j) {
 		double pickUpTimeEarly=j.getstartServiceTime()+j.getReqTime();
 		double pickUpTimeLate=j.getstartServiceTime()+j.getReqTime()+test.getCumulativeWaitingTime();
-		Jobs futureJob= new Jobs(j.getId(),pickUpTimeEarly,pickUpTimeLate,j.getReqQualification(),test.getloadTimeHomeCareStaff()); 
+		Jobs futureJob= new Jobs(j.getId(),pickUpTimeEarly,pickUpTimeLate,j.getReqQualification(),j.getReqTime()); 
 		futureJob.setClient(true);
 		futureJob.setloadUnloadTime(test.getloadTimeHomeCareStaff());
 		j.setPair(futureJob);
+		// set start service time
+		futureJob.setStartServiceTime(pickUpTimeLate);
+		futureJob.setEndServiceTime(pickUpTimeLate);
+		futureJob.setarrivalTime(futureJob.getstartServiceTime());
+		futureJob.setdepartureTime(futureJob.getstartServiceTime()+futureJob.getloadUnloadTime());
 		return futureJob;
 	}
 
@@ -328,42 +466,80 @@ public class Algorithm {
 
 	private Couple creatingCoupleforIndividualJobs(Jobs presentJob, Jobs futureJob) {
 		presentJob.setPair(futureJob);
+
+		///
+		futureJob.setTotalPeople(1);
+		futureJob.setClient(true);	
+		futureJob.setserviceTime(0); //los nodos pick up contienen la información de los nodos
+		// Setting the TW
+		double tv=input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1)*test.getDetour();
+		futureJob.setStartTime(presentJob.getendServiceTime()+tv);
+		futureJob.setEndTime(futureJob.getStartTime()+test.getCumulativeWaitingTime()); // considering waiting time
+
+		// modificar el tiempo requerido para el trabajo+	
+		// 1. Setting the start service time -- startServiceTime
+		futureJob.setStartServiceTime(futureJob.getEndTime());
+		// 3. Set el fin del servicio
+		futureJob.setEndServiceTime(futureJob.getstartServiceTime());
+		// 2. Set ArrivalTime-<- la enferemera puede ser recogida una vez esta haya terminado el servicio
+		futureJob.setarrivalTime(futureJob.getstartServiceTime());
+		futureJob.setdepartureTime(futureJob.getArrivalTime()+futureJob.getloadUnloadTime());
+
+		/////
+
+
+		double deltaArrivalDeparture=presentJob.getDepartureTime()-presentJob.getArrivalTime();
+		double deltaArrivalStartServiceTime=presentJob.getstartServiceTime()-presentJob.getArrivalTime();
+		double deltarStartServiceTimeEndServiceTime=presentJob.getendServiceTime()-presentJob.getstartServiceTime();
+		presentJob.setdeltaArrivalDeparture(deltaArrivalDeparture);
+		presentJob.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+		presentJob.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
+		//		// delta tiempo: future
+		deltaArrivalDeparture=futureJob.getDepartureTime()-futureJob.getArrivalTime();
+		deltaArrivalStartServiceTime=futureJob.getstartServiceTime()-futureJob.getArrivalTime();
+		deltarStartServiceTimeEndServiceTime=futureJob.getendServiceTime()-futureJob.getstartServiceTime();
+		futureJob.setdeltaArrivalDeparture(deltaArrivalDeparture);
+		futureJob.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+		futureJob.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
+
+
+
 		Couple presentCouple= new Couple(presentJob,futureJob);
 		return presentCouple;
 	}
 
 	private void convertingWalkingRoutesInOneTask(ArrayList<Couple> coupleFromWalkingRoutes) {
 		if(subroutes.getWalkingRoutes()!=null) {
-		for(SubRoute r:subroutes.getWalkingRoutes()) {
-			if(r.getDropOffNode()!=null && r.getPickUpNode()!=null) {
-				double walkingRouteLength=r.getDurationWalkingRoute();
+			for(SubRoute r:subroutes.getWalkingRoutes()) {
+				if(r.getDropOffNode()!=null && r.getPickUpNode()!=null) {
+					double walkingRouteLength=r.getDurationWalkingRoute();
 
-				// 0. creation of subjobs and fixing time windows 
-				if(r.getDropOffNode().getId()==3) {
+					// 0. creation of subjobs and fixing time windows 
+					if(r.getDropOffNode().getId()==3) {
+						System.out.println("couple ");
+					}
+					Jobs present=creatinngPresentJobFromWR(r.getDropOffNode(),walkingRouteLength);
+
+					Jobs future=creatinngFutureJobFromWR(present, r.getPickUpNode());
+					//1. creation of couple
+					Couple pairPickUpDropOffHCS=creatingCoupleClientHome(present,future); 
+
+					// 2. fixing number of people involved
+					settingPeopleInSubJob(pairPickUpDropOffHCS, -1,+1); //- drop-off #personas + pick up #personas
+
+					// 4. adding couple
+					coupleFromWalkingRoutes.add(pairPickUpDropOffHCS);
+					// 3. checking information
 					System.out.println("couple ");
+					System.out.println(pairPickUpDropOffHCS.toString());
+					System.out.println("couple ");
+					if(present.getstartServiceTime()>future.getstartServiceTime()) { // control
+						System.out.println("error");
+					}
+
 				}
-				Jobs present=creatinngPresentJobFromWR(r.getDropOffNode(),walkingRouteLength);
-
-				Jobs future=creatinngFutureJobFromWR(present, r.getPickUpNode());
-				//1. creation of couple
-				Couple pairPickUpDropOffHCS=creatingCoupleClientHome(present,future); 
-
-				// 2. fixing number of people involved
-				settingPeopleInSubJob(pairPickUpDropOffHCS, -1,+1); //- drop-off #personas + pick up #personas
-
-				// 4. adding couple
-				coupleFromWalkingRoutes.add(pairPickUpDropOffHCS);
-				// 3. checking information
-				System.out.println("couple ");
-				System.out.println(pairPickUpDropOffHCS.toString());
-				System.out.println("couple ");
-				if(present.getStartTime()>future.getEndTime()) { // control
-					System.out.println("error");
-				}
-
 			}
 		}
-	}
 	}
 
 	private Couple creatingCoupleClientHome(Jobs presentJob, Jobs futureJob) {
@@ -381,21 +557,47 @@ public class Algorithm {
 	private HashMap<Integer, Jobs> clientInWalkingRoutes() {
 		HashMap<Integer,Jobs> jobsInWalkingRoutes= new HashMap<Integer,Jobs>();
 		if(subroutes.getWalkingRoutes()!=null) {
-		for(SubRoute r:subroutes.getWalkingRoutes()) {
-			if(r.getJobSequence().size()>1) {
-				for(Jobs j:r.getJobSequence()) {
-					jobsInWalkingRoutes.put(j.getId(), j); // storing the job in the walking route
+			for(SubRoute r:subroutes.getWalkingRoutes()) {
+				if(r.getJobSequence().size()>1) {
+					for(Jobs j:r.getJobSequence()) {
+						jobsInWalkingRoutes.put(j.getId(), j); // storing the job in the walking route
+					}
 				}
 			}
 		}
-	}
 		return jobsInWalkingRoutes;
 	}
 
 	private Jobs creatinngFutureJobFromWR(Jobs present,Jobs pickUpNode) {
-		double previousTime= pickUpNode.getstartServiceTime();
-		Jobs future= new Jobs(pickUpNode.getId(),previousTime,previousTime ,pickUpNode.getReqQualification(), test.getloadTimeHomeCareStaff()); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
-		future.setloadUnloadTime(test.getloadTimeHomeCareStaff());
+		// homeCarePickUp(dropOff,pickUp);
+
+		Jobs future= new Jobs(pickUpNode.getId(),0,0 ,pickUpNode.getReqQualification(), 0); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
+
+
+		future.setTotalPeople(1);
+		future.setClient(true);	
+		future.setserviceTime(0); //los nodos pick up contienen la información de los nodos
+		// Setting the TW
+		double tv=input.getCarCost().getCost(present.getId()-1, pickUpNode.getId()-1)*test.getDetour();
+		future.setStartTime(present.getendServiceTime()+tv);
+		future.setEndTime(future.getStartTime()+test.getCumulativeWaitingTime()); // considering waiting time
+
+		// modificar el tiempo requerido para el trabajo+	
+		// 1. Setting the start service time -- startServiceTime
+		future.setStartServiceTime(future.getEndTime());
+		// 3. Set el fin del servicio
+		future.setEndServiceTime(future.getstartServiceTime());
+		// 2. Set ArrivalTime-<- la enferemera puede ser recogida una vez esta haya terminado el servicio
+		future.setarrivalTime(future.getstartServiceTime());
+		future.setdepartureTime(future.getArrivalTime()+future.getloadUnloadTime());
+
+		// present
+		double deltaArrivalDeparture=future.getDepartureTime()-future.getArrivalTime();
+		double deltaArrivalStartServiceTime=future.getstartServiceTime()-future.getArrivalTime();
+		double deltarStartServiceTimeEndServiceTime=future.getendServiceTime()-future.getstartServiceTime();
+		future.setdeltaArrivalDeparture(deltaArrivalDeparture);
+		future.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+		future.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
 		return future;
 	}
 
@@ -404,7 +606,28 @@ public class Algorithm {
 	private Jobs creatinngPresentJobFromWR(Jobs dropOffNode, double walkingRouteLength) {
 		// start when the service
 		Jobs present= new Jobs(dropOffNode.getId(),dropOffNode.getStartTime(),dropOffNode.getEndTime() ,dropOffNode.getReqQualification(), walkingRouteLength); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
+
+		///
+		present.setTotalPeople(-1);
+		present.setClient(true);
 		present.setloadUnloadTime(test.getloadTimeHomeCareStaff());
+		// 1. Setting the start service time -- startServiceTime
+		present.setStartServiceTime(present.getEndTime());
+		// 2. Set ArrivalTime
+		present.setarrivalTime(present.getstartServiceTime()-present.getloadUnloadTime());
+		// 3. Set el fin del servicio
+		present.setEndServiceTime(present.getstartServiceTime()+walkingRouteLength);	
+		present.setdepartureTime(present.getArrivalTime()+present.getloadUnloadTime());
+
+
+		///
+		// present
+		double deltaArrivalDeparture=present.getDepartureTime()-present.getArrivalTime();
+		double deltaArrivalStartServiceTime=present.getstartServiceTime()-present.getArrivalTime();
+		double deltarStartServiceTimeEndServiceTime=present.getendServiceTime()-present.getstartServiceTime();
+		present.setdeltaArrivalDeparture(deltaArrivalDeparture);
+		present.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+		present.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
 		return present;
 	}
 

@@ -375,6 +375,7 @@ public class Jobs {
 		s = s.concat("\nstartTime: " + this.hardstartTime);
 		s = s.concat("\nendTime: " + this.hardendTime);
 		s = s.concat("\nservice start Time: " + this.startServiceTime);
+		s = s.concat("\nservice end Time: " + this.endServiceTime);
 		s = s.concat("\nArrival Time: " + (this.arrivalTime));
 		s = s.concat("\nDeparture Time: " + (this.departureTime));
 		s = s.concat("\nreqQualification: " + (this.reqQualification));

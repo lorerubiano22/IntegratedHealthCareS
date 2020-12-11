@@ -35,7 +35,7 @@ public class Inputs {
 		maxQualificationLevel= Integer.MIN_VALUE;
 		for(Jobs j:nodes) {
 			directoryNodes.put(j.getId(),j.getReqTime());
-			if(j.getReqQualification()>0 && j.getId()!=1) {
+			if(j.getReqQualification()>0 && j.getStartTime()!=0) {
 				j.setClient(true);
 				clients.put(j.getId(),j);
 				if(maxQualificationLevel<j.getReqQualification()) {
@@ -43,7 +43,7 @@ public class Inputs {
 				}
 			}
 			else { // patients <- it considers location of the medical centre. Beacause there is a drop-off and pick-up job
-				if(j.getSoftStartTime()!=0 && j.getId()!=1) {
+				if(j.getReqQualification()==0 && j.getStartTime()!=0) {
 					j.setPatient(true);
 					patients.put(j.getId(),j);
 					if(maxQualificationLevel<j.getReqQualification()) {
@@ -51,7 +51,7 @@ public class Inputs {
 					}
 				}
 				else {
-					if(j.getId()!=1) {
+					if(j.getId()!=1 && j.getStartTime()==0 ) {
 					j.setMedicalCentre(true);
 					medicalCentre.put(j.getId(),j);
 					if(maxQualificationLevel<j.getReqQualification()) {
