@@ -792,7 +792,7 @@ FO: Travel time: 345.0
 Walking time: 716.0
  medical staff cost: 313.0
  driver cost: 345.
- waiting Time to penalize: 0.0 Detour to penalize: 227.55999999999997
+ waiting Time to penalize: 597.0 Detour to penalize: 227.55999999999997
  List of jobs: 
  Route: 0
  ( P1 A  375.0  B  375.0   D  375.0  reqTime_0.0  TW [360.0;630.0]waitingTime0.0) 

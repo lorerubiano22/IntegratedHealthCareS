@@ -164,6 +164,8 @@ public class Algorithm {
 			coupleFromPatientsRequest.add(pairMedicalCentrePatient);
 			coupleFromPatientsRequest.add(pairPatientMedicalCentre);
 			
+			settingPeopleInSubJob(pairMedicalCentrePatient, +2,-1);
+			
 			if(pairMedicalCentrePatient.getPresent().getstartServiceTime()>pairMedicalCentrePatient.getFuture().getstartServiceTime()) { // control
 				System.out.println("error");
 			}
@@ -213,6 +215,8 @@ public class Algorithm {
 		double tv=input.getCarCost().getCost(pairPatientMedicalCentre.getPresent().getId()-1, pairPatientMedicalCentre.getFuture().getId()-1)*test.getDetour();	
 		pairPatientMedicalCentre.getPresent().setStartTime(pairPatientMedicalCentre.getFuture().getArrivalTime()-tv);
 		pairPatientMedicalCentre.getPresent().setEndTime(pairPatientMedicalCentre.getFuture().getArrivalTime()-tv);
+		// Service time required
+		pairPatientMedicalCentre.getPresent().setserviceTime(0);
 		// Service time: start time and duration service
 		pairPatientMedicalCentre.getPresent().setStartServiceTime(pairPatientMedicalCentre.getFuture().getArrivalTime()-tv);
 		pairPatientMedicalCentre.getPresent().setEndServiceTime(pairPatientMedicalCentre.getPresent().getstartServiceTime());
@@ -289,8 +293,10 @@ public class Algorithm {
 		// start time= doctor appointment - registration time
 
 		Jobs present= new Jobs(pairPatientMedicalCentre.getFuture());// pick up at medical centre
+		present.setMedicalCentre(true);
 		settingInformationPatientPickUpMC(present);	
 		Jobs future= new Jobs(pairPatientMedicalCentre.getPresent());// drop off patient home
+		future.setPatient(true);
 		settingInformationPatientDropOffHome(present,future);	
 
 		double tv= input.getCarCost().getCost(present.getId()-1, future.getId()-1);
@@ -315,6 +321,7 @@ public class Algorithm {
 		dropOffPatientHome.setdepartureTime(dropOffPatientHome.getstartServiceTime()+dropOffPatientHome.getloadUnloadTime());
 		dropOffPatientHome.setserviceTime(0);	
 
+		dropOffPatientHome.setserviceTime(0);
 
 	}
 
@@ -330,7 +337,7 @@ public class Algorithm {
 		// 3. Set el fin del servicio
 		pickUpMedicalCentre.setEndServiceTime(pickUpMedicalCentre.getstartServiceTime());
 		pickUpMedicalCentre.setdepartureTime(pickUpMedicalCentre.getArrivalTime()+pickUpMedicalCentre.getloadUnloadTime());
-
+		pickUpMedicalCentre.setserviceTime(0);
 		// delta
 
 	}
@@ -484,7 +491,6 @@ public class Algorithm {
 		// 2. Set ArrivalTime-<- la enferemera puede ser recogida una vez esta haya terminado el servicio
 		futureJob.setarrivalTime(futureJob.getstartServiceTime());
 		futureJob.setdepartureTime(futureJob.getArrivalTime()+futureJob.getloadUnloadTime());
-
 		/////
 
 
@@ -590,7 +596,8 @@ public class Algorithm {
 		// 2. Set ArrivalTime-<- la enferemera puede ser recogida una vez esta haya terminado el servicio
 		future.setarrivalTime(future.getstartServiceTime());
 		future.setdepartureTime(future.getArrivalTime()+future.getloadUnloadTime());
-
+ /// poner el tiempo de servicio en cero
+		future.setserviceTime(0);
 		// present
 		double deltaArrivalDeparture=future.getDepartureTime()-future.getArrivalTime();
 		double deltaArrivalStartServiceTime=future.getstartServiceTime()-future.getArrivalTime();
