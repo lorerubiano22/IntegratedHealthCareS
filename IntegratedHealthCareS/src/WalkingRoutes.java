@@ -28,12 +28,12 @@ public class WalkingRoutes {
 
 
 	// Methods
-	public WalkingRoutes(Inputs input, Random r, Test t, List<Jobs> nodes) {
+	public WalkingRoutes(Inputs input, Test t, List<Jobs> nodes) {
 		// Information
 		jobList= new ArrayList<Jobs>();
 		inp=input;
 		test=t;
-		for(Jobs i: inp.getclients().values()) {// List a client jobs
+		for(Jobs i: nodes) {// List a client jobs
 			if(i.getReqQualification()!=0) {
 				i.setStartServiceTime(i.getStartTime()); // the start time of the service  is fixed as the earliest time
 				jobList.add(i);

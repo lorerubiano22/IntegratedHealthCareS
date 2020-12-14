@@ -27,7 +27,7 @@ public class Algorithm {
 		test = t;
 		input = i;
 		//for(int iter=0;iter<200;iter++) {
-		subroutes = new WalkingRoutes(input, r, t, i.getNodes()); // stage 1: Creation of walking routes
+		subroutes = new WalkingRoutes(input, t, i.getNodes()); // stage 1: Creation of walking routes
 		//updateHomeCareStaffJobs();
 		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,subroutes); // stage 2: Creation of driving routes
@@ -502,7 +502,7 @@ public class Algorithm {
 		return presentCouple;
 	}
 
-	private void convertingWalkingRoutesInOneTask(ArrayList<Couple> coupleFromWalkingRoutes) {
+	void convertingWalkingRoutesInOneTask(ArrayList<Couple> coupleFromWalkingRoutes) {
 		if(subroutes.getWalkingRoutes()!=null) {
 			for(SubRoute r:subroutes.getWalkingRoutes()) {
 				if(r.getDropOffNode()!=null && r.getPickUpNode()!=null) {
@@ -536,7 +536,7 @@ public class Algorithm {
 		}
 	}
 
-	private Couple creatingCoupleClientHome(Jobs presentJob, Jobs futureJob) {
+	public Couple creatingCoupleClientHome(Jobs presentJob, Jobs futureJob) {
 		presentJob.setPair(futureJob);
 		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1); // setting the time for picking up the patient at home patient
 		Couple pairPatientMedicalCentre=creatingPairPickUpDeliveryHCS(presentJob,futureJob, directConnectionDistance);

@@ -26,6 +26,7 @@ public class DrivingRoutes {
 
 	// computing walking hours
 	private WalkingRoutes subroutes;
+	private WalkingRoutes newWalkingRoutes;
 	private  HashMap<Integer, SubRoute> jobsInWalkingRoute= new HashMap<>();
 	///
 	private  ArrayList<Couple> subJobsList= new ArrayList<Couple>();
@@ -102,7 +103,7 @@ public class DrivingRoutes {
 	private Solution createInitialSolution() {
 		// creationRoutes(); // create as many routes as there are vehicles
 		// iteratively insert couples - here should be a destructive and constructive method 
-	
+
 		ArrayList<ArrayList<Couple>> clasification= clasificationjob(); // classification according to the job qualification
 		// Los tiempos de las ventanas de tiempo son menores que la hora de inicio del servicio porque considera el tiempo del registro y el tiempo de carga y descarga del personal
 		//settingStartServiceTime(); // late time - the start service time is fixed for the jobs which have a hard time window
@@ -127,48 +128,48 @@ public class DrivingRoutes {
 		assigmentPersonnalJob.checkingSolution(inp,test,jobsInWalkingRoute,assigmentPersonnalJob);
 		System.out.println(assigmentPersonnalJob.toString());
 		//initialSol.computeCosts(inp,test);
-	
+
 		//
-	
-		
-//		if(assigmentPersonnalJob.getDurationSolution()<initialSol.getDurationSolution()) {
-//			initialSol=new Solution(assigmentPersonnalJob);
-//		}
-//		System.out.println(initialSol.toString());
-//
-//
-//		double serviceTime=checkServiceTimes(initialSol);
-//		boolean areAllJobsAssigned=checkAssigment(initialSol);
-//		System.out.println(initialSol.toString());
+
+
+		//		if(assigmentPersonnalJob.getDurationSolution()<initialSol.getDurationSolution()) {
+		//			initialSol=new Solution(assigmentPersonnalJob);
+		//		}
+		//		System.out.println(initialSol.toString());
+		//
+		//
+		//		double serviceTime=checkServiceTimes(initialSol);
+		//		boolean areAllJobsAssigned=checkAssigment(initialSol);
+		//		System.out.println(initialSol.toString());
 		return new Solution(assigmentPersonnalJob);
 	}
 
 
 
 	private Solution assigmentVehicle(Solution assigmentPersonnalJob) {
-	// 1. cambio de tiempos
+		// 1. cambio de tiempos
 		Solution sol= changingTimesVehicleRoute(assigmentPersonnalJob);
 		mergingRoute(sol);
 		return sol;
 	}
 
 	private void mergingRoute(Solution sol) { // merging shift <- medical staff
-	ArrayList<Route> routesToMerge= new ArrayList<Route>();
-	ArrayList<Route> newRoutes= new ArrayList<Route>();
+		ArrayList<Route> routesToMerge= new ArrayList<Route>();
+		ArrayList<Route> newRoutes= new ArrayList<Route>();
 		for(Route r:sol.getRoutes()) {
-		if(r.getPartsRoute().size()>2) {
-			routesToMerge.add(r);
-		}
-	}
-		for(Route r:routesToMerge) {
-			for(Route r1:routesToMerge) {
-				
+			if(r.getPartsRoute().size()>2) {
+				routesToMerge.add(r);
 			}
 		}
-	
+		for(Route r:routesToMerge) {
+			for(Route r1:routesToMerge) {
+
+			}
+		}
+
 	}
 
-	
+
 
 	private Solution changingTimesVehicleRoute(Solution assigmentPersonnalJob) {
 		// 1. copia de la solución actual
@@ -207,7 +208,7 @@ public class DrivingRoutes {
 			}
 			newRoute.getPartsRoute().add(pCopy);
 		}
-		
+
 		newRoute.getPartsRoute().add(new Parts(r.getPartsRoute().get(r.getPartsRoute().size()-1)));
 		if(allowedMaxDeviation>test.getCumulativeWaitingTime()) {
 			allowedMaxDeviation=test.getCumulativeWaitingTime();
@@ -638,18 +639,19 @@ public class DrivingRoutes {
 
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
 
+
 		Solution startingSol=new Solution(initialSol);
-	
+
 		Solution newSol=null;
 
 		Solution copySolution= assigmentVehicle(startingSol);// hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
 		////
-		
+
 		for(int iter=0;iter<100;iter++) {
 			if(iter==1) {
 				System.out.println(copySolution.toString());
 			}
-
+			definitionWalkingRoutes(copySolution);
 			Solution sol1= intraMergingParts0(copySolution);
 			sol1.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 			System.out.println(sol1.getobjectiveFunction());
@@ -734,6 +736,47 @@ public class DrivingRoutes {
 
 
 
+	private void definitionWalkingRoutes(Solution copySolution) {
+		ArrayList<Route> listRoute= new ArrayList<Route>();
+		for(Route r: copySolution.getRoutes()) {
+			if(r.getHomeCareStaff()>0) {
+				listRoute.add(r);
+			}
+		}
+		int r1 = this.rn.nextInt(listRoute.size()-1);
+		int r2 = this.rn.nextInt(listRoute.size()-1);
+
+		HashMap<Integer,Jobs> list= new HashMap<>();
+		List<Jobs> listNodes= new ArrayList<Jobs>();
+		for(SubJobs j:listRoute.get(r1).getSubJobsList()) {
+			if(j.isClient()) {
+			list.put(j.getId(), j);}
+		}
+		for(SubJobs j:listRoute.get(r2).getSubJobsList()) {
+			if(j.isClient()) {
+			list.put(j.getId(), j);
+		}
+		}
+
+		for(Jobs j:list.values()) {
+			Jobs originalNode= new Jobs(inp.getNodes().get(j.getId()));
+			listNodes.add(originalNode);
+		}
+
+		newWalkingRoutes = new WalkingRoutes(inp, test, listNodes);
+		
+		ArrayList<Couple> coupleFromWalkingRoutes= new ArrayList<Couple>();
+		HashMap<Integer,Jobs> jobsInWalkingRoutes= clientInWalkingRoutes(newWalkingRoutes); // store the list of job in the walking routes
+		// 1. WALKING ROUTES-- Convert walking route in big jobs
+		if(!jobsInWalkingRoutes.isEmpty()) {
+			System.out.println("listo");
+		}
+		convertingWalkingRoutesInOneTask(coupleFromWalkingRoutes,newWalkingRoutes);
+		
+		System.out.println("listo");
+
+	}
+
 	//	private Solution treatment0(Solution initialSol2) {
 	//		Solution copySolution= new Solution(initialSol2); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
 	//       System.out.println(copySolution.toString());
@@ -755,6 +798,135 @@ public class DrivingRoutes {
 	//		//	newSolution.computeCosts(inp,test);
 	//		return newSolution;
 	//	}
+
+
+	private HashMap<Integer, Jobs> clientInWalkingRoutes(WalkingRoutes subroutes2) {
+		HashMap<Integer,Jobs> jobsInWalkingRoutes= new HashMap<Integer,Jobs>();
+		if(subroutes2.getWalkingRoutes()!=null) {
+			for(SubRoute r:subroutes2.getWalkingRoutes()) {
+				if(r.getJobSequence().size()>1) {
+					for(Jobs j:r.getJobSequence()) {
+						jobsInWalkingRoutes.put(j.getId(), j); // storing the job in the walking route
+					}
+				}
+			}
+		}
+		return jobsInWalkingRoutes;
+	}
+
+	void convertingWalkingRoutesInOneTask(ArrayList<Couple> coupleFromWalkingRoutes, WalkingRoutes subroutes2) {
+		if(subroutes2.getWalkingRoutes()!=null) {
+			for(SubRoute r:subroutes2.getWalkingRoutes()) {
+				if(r.getDropOffNode()!=null && r.getPickUpNode()!=null) {
+					double walkingRouteLength=r.getDurationWalkingRoute();
+
+					// 0. creation of subjobs and fixing time windows 
+					if(r.getDropOffNode().getId()==3) {
+						System.out.println("couple ");
+					}
+					Jobs present=creatinngPresentJobFromWR(r.getDropOffNode(),walkingRouteLength);
+
+					Jobs future=creatinngFutureJobFromWR(present, r.getPickUpNode());
+					//1. creation of couple
+					Couple pairPickUpDropOffHCS=creatingCoupleClientHome(present,future); 
+
+					// 2. fixing number of people involved
+					settingPeopleInSubJob(pairPickUpDropOffHCS, -1,+1); //- drop-off #personas + pick up #personas
+
+					// 4. adding couple
+					coupleFromWalkingRoutes.add(pairPickUpDropOffHCS);
+					// 3. checking information
+					System.out.println("couple ");
+					System.out.println(pairPickUpDropOffHCS.toString());
+					System.out.println("couple ");
+					if(present.getstartServiceTime()>future.getstartServiceTime()) { // control
+						System.out.println("error");
+					}
+
+				}
+			}
+		}
+	}
+
+	private void settingPeopleInSubJob(Couple pairPatientMedicalCentre, int i, int j) {
+		pairPatientMedicalCentre.getPresent().setTotalPeople(i); // 1 persona porque se recoge sólo al paciente
+		pairPatientMedicalCentre.getFuture().setTotalPeople(j); // setting el numero de personas en el servicio // es un dos porque es el paramedico y el pacnete al mismo tiempo	
+	}
+
+
+	public Couple creatingCoupleClientHome(Jobs presentJob, Jobs futureJob) {
+		presentJob.setPair(futureJob);
+		int directConnectionDistance= inp.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1); // setting the time for picking up the patient at home patient
+		Couple pairPatientMedicalCentre=creatingPairPickUpDeliveryHCS(presentJob,futureJob, directConnectionDistance);
+		return pairPatientMedicalCentre;
+	}
+
+	private Couple creatingPairPickUpDeliveryHCS(Jobs presentJob, Jobs futureJob, int directConnectionDistance) {
+		Couple presentCouple= new Couple(presentJob,futureJob, directConnectionDistance, test.getDetour());
+		return presentCouple;
+	}
+
+	private Jobs creatinngFutureJobFromWR(Jobs present,Jobs pickUpNode) {
+		// homeCarePickUp(dropOff,pickUp);
+
+		Jobs future= new Jobs(pickUpNode.getId(),0,0 ,pickUpNode.getReqQualification(), 0); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
+
+
+		future.setTotalPeople(1);
+		future.setClient(true);	
+		future.setserviceTime(0); //los nodos pick up contienen la información de los nodos
+		// Setting the TW
+		double tv=inp.getCarCost().getCost(present.getId()-1, pickUpNode.getId()-1)*test.getDetour();
+		future.setStartTime(present.getendServiceTime()+tv);
+		future.setEndTime(future.getStartTime()+test.getCumulativeWaitingTime()); // considering waiting time
+
+		// modificar el tiempo requerido para el trabajo+	
+		// 1. Setting the start service time -- startServiceTime
+		future.setStartServiceTime(future.getEndTime());
+		// 3. Set el fin del servicio
+		future.setEndServiceTime(future.getstartServiceTime());
+		// 2. Set ArrivalTime-<- la enferemera puede ser recogida una vez esta haya terminado el servicio
+		future.setarrivalTime(future.getstartServiceTime());
+		future.setdepartureTime(future.getendServiceTime()+future.getloadUnloadTime());
+ /// poner el tiempo de servicio en cero
+		future.setserviceTime(0);
+		// present
+		double deltaArrivalDeparture=future.getDepartureTime()-future.getArrivalTime();
+		double deltaArrivalStartServiceTime=future.getstartServiceTime()-future.getArrivalTime();
+		double deltarStartServiceTimeEndServiceTime=future.getendServiceTime()-future.getstartServiceTime();
+		future.setdeltaArrivalDeparture(deltaArrivalDeparture);
+		future.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+		future.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
+		return future;
+	}
+
+	private Jobs creatinngPresentJobFromWR(Jobs dropOffNode, double walkingRouteLength) {
+		// start when the service
+		Jobs present= new Jobs(dropOffNode.getId(),dropOffNode.getStartTime(),dropOffNode.getEndTime() ,dropOffNode.getReqQualification(), walkingRouteLength); // Jobs(int id, int startTime, int endTime, int reqQualification,int reqTime)
+
+		///
+		present.setTotalPeople(-1);
+		present.setClient(true);
+		present.setloadUnloadTime(test.getloadTimeHomeCareStaff());
+		// 1. Setting the start service time -- startServiceTime
+		present.setStartServiceTime(present.getEndTime());
+		// 2. Set ArrivalTime
+		present.setarrivalTime(present.getstartServiceTime()-present.getloadUnloadTime());
+		// 3. Set el fin del servicio
+		present.setEndServiceTime(present.getstartServiceTime()+walkingRouteLength);	
+		present.setdepartureTime(present.getendServiceTime()+present.getloadUnloadTime());
+
+
+		///
+		// present
+		double deltaArrivalDeparture=present.getDepartureTime()-present.getArrivalTime();
+		double deltaArrivalStartServiceTime=present.getstartServiceTime()-present.getArrivalTime();
+		double deltarStartServiceTimeEndServiceTime=present.getendServiceTime()-present.getstartServiceTime();
+		present.setdeltaArrivalDeparture(deltaArrivalDeparture);
+		present.setdeltaArrivalStartServiceTime(deltaArrivalStartServiceTime);
+		present.setdeltarStartServiceTimeEndServiceTime(deltarStartServiceTimeEndServiceTime);
+		return present;
+	}
 
 
 	private Solution mergingRoutes0(Solution copySolution) {
@@ -6580,7 +6752,7 @@ public class DrivingRoutes {
 		ArrayList<Route> route= new ArrayList<Route>();
 		for(Parts turn:schift2 ) { // cada turno se convertira en una ruta
 			makeTurnInRoute(turn,route);
-		
+
 		}
 		// 2. compute the the start and end time of route
 		timeStartEndRoutes(route);
@@ -6944,12 +7116,12 @@ public class DrivingRoutes {
 				}
 			}
 		}
-		
+
 		for(Parts paramedic:qualificationParamedic) {
 			for(SubJobs j:paramedic.getListSubJobs()) {
-			if(qualification<j.getReqQualification()) {
-				qualification=j.getReqQualification();
-			}
+				if(qualification<j.getReqQualification()) {
+					qualification=j.getReqQualification();
+				}
 			}
 			paramedic.setQualificationParts((int)qualification);
 			if(qualification==0) {
@@ -7004,7 +7176,7 @@ public class DrivingRoutes {
 				}
 				ArrayList<SubJobs> newListSubJobs= new ArrayList<SubJobs>();
 				if(position==0) {
-					
+
 					for(SubJobs ssj:pickUpDropOff.getListSubJobs()) {
 						assignedJobs.put(ssj.getSubJobKey(),ssj);
 						newListSubJobs.add(ssj);
@@ -7046,14 +7218,14 @@ public class DrivingRoutes {
 		SubJobs primerInRouteSubJob=possibleNewRoute.get(0);
 		SubJobs lastSubJobToInsert=possibleNewRoute.get(possibleNewRoute.size()-1);
 		// additional time to insert pickUpDropOff
-				double tv=0;
-				for(Edge e:pickUpDropOff.getDirectoryConnections().values()) {
-					tv+=e.getTime();
-				}
-				double serviceTime=0;
-				for(SubJobs s:pickUpDropOff.getListSubJobs()) {
-					serviceTime+=s.getReqTime();
-				}
+		double tv=0;
+		for(Edge e:pickUpDropOff.getDirectoryConnections().values()) {
+			tv+=e.getTime();
+		}
+		double serviceTime=0;
+		for(SubJobs s:pickUpDropOff.getListSubJobs()) {
+			serviceTime+=s.getReqTime();
+		}
 		double distanceBetweenParts=inp.getCarCost().getCost(lastSubJobToInsert.getId()-1,primerInRouteSubJob.getId()-1);		
 		double distanceFromDepot=inp.getCarCost().getCost(0,primerInRouteSubJob.getId()-1);
 		double distancetoDepot=inp.getCarCost().getCost(lastSubJobToInsert.getId()-1, 0);
