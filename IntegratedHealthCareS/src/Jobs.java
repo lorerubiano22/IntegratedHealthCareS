@@ -41,6 +41,8 @@ public class Jobs {
 	private boolean isMedicalCentre;// type of job in the system- patient job at medical centre home
 	private boolean isClient;// type of job in the system- patient job at client home
 	private ArrayList<Jobs> assignedJob= new ArrayList<Jobs>(); // Walking Route
+	private Route shiftMedicalStaff= new Route(); // Walking Route
+	
 	private int idCouple=0;
 	private HashMap<Integer,SubJobs> subJobs= new HashMap<>();
 	// Constructors
@@ -67,7 +69,7 @@ public class Jobs {
 		double sizeTW=hardendTime-hardstartTime;
 		this.sortETWSizeCriterion=(startTime)*(sizeTW);
 		this.sortLTWSizeCriterion=(endTime)*(sizeTW);
-		
+	
 		// estar service time
 		
 		
@@ -111,6 +113,7 @@ public class Jobs {
 		deltaArrivalDeparture=i.deltaArrivalDeparture;
 		deltaArrivalStartServiceTime=i.deltaArrivalStartServiceTime;
 		deltarStartServiceTimeEndServiceTime=i.deltarStartServiceTimeEndServiceTime;
+		this.shiftMedicalStaff= new Route(i.shiftMedicalStaff);
 	}
 
 	public Jobs(Jobs i) {
@@ -145,7 +148,6 @@ public class Jobs {
 		deltaArrivalDeparture=i.deltaArrivalDeparture;
 		deltaArrivalStartServiceTime=i.deltaArrivalStartServiceTime;
 		deltarStartServiceTimeEndServiceTime=i.deltarStartServiceTimeEndServiceTime;
-		
 	}
 
 	/* SET METHODS */
@@ -159,14 +161,15 @@ public class Jobs {
 		subJobKey=creatingKey(i);
 		this.totalPeople = i;}
 	public void setId(int id) {this.id = id;}
+	public void setShiftOwner(Route s) {shiftMedicalStaff=s;}
 	public void setWalkingTime(double walking) {this.walkingTime = walking;}
 	public void setloadUnloadRegistrationTime(double time) {this.loadUnloadRegistrationTime = time;}
 	public void setloadUnloadTime(double time) {this.loadUnloadTime = time;}
-	public void setStartServiceTime(double B) {this.startServiceTime = (int) Math.ceil(B);}
+	public void setStartServiceTime(double B) {this.startServiceTime = B;}
 	public void setEndServiceTime(double B) {this.endServiceTime = B;}
-	public void setStartTime(double B) {this.hardstartTime = (int) Math.ceil(B);}
-	public void setEndTime(double B) {	this.hardendTime = (int) Math.ceil(B);}
-	public void setserviceTime(double B) {	this.serviceTime = (int) Math.ceil(B);}
+	public void setStartTime(double B) {this.hardstartTime = B;}
+	public void setEndTime(double B) {	this.hardendTime = B;}
+	public void setserviceTime(double B) {	this.serviceTime = B;}
 	public void setClient(boolean client) {isClient= client;}
 	public void setPatient(boolean patient) {this.isPatient = patient;}
 	public void setMedicalCentre(boolean mc) {this.isMedicalCentre = mc;}
@@ -194,7 +197,7 @@ public class Jobs {
 	public double getdeltaArrivalDeparture() {return deltaArrivalDeparture;}
 	public double getdeltaArrivalStartServiceTime() {return deltaArrivalStartServiceTime;}
 	public double getdeltarStartServiceTimeEndServiceTime() {return deltarStartServiceTimeEndServiceTime;}
-
+	public Route getShiftOwner() {return shiftMedicalStaff;}
 	public String getSubJobKey() { return subJobKey;}
 	public int getId() { return id;}
 	public double getstartServiceTime() {return startServiceTime;}

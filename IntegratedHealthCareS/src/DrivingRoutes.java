@@ -124,13 +124,16 @@ public class DrivingRoutes {
 		assigmentJobsToQualifications(clasification);
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		ArrayList<Route> route=insertingDepotConnections(schift);
-		Solution sol3= solutionInformation(route); 
-		sol3.checkingSolution(inp,test,jobsInWalkingRoute);
-		System.out.println(sol3.toString());
+		Solution assigmentPersonnalJob= solutionInformation(route); 
+		assigmentPersonnalJob.checkingSolution(inp,test,jobsInWalkingRoute);
+		System.out.println(assigmentPersonnalJob.toString());
 		//initialSol.computeCosts(inp,test);
-		savingInformationSchifts(sol3);
-		if(sol3.getDurationSolution()<initialSol.getDurationSolution()) {
-			initialSol=new Solution(sol3);
+		savingInformationSchifts(assigmentPersonnalJob);
+		//
+		Solution assigmentVehicle =changingTimesVehicleRoute(assigmentPersonnalJob);
+		
+		if(assigmentPersonnalJob.getDurationSolution()<initialSol.getDurationSolution()) {
+			initialSol=new Solution(assigmentPersonnalJob);
 		}
 		System.out.println(initialSol.toString());
 
@@ -142,6 +145,17 @@ public class DrivingRoutes {
 	}
 
 	
+
+	private Solution changingTimesVehicleRoute(Solution assigmentPersonnalJob) {
+		// 1. copia de la solución actual
+		Solution currentSolution = new Solution (assigmentPersonnalJob);
+		// 2. tratamiento de trabajos en cada ruta: definición de las ventanas de tiempo para cada trabajo hard
+		for(Route r:currentSolution.getRoutes()) {
+			
+		}
+	
+		return currentSolution;
+	}
 
 	private Solution creatingPoolRoute(Solution sol1) {
 		Solution sol= new Solution();
@@ -478,6 +492,7 @@ public class DrivingRoutes {
 	}
 
 	private void savingInformationSchifts(Solution initialSol2) {
+		// conection infomration
 		for(Route r:initialSol2.getRoutes()) {
 			r.getSchiftRoute().setRouteList(r);
 			// crear la connección con el depot
@@ -496,8 +511,12 @@ public class DrivingRoutes {
 		}
 
 
-		// 
-
+		//  each job belongs to a schift
+		for(Route r:initialSol2.getRoutes()) {
+			for(SubJobs j:r.getSubJobsList()) {
+				j.setShiftOwner(r);
+			}
+		}
 		// setting frequency Route
 		for(Route r:initialSol2.getRoutes()) {
 			for(SubJobs j:r.getSubJobsList()) {
@@ -6175,57 +6194,57 @@ public class DrivingRoutes {
 		ArrayList<Parts> qualification0= assigmentParamedic(q0,clasification0);
 		missingAssigment(qualification0,clasification0);
 //		//Qualification level from 1 to 3
-//		ArrayList<Parts> qualification1= assigmentParamedic(q1,clasification1); // here are not considering working hours
-//		missingAssigment(qualification1,clasification1);
-//		ArrayList<Parts> qualification2= assigmentParamedic(q2,clasification2);
-//		missingAssigment(qualification2,clasification2);
-//		ArrayList<Parts> qualification3= assigmentParamedic(q3,clasification3);
-//		missingAssigment(qualification3,clasification3);
-//
-//		downgradings(qualification3,qualification2);
-//		downgradings(qualification2,qualification1); //No se considera porque no es tan facil controlar el tiempo de trabajo
+		ArrayList<Parts> qualification1= assigmentParamedic(q1,clasification1); // here are not considering working hours
+		missingAssigment(qualification1,clasification1);
+		ArrayList<Parts> qualification2= assigmentParamedic(q2,clasification2);
+		missingAssigment(qualification2,clasification2);
+		ArrayList<Parts> qualification3= assigmentParamedic(q3,clasification3);
+		missingAssigment(qualification3,clasification3);
 
-//		for(Parts schifts:qualification0) {
-//			Parts newParts= null;
-//			if(!schifts.getListSubJobs().isEmpty()) {
-//				newParts= new Parts(schifts);
-//			}
-//			if(newParts!=null) {
-//				schift.add(newParts);
-//			}
-//		}
-//
-//		// home care staff
-//		for(Parts schifts:qualification1) {
-//			Parts newParts= null;
-//			if(!schifts.getListSubJobs().isEmpty()) {
-//				newParts= new Parts(schifts);
-//			}
-//			if(newParts!=null) {
-//				schift.add(newParts);
-//			}
-//		}
-//
-//
-//
-//		for(Parts schifts:qualification2) {
-//			Parts newParts= null;
-//			if(!schifts.getListSubJobs().isEmpty()) {
-//				newParts= new Parts(schifts);
-//			}
-//			if(newParts!=null) {
-//				schift.add(newParts);
-//			}
-//		}
-//		for(Parts schifts:qualification3) {
-//			Parts newParts= null;
-//			if(!schifts.getListSubJobs().isEmpty()) {
-//				newParts= new Parts(schifts);
-//			}
-//			if(newParts!=null) {
-//				schift.add(newParts);
-//			}
-//		}
+		downgradings(qualification3,qualification2);
+		downgradings(qualification2,qualification1); //No se considera porque no es tan facil controlar el tiempo de trabajo
+
+		for(Parts schifts:qualification0) {
+			Parts newParts= null;
+			if(!schifts.getListSubJobs().isEmpty()) {
+				newParts= new Parts(schifts);
+			}
+			if(newParts!=null) {
+				schift.add(newParts);
+			}
+		}
+
+		// home care staff
+		for(Parts schifts:qualification1) {
+			Parts newParts= null;
+			if(!schifts.getListSubJobs().isEmpty()) {
+				newParts= new Parts(schifts);
+			}
+			if(newParts!=null) {
+				schift.add(newParts);
+			}
+		}
+
+
+
+		for(Parts schifts:qualification2) {
+			Parts newParts= null;
+			if(!schifts.getListSubJobs().isEmpty()) {
+				newParts= new Parts(schifts);
+			}
+			if(newParts!=null) {
+				schift.add(newParts);
+			}
+		}
+		for(Parts schifts:qualification3) {
+			Parts newParts= null;
+			if(!schifts.getListSubJobs().isEmpty()) {
+				newParts= new Parts(schifts);
+			}
+			if(newParts!=null) {
+				schift.add(newParts);
+			}
+		}
 		System.out.println("all turns");
 		int i=-1;
 		for(Parts s:schift) {
@@ -6814,7 +6833,7 @@ public class DrivingRoutes {
 			Jobs j= new Jobs(taskToInert);
 			
 			for(Parts paramedic:qualificationParamedic) {
-				if(j.getId()==22) {
+				if(j.getId()==71) {
 					System.out.println(" Turn ");
 					System.out.println(j.toString());
 				}
@@ -7052,7 +7071,7 @@ double homeDeparture=dropOffPickUp.getListSubJobs().get(1).getArrivalTime()-tv;
 
 double homeArrival=homeDeparture-dropOffPickUp.getListSubJobs().get(0).getdeltaArrivalDeparture();
 double homeStartServiceTime=homeArrival+dropOffPickUp.getListSubJobs().get(0).getdeltaArrivalStartServiceTime();
-double endServiceTime=homeStartServiceTime+dropOffPickUp.getListSubJobs().get(0).getendServiceTime();
+double endServiceTime=homeStartServiceTime+dropOffPickUp.getListSubJobs().get(0).getdeltarStartServiceTimeEndServiceTime();
 dropOffPickUp.getListSubJobs().get(0).setarrivalTime(homeArrival);
 dropOffPickUp.getListSubJobs().get(0).setStartServiceTime(homeStartServiceTime);
 dropOffPickUp.getListSubJobs().get(0).setEndServiceTime(endServiceTime);
@@ -7070,6 +7089,9 @@ for(int i=2; i<dropOffPickUp.getListSubJobs().size();i++ ) {
 			sbj.setStartServiceTime(startServiceTime);
 			sbj.setEndServiceTime(endServiceTime);
 			sbj.setdepartureTime(departureTime);	
+			// setting new tw
+			sbj.setStartTime(startServiceTime);
+			sbj.setEndTime(startServiceTime);
 		}
 	System.out.println(dropOffPickUp.toString());	
 	}
@@ -7090,7 +7112,10 @@ for(int i=2; i<dropOffPickUp.getListSubJobs().size();i++ ) {
 			sbj.setarrivalTime(arrivalTime);
 			sbj.setStartServiceTime(startServiceTime);
 			sbj.setEndServiceTime(endServiceTime);
-			sbj.setdepartureTime(departureTime);	
+			sbj.setdepartureTime(departureTime);
+			// definición de las nuevas ventanas de tiempo
+			sbj.setStartTime(startServiceTime);
+			sbj.setEndTime(startServiceTime);
 		}
 	System.out.println(dropOffPickUp.toString());	
 	}
