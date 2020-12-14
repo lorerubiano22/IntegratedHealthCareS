@@ -17,6 +17,7 @@ public class Route {
 	private double amountParamedics=0;// los paramedicos que salen del depot
 	private double homeCareStaff=0;// los paramedicos que salen del depot
 	private double driver=0;// los paramedicos que salen del depot
+	private double detour=0;// los paramedicos que salen del depot
 	private HashMap<String, Edge> edges; // edges list
 	private LinkedList<Couple> jobsList= new LinkedList<Couple>(); // subjobs list (pick up and delivary)
 	private LinkedList<SubJobs> subJobsList=new LinkedList<SubJobs>(); // subjobs list (pick up and delivary)
@@ -46,6 +47,7 @@ public class Route {
 		amountParamedics=r.getAmountParamedic();
 		driver=r.getAmountDriver();
 		idleTime=r.getIdleTime();
+		detour=r.getdetour();
 		driverCost=r.driverCost;// los paramedicos que salen del depot
 		homeCareStaffCost=r.driverCost;// los paramedicos que salen del depot
 
@@ -59,6 +61,12 @@ public class Route {
 		}
 
 	}
+
+
+
+
+
+	private double getdetour() {return detour; }
 
 
 
@@ -124,6 +132,7 @@ public class Route {
 
 
 	// Setters
+	public void setDetour(double d) {this.detour = d;}
 	public void setDurationRoute(double durationRoute) {this.durationRoute = durationRoute;}
 	public void setTravelTime(double tv) {this.travelTime = tv;}
 	public void setServiceTime(double st) {this.serviceTime = st;}
@@ -169,7 +178,9 @@ public class Route {
 	public double getdetourViolation() {	return detourViolation;}
 	public double getdriverCost() {return driverCost;}
 	public double gethomeCareStaffCost() {return homeCareStaffCost;}
-
+	public double getDetour() {return detour;}
+	
+	
 
 	// Auxiliar methods
 
@@ -440,12 +451,12 @@ public class Route {
 		for(SubJobs j:this.getSubJobsList()) { // se producen despues de terminar un servicio
 			if((j.getArrivalTime()+j.getdeltaArrivalStartServiceTime())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
 				penalization=j.getstartServiceTime()-(j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime());
+				penalizationRoute+=penalization;
 			}
 
 			else { // llega antes el personal tiene que esperar al vehiculo
 				if((j.getArrivalTime()+j.getdeltaArrivalStartServiceTime())>j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
-					if(j.getTotalPeople()>0) {
-						penalization=(j.getArrivalTime()+j.getdeltaArrivalStartServiceTime())-j.getstartServiceTime();}
+						penalization=(j.getArrivalTime()+j.getdeltaArrivalStartServiceTime())-j.getstartServiceTime();
 					penalizationRoute+=penalization;
 					if(penalization>test.getCumulativeWaitingTime()) {
 						additionalWaitingRoute+=Math.abs(test.getCumulativeWaitingTime()-penalization);
@@ -464,62 +475,60 @@ public class Route {
 
 
 
-	public void checkingDetour(Test test, Inputs inp) {
+	public void checkingDetour(Test test, Inputs inp, Solution initialSol) {
 		double penalization=0;
 		double penalizationRotue=0;
+		double detour=0;
+		
 		// calculating detour
-		computingDetours(inp,test);
+		computingDetours(inp,test,initialSol);
 		// calculating additional times per edge
-		for(Edge e:this.getEdges().values()) {
-			if(e.gettravelTimeInRoute()>e.getDetour()) {
-				penalization=e.gettravelTimeInRoute()-e.getDetour();
-				penalizationRotue+=penalization;
+		for(Route r: initialSol.getRoutes()) {
+			for(Edge e:r.getEdges().values()) {
+				if(e.gettravelTimeInRoute()>e.getDetour()) {
+					penalization=e.gettravelTimeInRoute()-e.getDetour();
+					penalizationRotue+=penalization;
+				}
+				e.setadditionalTime(penalization);
+				detour+=penalization;
 			}
-			e.setadditionalTime(penalization);
 		}
-		this.setdetourViolation(penalizationRotue);
-		
+		this.setdetourViolation(penalizationRotue);		
+		this.setDetour(detour);
 	}
 
 
 
 
 
-	private void computingDetours(Inputs inp, Test test) {
+	private void computingDetours(Inputs inp, Test test, Solution initialSol) {
 	String depotS="P1";
-	String depotConnection=depotS+this.getSubJobsList().getFirst().getSubJobKey();
-	if(!this.getEdges().containsKey(depotConnection)) {
-		SubJobs depotStart=this.getPartsRoute().get(0).getListSubJobs().get(0);
-		Edge e = new Edge(depotStart,this.getSubJobsList().get(0),inp,test);
-		this.getEdges().put(e.getEdgeKey(), e);
-		SubJobs depotEnd=this.getPartsRoute().get(this.getPartsRoute().size()-1).getListSubJobs().get(0);
-		e = new Edge(this.getSubJobsList().get(this.getSubJobsList().size()-1),depotEnd,inp,test);
-		this.getEdges().put(e.getEdgeKey(), e);
-	}
-		for(Edge e:this.getEdges().values()) {
-		double travelTime=0;
-		boolean startCount=false;
-		SubJobs origen=e.getOrigin();
-		SubJobs end=e.getEnd();
-		for(int i=1; i<this.getSubJobsList().size();i++) { // iterating over the rotue
-			SubJobs r=this.getSubJobsList().get(i-1);
-			SubJobs s=this.getSubJobsList().get(i);
-			
-			if(r.getSubJobKey().equals(origen.getSubJobKey())) {
-				startCount=true;
-			}
-			if(startCount) {
-				travelTime+=inp.getCarCost().getCost(r.getId()-1, s.getId()-1);
-			}
-			if(s.getSubJobKey().equals(end.getSubJobKey())) {
-				break;
+	for(Route route:initialSol.getRoutes()) {
+		for(Edge e: route.getEdges().values()) { // is there a detour??
+			SubJobs origen=e.getOrigin();
+			SubJobs end=e.getEnd();
+			if(this.getJobsDirectory().containsKey(origen.getSubJobKey()) && this.getJobsDirectory().containsKey(end.getSubJobKey()) ) {
+				double travelTime=0;
+				boolean startCount=false;
+				for(int i=1; i<this.getSubJobsList().size();i++) { // iterating over the rotue
+					SubJobs r=this.getSubJobsList().get(i-1);
+					SubJobs s=this.getSubJobsList().get(i);
+					
+					if(r.getSubJobKey().equals(origen.getSubJobKey())) {
+						startCount=true;
+					}
+					if(startCount) {
+						travelTime+=inp.getCarCost().getCost(r.getId()-1, s.getId()-1);
+					}
+					if(s.getSubJobKey().equals(end.getSubJobKey())) {
+						break;
+					}
+				}
+				e.setTravelTimeInRoute(travelTime);
 			}
 		}
-		e.setTravelTimeInRoute(travelTime);
 	}
-		// agregar los ejes del depot
 	
-		
 	}
 
 

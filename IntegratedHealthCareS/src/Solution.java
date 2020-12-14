@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -10,6 +11,7 @@ public class Solution {
 	private int passengers=0;// home care staff and + paramedic transported que salen del depot
 	private double durationSolution = 0.0; // Travel distance = waiting time + driving time
 	private double waitingTime=0;// Total waiting time
+	private double detourDuration=0;// Total waiting time
 	private double serviceTime=0;
 	private double drivingTime=0;
 	private double walkingTime=0;
@@ -74,6 +76,8 @@ public class Solution {
 	public void setwAdditionalWaitingTime(double dr) {additionalWaitingTime=	dr;}
 	public void settimeWindowViolation(double dr) {timeWindowViolation=	dr;}
 	public void setdetourViolation(double detour) {detourViolation= detour;}
+	public void setdetourDuration(double detour) {detourDuration= detour;}
+	
 	// Getters
 	public long getId() { return id;}
 	public double getDurationSolution() { return durationSolution;}
@@ -89,7 +93,9 @@ public class Solution {
 	public double getimeWindowViolation() {return timeWindowViolation;}
 	public double getdetourViolation() {	return detourViolation;}
 	public double getobjectiveFunction() {	return objectiveFunction;}
-
+	public double getdetourDuration() {	return detourDuration;}
+	
+	
 	// auxiliar methods
 
 	private LinkedList<Route> copyRoutes(Solution initialSol) {
@@ -107,25 +113,27 @@ public class Solution {
 	s = s.concat("\nID Solution: " + id);
 	s = s.concat("\nFO: Duration: " + durationSolution);
 	s = s.concat("\nFO: Travel time: " + drivingTime);
+	s = s.concat("\nFO: Service time: " + serviceTime);
 	s = s.concat("\nWalking time: " + walkingTime);
 	s = s.concat("\n Waiting time: " + waitingTime);
 	s= s.concat("\n medical staff cost: "+ homeCareStaffCost);
 	s= s.concat("\n driver cost: "+ driverCost);
 	s= s.concat("\n time window violation: "+ timeWindowViolation);
 	s= s.concat("\n waiting Time to penalize: "+ additionalWaitingTime);
+	
 	s= s.concat(" Detour: "+ detourViolation);
 	s = s.concat("\n List of jobs: ");
 	for(Route r:routes) {
 		if(!r.getSubJobsList().isEmpty()) {
 			s= s.concat("\n Route: "+ r.getIdRoute());
-//			s= s.concat(" travelTime: "+ r.getTravelTime());
-//			s= s.concat(" waitingTime: "+ r.getWaitingTime());
-//			s= s.concat(" serviceTime: "+ r.getServiceTime());
-//			s= s.concat(" detour: "+ r.getdetourViolation());
-//			s= s.concat(" waiting Time to penalize: "+ r.getAdditionalwaitingTime());
-//			s= s.concat(" durationRoute: "+ r.getDurationRoute());
-//			s= s.concat("\n medical staff cost: "+ r.gethomeCareStaffCost());
-//			s= s.concat("\n driver cost: "+ r.getdriverCost());
+			s= s.concat(" travelTime: "+ r.getTravelTime());
+			s= s.concat(" waitingTime: "+ r.getWaitingTime());
+			s= s.concat(" serviceTime: "+ r.getServiceTime());
+			s= s.concat(" detour: "+ r.getdetourViolation());
+			s= s.concat(" waiting Time to penalize: "+ r.getAdditionalwaitingTime());
+			s= s.concat(" durationRoute: "+ r.getDurationRoute());
+			s= s.concat("\n medical staff cost: "+ r.gethomeCareStaffCost());
+			s= s.concat("\n driver cost: "+ r.getdriverCost());
 			s= s.concat("\n");
 			for(Parts p:r.getPartsRoute()) {
 				for(SubJobs j:p.getListSubJobs()) {	
@@ -139,8 +147,8 @@ public class Solution {
 	}
 
 
-	public void checkingSolution(Inputs inp, Test test, HashMap<Integer, SubRoute> jobsInWalkingRoute) {
-		slackMethod(inp,test);
+	public void checkingSolution(Inputs inp, Test test, HashMap<Integer, SubRoute> jobsInWalkingRoute, Solution initialSol) {
+		//slackMethod(inp,test);
 		int id=-1;
 		for(Route r: this.getRoutes()) {
 			id++;
@@ -155,7 +163,7 @@ public class Solution {
 			// revisar los tiempos de espera
 			r.checkingWaitingTimes(test,inp);
 			// revisar los detours
-			r.checkingDetour(test,inp);	
+			r.checkingDetour(test,inp,initialSol);	
 			// metrics Home- care staff cost
 			r.computeHomCareStaffCost();
 			System.out.println(this.toString());
@@ -290,7 +298,7 @@ public class Solution {
 		double additionalWaitingTime=0; // 
 		double timeWindowViolation=0;
 		double detourViolation=0;
-
+		double detour=0;
 		for(Route r:this.getRoutes()) {
 			waitingTime+=r.getWaitingTime();
 			serviceTime+=r.getServiceTime();
@@ -299,6 +307,7 @@ public class Solution {
 			homeCareStaff+=r.getHomeCareStaff();
 			additionalWaitingTime+=r.getAdditionalwaitingTime();
 			timeWindowViolation+=r.gettimeWindowViolation();
+			detour+=r.getDetour();
 			detourViolation+=r.getdetourViolation();
 			durationSolution+=r.getDurationRoute();
 		}
@@ -311,6 +320,7 @@ public class Solution {
 		this.setwAdditionalWaitingTime(additionalWaitingTime);
 		this.setdetourViolation(detourViolation);
 		this.settimeWindowViolation(timeWindowViolation);
+		this.setdetourDuration(detour);
 
 	
 

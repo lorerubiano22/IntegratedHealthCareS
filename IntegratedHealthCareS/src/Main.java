@@ -29,8 +29,15 @@ public class Main {
 					currentTest.getInstanceName() + File.separator;
 			Inputs inputs = InputsReader.readInputs(inputSource);
 			long t = System.nanoTime();
+			String objective="";
+			if(currentTest.getdriverObjective()==1) {
+				objective="Driver";
+			}
+			else {
+				objective="Home_Care_Staff";	
+			}
 			String outputsFilePath = outputFolder + File.separator +
-					currentTest.getInstanceName() + "_" + currentTest.getSeed() +  sufixFileOutput;
+					currentTest.getInstanceName() + "_" + currentTest.getSeed() +"_"+objective+  sufixFileOutput;
 			// 2.2. USE THE MULTI-START ALGORITHM TO SOLVE THE INSTANCE
 			Algorithm algorithm = new Algorithm(currentTest, inputs, rng);
 			Outputs output = new Outputs(algorithm);

@@ -102,9 +102,7 @@ public class DrivingRoutes {
 	private Solution createInitialSolution() {
 		// creationRoutes(); // create as many routes as there are vehicles
 		// iteratively insert couples - here should be a destructive and constructive method 
-		Solution initialSol= null;
-
-
+	
 		ArrayList<ArrayList<Couple>> clasification= clasificationjob(); // classification according to the job qualification
 		// Los tiempos de las ventanas de tiempo son menores que la hora de inicio del servicio porque considera el tiempo del registro y el tiempo de carga y descarga del personal
 		//settingStartServiceTime(); // late time - the start service time is fixed for the jobs which have a hard time window
@@ -125,23 +123,24 @@ public class DrivingRoutes {
 		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		ArrayList<Route> route=insertingDepotConnections(schift);
 		Solution assigmentPersonnalJob= solutionInformation(route); 
-		assigmentPersonnalJob.checkingSolution(inp,test,jobsInWalkingRoute);
+		savingInformationSchifts(assigmentPersonnalJob);
+		assigmentPersonnalJob.checkingSolution(inp,test,jobsInWalkingRoute,assigmentPersonnalJob);
 		System.out.println(assigmentPersonnalJob.toString());
 		//initialSol.computeCosts(inp,test);
-		savingInformationSchifts(assigmentPersonnalJob);
+	
 		//
-		Solution assigmentVehicle =assigmentVehicle(assigmentPersonnalJob);
+	
 		
-		if(assigmentPersonnalJob.getDurationSolution()<initialSol.getDurationSolution()) {
-			initialSol=new Solution(assigmentPersonnalJob);
-		}
-		System.out.println(initialSol.toString());
-
-
-		double serviceTime=checkServiceTimes(initialSol);
-		boolean areAllJobsAssigned=checkAssigment(initialSol);
-		System.out.println(initialSol.toString());
-		return new Solution(initialSol);
+//		if(assigmentPersonnalJob.getDurationSolution()<initialSol.getDurationSolution()) {
+//			initialSol=new Solution(assigmentPersonnalJob);
+//		}
+//		System.out.println(initialSol.toString());
+//
+//
+//		double serviceTime=checkServiceTimes(initialSol);
+//		boolean areAllJobsAssigned=checkAssigment(initialSol);
+//		System.out.println(initialSol.toString());
+		return new Solution(assigmentPersonnalJob);
 	}
 
 
@@ -154,30 +153,22 @@ public class DrivingRoutes {
 	}
 
 	private void mergingRoute(Solution sol) { // merging shift <- medical staff
-		ArrayList<Route> paramedicsRoute= new ArrayList<Route>();
-		ArrayList<Route> homeCareStaffRoute= new ArrayList<Route>();
+	ArrayList<Route> routesToMerge= new ArrayList<Route>();
+	ArrayList<Route> newRoutes= new ArrayList<Route>();
 		for(Route r:sol.getRoutes()) {
-			if(r.getAmountParamedic()>0) {
-				paramedicsRoute.add(r);
-			}
-			else {
-				if(r.getHomeCareStaff()>0) {
-					homeCareStaffRoute.add(r);
-				}
+		if(r.getPartsRoute().size()>2) {
+			routesToMerge.add(r);
+		}
+	}
+		for(Route r:routesToMerge) {
+			for(Route r1:routesToMerge) {
+				
 			}
 		}
-		paramedicsRoute.sort(Route.SORT_BY_RouteLength);
-		homeCareStaffRoute.sort(Route.SORT_BY_RouteLength);
-		mergingParamedics(paramedicsRoute);
+	
 	}
 
-	private void mergingParamedics(ArrayList<Route> paramedicsRoute) {
-	// seleccionar sólo los trabajos que tienen un paciente asignado
-		for() {
-			
-		}
-		
-	}
+	
 
 	private Solution changingTimesVehicleRoute(Solution assigmentPersonnalJob) {
 		// 1. copia de la solución actual
@@ -252,7 +243,7 @@ public class DrivingRoutes {
 		// creación de partes
 		Solution newSol= solutionInformation(route); 
 
-		newSol.checkingSolution(inp,test,jobsInWalkingRoute);
+		newSol.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 		for(Route r:sol1.getRoutes()) {
 			newSol.getRoutes().add(r);
 		}
@@ -284,7 +275,7 @@ public class DrivingRoutes {
 		}
 
 		Solution sol= solutionInformation(xpressPoolRoutes.getDrivingRoutes()); 
-		sol.checkingSolution(inp,test,jobsInWalkingRoute);
+		sol.checkingSolution(inp,test,jobsInWalkingRoute, initialSol);
 		return sol;
 	}
 
@@ -648,17 +639,20 @@ public class DrivingRoutes {
 	private Solution assigningRoutesToDrivers(Solution initialSol) {
 
 		Solution startingSol=new Solution(initialSol);
-		System.out.println(startingSol.toString());
+	
 		Solution newSol=null;
 
-		Solution copySolution= new Solution(startingSol); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
+		Solution copySolution= assigmentVehicle(startingSol);// hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
+		////
+		
 		for(int iter=0;iter<100;iter++) {
 			if(iter==1) {
 				System.out.println(copySolution.toString());
 			}
 
 			Solution sol1= intraMergingParts0(copySolution);
-			sol1.checkingSolution(inp,test,jobsInWalkingRoute);
+			sol1.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
+			System.out.println(sol1.getobjectiveFunction());
 			if(sol1.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
 				newSol=new Solution (sol1);
 				startingSol=new Solution (sol1);
@@ -668,7 +662,7 @@ public class DrivingRoutes {
 			}
 
 			Solution Sol2= interMergingParts(copySolution); // 1 merging parts (without complete parts)
-			Sol2.checkingSolution(inp,test,jobsInWalkingRoute);
+			Sol2.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 
 			if(Sol2.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
 				newSol=new Solution (Sol2);
@@ -767,7 +761,7 @@ public class DrivingRoutes {
 		// revisar la capacidad del vehículo en tiempos de 
 		Solution Sol= interMergingParts(copySolution); // 1 merging parts (without complete parts)
 		System.out.println(Sol.toString());
-		Sol.checkingSolution(inp,test,jobsInWalkingRoute);
+		Sol.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 		///Sol.computeCosts(inp,test);
 		System.out.println(Sol.toString());
 		settingNewPart(Sol);
@@ -779,7 +773,7 @@ public class DrivingRoutes {
 
 		Solution newSol= intraMergingParts0(copySolution);
 		System.out.println(Sol.toString());
-		newSol.checkingSolution(inp,test,jobsInWalkingRoute);
+		newSol.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 		System.out.println(Sol.toString());
 		//newSol.computeCosts(inp,test);
 		merge= checkingSubJobs(Sol,newSol);
@@ -905,13 +899,13 @@ public class DrivingRoutes {
 			Solution presolhomeCareStaff=mergingTurnos(initialSol);
 			Solution newInitialSolution=mergeSolutions(presolpatientsRoute,presolhomeCareStaff);
 			newSolution= mergingRoutes(newInitialSolution); 
-			newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
+			newSolution.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 			//newSolution.computeCosts(inp,test);
 			merge= checkingSubJobs(initialSol,newSolution);
 		}
 		else{
 			newSolution= mergingRoutes(copySolution); // las rutas se mezclan por partes
-			newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
+			newSolution.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 			//newSolution.computeCosts(inp,test);
 			merge= checkingSubJobs(initialSol,newSolution);
 		}
@@ -932,7 +926,7 @@ public class DrivingRoutes {
 		merge= checkingSubJobs(initialSol,newSolution);
 		//Solution solFixedTime=insertTWNarrow(initialSol); // insertar la 
 
-		newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
+		newSolution.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 
 
 		return newSolution;
@@ -956,7 +950,7 @@ public class DrivingRoutes {
 		boolean merge= checkingSubJobs(initialSol,newSolution);
 		//Solution solFixedTime=insertTWNarrow(initialSol); // insertar la 
 
-		newSolution.checkingSolution(inp,test,jobsInWalkingRoute);
+		newSolution.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 		//	newSolution.computeCosts(inp,test);
 		return newSolution;
 	}
@@ -984,7 +978,7 @@ public class DrivingRoutes {
 			Sol.getRoutes().remove(r);	
 		}
 
-		Sol.checkingSolution(inp,test,jobsInWalkingRoute);
+		Sol.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 		//Sol.computeCosts(inp,test);
 		return Sol;
 	}
@@ -1040,7 +1034,7 @@ public class DrivingRoutes {
 				}
 			}
 
-			sol.checkingSolution(inp,test,jobsInWalkingRoute);
+			sol.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 			//sol.computeCosts(inp,test);
 		}
 		return sol;
@@ -1749,7 +1743,7 @@ public class DrivingRoutes {
 	private Solution mergingRoutes(Solution copySolution) {
 		// revisar la capacidad del vehículo en tiempos de 
 		Solution Sol= interMergingParts(copySolution); // 1 merging parts (without complete parts)
-		Sol.checkingSolution(inp,test,jobsInWalkingRoute);
+		Sol.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 		//Sol.computeCosts(inp,test);
 
 		settingNewPart(Sol);
@@ -1762,7 +1756,7 @@ public class DrivingRoutes {
 
 		Solution newSol= intraMergingParts(Sol); // 2 merging parts (splited the parts) // here the detours are considered
 
-		newSol.checkingSolution(inp,test,jobsInWalkingRoute);
+		newSol.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 
 		//newSol.computeCosts(inp,test);
 		merge= checkingSubJobs(Sol,newSol);
@@ -5465,13 +5459,13 @@ public class DrivingRoutes {
 		// creación de partes
 		Solution newSol= solutionInformation(route); 
 
-		newSol.checkingSolution(inp,test,jobsInWalkingRoute);
+		newSol.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 
 
 
 		System.out.println(newSol.toString());
 		Solution mergingRoutes= checkingMergingRoutes(newSol);
-		mergingRoutes.checkingSolution(inp, test, jobsInWalkingRoute);
+		mergingRoutes.checkingSolution(inp, test, jobsInWalkingRoute,initialSol);
 		System.out.println("Stop");
 		System.out.println(newSol.toString());
 
