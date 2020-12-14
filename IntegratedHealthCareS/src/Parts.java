@@ -58,8 +58,10 @@ public class Parts {
 	public SubJobs getReferenceNode() {return nodeReference;}
 
 	// Setters
+	public void setParamedicSchift(boolean a) { paramedicSchift=a;}
+	public void setHomecareStaffSchift(boolean b) { homecareStaffSchift=b;}
 	public void setKeyParts(String k) {this.key = k;}
-
+	public void setQualificationParts(int q) {this.qualificationLevel = q;}
 	public void setListSubJobs(ArrayList<SubJobs> listSubJobs, Inputs inp, Test test) {
 		this.listSubJobs = listSubJobs;
 		for(SubJobs j:listSubJobs) {

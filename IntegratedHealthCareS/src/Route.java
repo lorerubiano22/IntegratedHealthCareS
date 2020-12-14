@@ -655,7 +655,7 @@ public class Route {
 //		if(auxparamedic>paramedic) {
 //			paramedic=auxparamedic;
 //		}
-		this.setAmountParamedic(auxparamedic);
+		this.setAmountParamedic(paramedic);
 		this.setHomeCareStaff(homeCareStaff);
 		System.out.println("total HHC"+ homeCareStaff);
 		System.out.println("total Paramedic"+ paramedic);
