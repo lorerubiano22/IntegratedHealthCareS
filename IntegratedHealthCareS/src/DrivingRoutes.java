@@ -6914,12 +6914,14 @@ public class DrivingRoutes {
 		for(Jobs taskToInert:clasification3) { // iterate over jobs
 			Jobs j= new Jobs(taskToInert);
 			for(Parts paramedic:qualificationParamedic) {
-				
-				if(j.getId()==71) {
+				if(paramedic.getDirectorySubjobs().containsKey("D19") &&  j.getId()==30) {
+					System.out.println("stop");
+				}
+				if(j.getId()==30) {
 					System.out.println(" Turn ");
 					System.out.println(j.toString());
 				}
-				if(j.getId()==26) {
+				if(j.getId()==19) {
 					System.out.println(" Turn ");
 					System.out.println(j.toString());
 				}
@@ -6987,16 +6989,28 @@ public class DrivingRoutes {
 			// dividir el trabajo
 			Parts pickUpDropOff=disaggregatedJob(j);
 			// revisar si el primer trabajo de esta parte puede ser insertado
-			SubJobs jsplited=pickUpDropOff.getListSubJobs().get(0);
+			SubJobs jsplited=null;
+			if(j.isClient()) {
+				jsplited=pickUpDropOff.getListSubJobs().get(0);
+			}
+			else {
+				jsplited=pickUpDropOff.getListSubJobs().get(1);
+			}
+			//SubJobs jsplited=pickUpDropOff.getListSubJobs().get(0);
 
 			//double workingHours= computingWorkingHours(homeCare,pickUpDropOff);
 			int position=iterateOverSchiftLastPosition(jsplited,pickUpDropOff,homeCare);
 			if(position>=0 ) {
+				if(jsplited.isClient()) {
+					settingEarlyTimeFutureJob(pickUpDropOff);// siempre el trabajo de referencia es el primer nodo
+				}
+				else {
+					if(pickUpDropOff.getListSubJobs().get(0).isPatient()) {
+						settingEarlyTimeFuturePatientJob(pickUpDropOff);}
+				}
 				ArrayList<SubJobs> newListSubJobs= new ArrayList<SubJobs>();
 				if(position==0) {
-					if(jsplited.isClient()) {
-						settingEarlyTimeFutureJob(pickUpDropOff);// siempre el trabajo de referencia es el primer nodo
-					}
+					
 					for(SubJobs ssj:pickUpDropOff.getListSubJobs()) {
 						assignedJobs.put(ssj.getSubJobKey(),ssj);
 						newListSubJobs.add(ssj);
@@ -7015,9 +7029,11 @@ public class DrivingRoutes {
 						newListSubJobs.add(ssj);
 					}
 				}
+				homeCare.getDirectoryConnections().clear();
 				homeCare.getListSubJobs().clear();
 				for(SubJobs ssj:newListSubJobs) {
 					homeCare.getListSubJobs().add(ssj);
+					homeCare.getDirectorySubjobs().put(ssj.getSubJobKey(), ssj);
 				}
 				printing(homeCare);
 				inserted=true;
@@ -7035,9 +7051,19 @@ public class DrivingRoutes {
 
 		SubJobs primerInRouteSubJob=possibleNewRoute.get(0);
 		SubJobs lastSubJobToInsert=possibleNewRoute.get(possibleNewRoute.size()-1);
+		// additional time to insert pickUpDropOff
+				double tv=0;
+				for(Edge e:pickUpDropOff.getDirectoryConnections().values()) {
+					tv+=e.getTime();
+				}
+				double serviceTime=0;
+				for(SubJobs s:pickUpDropOff.getListSubJobs()) {
+					serviceTime+=s.getReqTime();
+				}
+		double distanceBetweenParts=inp.getCarCost().getCost(lastSubJobToInsert.getId()-1,primerInRouteSubJob.getId()-1);		
 		double distanceFromDepot=inp.getCarCost().getCost(0,primerInRouteSubJob.getId()-1);
 		double distancetoDepot=inp.getCarCost().getCost(lastSubJobToInsert.getId()-1, 0);
-		double preliminaryWorkingTime=lastSubJobToInsert.getDepartureTime()-primerInRouteSubJob.getArrivalTime()+distanceFromDepot+distancetoDepot;
+		double preliminaryWorkingTime=(homeCare.getListSubJobs().get(homeCare.getListSubJobs().size()-1).getDepartureTime()-homeCare.getListSubJobs().get(0).getArrivalTime())+tv+serviceTime+distanceFromDepot+distancetoDepot+distanceBetweenParts;
 		if(preliminaryWorkingTime<test.getWorkingTime()) {
 			enoughtTime=true;
 		}
@@ -7157,7 +7183,7 @@ public class DrivingRoutes {
 			String key=creatingKey(sb);
 			assignedJobs.put(key, sb);
 			homeCare.getListSubJobs().add(sb);
-
+			homeCare.getDirectorySubjobs().put(sb.getSubJobKey(), sb);
 		}
 
 

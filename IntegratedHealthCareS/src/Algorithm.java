@@ -196,8 +196,7 @@ public class Algorithm {
 		pairPatientMedicalCentre.getFuture().setloadUnloadTime(test.getloadTimePatient());
 		pairPatientMedicalCentre.getFuture().setloadUnloadRegistrationTime(test.getRegistrationTime());
 
-		pairPatientMedicalCentre.getFuture().setStartTime(j.getStartTime()); // earliest
-		pairPatientMedicalCentre.getFuture().setEndTime(j.getEndTime()); // latest
+		
 		// Service time: start time and duration service
 		pairPatientMedicalCentre.getFuture().setStartServiceTime(j.getEndTime()); // start time
 		pairPatientMedicalCentre.getFuture().setserviceTime(j.getReqTime()); // duration service
@@ -207,6 +206,12 @@ public class Algorithm {
 
 		pairPatientMedicalCentre.getFuture().setdepartureTime(pairPatientMedicalCentre.getFuture().getendServiceTime()+pairPatientMedicalCentre.getFuture().getloadUnloadTime());
 		
+		
+		// changing TW
+//		pairPatientMedicalCentre.getFuture().setStartTime(j.getStartTime()); // earliest
+//		pairPatientMedicalCentre.getFuture().setEndTime(j.getEndTime()); // latest
+		pairPatientMedicalCentre.getFuture().setStartTime(Math.max(0, j.getStartTime()-test.getCumulativeWaitingTime())); // earliest
+		pairPatientMedicalCentre.getFuture().setEndTime(j.getStartTime()); // latest
 
 
 
