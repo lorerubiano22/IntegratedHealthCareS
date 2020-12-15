@@ -24,7 +24,8 @@ public class WalkingRoutes {
 	private Test test; // input problem
 	private Random rn;
 	private LinkedList<SubRoute> walkingRoutes; // list of selected walking routes
-	private ArrayList<SubJobs> subJobList = new ArrayList<SubJobs>(); // this list contains 
+ // list of selected walking routes
+	//private ArrayList<SubJobs> subJobList = new ArrayList<SubJobs>(); // this list contains 
 
 
 	// Methods
@@ -47,10 +48,10 @@ public class WalkingRoutes {
 
 			//2. Criteria for setting the service start time
 			//		String[] serviceStartTime= new String[3]; 
-			String[] serviceStartTime= new String[1];  // to remove
+			String[] serviceStartTime= new String[3];  // to remove
 			serviceStartTime[0] = "L"; // earliest time
-			//		serviceStartTime[1] = "L";  // latest time
-			//		serviceStartTime[2] = "R";  // random time
+					serviceStartTime[1] = "E";  // latest time
+					serviceStartTime[2] = "R";  // random time
 
 
 			//3. Creating multiples slots - set covering problem
@@ -85,10 +86,7 @@ public class WalkingRoutes {
 			ExactAllocation improveSlots= new ExactAllocation(test,inp);
 			improveSlots.selectionWalkingRoutes(jobSlots,walkingRoutes);
 			walkingRoutes=improveSlots.getWalkingRoutes();
-
-
 			System.out.print("\n Final WR");
-
 			for(SubRoute wr:walkingRoutes) {
 				if(wr.getJobSequence().size()>1) {
 					Jobs dropOff=wr.getJobSequence().getFirst();
@@ -125,8 +123,9 @@ public class WalkingRoutes {
 			//slackprocedureWalkingRoute();
 			computingRouteTimeDuration(walkingRoutes); // computing the travel time for each slot walking time + waiting time
 
+			
 			// 8. Making walking routes into big tasks 
-			walkingRouteToJob(); // fix the pick-up and drop-off nodes for each walking route
+			//walkingRouteToJob(); // fix the pick-up and drop-off nodes for each walking route
 		}
 	}
 
@@ -317,45 +316,45 @@ public class WalkingRoutes {
 
 
 
-	private void walkingRouteToJob() {
-		for(SubRoute wr:jobSlots) {
-			System.out.println(wr.toString());
-			if(wr.getJobSequence().size()>1) {// only for real walking routes
-				wr.setDropOffNode(wr.getJobSequence().getFirst());
-
-				wr.setPickUpNode(wr.getJobSequence().getLast());
-
-				/*
-				 *  Present job
-				 */
-				Jobs presentbigJob=new Jobs(wr.getDropOffNode());
-				// 1. Setting the TW and start service time
-				double startTime=wr.getDropOffNode().getstartServiceTime(); // considering the unloading of the home health care staff
-				double deltaTimeWindow=computingMinSizeDropOff(wr);
-				presentbigJob.setStartTime(startTime-deltaTimeWindow);
-				presentbigJob.setEndTime(startTime);
-				presentbigJob.setStartServiceTime(startTime);
-				// 2. Setting the duration of the jobs
-				presentbigJob.setserviceTime(0); 
-				// 3. Setting qualification of the nurse
-				presentbigJob.setReqQualification(wr.getSkill());
-
-				/*
-				 *  Future job
-				 */
-				Jobs futurebigJob=new Jobs(wr.getPickUpNode());		
-				// 1. Setting the TW and start service time
-				//double deltatimePickup=computingPickUp(wr);
-				futurebigJob.setStartTime(wr.getPickUpNode().getstartServiceTime()+ wr.getDurationWalkingRoute());
-				futurebigJob.setEndTime(wr.getPickUpNode().getstartServiceTime()+ wr.getDurationWalkingRoute());
-				// 2. Setting the duration of the jobs
-				futurebigJob.setserviceTime(wr.getDurationWalkingRoute()); 
-				// 3. Setting qualification of the nurse
-				SubJobs separateJobs= new SubJobs(presentbigJob,futurebigJob,wr);
-				this.subJobList.add(separateJobs);
-			}
-		}
-	}
+//	private void walkingRouteToJob() {
+//		for(SubRoute wr:jobSlots) {
+//			System.out.println(wr.toString());
+//			if(wr.getJobSequence().size()>1) {// only for real walking routes
+//				wr.setDropOffNode(wr.getJobSequence().getFirst());
+//
+//				wr.setPickUpNode(wr.getJobSequence().getLast());
+//
+//				/*
+//				 *  Present job
+//				 */
+//				Jobs presentbigJob=new Jobs(wr.getDropOffNode());
+//				// 1. Setting the TW and start service time
+//				double startTime=wr.getDropOffNode().getstartServiceTime(); // considering the unloading of the home health care staff
+//				double deltaTimeWindow=computingMinSizeDropOff(wr);
+//				presentbigJob.setStartTime(startTime-deltaTimeWindow);
+//				presentbigJob.setEndTime(startTime);
+//				presentbigJob.setStartServiceTime(startTime);
+//				// 2. Setting the duration of the jobs
+//				presentbigJob.setserviceTime(0); 
+//				// 3. Setting qualification of the nurse
+//				presentbigJob.setReqQualification(wr.getSkill());
+//
+//				/*
+//				 *  Future job
+//				 */
+//				Jobs futurebigJob=new Jobs(wr.getPickUpNode());		
+//				// 1. Setting the TW and start service time
+//				//double deltatimePickup=computingPickUp(wr);
+//				futurebigJob.setStartTime(wr.getPickUpNode().getstartServiceTime()+ wr.getDurationWalkingRoute());
+//				futurebigJob.setEndTime(wr.getPickUpNode().getstartServiceTime()+ wr.getDurationWalkingRoute());
+//				// 2. Setting the duration of the jobs
+//				futurebigJob.setserviceTime(wr.getDurationWalkingRoute()); 
+//				// 3. Setting qualification of the nurse
+//				SubJobs separateJobs= new SubJobs(presentbigJob,futurebigJob,wr);
+//				this.subJobList.add(separateJobs);
+//			}
+//		}
+//	}
 
 
 

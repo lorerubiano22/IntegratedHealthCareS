@@ -9,46 +9,26 @@
 
 --------------------------------------------
 [
-ID route: 6
+ID route: 0
 Required Qualification: 3
- duration walking route: 161.0
- cumulative walking time: 11.0
- cumulative service time: 150.0
- cumulative waiting time: 0.0
- start service time: 630.0
-Edge total of job in the walking route: 3
- List of jobs:  j_( Id11  A  629.0 , B_ 630.0 ) TW[630.0;900.0] j_( Id19  A  669.0 , B_ 669.0 ) TW[630.0;900.0] j_( Id25  A  731.0 , B_ 731.0 ) TW[630.0;900.0]
-Edge route duration (service+ walking time): 161.0, 
-ID route: 5
-Required Qualification: 2
- duration walking route: 307.0
- cumulative walking time: 7.0
- cumulative service time: 300.0
- cumulative waiting time: 0.0
- start service time: 630.0
-Edge total of job in the walking route: 5
- List of jobs:  j_( Id10  A  744.0 , B_ 745.0 ) TW[630.0;900.0] j_( Id13  A  777.0 , B_ 777.0 ) TW[360.0;1170.0] j_( Id15  A  809.0 , B_ 809.0 ) TW[630.0;900.0] j_( Id3  A  900.0 , B_ 900.0 ) TW[900.0;1170.0] j_( Id12  A  977.0 , B_ 977.0 ) TW[900.0;1170.0]
-Edge route duration (service+ walking time): 307.0, 
-ID route: 4
-Required Qualification: 3
- duration walking route: 166.0
- cumulative walking time: 16.0
- cumulative service time: 150.0
- cumulative waiting time: 0.0
- start service time: 630.0
-Edge total of job in the walking route: 4
- List of jobs:  j_( Id9  A  629.0 , B_ 630.0 ) TW[630.0;900.0] j_( Id37  A  691.0 , B_ 691.0 ) TW[360.0;1170.0] j_( Id14  A  726.0 , B_ 726.0 ) TW[630.0;900.0] j_( Id22  A  766.0 , B_ 766.0 ) TW[630.0;900.0]
-Edge route duration (service+ walking time): 166.0, 
-ID route: 3
-Required Qualification: 3
- duration walking route: 142.0
- cumulative walking time: 7.0
- cumulative service time: 135.0
+ duration walking route: 110.0
+ cumulative walking time: 5.0
+ cumulative service time: 105.0
  cumulative waiting time: 0.0
  start service time: 360.0
 Edge total of job in the walking route: 2
- List of jobs:  j_( Id35  A  577.0 , B_ 578.0 ) TW[360.0;630.0] j_( Id31  A  630.0 , B_ 630.0 ) TW[630.0;900.0]
-Edge route duration (service+ walking time): 142.0, 
+ List of jobs:  j_( Id7  A  579.0 , B_ 580.0 ) TW[360.0;1170.0] j_( Id23  A  630.0 , B_ 630.0 ) TW[630.0;900.0]
+Edge route duration (service+ walking time): 110.0, 
+ID route: 2
+Required Qualification: 3
+ duration walking route: 238.0
+ cumulative walking time: 13.0
+ cumulative service time: 225.0
+ cumulative waiting time: 0.0
+ start service time: 360.0
+Edge total of job in the walking route: 3
+ List of jobs:  j_( Id33  A  577.0 , B_ 578.0 ) TW[360.0;1170.0] j_( Id36  A  630.0 , B_ 630.0 ) TW[630.0;900.0] j_( Id17  A  726.0 , B_ 726.0 ) TW[630.0;900.0]
+Edge route duration (service+ walking time): 238.0, 
 ID route: 1
 Required Qualification: 2
  duration walking route: 314.0
@@ -59,16 +39,46 @@ Required Qualification: 2
 Edge total of job in the walking route: 3
  List of jobs:  j_( Id32  A  533.0 , B_ 534.0 ) TW[360.0;1170.0] j_( Id20  A  630.0 , B_ 630.0 ) TW[630.0;900.0] j_( Id26  A  758.0 , B_ 758.0 ) TW[630.0;900.0]
 Edge route duration (service+ walking time): 314.0, 
-ID route: 7
-Required Qualification: 2
- duration walking route: 121.0
- cumulative walking time: 1.0
- cumulative service time: 120.0
+ID route: 4
+Required Qualification: 3
+ duration walking route: 166.0
+ cumulative walking time: 16.0
+ cumulative service time: 150.0
  cumulative waiting time: 0.0
- start service time: 943.0
+ start service time: 630.0
+Edge total of job in the walking route: 4
+ List of jobs:  j_( Id9  A  629.0 , B_ 630.0 ) TW[630.0;900.0] j_( Id37  A  691.0 , B_ 691.0 ) TW[360.0;1170.0] j_( Id14  A  726.0 , B_ 726.0 ) TW[630.0;900.0] j_( Id22  A  766.0 , B_ 766.0 ) TW[630.0;900.0]
+Edge route duration (service+ walking time): 166.0, 
+ID route: 9
+Required Qualification: 3
+ duration walking route: 65.0
+ cumulative walking time: 5.0
+ cumulative service time: 60.0
+ cumulative waiting time: 0.0
+ start service time: 1119.0
 Edge total of job in the walking route: 2
- List of jobs:  j_( Id6  A  942.0 , B_ 943.0 ) TW[360.0;1170.0] j_( Id27  A  1004.0 , B_ 1004.0 ) TW[900.0;1170.0]
-Edge route duration (service+ walking time): 121.0, 
+ List of jobs:  j_( Id34  A  1118.0 , B_ 1119.0 ) TW[900.0;1170.0] j_( Id5  A  1154.0 , B_ 1154.0 ) TW[360.0;1170.0]
+Edge route duration (service+ walking time): 65.0, 
+ID route: 5
+Required Qualification: 2
+ duration walking route: 307.0
+ cumulative walking time: 7.0
+ cumulative service time: 300.0
+ cumulative waiting time: 0.0
+ start service time: 630.0
+Edge total of job in the walking route: 5
+ List of jobs:  j_( Id10  A  744.0 , B_ 745.0 ) TW[630.0;900.0] j_( Id13  A  777.0 , B_ 777.0 ) TW[360.0;1170.0] j_( Id15  A  809.0 , B_ 809.0 ) TW[630.0;900.0] j_( Id3  A  900.0 , B_ 900.0 ) TW[900.0;1170.0] j_( Id12  A  977.0 , B_ 977.0 ) TW[900.0;1170.0]
+Edge route duration (service+ walking time): 307.0, 
+ID route: 6
+Required Qualification: 3
+ duration walking route: 161.0
+ cumulative walking time: 11.0
+ cumulative service time: 150.0
+ cumulative waiting time: 0.0
+ start service time: 630.0
+Edge total of job in the walking route: 3
+ List of jobs:  j_( Id11  A  629.0 , B_ 630.0 ) TW[630.0;900.0] j_( Id19  A  669.0 , B_ 669.0 ) TW[630.0;900.0] j_( Id25  A  731.0 , B_ 731.0 ) TW[630.0;900.0]
+Edge route duration (service+ walking time): 161.0, 
 ID route: 8
 Required Qualification: 3
  duration walking route: 76.0
@@ -78,7 +88,17 @@ Required Qualification: 3
  start service time: 849.0
 Edge total of job in the walking route: 2
  List of jobs:  j_( Id8  A  853.0 , B_ 854.0 ) TW[630.0;900.0] j_( Id29  A  900.0 , B_ 900.0 ) TW[900.0;1170.0]
-Edge route duration (service+ walking time): 76.0]
+Edge route duration (service+ walking time): 76.0, 
+ID route: 3
+Required Qualification: 3
+ duration walking route: 142.0
+ cumulative walking time: 7.0
+ cumulative service time: 135.0
+ cumulative waiting time: 0.0
+ start service time: 360.0
+Edge total of job in the walking route: 2
+ List of jobs:  j_( Id35  A  577.0 , B_ 578.0 ) TW[360.0;630.0] j_( Id31  A  630.0 , B_ 630.0 ) TW[630.0;900.0]
+Edge route duration (service+ walking time): 142.0]
 
 --------------------------------------------
 Driving Routes
@@ -1324,4 +1344,4 @@ Walking time: 1766.0
 
  pc Time:
 
-6293649.4857
+3660143.2997

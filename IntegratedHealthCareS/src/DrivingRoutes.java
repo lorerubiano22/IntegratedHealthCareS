@@ -25,8 +25,7 @@ public class DrivingRoutes {
 
 
 	// computing walking hours
-	private WalkingRoutes subroutes;
-	private WalkingRoutes newWalkingRoutes;
+	private LinkedList<SubRoute> walkingRoutes;
 	private  HashMap<Integer, SubRoute> jobsInWalkingRoute= new HashMap<>();
 	///
 	private  ArrayList<Couple> subJobsList= new ArrayList<Couple>();
@@ -64,14 +63,14 @@ public class DrivingRoutes {
 	// frequency
 	int[][] frequency;
 
-	public DrivingRoutes(Inputs i, Random r, Test t, HashMap<String, Couple> subJobsList2, WalkingRoutes subroutes) {
+	public DrivingRoutes(Inputs i, Random r, Test t, HashMap<String, Couple> subJobsList2,  LinkedList<SubRoute> subroutes) {
 		inp=i;
 		test=t;
 		rn=r;
+		LinkedList<SubRoute> walkingRoutes=subroutes;
 		this.coupleList=subJobsList2;
-		this.subroutes=subroutes;
-		if(this.subroutes.getWalkingRoutes()!=null) {
-			for(SubRoute wr:this.subroutes.getWalkingRoutes()) {
+		if(subroutes!=null) {
+			for(SubRoute wr:subroutes) {
 				Jobs startNode=wr.getJobSequence().get(0);
 				jobsInWalkingRoute.put(startNode.getId(), wr);
 			}
@@ -615,8 +614,8 @@ public class DrivingRoutes {
 				missing.put(j.getId(), j);
 			}
 		}
-		if(subroutes.getWalkingRoutes()!=null) {
-			for(SubRoute r:subroutes.getWalkingRoutes()) {
+		if(walkingRoutes!=null) {
+			for(SubRoute r:walkingRoutes) {
 				for(Jobs j:r.getJobSequence()) {
 					if(j.getId()!=1) {
 						missing.remove(j.getId());
@@ -647,11 +646,8 @@ public class DrivingRoutes {
 		Solution copySolution= assigmentVehicle(startingSol);// hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
 		////
 
-		for(int iter=0;iter<100;iter++) {
-			if(iter==1) {
-				System.out.println(copySolution.toString());
-			}
-			definitionWalkingRoutes(copySolution);
+		for(int iter=0;iter<50;iter++) {
+			
 			Solution sol1= intraMergingParts0(copySolution);
 			sol1.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 			System.out.println(sol1.getobjectiveFunction());
@@ -736,46 +732,6 @@ public class DrivingRoutes {
 
 
 
-	private void definitionWalkingRoutes(Solution copySolution) {
-		ArrayList<Route> listRoute= new ArrayList<Route>();
-		for(Route r: copySolution.getRoutes()) {
-			if(r.getHomeCareStaff()>0) {
-				listRoute.add(r);
-			}
-		}
-		int r1 = this.rn.nextInt(listRoute.size()-1);
-		int r2 = this.rn.nextInt(listRoute.size()-1);
-
-		HashMap<Integer,Jobs> list= new HashMap<>();
-		List<Jobs> listNodes= new ArrayList<Jobs>();
-		for(SubJobs j:listRoute.get(r1).getSubJobsList()) {
-			if(j.isClient()) {
-			list.put(j.getId(), j);}
-		}
-		for(SubJobs j:listRoute.get(r2).getSubJobsList()) {
-			if(j.isClient()) {
-			list.put(j.getId(), j);
-		}
-		}
-
-		for(Jobs j:list.values()) {
-			Jobs originalNode= new Jobs(inp.getNodes().get(j.getId()));
-			listNodes.add(originalNode);
-		}
-
-		newWalkingRoutes = new WalkingRoutes(inp, test, listNodes);
-		
-		ArrayList<Couple> coupleFromWalkingRoutes= new ArrayList<Couple>();
-		HashMap<Integer,Jobs> jobsInWalkingRoutes= clientInWalkingRoutes(newWalkingRoutes); // store the list of job in the walking routes
-		// 1. WALKING ROUTES-- Convert walking route in big jobs
-		if(!jobsInWalkingRoutes.isEmpty()) {
-			System.out.println("listo");
-		}
-		convertingWalkingRoutesInOneTask(coupleFromWalkingRoutes,newWalkingRoutes);
-		
-		System.out.println("listo");
-
-	}
 
 	//	private Solution treatment0(Solution initialSol2) {
 	//		Solution copySolution= new Solution(initialSol2); // hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
@@ -986,15 +942,6 @@ public class DrivingRoutes {
 		return newSol;
 	}
 
-	private Solution assigmentTurnsToVehicles(Solution copySolution) {
-		Solution sol=new Solution (copySolution);
-		//computationFrequencyRoute(copySolution);
-		computingPenalization(copySolution);
-		VNS alg= new VNS(this,test,inp);
-		Solution newSol= alg.solvns(copySolution);
-
-		return newSol;
-	}
 
 	private void computingPenalization(Solution copySolution) {
 

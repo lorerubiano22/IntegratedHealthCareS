@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Random;
 
 
@@ -13,40 +14,71 @@ public class Algorithm {
 	private final Test test;
 	private final Inputs input;
 	private WalkingRoutes subroutes;
+	private LinkedList<SubRoute> walkingList;
 	private DrivingRoutes drivingRoute;
 	private Solution initialSolution=null;
 	private Solution solution=null;
 	private Solution newSolution=null;
 	private Solution bestSolution=null;
+	private Random rn;
 	private  HashMap<String,Couple> subJobsList= new HashMap<String,Couple>();
 
 
 
 
 	public Algorithm(Test t, Inputs i, Random r) {
+		
 		test = t;
+		rn=new Random(t.getSeed());
 		input = i;
 		//for(int iter=0;iter<200;iter++) {
+		for(int iter=0;iter<50;iter++) {
+			walkingList = new LinkedList<SubRoute>();
 		subroutes = new WalkingRoutes(input, t, i.getNodes()); // stage 1: Creation of walking routes
-		//updateHomeCareStaffJobs();
+	
+		selectionWalkingRoutes();
+		
 		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
-		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,subroutes); // stage 2: Creation of driving routes
+		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
 		drivingRoute.generateAfeasibleSolution();
+		newSolution= new Solution(drivingRoute.getSol());
 		//iterations++;
-		setBestSolution(drivingRoute.getSol());
-		setInitialSolution(drivingRoute.getInitialSol());
+		double objective=0;
+		if(bestSolution==null) {
+			objective=Double.MAX_VALUE;
+		}
+		else {
+			objective=newSolution.getobjectiveFunction();
+		}
+		if(newSolution.getobjectiveFunction()<objective) {
+			setBestSolution(drivingRoute.getSol());
+			setInitialSolution(drivingRoute.getInitialSol());
+		}
+	}
+	}
 
-		//}
-		//initialSolution.computeMetricsSolution(input, test);
-		//Interaction stages= new Interaction(routes,subJobsList, input, r, t);// Iteration between stage 1 und stage 2: from the current walking routes split and define new ones
-		//routes= stages.getBestRoutes();
-		//subroutes= stages.getBestWalkingRoutes();
+	private void selectionWalkingRoutes() {
+		int totalWalkingRoutes = this.rn.nextInt(subroutes.getWalkingRoutes().size()-1);
+		for(int i=0;i<totalWalkingRoutes;i++) {
+			int r2 = this.rn.nextInt(subroutes.getWalkingRoutes().size()-1);
+			SubRoute wr=subroutes.getWalkingRoutes().get(r2);
+			if(!walkingList.contains(wr)) {
+				walkingList.add(wr);
+			}
+			else {
+				i--;
+			}
+			
+		}
+		
+		
 	}
 
 	private void setBestSolution(Solution sol) {
 
 		if(solution==null) {
 			solution=new Solution (sol);
+			//newSolution=new Solution (sol);
 			bestSolution=new Solution (sol);
 			addingWaitingTime(solution);
 			solution.setId(iterations);
@@ -85,7 +117,7 @@ public class Algorithm {
 	}
 
 	private void addingWaitingTime(Solution initialSolution2) {
-		double waitingSolution=initialSolution2.getWaitingTime()+this.subroutes.getTotalwaitingTime();
+		double waitingSolution=initialSolution2.getWaitingTime();
 		initialSolution2.setWaitingTime(waitingSolution);		
 
 	}
@@ -503,8 +535,8 @@ public class Algorithm {
 	}
 
 	void convertingWalkingRoutesInOneTask(ArrayList<Couple> coupleFromWalkingRoutes) {
-		if(subroutes.getWalkingRoutes()!=null) {
-			for(SubRoute r:subroutes.getWalkingRoutes()) {
+		if(walkingList!=null) {
+			for(SubRoute r:walkingList) {
 				if(r.getDropOffNode()!=null && r.getPickUpNode()!=null) {
 					double walkingRouteLength=r.getDurationWalkingRoute();
 
@@ -550,8 +582,8 @@ public class Algorithm {
 
 	private HashMap<Integer, Jobs> clientInWalkingRoutes() {
 		HashMap<Integer,Jobs> jobsInWalkingRoutes= new HashMap<Integer,Jobs>();
-		if(subroutes.getWalkingRoutes()!=null) {
-			for(SubRoute r:subroutes.getWalkingRoutes()) {
+		if(walkingList!=null) {
+			for(SubRoute r:walkingList) {
 				if(r.getJobSequence().size()>1) {
 					for(Jobs j:r.getJobSequence()) {
 						jobsInWalkingRoutes.put(j.getId(), j); // storing the job in the walking route
@@ -628,9 +660,8 @@ public class Algorithm {
 
 
 	// Getters
-	public WalkingRoutes getSubroutes() {
-		return subroutes;}
-
+	public LinkedList<SubRoute> getSubroutes() {return walkingList;}
+	 
 
 
 	public DrivingRoutes getRoutes() {return drivingRoute;}

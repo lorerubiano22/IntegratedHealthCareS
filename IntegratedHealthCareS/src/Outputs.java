@@ -9,7 +9,7 @@ public class Outputs {
 
 
 	public Outputs(Algorithm algorithm) {
-		subroutes=algorithm.getSubroutes().getWalkingRoutes();
+		subroutes=algorithm.getSubroutes();
 		initialSolution=algorithm.getInitialSolution();
 		solution=algorithm.getSolution();
 	}
