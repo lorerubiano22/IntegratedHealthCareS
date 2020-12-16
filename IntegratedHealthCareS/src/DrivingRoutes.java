@@ -126,12 +126,17 @@ public class DrivingRoutes {
 		Solution currentSolution = new Solution (assigmentPersonnalJob);
 		Solution newSolution = new Solution ();
 		// 2. tratamiento de trabajos en cada ruta: definición de las ventanas de tiempo para cada trabajo hard
+
 		for(Route r:currentSolution.getRoutes()) {
 			treatmentRoute(r,newSolution);//changing TW
 			System.out.println(r.toString());
 		}
-
-		return currentSolution;
+		int i=-1;
+		for(Route r:newSolution.getRoutes()) {
+			i++;
+			r.setIdRoute(i);
+		}
+		return newSolution;
 	}
 
 	private void treatmentRoute(Route r, Solution newSolution) {
@@ -156,9 +161,14 @@ public class DrivingRoutes {
 				}
 				pCopy.getListSubJobs().add(copy);
 			}
+			for(Edge e:r.getPartsRoute().get(p).getDirectoryConnections().values()) {
+				pCopy.getDirectoryConnections().put(e.getEdgeKey(), e);
+			}
 			newRoute.getPartsRoute().add(pCopy);
 		}
-
+		for(Edge e:r.getEdges().values()) {
+			newRoute.getEdges().put(e.getEdgeKey(), e);
+		}
 		newRoute.getPartsRoute().add(new Parts(r.getPartsRoute().get(r.getPartsRoute().size()-1)));
 		if(allowedMaxDeviation>test.getCumulativeWaitingTime()) {
 			allowedMaxDeviation=test.getCumulativeWaitingTime();
@@ -169,12 +179,15 @@ public class DrivingRoutes {
 				j.setEndTime(j.getstartServiceTime());
 			}
 		}
-		
+
 		for(Parts p:newRoute.getPartsRoute()) {
 			for(SubJobs j:p.getListSubJobs()) {
+				if(j.getSubJobKey().equals("D1222")) {
+					System.out.print("stop");
+				}
 				if(j.isClient() || j.isMedicalCentre()) {
 					if(j.getTotalPeople()<0) {
-				j.setdepartureTime(j.getArrivalTime()+j.getloadUnloadRegistrationTime());		
+						j.setdepartureTime(j.getArrivalTime()+j.getloadUnloadTime());		
 					}	
 				}
 			}
@@ -182,8 +195,8 @@ public class DrivingRoutes {
 
 		// actualizar information parts
 		// actualizar la hora de los drop-off
-		
-		
+
+
 		newRoute.updateRouteFromParts(inp, test, jobsInWalkingRoute);
 		System.out.println("ref route");
 		System.out.println(r.toString());
@@ -882,19 +895,20 @@ public class DrivingRoutes {
 
 	private Solution intraMergingParts0(Solution copySolution) {
 		Solution newSol= new Solution(copySolution); // 1. copy solution
-		if(copySolution.getRoutes().size()>=2) {
+		System.out.println(newSol.toString());
+		if(newSol.getRoutes().size()>=2) {
 			// 2. Seleccionar las rutas que se van a mezclar
-			ArrayList<Route> copyRoute = copyListRoute(copySolution); // copy original route for safe
-			for(int i=0;i<copySolution.getRoutes().size()*2;i++) {
-				int r1 = this.rn.nextInt(copySolution.getRoutes().size()-1);
-				int r2 = this.rn.nextInt(copySolution.getRoutes().size()-1);
+			for(int i=0;i<copySolution.getRoutes().size();i++) {
+				int r2 = i;
+				while(i==r2) {
+					r2 = this.rn.nextInt(copySolution.getRoutes().size()-1);}
 
-				Route refRoute=copySolution.getRoutes().get(r1);
+				Route refRoute=copySolution.getRoutes().get(i);
 				Route toSplit=copySolution.getRoutes().get(r2);
 				if(toSplit.getJobsDirectory().containsKey("D6") || refRoute.getJobsDirectory().containsKey("D6")) {
 					System.out.println("***Parte vacia");
 				}
-				boolean mergingParts= insertingPartIntoPart(refRoute,toSplit); // true <- cuando las rutas estan cambiando (se mezclan) false <-cuando las rutas permanecen igual
+				boolean mergingParts= insertingPartIntoPartSorting(refRoute,toSplit); // true <- cuando las rutas estan cambiando (se mezclan) false <-cuando las rutas permanecen igual
 
 				System.out.println("***Parte vacia");
 
@@ -904,9 +918,370 @@ public class DrivingRoutes {
 			System.out.println("***Parte vacia");
 			System.out.println(newSol.toString());
 		}
+		ArrayList<Route> newRoute= new ArrayList<Route>();
+		for(Route r:newSol.getRoutes()) {
+			if(!r.getPartsRoute().isEmpty()) {
+				newRoute.add(r);}
+		}
+		newSol.getRoutes().clear();
+		for(Route r:newRoute) {
+			if(!r.getPartsRoute().isEmpty()) {
+				newSol.getRoutes().add(r);
+			}
+		}
+		newSol.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 		return newSol;
 	}
 
+
+	private boolean insertingPartIntoPartSorting(Route refRoute, Route toSplit) {
+		boolean merging=false;
+		boolean mergingParts=false;
+		if((refRoute.getDurationRoute()+toSplit.getDurationRoute())<=test.getRouteLenght()) {
+			//if((refRoute.getTravelTime()+refRoute.getloadUnloadRegistrationTime()+toSplit.getTravelTime()+toSplit.getloadUnloadRegistrationTime())<test.getRouteLenght()) {
+			mergingParts=true;
+		}
+		if(refRoute!=toSplit && mergingParts && !refRoute.getPartsRoute().isEmpty() && !toSplit.getPartsRoute().isEmpty()) { // sólo se pueden mezclar si son rutas diferentes
+			// se tiene que tener cuidado con las working horas y con los detours
+
+			if(refRoute.getIdRoute()==0 && toSplit.getIdRoute()==1) {
+				System.out.println("Stop");
+			}
+			boolean node=false;
+			Route newRoute= new Route(); // la ruta que va a almacenar 
+			Route earlyRoute=selecctingStartRoute(refRoute,toSplit);
+			Route lateRoute=selecctingRouteToInsert(refRoute,toSplit);
+			boolean mergingTrips= mergingIndividualTrips(earlyRoute,lateRoute,newRoute);
+			if(!mergingTrips) {
+				if(earlyRoute.getPartsRoute().size()>4 && refRoute.getPartsRoute().size()>4) {
+
+
+					// 1. Evaluar mezclar las primeras partes 
+
+
+					boolean mergingHeading=seattingFirstPart(earlyRoute,lateRoute,newRoute);
+					// 2. Evaluar mezclar las partes intermedias
+					if(mergingHeading ) {
+						System.out.println("Stop");
+					}
+
+					boolean mergingIntermediateParts=settingMiddleParts(earlyRoute,lateRoute,newRoute);
+					if(mergingIntermediateParts) {
+						System.out.println("Stop");
+					}
+
+					if(mergingIntermediateParts || mergingHeading ) {
+						mergingTrips=true;
+					}
+				}
+			}
+
+			if(mergingTrips ) {
+				updatingEarlyRoute(earlyRoute,newRoute,lateRoute);
+			}
+
+			// los trabajos que aparecen en la ruta nueva no tienen porque aparecer en la ruta vieja
+			System.out.println("Stop");
+			System.out.println("Route earlyRoute"  +earlyRoute.toString());
+			System.out.println("Route Late"  +lateRoute.toString());
+			System.out.println("Stop");
+
+
+		}
+		return merging;
+	}
+
+	private void updatingEarlyRoute(Route earlyRoute, Route newRoute, Route lateRoute) {
+		// early Route
+		newRoute.getPartsRoute().add(0,earlyRoute.getPartsRoute().get(0));
+		newRoute.getPartsRoute().add(earlyRoute.getPartsRoute().get(earlyRoute.getPartsRoute().size()-1));
+		earlyRoute.getPartsRoute().clear();
+		earlyRoute.getSubJobsList().clear();
+		earlyRoute.getEdges().clear();
+		for(Parts p:newRoute.getPartsRoute()) {
+			earlyRoute.getPartsRoute().add(p);
+		}
+		earlyRoute.updateRouteFromParts(inp,test,jobsInWalkingRoute);
+
+		for(Edge e:newRoute.getEdges().values()) {
+			earlyRoute.getEdges().put(e.getEdgeKey(), e);
+		}
+
+		// late route
+		ArrayList<Parts> list= new ArrayList<Parts>();
+		for(int index=1;index<lateRoute.getPartsRoute().size()-1;index++) {
+			Parts p=lateRoute.getPartsRoute().get(index);
+			boolean isInOtherRoute=checkifJobInEarlyRoute(p,earlyRoute);
+			if(!isInOtherRoute) {
+				list.add(p);
+			}
+		}
+		if(!list.isEmpty()) {
+			list.add(0,lateRoute.getPartsRoute().get(0));
+			list.add(lateRoute.getPartsRoute().get(lateRoute.getPartsRoute().size()-1));
+		}
+		lateRoute.getPartsRoute().clear();
+		lateRoute.getSubJobsList().clear();
+		if(!list.isEmpty()) {
+			for(Parts p:list) {
+				lateRoute.getPartsRoute().add(p);
+			}
+			lateRoute.updateRouteFromParts(inp,test,jobsInWalkingRoute);}
+	}
+
+	private boolean checkifJobInEarlyRoute(Parts p, Route earlyRoute) {
+		boolean inRoute=false;
+		for(SubJobs j:p.getListSubJobs()) {
+			if(earlyRoute.getJobsDirectory().containsKey(j.getSubJobKey())) {
+				inRoute=true;
+				break;
+			}
+		}
+		return inRoute;
+	}
+
+	private boolean mergingIndividualTrips(Route early, Route late, Route newRoute) {
+		boolean merging= false;
+		if(early.getSubJobsList().get(early.getSubJobsList().size()-1).getDepartureTime()<late.getSubJobsList().get(0).getArrivalTime()) {
+			merging= true;
+			for(int i = 1; i<early.getPartsRoute().size()-1;i++) {
+				newRoute.getPartsRoute().add(early.getPartsRoute().get(i));
+			}
+			for(int i = 1; i<late.getPartsRoute().size()-1;i++) {
+				newRoute.getPartsRoute().add(late.getPartsRoute().get(i));
+			}
+			for(Edge e:early.getEdges().values()) {
+				newRoute.getEdges().put(e.getEdgeKey(), e);
+			}
+			for(Edge e:late.getEdges().values()) {
+				newRoute.getEdges().put(e.getEdgeKey(), e);
+			}
+		}
+
+		return merging;
+	}
+	private boolean settingMiddleParts(Route earlyRoute, Route lateRoute, Route newRoute) {
+		boolean merging= false;
+		ArrayList<SubJobs> list= new ArrayList<SubJobs>();
+		ArrayList <Parts> partList= new ArrayList <Parts>();
+		for(int ii=2 ;ii<lateRoute.getPartsRoute().size()-1;ii++) {
+			partList.add(lateRoute.getPartsRoute().get(ii));
+		}
+		int a=2;
+		for(int i=2 ;i<earlyRoute.getPartsRoute().size()-1;i++) {
+			SubJobs next=earlyRoute.getPartsRoute().get(i+1).getListSubJobs().get(0);
+			boolean merge= false;
+			Parts partEarly= earlyRoute.getPartsRoute().get(i);
+			for(int ii=2 ;ii<lateRoute.getPartsRoute().size()-1;ii++) {
+				if(partList.contains(lateRoute.getPartsRoute().get(ii))) {
+					list= new ArrayList<SubJobs>();
+					merge=mergingParts(partEarly,lateRoute.getPartsRoute().get(ii),next,list);
+					if(merge) {
+						partList.remove(lateRoute.getPartsRoute().get(ii));
+						merging=true;
+						Parts part= new Parts();
+						part.setListSubJobs(list, inp, test);
+						newRoute.getPartsRoute().add(part);
+						partEarly= new Parts();
+						for(Edge e:partEarly.getDirectoryConnections().values()) {
+							newRoute.getEdges().put(e.getEdgeKey(), e);
+						}
+						for(Edge e:lateRoute.getPartsRoute().get(ii).getDirectoryConnections().values()) {
+							newRoute.getEdges().put(e.getEdgeKey(), e);
+						}
+					}
+				}
+			}
+			if(!merge) {
+				newRoute.getPartsRoute().add(earlyRoute.getPartsRoute().get(i));
+				for(Edge e:partEarly.getDirectoryConnections().values()) {
+					newRoute.getEdges().put(e.getEdgeKey(), e);
+				}
+			}
+		}
+
+		return merging;
+	}
+	//	private boolean settingMiddleParts(Route earlyRoute, Route lateRoute, Route newRoute) {
+	//		boolean merging= false;
+	//		ArrayList<SubJobs> list= new ArrayList<SubJobs>();
+	//		for(int i=2 ;i<earlyRoute.getPartsRoute().size()-1;i++) {
+	//			for(SubJobs j:earlyRoute.getPartsRoute().get(i).getListSubJobs()) {
+	//				list.add(j);
+	//			}
+	//		}
+	//		for(int i=2 ;i<lateRoute.getPartsRoute().size()-1;i++) {
+	//			for(SubJobs j:lateRoute.getPartsRoute().get(i).getListSubJobs()) {
+	//				list.add(j);
+	//			}
+	//		}
+	//
+	//		list.sort(Jobs.SORT_BY_ARRIVALTIME);
+	//
+	//		//ArrayList<SubJobs> newSequence= sortingSequence(list);
+	//		boolean feasible= evaluatingArrivalTime(list);
+	//		if(feasible) {
+	//			if(vehicleCapacityPart(list)) { // checking the vehicle capacity
+	//				merging=true;	
+	//				Parts part= new Parts();
+	//				part.setListSubJobs(list, inp, test);
+	//				newRoute.getPartsRoute().add(part);
+	//			}	
+	//
+	//		}
+	//		if(!merging) {
+	//			for(int i=2 ;i<earlyRoute.getPartsRoute().size()-1;i++) {
+	//				newRoute.getPartsRoute().add(earlyRoute.getPartsRoute().get(i));
+	//			}
+	//		}
+	//		return merging;
+	//	}
+
+	private boolean mergingParts(Parts parts, Parts parts2, SubJobs next,ArrayList<SubJobs> list) {
+		boolean merge=false;
+		for(SubJobs j:parts.getListSubJobs()) {
+			list.add(j);
+		}
+		for(SubJobs j:parts2.getListSubJobs()) {
+			list.add(j);
+		}
+		list.sort(Jobs.SORT_BY_ARRIVALTIME);
+
+		//ArrayList<SubJobs> newSequence= sortingSequence(list);
+		boolean feasible= evaluatingArrivalTime(list);
+		SubJobs lastJobSequence=list.get(list.size()-1);
+		double tv=inp.getCarCost().getCost(lastJobSequence.getId()-1, next.getId()-1);
+		double timeNexpart=Double.MAX_VALUE;
+		if(next.getId()!=1) {
+			timeNexpart=next.getArrivalTime();
+		}
+		if(feasible && lastJobSequence.getDepartureTime()+tv<timeNexpart) {
+			if(vehicleCapacityPart(list)) { // checking the vehicle capacity
+				merge=true;	
+			}	
+
+		}
+
+		return merge;
+	}
+
+	private boolean seattingFirstPart(Route earlyRoute, Route lateRoute, Route newRoute) {
+		boolean merging= false;
+		Parts firstEarlyPart=earlyRoute.getPartsRoute().get(1);
+		Parts nextEarlyPart=earlyRoute.getPartsRoute().get(2);
+		Parts firstLatePart=lateRoute.getPartsRoute().get(1);
+		ArrayList<SubJobs> list= new ArrayList<SubJobs>();
+		for(SubJobs j:firstEarlyPart.getListSubJobs()) {
+			list.add(j);
+		}
+		for(SubJobs j:firstLatePart.getListSubJobs()) {
+			list.add(j);
+		}
+		list.sort(Jobs.SORT_BY_ARRIVALTIME);
+
+		//ArrayList<SubJobs> newSequence= sortingSequence(list);
+		boolean feasible= evaluatingArrivalTime(list);
+		if(feasible) {
+			SubJobs lastJobs=list.get(list.size()-1);
+			double travelTime=inp.getCarCost().getCost(lastJobs.getId()-1, nextEarlyPart.getListSubJobs().get(0).getId()-1);
+			if(lastJobs.getDepartureTime()+travelTime<nextEarlyPart.getListSubJobs().get(0).getArrivalTime()) { // checking tw for the next part
+				if(vehicleCapacityPart(list)) { // checking the vehicle capacity
+					merging=true;	
+					Parts part= new Parts();
+					part.setListSubJobs(list, inp, test);
+					newRoute.getPartsRoute().add(part);
+					for(Edge e:firstEarlyPart.getDirectoryConnections().values()) {
+						newRoute.getEdges().put(e.getEdgeKey(), e);
+					}
+					for(Edge e:firstLatePart.getDirectoryConnections().values()) {
+						newRoute.getEdges().put(e.getEdgeKey(), e);
+					}
+				}	
+			}
+		}
+		if(!merging) {	
+			newRoute.getPartsRoute().add(firstEarlyPart);
+			for(Edge e:firstEarlyPart.getDirectoryConnections().values()) {
+				newRoute.getEdges().put(e.getEdgeKey(), e);
+			}
+		}
+		return merging;
+	}
+
+	private ArrayList<SubJobs> sortingSequence(ArrayList<SubJobs> list) {
+		ArrayList<SubJobs> newSequence= new ArrayList<SubJobs>();
+		for(SubJobs j: list) {
+			if(j.isMedicalCentre() && j.getTotalPeople()<0) {
+				newSequence.add(j);
+			}
+		}
+		for(SubJobs j: list) {
+			if(!newSequence.contains(j)) {
+				if(j.isClient() && j.getTotalPeople()<0) {
+					boolean early=isFirstJob(newSequence,j);
+					if(!early) {
+						early=isAnIntermediateStopDropOff(newSequence,j);
+						if(!early) { // last jobs in the sequence
+
+						}
+					}
+				}
+			}
+		}
+		return newSequence;
+	}
+
+	private boolean isAnIntermediateStopDropOff(ArrayList<SubJobs> newSequence, SubJobs j) {
+		boolean inserted= false;
+		for(int i=1; i<newSequence.size();i++) {
+			SubJobs previous=newSequence.get(i-1);
+			SubJobs next=newSequence.get(i);
+			double previousTVj=inp.getCarCost().getCost(previous.getId()-1, j.getId()-1);
+			double jTVnext=inp.getCarCost().getCost(j.getId()-1, next.getId()-1);
+			double possibleArrival=previous.getDepartureTime()+previousTVj;
+			double possibleStartServiceTime=possibleArrival+j.getloadUnloadTime();// start service time = departure time
+			if(possibleArrival<=j.getArrivalTime()) {
+				if(possibleStartServiceTime+jTVnext<=next.getArrivalTime()) {
+					j.setarrivalTime(possibleArrival);
+					j.setStartServiceTime(Math.max(possibleStartServiceTime, j.getStartTime()));
+					j.setEndServiceTime(j.getReqTime());
+					j.setdepartureTime(possibleStartServiceTime);
+				}
+			}
+		}
+		return inserted;
+	}
+
+	private boolean isFirstJob(ArrayList<SubJobs> newSequence, SubJobs j) {
+		boolean inserted= false;
+		if(!newSequence.isEmpty()) {
+			if(j.getArrivalTime()<newSequence.get(0).getArrivalTime()) {
+				newSequence.add(0,j);
+				inserted=true;
+			}
+		}
+		else {
+			newSequence.add(j);
+			inserted=true;
+		}
+		return inserted;
+	}
+
+	private boolean evaluatingArrivalTime(ArrayList<SubJobs> list) {
+		boolean feasible= true;
+		for(int index=1;index<list.size();index++) {
+			SubJobs i= list.get(index-1);
+			SubJobs j= list.get(index);
+			double tv= inp.getCarCost().getCost(i.getId()-1, j.getId()-1);
+			if(i.getDepartureTime()+tv>j.getArrivalTime()) {
+				feasible=false;
+			}
+			if(!feasible) {
+				break;
+			}
+		}
+		return feasible;
+	}
 
 	private void computingPenalization(Solution copySolution) {
 
@@ -1948,34 +2323,35 @@ public class DrivingRoutes {
 			boolean node=false;
 			Route earlyRoute=selecctingStartRoute(refRoute,toSplit);
 			Route lateRoute=selecctingRouteToInsert(refRoute,toSplit);
-			if(earlyRoute==refRoute) {
-				Route newRoute= new Route(); // la ruta que va a almacenar 
+			//if(earlyRoute==refRoute) {
+			Route newRoute= new Route(); // la ruta que va a almacenar 
 
-				// 1. Evaluar mezclar las primeras partes 
-				boolean mergingHeading=seatingHeading(earlyRoute,lateRoute,newRoute);
-				// 2. Evaluar mezclar las partes intermedias
-				if(mergingHeading ) {
-					System.out.println("Stop");
-				}
-
-				boolean mergingIntermediateParts=settingIntermediateParts(earlyRoute,lateRoute,newRoute);
-				if(mergingIntermediateParts) {
-					System.out.println("Stop");
-				}
-
-				// 3. Evaluar mezclar las ultimas partes
-				//TO DO: boolean mergingTail=settingTailsParts(earlyRoute,lateRoute,mergingPart);
-				// 4. Los trabajos contenidos en la nueva ruta corresponden a los nuevos trabajos que va a integrar la ruta más temprana
-				boolean mergingLastParts=settingTailsParts(earlyRoute,lateRoute,newRoute);
-				if(mergingLastParts) {
-					System.out.println("Stop");
-				}
-				updatingRefRoute(earlyRoute,newRoute);
-				updatingLateRoute(lateRoute,earlyRoute,newRoute); // los trabajos que aparecen en la ruta nueva no tienen porque aparecer en la ruta vieja
+			// 1. Evaluar mezclar las primeras partes 
+			boolean mergingHeading=seatingHeading(earlyRoute,lateRoute,newRoute);
+			// 2. Evaluar mezclar las partes intermedias
+			if(mergingHeading ) {
 				System.out.println("Stop");
-				System.out.println("Route earlyRoute"  +earlyRoute.toString());
-				System.out.println("Route Late"  +lateRoute.toString());
-				System.out.println("Stop");}
+			}
+
+			boolean mergingIntermediateParts=settingIntermediateParts(earlyRoute,lateRoute,newRoute);
+			if(mergingIntermediateParts) {
+				System.out.println("Stop");
+			}
+
+			// 3. Evaluar mezclar las ultimas partes
+			//TO DO: boolean mergingTail=settingTailsParts(earlyRoute,lateRoute,mergingPart);
+			// 4. Los trabajos contenidos en la nueva ruta corresponden a los nuevos trabajos que va a integrar la ruta más temprana
+			boolean mergingLastParts=settingTailsParts(earlyRoute,lateRoute,newRoute);
+			if(mergingLastParts) {
+				System.out.println("Stop");
+			}
+			updatingRefRoute(earlyRoute,newRoute);
+			updatingLateRoute(lateRoute,earlyRoute,newRoute); // los trabajos que aparecen en la ruta nueva no tienen porque aparecer en la ruta vieja
+			System.out.println("Stop");
+			System.out.println("Route earlyRoute"  +earlyRoute.toString());
+			System.out.println("Route Late"  +lateRoute.toString());
+			System.out.println("Stop");
+			//}
 		}
 		return merging;
 	}
@@ -6703,6 +7079,19 @@ public class DrivingRoutes {
 		}
 
 
+		// parts
+
+		for(Route r:route) {
+			for(Parts p: r.getPartsRoute()) {
+				for(int i=1;i<p.getListSubJobs().size()-1;i++) {
+					SubJobs previous=r.getSubJobsList().get(i-1);
+					SubJobs job=r.getSubJobsList().get(i);
+					Edge e=new Edge(previous,job,inp,test);
+					p.getDirectoryConnections().put(e.getEdgeKey(), e);
+				}
+			}
+		}
+
 	}
 
 	private void timeStartEndRoutes(ArrayList<Route> route) {
@@ -7294,8 +7683,8 @@ public class DrivingRoutes {
 			double arrivalTime=departureTime+tv;
 
 			double startServiceTime=arrivalTime+sbj.getdeltaArrivalStartServiceTime();
-			 departureTime=arrivalTime+sbj.getdeltaArrivalDeparture();
-			 double endServiceTime=startServiceTime+sbj.getdeltarStartServiceTimeEndServiceTime();
+			departureTime=arrivalTime+sbj.getdeltaArrivalDeparture();
+			double endServiceTime=startServiceTime+sbj.getdeltarStartServiceTimeEndServiceTime();
 			sbj.setarrivalTime(arrivalTime);
 			sbj.setStartServiceTime(startServiceTime);
 			sbj.setEndServiceTime(endServiceTime);
