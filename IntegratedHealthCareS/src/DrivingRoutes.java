@@ -646,7 +646,7 @@ public class DrivingRoutes {
 		Solution copySolution= assigmentVehicle(startingSol);// hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
 		////
 
-		for(int iter=0;iter<50;iter++) {
+		for(int iter=0;iter<10;iter++) {
 			
 			Solution sol1= intraMergingParts0(copySolution);
 			sol1.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);

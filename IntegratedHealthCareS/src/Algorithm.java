@@ -32,7 +32,7 @@ public class Algorithm {
 		rn=new Random(t.getSeed());
 		input = i;
 		//for(int iter=0;iter<200;iter++) {
-		for(int iter=0;iter<50;iter++) {
+		for(int iter=0;iter<10;iter++) {
 			walkingList = new LinkedList<SubRoute>();
 		subroutes = new WalkingRoutes(input, t, i.getNodes()); // stage 1: Creation of walking routes
 	
@@ -70,8 +70,6 @@ public class Algorithm {
 			}
 			
 		}
-		
-		
 	}
 
 	private void setBestSolution(Solution sol) {
@@ -82,7 +80,7 @@ public class Algorithm {
 			bestSolution=new Solution (sol);
 			addingWaitingTime(solution);
 			solution.setId(iterations);
-			solution.setWalkingTime(subroutes.getdurationWalkingRoute());
+			solution.setWalkingTime(subroutes.getTotalTravelTime());
 			setInitialSolution(drivingRoute.getInitialSol());
 
 			addingWaitingTime(bestSolution);
@@ -113,7 +111,7 @@ public class Algorithm {
 		this.initialSolution = initialSolution;
 		addingWaitingTime(initialSolution);
 		initialSolution.setId(iterations);
-		initialSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
+		initialSolution.setWalkingTime(subroutes.getTotalTravelTime());
 	}
 
 	private void addingWaitingTime(Solution initialSolution2) {
@@ -166,7 +164,6 @@ public class Algorithm {
 				System.out.println("Error");
 			}
 		}
-
 	}
 
 
@@ -240,9 +237,9 @@ public class Algorithm {
 		
 		
 		// changing TW
-//		pairPatientMedicalCentre.getFuture().setStartTime(j.getStartTime()); // earliest
-//		pairPatientMedicalCentre.getFuture().setEndTime(j.getEndTime()); // latest
-		pairPatientMedicalCentre.getFuture().setStartTime(Math.max(0, j.getStartTime()-test.getCumulativeWaitingTime())); // earliest
+
+		//pairPatientMedicalCentre.getFuture().setStartTime(Math.max(0, j.getStartTime()-test.getCumulativeWaitingTime())); // earliest
+		pairPatientMedicalCentre.getFuture().setStartTime(Math.max(0, j.getStartTime()-Double.MAX_VALUE)); // earliest
 		pairPatientMedicalCentre.getFuture().setEndTime(j.getStartTime()); // latest
 
 
@@ -353,7 +350,9 @@ public class Algorithm {
 		// 1. Setting the start service time -- startServiceTime
 		double travel=input.getCarCost().getCost(present.getId()-1, dropOffPatientHome.getId()-1)*test.getDetour(); // es necesario considerar el travel time porque involucra dos locaciones
 		dropOffPatientHome.setStartTime(present.getendServiceTime()+travel);
-		dropOffPatientHome.setEndTime(dropOffPatientHome.getStartTime());// departure from patient home - el tiempo de viaje - el tiempo necesario para cargar los pacientes al vehículo
+		//dropOffPatientHome.setEndTime(dropOffPatientHome.getStartTime());// departure from patient home - el tiempo de viaje - el tiempo necesario para cargar los pacientes al vehículo
+		dropOffPatientHome.setEndTime(Double.MAX_VALUE);// departure from patient home - el tiempo de viaje - el tiempo necesario para cargar los pacientes al vehículo
+		
 		dropOffPatientHome.setStartServiceTime(dropOffPatientHome.getEndTime());
 		dropOffPatientHome.setEndServiceTime(dropOffPatientHome.getstartServiceTime());
 		dropOffPatientHome.setarrivalTime(dropOffPatientHome.getstartServiceTime());
@@ -369,7 +368,8 @@ public class Algorithm {
 		pickUpMedicalCentre.setMedicalCentre(true);
 		pickUpMedicalCentre.setloadUnloadTime(test.getloadTimePatient());
 		pickUpMedicalCentre.setStartTime(pickUpMedicalCentre.getendServiceTime());
-		pickUpMedicalCentre.setEndTime(pickUpMedicalCentre.getStartTime()+test.getCumulativeWaitingTime());
+		//pickUpMedicalCentre.setEndTime(pickUpMedicalCentre.getStartTime()+test.getCumulativeWaitingTime());
+		pickUpMedicalCentre.setEndTime(Double.MAX_VALUE);
 		// 1. Setting the start service time -- startServiceTime
 		pickUpMedicalCentre.setStartServiceTime(pickUpMedicalCentre.getEndTime());
 		pickUpMedicalCentre.setarrivalTime(pickUpMedicalCentre.getstartServiceTime());
@@ -444,7 +444,6 @@ public class Algorithm {
 
 
 	private void settingPresentTimeClient(Jobs presentJob) {
-		presentJob.setStartServiceTime(presentJob.getEndTime());	///
 		presentJob.setTotalPeople(-1);
 		presentJob.setClient(true);
 		presentJob.setloadUnloadTime(test.getloadTimeHomeCareStaff());
@@ -501,8 +500,8 @@ public class Algorithm {
 		// Setting the TW
 		double tv=input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1)*test.getDetour();
 		futureJob.setStartTime(presentJob.getendServiceTime()+tv);
-		futureJob.setEndTime(futureJob.getStartTime()+test.getCumulativeWaitingTime()); // considering waiting time
-
+		//futureJob.setEndTime(futureJob.getStartTime()+test.getCumulativeWaitingTime()); // considering waiting time
+		futureJob.setEndTime(Double.MAX_VALUE);
 		// modificar el tiempo requerido para el trabajo+	
 		// 1. Setting the start service time -- startServiceTime
 		futureJob.setStartServiceTime(futureJob.getEndTime());

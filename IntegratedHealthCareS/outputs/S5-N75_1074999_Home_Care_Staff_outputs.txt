@@ -725,8 +725,8 @@ ID Solution: 1
 FO: Duration: 8776.739999999998
 FO: Travel time: 344.0
 FO: Service time: 3750.0
-Walking time: 1766.0
- Waiting time: 1717.2700000000004
+Walking time: 1160.0
+ Waiting time: 1417.2700000000004
  medical staff cost: 1964.2700000000004
  driver cost: 344.0
  time window violation: 0.0

@@ -113,7 +113,7 @@ public class Solution {
 	s = s.concat("\nID Solution: " + id);
 	s = s.concat("\nFO: Duration: " + durationSolution);
 	s = s.concat("\nFO: Travel time: " + drivingTime);
-	s = s.concat("\nFO: Service time: " + serviceTime);
+	//s = s.concat("\nFO: Service time: " + serviceTime);
 	s = s.concat("\nWalking time: " + walkingTime);
 	s = s.concat("\n Waiting time: " + waitingTime);
 	s= s.concat("\n medical staff cost: "+ homeCareStaffCost);
@@ -136,9 +136,16 @@ public class Solution {
 			s= s.concat("\n driver cost: "+ r.getdriverCost());
 			s= s.concat("\n");
 			for(Parts p:r.getPartsRoute()) {
-				for(SubJobs j:p.getListSubJobs()) {	
-					s = s.concat(" ( " + j.getSubJobKey()+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+"waitingTime"+j.getWaitingTime()+") \n");
-				}
+				for(SubJobs j:p.getListSubJobs()) {
+					String type="";
+					if(j.isClient()) {
+						type="c";
+					}
+					if(j.isPatient()) {
+						type="p";
+					}
+					s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+ "end service "+ j.getendServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
+								}
 				s = s.concat("\n\n");
 			}
 		}	
