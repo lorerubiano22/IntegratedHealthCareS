@@ -100,46 +100,13 @@ public class DrivingRoutes {
 	//	}
 
 	private Solution createInitialSolution() {
-		// creationRoutes(); // create as many routes as there are vehicles
-		// iteratively insert couples - here should be a destructive and constructive method 
-
 		ArrayList<ArrayList<Couple>> clasification= clasificationjob(); // classification according to the job qualification
-		// Los tiempos de las ventanas de tiempo son menores que la hora de inicio del servicio porque considera el tiempo del registro y el tiempo de carga y descarga del personal
-		//settingStartServiceTime(); // late time - the start service time is fixed for the jobs which have a hard time window
-		//	settingDeltas
-
-
-		//		Solution sol1=assigmentJobsToVehicles(clasification);
-		//		Solution sol2= creatingPoolRoute(sol1);
-		//		if(sol1.getDurationSolution()<sol2.getDurationSolution()) {
-		//			initialSol=new Solution(sol1);
-		//		}
-		//		else {
-		//			initialSol=new Solution(sol2);
-		//		}
-
-
 		assigmentJobsToQualifications(clasification);
-		//settingAssigmentSchift(clasification); // Create a large sequence of jobs-  the amount of sequences depende on the synchronization between time window each jobs - it does not consider the working hours of the personal- here is only considered the job qualification
 		ArrayList<Route> route=insertingDepotConnections(schift);
 		Solution assigmentPersonnalJob= solutionInformation(route); 
 		savingInformationSchifts(assigmentPersonnalJob);
 		assigmentPersonnalJob.checkingSolution(inp,test,jobsInWalkingRoute,assigmentPersonnalJob);
 		System.out.println(assigmentPersonnalJob.toString());
-		//initialSol.computeCosts(inp,test);
-
-		//
-
-
-		//		if(assigmentPersonnalJob.getDurationSolution()<initialSol.getDurationSolution()) {
-		//			initialSol=new Solution(assigmentPersonnalJob);
-		//		}
-		//		System.out.println(initialSol.toString());
-		//
-		//
-		//		double serviceTime=checkServiceTimes(initialSol);
-		//		boolean areAllJobsAssigned=checkAssigment(initialSol);
-		//		System.out.println(initialSol.toString());
 		return new Solution(assigmentPersonnalJob);
 	}
 
@@ -148,25 +115,9 @@ public class DrivingRoutes {
 	private Solution assigmentVehicle(Solution assigmentPersonnalJob) {
 		// 1. cambio de tiempos
 		Solution sol= changingTimesVehicleRoute(assigmentPersonnalJob);
-		mergingRoute(sol);
 		return sol;
 	}
 
-	private void mergingRoute(Solution sol) { // merging shift <- medical staff
-		ArrayList<Route> routesToMerge= new ArrayList<Route>();
-		ArrayList<Route> newRoutes= new ArrayList<Route>();
-		for(Route r:sol.getRoutes()) {
-			if(r.getPartsRoute().size()>2) {
-				routesToMerge.add(r);
-			}
-		}
-		for(Route r:routesToMerge) {
-			for(Route r1:routesToMerge) {
-
-			}
-		}
-
-	}
 
 
 
@@ -218,8 +169,21 @@ public class DrivingRoutes {
 				j.setEndTime(j.getstartServiceTime());
 			}
 		}
+		
+		for(Parts p:newRoute.getPartsRoute()) {
+			for(SubJobs j:p.getListSubJobs()) {
+				if(j.isClient() || j.isMedicalCentre()) {
+					if(j.getTotalPeople()<0) {
+				j.setdepartureTime(j.getArrivalTime()+j.getloadUnloadRegistrationTime());		
+					}	
+				}
+			}
+		}
 
 		// actualizar information parts
+		// actualizar la hora de los drop-off
+		
+		
 		newRoute.updateRouteFromParts(inp, test, jobsInWalkingRoute);
 		System.out.println("ref route");
 		System.out.println(r.toString());
@@ -647,7 +611,7 @@ public class DrivingRoutes {
 		////
 
 		for(int iter=0;iter<10;iter++) {
-			
+
 			Solution sol1= intraMergingParts0(copySolution);
 			sol1.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
 			System.out.println(sol1.getobjectiveFunction());
@@ -832,7 +796,8 @@ public class DrivingRoutes {
 		future.setClient(true);	
 		future.setserviceTime(0); //los nodos pick up contienen la información de los nodos
 		// Setting the TW
-		double tv=inp.getCarCost().getCost(present.getId()-1, pickUpNode.getId()-1)*test.getDetour();
+		//double tv=inp.getCarCost().getCost(present.getId()-1, pickUpNode.getId()-1)*test.getDetour();
+		double tv=inp.getCarCost().getCost(present.getId()-1, pickUpNode.getId()-1);
 		future.setStartTime(present.getendServiceTime()+tv);
 		future.setEndTime(future.getStartTime()+test.getCumulativeWaitingTime()); // considering waiting time
 
@@ -844,7 +809,7 @@ public class DrivingRoutes {
 		// 2. Set ArrivalTime-<- la enferemera puede ser recogida una vez esta haya terminado el servicio
 		future.setarrivalTime(future.getstartServiceTime());
 		future.setdepartureTime(future.getendServiceTime()+future.getloadUnloadTime());
- /// poner el tiempo de servicio en cero
+		/// poner el tiempo de servicio en cero
 		future.setserviceTime(0);
 		// present
 		double deltaArrivalDeparture=future.getDepartureTime()-future.getArrivalTime();
@@ -6795,7 +6760,7 @@ public class DrivingRoutes {
 		SubJobs depotStart = new SubJobs(inp.getNodes().get(0));
 		depotStart.setTotalPeople(1);
 		SubJobs depotEnd = new SubJobs(inp.getNodes().get(0));
-		depotEnd.setTotalPeople(1);
+		depotEnd.setTotalPeople(-1);
 		ArrayList<SubJobs> partStart= new ArrayList<SubJobs>();
 		ArrayList<SubJobs> partEnd= new ArrayList<SubJobs>();
 		partStart.add(depotStart);
@@ -6869,7 +6834,8 @@ public class DrivingRoutes {
 
 	private void settingDropOff(Jobs jobsInRoute,Jobs dropOff) {
 		dropOff.setTotalPeople(-1);
-		double tv=inp.getCarCost().getCost(jobsInRoute.getId()-1, dropOff.getId()-1)*test.getDetour();
+		double tv=inp.getCarCost().getCost(jobsInRoute.getId()-1, dropOff.getId()-1);
+		//double tv=inp.getCarCost().getCost(jobsInRoute.getId()-1, dropOff.getId()-1)*test.getDetour();
 		// Time window
 		double earlyTime=0;
 		double laterTime=0;
@@ -6933,7 +6899,8 @@ public class DrivingRoutes {
 		// 3. how many people involve the service // time window // preliminary service start time
 		pair.setTotalPeople(-1);
 		// Time window
-		double tv=inp.getCarCost().getCost(inRoute.getId()-1, pair.getId()-1)*test.getDetour();
+		double tv=inp.getCarCost().getCost(inRoute.getId()-1, pair.getId()-1);
+		//double tv=inp.getCarCost().getCost(inRoute.getId()-1, pair.getId()-1)*test.getDetour();
 		double earlyTime=inRoute.getendServiceTime()+tv;
 		double laterTime=earlyTime+test.getCumulativeWaitingTime();
 		pair.setStartTime(earlyTime);
@@ -7027,14 +6994,17 @@ public class DrivingRoutes {
 		for(Jobs taskToInert:clasification3) { // iterate over jobs
 			Jobs j= new Jobs(taskToInert);
 			for(Parts paramedic:qualificationParamedic) {
-				if(paramedic.getDirectorySubjobs().containsKey("D19") &&  j.getId()==30) {
+				if(paramedic.getDirectorySubjobs().containsKey("D24") &&  j.getId()==14) {
+					System.out.println("stop");
+				}
+				if(paramedic.getDirectorySubjobs().containsKey("D14") &&  j.getId()==9) {
 					System.out.println("stop");
 				}
 				if(j.getId()==30) {
 					System.out.println(" Turn ");
 					System.out.println(j.toString());
 				}
-				if(j.getId()==19) {
+				if(j.getId()==9) {
 					System.out.println(" Turn ");
 					System.out.println(j.toString());
 				}
@@ -7107,7 +7077,7 @@ public class DrivingRoutes {
 				jsplited=pickUpDropOff.getListSubJobs().get(0);
 			}
 			else {
-				jsplited=pickUpDropOff.getListSubJobs().get(1);
+				jsplited=pickUpDropOff.getListSubJobs().get(0);
 			}
 			//SubJobs jsplited=pickUpDropOff.getListSubJobs().get(0);
 
@@ -7304,25 +7274,28 @@ public class DrivingRoutes {
 	}
 
 	private void settingEarlyTimeFuturePatientJob(Parts dropOffPickUp) {
-		double tv=inp.getCarCost().getCost(dropOffPickUp.getListSubJobs().get(0).getId()-1, dropOffPickUp.getListSubJobs().get(1).getId()-1)*test.getDetour();
+		double tv=inp.getCarCost().getCost(dropOffPickUp.getListSubJobs().get(0).getId()-1, dropOffPickUp.getListSubJobs().get(1).getId()-1);
+
+		//double tv=inp.getCarCost().getCost(dropOffPickUp.getListSubJobs().get(0).getId()-1, dropOffPickUp.getListSubJobs().get(1).getId()-1)*test.getDetour();
 		double homeDeparture=dropOffPickUp.getListSubJobs().get(1).getArrivalTime()-tv;
 
 		double homeArrival=homeDeparture-dropOffPickUp.getListSubJobs().get(0).getdeltaArrivalDeparture();
 		double homeStartServiceTime=homeArrival+dropOffPickUp.getListSubJobs().get(0).getdeltaArrivalStartServiceTime();
-		double endServiceTime=homeStartServiceTime+dropOffPickUp.getListSubJobs().get(0).getdeltarStartServiceTimeEndServiceTime();
+		double departureTime=homeStartServiceTime+dropOffPickUp.getListSubJobs().get(0).getdeltarStartServiceTimeEndServiceTime();
 		dropOffPickUp.getListSubJobs().get(0).setarrivalTime(homeArrival);
 		dropOffPickUp.getListSubJobs().get(0).setStartServiceTime(homeStartServiceTime);
-		dropOffPickUp.getListSubJobs().get(0).setEndServiceTime(endServiceTime);
-		endServiceTime=dropOffPickUp.getListSubJobs().get(1).getendServiceTime();
+		dropOffPickUp.getListSubJobs().get(0).setEndServiceTime(departureTime);
+		departureTime=dropOffPickUp.getListSubJobs().get(1).getDepartureTime();
 		for(int i=2; i<dropOffPickUp.getListSubJobs().size();i++ ) {
 			SubJobs sbi=dropOffPickUp.getListSubJobs().get(i-1);
 			SubJobs sbj=dropOffPickUp.getListSubJobs().get(i);
-			tv= inp.getCarCost().getCost(sbi.getId()-1, sbj.getId()-1)*test.getDetour();
-			double arrivalTime=endServiceTime+tv;
+			tv= inp.getCarCost().getCost(sbi.getId()-1, sbj.getId()-1);
+			//tv= inp.getCarCost().getCost(sbi.getId()-1, sbj.getId()-1)*test.getDetour();
+			double arrivalTime=departureTime+tv;
 
 			double startServiceTime=arrivalTime+sbj.getdeltaArrivalStartServiceTime();
-			double departureTime=arrivalTime+sbj.getdeltaArrivalDeparture();
-			endServiceTime=startServiceTime+sbj.getdeltarStartServiceTimeEndServiceTime();
+			 departureTime=arrivalTime+sbj.getdeltaArrivalDeparture();
+			 double endServiceTime=startServiceTime+sbj.getdeltarStartServiceTimeEndServiceTime();
 			sbj.setarrivalTime(arrivalTime);
 			sbj.setStartServiceTime(startServiceTime);
 			sbj.setEndServiceTime(endServiceTime);
@@ -7341,7 +7314,9 @@ public class DrivingRoutes {
 		for(int i=1; i<dropOffPickUp.getListSubJobs().size();i++ ) {
 			SubJobs sbi=dropOffPickUp.getListSubJobs().get(i-1);
 			SubJobs sbj=dropOffPickUp.getListSubJobs().get(i);
-			double tv= inp.getCarCost().getCost(sbi.getId()-1, sbj.getId()-1)*test.getDetour();
+			//double tv= inp.getCarCost().getCost(sbi.getId()-1, sbj.getId()-1)*test.getDetour();
+			double tv= inp.getCarCost().getCost(sbi.getId()-1, sbj.getId()-1);
+
 			double arrivalTime=endServiceTime+tv;
 
 			double startServiceTime=arrivalTime+sbj.getdeltaArrivalStartServiceTime();
@@ -7742,7 +7717,8 @@ public class DrivingRoutes {
 		SubJobs k=pickUpDropOff.getListSubJobs().get(pickUpDropOff.getListSubJobs().size()-1);
 		if(j.isClient() && k.isClient() ) {
 			// se intenta insertar antes - El trabajo importante es j porque k es la continuación
-			double tv=inp.getCarCost().getCost(k.getId()-1, firstInRoute.getId()-1)*test.getDetour();
+			//double tv=inp.getCarCost().getCost(k.getId()-1, firstInRoute.getId()-1)*test.getDetour();
+			double tv=inp.getCarCost().getCost(k.getId()-1, firstInRoute.getId()-1);
 			double departureK=firstInRoute.getArrivalTime()-tv;
 
 			double arrivalTimeK=departureK-k.getdeltaArrivalDeparture();
@@ -7927,7 +7903,8 @@ public class DrivingRoutes {
 	}
 
 	private double computingTravelTimeWithDetour(SubJobs inRoute, SubJobs j) {
-		double travelTime=inp.getCarCost().getCost(inRoute.getId()-1, j.getId()-1)*test.getDetour();
+		double travelTime=inp.getCarCost().getCost(inRoute.getId()-1, j.getId()-1);
+		//double travelTime=inp.getCarCost().getCost(inRoute.getId()-1, j.getId()-1)*test.getDetour();
 		return travelTime;
 	}
 

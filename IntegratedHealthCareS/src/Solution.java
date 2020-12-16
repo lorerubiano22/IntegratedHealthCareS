@@ -164,7 +164,6 @@ public class Solution {
 			r.setIdRoute(id);
 			r.setDurationRoute(r.getSubJobsList().getLast().getDepartureTime()-r.getSubJobsList().getFirst().getArrivalTime());
 			r.computeServiceTime(inp,jobsInWalkingRoute);
-			//r.checkingTimesRoute(test,inp);
 			// revisar las ventanas de tiempo si se pueden mover
 			r.checkingTimeWindows(test,inp);
 			// revisar los tiempos de espera
@@ -177,17 +176,6 @@ public class Solution {
 			r.updatingJobsList();
 			r.totalMedicalStaff();
 		}
-
-		//waitingTime+=r.getWaitingTime();
-		//serviceTime+=r.getServiceTime();
-		//		drivingTime+=r.getTravelTime();
-		//		paramedic+=r.getAmountParamedic();
-		//		homeCareStaff+=r.getHomeCareStaff();
-		//		additionalWaitingTime+=r.getAdditionalwaitingTime();
-		//		timeWindowViolation+=r.gettimeWindowViolation();
-		//		detourViolation+=r.getdetourViolation();
-		//		durationSolution+=r.getDurationRoute();
-
 		this.computeCosts( inp,  test);
 
 	}
