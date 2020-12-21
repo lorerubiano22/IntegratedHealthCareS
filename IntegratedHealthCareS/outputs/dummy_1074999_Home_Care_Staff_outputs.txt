@@ -1,0 +1,635 @@
+***************************************************
+*                      OUTPUTS                    *
+***************************************************
+
+
+--------------------------------------------
+
+ Walking Routes:
+
+--------------------------------------------
+[]
+
+--------------------------------------------
+Driving Routes
+--------------------------------------------
+
+ Initial solution 
+
+
+ID Solution: 1
+FO: Duration: 1832.0
+FO: Travel time: 143.0
+Walking time: 0.0
+ Waiting time: 36.0
+ Amount home care staff: 8.0
+ Amount paramedic: 15.0
+ driver cost: 143.0
+ time window violation: 0.0
+ waiting Time to penalize: 0.0 Detour: 0.0
+ List of jobs: 
+ Route: 0 travelTime: 11.0 waitingTime: 0.0 serviceTime: 180.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 267.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  452  B  452 end service 452   D  452  reqTime_0.0  TW [0;0]) 
+
+
+ ( P22p A  459  B  461 end service 461   D  461  reqTime_0.0  TW [461;461]) 
+ ( D1222 A  463  B  480 end service 600   D  600  reqTime_120.0  TW [0;480]) 
+
+
+ ( P1222 A  600  B  600 end service 600   D  602  reqTime_0.0  TW [600;600]) 
+ ( D22p A  604  B  604 end service 604   D  606  reqTime_0.0  TW [604;604]) 
+ ( P25p A  639  B  641 end service 641   D  641  reqTime_0.0  TW [641;641]) 
+ ( D1025 A  643  B  660 end service 720   D  720  reqTime_60.0  TW [160;660]) 
+
+
+ ( P1025 A  720  B  720 end service 720   D  722  reqTime_0.0  TW [720;720]) 
+ ( D25p A  724  B  724 end service 724   D  726  reqTime_0.0  TW [724;724]) 
+
+
+ ( D1 A  729  B  729 end service 729   D  729  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 1 travelTime: 26.0 waitingTime: 0.0 serviceTime: 120.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 237.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  454  B  454 end service 454   D  454  reqTime_0.0  TW [0;0]) 
+
+
+ ( P15p A  460  B  462 end service 462   D  462  reqTime_0.0  TW [462;462]) 
+ ( D1015 A  463  B  480 end service 540   D  540  reqTime_60.0  TW [0;480]) 
+
+
+ ( P1015 A  540  B  540 end service 540   D  542  reqTime_0.0  TW [540;540]) 
+ ( D15p A  543  B  543 end service 543   D  545  reqTime_0.0  TW [543;543]) 
+ ( P23p A  576  B  578 end service 578   D  578  reqTime_0.0  TW [578;578]) 
+ ( D1323 A  583  B  600 end service 630   D  630  reqTime_30.0  TW [100;600]) 
+
+
+ ( P1323 A  630  B  630 end service 630   D  632  reqTime_0.0  TW [630;630]) 
+ ( D23p A  637  B  637 end service 637   D  639  reqTime_0.0  TW [637;637]) 
+ ( P18p A  638  B  640 end service 640   D  640  reqTime_0.0  TW [640;640]) 
+ ( D1318 A  643  B  660 end service 690   D  690  reqTime_30.0  TW [160;660]) 
+
+
+ ( P1318 A  690  B  690 end service 690   D  692  reqTime_0.0  TW [690;690]) 
+ ( D18p A  695  B  695 end service 695   D  697  reqTime_0.0  TW [695;695]) 
+
+
+ ( D1 A  699  B  699 end service 699   D  699  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 2 travelTime: 24.0 waitingTime: 0.0 serviceTime: 165.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 252.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  393  B  393 end service 393   D  393  reqTime_0.0  TW [0;0]) 
+
+
+ ( P29p A  399  B  401 end service 401   D  401  reqTime_0.0  TW [401;401]) 
+ ( D1429 A  403  B  420 end service 450   D  450  reqTime_30.0  TW [0;420]) 
+
+
+ ( P1429 A  450  B  450 end service 450   D  452  reqTime_0.0  TW [450;450]) 
+ ( D29p A  453  B  453 end service 453   D  455  reqTime_0.0  TW [453;453]) 
+ ( P26p A  456  B  458 end service 458   D  458  reqTime_0.0  TW [458;458]) 
+ ( D1126 A  463  B  480 end service 570   D  570  reqTime_90.0  TW [0;480]) 
+
+
+ ( P1126 A  570  B  570 end service 570   D  572  reqTime_0.0  TW [570;570]) 
+ ( D26p A  577  B  577 end service 577   D  579  reqTime_0.0  TW [577;577]) 
+ ( P19p A  579  B  581 end service 581   D  581  reqTime_0.0  TW [581;581]) 
+ ( D1419 A  583  B  600 end service 645   D  645  reqTime_45.0  TW [100;600]) 
+
+
+ ( P1419 A  645  B  645 end service 645   D  647  reqTime_0.0  TW [645;645]) 
+ ( D19p A  649  B  649 end service 649   D  651  reqTime_0.0  TW [649;649]) 
+
+
+ ( D1 A  654  B  654 end service 654   D  654  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 3 travelTime: 25.0 waitingTime: 0.0 serviceTime: 150.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 238.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  394  B  394 end service 394   D  394  reqTime_0.0  TW [0;0]) 
+
+
+ ( P17p A  398  B  400 end service 400   D  400  reqTime_0.0  TW [400;400]) 
+ ( D1217 A  403  B  420 end service 510   D  510  reqTime_90.0  TW [0;420]) 
+
+
+ ( P1217 A  510  B  510 end service 510   D  512  reqTime_0.0  TW [510;510]) 
+ ( D17p A  515  B  515 end service 515   D  517  reqTime_0.0  TW [515;515]) 
+ ( P20p A  518  B  520 end service 520   D  520  reqTime_0.0  TW [520;520]) 
+ ( D1020 A  523  B  540 end service 570   D  570  reqTime_30.0  TW [40;540]) 
+
+
+ ( P1020 A  570  B  570 end service 570   D  572  reqTime_0.0  TW [570;570]) 
+ ( D20p A  575  B  575 end service 575   D  577  reqTime_0.0  TW [575;575]) 
+ ( P24p A  578  B  580 end service 580   D  580  reqTime_0.0  TW [580;580]) 
+ ( D1424 A  583  B  600 end service 630   D  630  reqTime_30.0  TW [100;600]) 
+
+
+ ( P1424 A  630  B  630 end service 630   D  632  reqTime_0.0  TW [630;630]) 
+ ( D24p A  634  B  634 end service 634   D  636  reqTime_0.0  TW [634;634]) 
+
+
+ ( D1 A  640  B  640 end service 640   D  640  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 4 travelTime: 19.0 waitingTime: 0.0 serviceTime: 120.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 241.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  512  B  512 end service 512   D  512  reqTime_0.0  TW [0;0]) 
+
+
+ ( P28p A  519  B  521 end service 521   D  521  reqTime_0.0  TW [521;521]) 
+ ( D1328 A  523  B  540 end service 570   D  570  reqTime_30.0  TW [40;540]) 
+
+
+ ( P1328 A  570  B  570 end service 570   D  572  reqTime_0.0  TW [570;570]) 
+ ( D28p A  574  B  574 end service 574   D  576  reqTime_0.0  TW [574;574]) 
+ ( P21p A  636  B  638 end service 638   D  638  reqTime_0.0  TW [638;638]) 
+ ( D1121 A  643  B  660 end service 750   D  750  reqTime_90.0  TW [160;660]) 
+
+
+ ( P1121 A  750  B  750 end service 750   D  752  reqTime_0.0  TW [750;750]) 
+ ( D21p A  758  B  758 end service 758   D  760  reqTime_0.0  TW [758;758]) 
+
+
+ ( D1 A  767  B  767 end service 767   D  767  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 5 travelTime: 6.0 waitingTime: 0.0 serviceTime: 60.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 89.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  515  B  515 end service 515   D  515  reqTime_0.0  TW [0;0]) 
+
+
+ ( P16p A  518  B  520 end service 520   D  520  reqTime_0.0  TW [520;520]) 
+ ( D1116 A  523  B  540 end service 600   D  600  reqTime_60.0  TW [40;540]) 
+
+
+ ( P1116 A  600  B  600 end service 600   D  602  reqTime_0.0  TW [600;600]) 
+ ( D16p A  605  B  605 end service 605   D  607  reqTime_0.0  TW [605;605]) 
+
+
+ ( D1 A  609  B  609 end service 609   D  609  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 6 travelTime: 10.0 waitingTime: 0.0 serviceTime: 45.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 78.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  512  B  512 end service 512   D  512  reqTime_0.0  TW [0;0]) 
+
+
+ ( P27p A  516  B  518 end service 518   D  518  reqTime_0.0  TW [518;518]) 
+ ( D1227 A  523  B  540 end service 585   D  585  reqTime_45.0  TW [40;540]) 
+
+
+ ( P1227 A  585  B  585 end service 585   D  587  reqTime_0.0  TW [585;585]) 
+ ( D27p A  592  B  592 end service 592   D  594  reqTime_0.0  TW [592;592]) 
+
+
+ ( D1 A  597  B  597 end service 597   D  597  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 7 travelTime: 10.0 waitingTime: 25.0 serviceTime: 210.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 251.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  374  B  374 end service 374   D  374  reqTime_0.0  TW [0;0]) 
+
+
+ ( D3c A  380  B  381 end service 441   D  441  reqTime_60.0  TW [360;480]) 
+
+
+ ( P3c A  441  B  441 end service 441   D  442  reqTime_0.0  TW [441;441]) 
+ ( D9c A  444  B  445 end service 475   D  475  reqTime_30.0  TW [360;540]) 
+
+
+ ( P9c A  475  B  475 end service 475   D  476  reqTime_0.0  TW [475;475]) 
+ ( D5c A  479  B  480 end service 510   D  510  reqTime_30.0  TW [360;480]) 
+
+
+ ( P5c A  510  B  510 end service 510   D  511  reqTime_0.0  TW [510;510]) 
+ ( D7c A  515  B  540 end service 630   D  630  reqTime_90.0  TW [360;540]) 
+
+
+ ( P7c A  630  B  630 end service 630   D  631  reqTime_0.0  TW [630;630]) 
+
+
+ ( D1 A  633  B  633 end service 633   D  633  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 8 travelTime: 12.0 waitingTime: 11.0 serviceTime: 150.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 179.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  402  B  402 end service 402   D  402  reqTime_0.0  TW [0;0]) 
+
+
+ ( D2c A  407  B  408 end service 438   D  438  reqTime_30.0  TW [360;480]) 
+
+
+ ( P2c A  438  B  438 end service 438   D  439  reqTime_0.0  TW [438;438]) 
+ ( D6c A  443  B  444 end service 474   D  474  reqTime_30.0  TW [360;480]) 
+
+
+ ( P6c A  474  B  474 end service 474   D  475  reqTime_0.0  TW [474;474]) 
+ ( D4c A  479  B  480 end service 525   D  525  reqTime_45.0  TW [360;480]) 
+
+
+ ( P4c A  525  B  525 end service 525   D  526  reqTime_0.0  TW [525;525]) 
+ ( D8c A  529  B  540 end service 585   D  585  reqTime_45.0  TW [360;540]) 
+
+
+ ( P8c A  585  B  585 end service 585   D  586  reqTime_0.0  TW [585;585]) 
+
+
+ ( D1 A  591  B  591 end service 591   D  591  reqTime_0.0  TW [0;0]) 
+
+
+
+
+
+ Best solution 
+
+
+ID Solution: 1
+FO: Duration: 4189.0
+FO: Travel time: 114.0
+Walking time: 0.0
+ Waiting time: 110.0
+ Amount home care staff: 8.0
+ Amount paramedic: 15.0
+ driver cost: 114.0
+ time window violation: 621.0
+ waiting Time to penalize: 0.0 Detour: 45.9
+ List of jobs: 
+ Route: 0 travelTime: 4.0 waitingTime: 0.0 serviceTime: 60.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 327.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  354  B  354 end service 354   D  354  reqTime_0.0  TW [0;0]) 
+
+
+ ( P25p A  358  B  360 end service 360   D  360  reqTime_0.0  TW [360;639]) 
+ ( D1025 A  360  B  377 end service 437   D  362  reqTime_60.0  TW [360;643]) 
+
+
+ ( P1025 A  720  B  720 end service 720   D  722  reqTime_0.0  TW [720;1220]) 
+ ( D25p A  722  B  724 end service 784   D  726  reqTime_0.0  TW [724;1440]) 
+
+
+ ( D1 A  729  B  729 end service 729   D  729  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 1 travelTime: 6.0 waitingTime: 0.0 serviceTime: 30.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 298.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  354  B  354 end service 354   D  354  reqTime_0.0  TW [0;0]) 
+
+
+ ( P18p A  357  B  360 end service 360   D  359  reqTime_0.0  TW [360;638]) 
+ ( D1318 A  360  B  377 end service 407   D  362  reqTime_30.0  TW [360;643]) 
+
+
+ ( P1318 A  690  B  690 end service 690   D  692  reqTime_0.0  TW [690;1190]) 
+ ( D18p A  693  B  695 end service 725   D  697  reqTime_0.0  TW [695;1440]) 
+
+
+ ( D1 A  699  B  699 end service 699   D  699  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 2 travelTime: 11.0 waitingTime: 2.0 serviceTime: 90.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 358.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  347  B  347 end service 347   D  347  reqTime_0.0  TW [0;0]) 
+
+
+ ( P21p A  355  B  360 end service 360   D  357  reqTime_0.0  TW [360;636]) 
+ ( D1121 A  360  B  377 end service 467   D  362  reqTime_90.0  TW [360;643]) 
+
+
+ ( P1121 A  750  B  750 end service 750   D  752  reqTime_0.0  TW [750;1250]) 
+ ( D21p A  756  B  758 end service 848   D  760  reqTime_0.0  TW [758;1440]) 
+
+
+ ( D1 A  767  B  767 end service 767   D  767  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 3 travelTime: 5.0 waitingTime: 0.0 serviceTime: 30.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 234.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  352  B  352 end service 352   D  352  reqTime_0.0  TW [0;0]) 
+
+
+ ( P24p A  357  B  360 end service 360   D  359  reqTime_0.0  TW [360;578]) 
+ ( D1424 A  360  B  377 end service 407   D  362  reqTime_30.0  TW [360;583]) 
+
+
+ ( P1424 A  630  B  630 end service 630   D  632  reqTime_0.0  TW [630;1130]) 
+ ( D24p A  632  B  634 end service 664   D  636  reqTime_0.0  TW [634;1440]) 
+
+
+ ( D1 A  640  B  640 end service 640   D  640  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 4 travelTime: 10.0 waitingTime: 2.0 serviceTime: 30.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 238.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  352  B  352 end service 352   D  352  reqTime_0.0  TW [0;0]) 
+
+
+ ( P23p A  355  B  360 end service 360   D  357  reqTime_0.0  TW [360;576]) 
+ ( D1323 A  360  B  377 end service 407   D  362  reqTime_30.0  TW [360;583]) 
+
+
+ ( P1323 A  630  B  630 end service 630   D  632  reqTime_0.0  TW [630;1130]) 
+ ( D23p A  635  B  637 end service 667   D  639  reqTime_0.0  TW [637;1440]) 
+
+
+ ( D1 A  641  B  641 end service 641   D  641  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 5 travelTime: 0.0 waitingTime: 1.0 serviceTime: 90.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 228.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  357  B  357 end service 357   D  357  reqTime_0.0  TW [0;0]) 
+
+
+ ( D7c A  360  B  361 end service 451   D  361  reqTime_90.0  TW [360;420]) 
+
+
+ ( P7c A  628  B  630 end service 720   D  629  reqTime_0.0  TW [630;1130]) 
+
+
+ ( D1 A  631  B  631 end service 631   D  631  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 6 travelTime: 0.0 waitingTime: 1.0 serviceTime: 45.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 189.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  354  B  354 end service 354   D  354  reqTime_0.0  TW [0;0]) 
+
+
+ ( D8c A  360  B  361 end service 406   D  361  reqTime_45.0  TW [360;420]) 
+
+
+ ( P8c A  583  B  585 end service 630   D  584  reqTime_0.0  TW [585;1085]) 
+
+
+ ( D1 A  589  B  589 end service 589   D  589  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 7 travelTime: 0.0 waitingTime: 1.0 serviceTime: 30.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 174.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  353  B  353 end service 353   D  353  reqTime_0.0  TW [0;0]) 
+
+
+ ( D9c A  360  B  361 end service 391   D  361  reqTime_30.0  TW [360;420]) 
+
+
+ ( P9c A  568  B  570 end service 600   D  569  reqTime_0.0  TW [570;1070]) 
+
+
+ ( D1 A  575  B  575 end service 575   D  575  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 8 travelTime: 6.0 waitingTime: 0.0 serviceTime: 30.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 190.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  351  B  351 end service 351   D  351  reqTime_0.0  TW [0;0]) 
+
+
+ ( P20p A  357  B  360 end service 360   D  359  reqTime_0.0  TW [360;518]) 
+ ( D1020 A  360  B  377 end service 407   D  362  reqTime_30.0  TW [360;523]) 
+
+
+ ( P1020 A  570  B  570 end service 570   D  572  reqTime_0.0  TW [570;1070]) 
+ ( D20p A  573  B  575 end service 605   D  577  reqTime_0.0  TW [575;1440]) 
+
+
+ ( D1 A  582  B  582 end service 582   D  582  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 9 travelTime: 6.0 waitingTime: 0.0 serviceTime: 60.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 210.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  354  B  354 end service 354   D  354  reqTime_0.0  TW [0;0]) 
+
+
+ ( P16p A  357  B  360 end service 360   D  359  reqTime_0.0  TW [360;518]) 
+ ( D1116 A  360  B  377 end service 437   D  362  reqTime_60.0  TW [360;523]) 
+
+
+ ( P1116 A  600  B  600 end service 600   D  602  reqTime_0.0  TW [600;1100]) 
+ ( D16p A  603  B  605 end service 665   D  607  reqTime_0.0  TW [605;1440]) 
+
+
+ ( D1 A  609  B  609 end service 609   D  609  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 10 travelTime: 10.0 waitingTime: 2.0 serviceTime: 45.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 196.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  351  B  351 end service 351   D  351  reqTime_0.0  TW [0;0]) 
+
+
+ ( P27p A  355  B  360 end service 360   D  357  reqTime_0.0  TW [360;516]) 
+ ( D1227 A  360  B  377 end service 422   D  362  reqTime_45.0  TW [360;523]) 
+
+
+ ( P1227 A  585  B  585 end service 585   D  587  reqTime_0.0  TW [585;1085]) 
+ ( D27p A  590  B  592 end service 637   D  594  reqTime_0.0  TW [592;1440]) 
+
+
+ ( D1 A  597  B  597 end service 597   D  597  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 11 travelTime: 22.0 waitingTime: 21.0 serviceTime: 135.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 178.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  439  B  439 end service 439   D  439  reqTime_0.0  TW [0;0]) 
+
+
+ ( D4c A  444  B  446 end service 491   D  445  reqTime_45.0  TW [360;420]) 
+ ( P26p A  452  B  452 end service 452   D  454  reqTime_0.0  TW [360;456]) 
+ ( D1126 A  564  B  566 end service 656   D  566  reqTime_90.0  TW [360;463]) 
+ ( P4c A  568  B  568 end service 568   D  569  reqTime_0.0  TW [525;1025]) 
+ ( P1126 A  573  B  573 end service 573   D  575  reqTime_0.0  TW [570;1070]) 
+ ( D26p A  578  B  580 end service 580   D  580  reqTime_0.0  TW [577;1440]) 
+
+
+ ( D1 A  585  B  585 end service 585   D  585  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 12 travelTime: 0.0 waitingTime: 1.0 serviceTime: 30.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 175.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  354  B  354 end service 354   D  354  reqTime_0.0  TW [0;0]) 
+
+
+ ( D5c A  360  B  361 end service 391   D  361  reqTime_30.0  TW [360;420]) 
+
+
+ ( P5c A  508  B  510 end service 540   D  509  reqTime_0.0  TW [510;1010]) 
+
+
+ ( D1 A  513  B  513 end service 513   D  513  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 13 travelTime: 0.0 waitingTime: 1.0 serviceTime: 30.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 179.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  356  B  356 end service 356   D  356  reqTime_0.0  TW [0;0]) 
+
+
+ ( D6c A  360  B  361 end service 391   D  361  reqTime_30.0  TW [360;420]) 
+
+
+ ( P6c A  508  B  510 end service 540   D  509  reqTime_0.0  TW [510;1010]) 
+
+
+ ( D1 A  511  B  511 end service 511   D  511  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 14 travelTime: 0.0 waitingTime: 1.0 serviceTime: 30.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 177.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  355  B  355 end service 355   D  355  reqTime_0.0  TW [0;0]) 
+
+
+ ( D2c A  360  B  361 end service 391   D  361  reqTime_30.0  TW [360;420]) 
+
+
+ ( P2c A  508  B  510 end service 540   D  509  reqTime_0.0  TW [510;1010]) 
+
+
+ ( D1 A  512  B  512 end service 512   D  512  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 15 travelTime: 0.0 waitingTime: 1.0 serviceTime: 60.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 152.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  354  B  354 end service 354   D  354  reqTime_0.0  TW [0;0]) 
+
+
+ ( D3c A  360  B  361 end service 421   D  361  reqTime_60.0  TW [360;420]) 
+
+
+ ( P3c A  538  B  540 end service 600   D  539  reqTime_0.0  TW [540;1040]) 
+
+
+ ( D1 A  544  B  544 end service 544   D  544  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 16 travelTime: 12.0 waitingTime: 38.0 serviceTime: 90.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 148.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  430  B  430 end service 430   D  430  reqTime_0.0  TW [0;0]) 
+
+
+ ( P15p A  436  B  436 end service 436   D  438  reqTime_0.0  TW [360;460]) 
+ ( P28p A  441  B  441 end service 441   D  443  reqTime_0.0  TW [360;519]) 
+ 
+ ****
+ ( D1015 A  521  B  523 end service 583   D  523  reqTime_60.0  TW [360;463]) 
+ 
+ ***
+ ( D1328 A  569  B  571 end service 601   D  571  reqTime_30.0  TW [360;523]) 
+ ( P1015 A  572  B  572 end service 572   D  574  reqTime_0.0  TW [540;1040]) 
+ ( D15p A  575  B  577 end service 577   D  577  reqTime_0.0  TW [543;1440]) 
+ ( P1328 A  578  B  578 end service 578   D  580  reqTime_0.0  TW [570;1070]) 
+ ( D28p A  580  B  582 end service 582   D  582  reqTime_0.0  TW [574;1440]) 
+
+
+ ( D1 A  588  B  588 end service 588   D  588  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 17 travelTime: 13.0 waitingTime: 38.0 serviceTime: 165.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 224.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  428  B  428 end service 428   D  428  reqTime_0.0  TW [0;0]) 
+
+
+ ( P22p A  435  B  435 end service 435   D  437  reqTime_0.0  TW [360;459]) 
+ ( P19p A  440  B  440 end service 440   D  442  reqTime_0.0  TW [360;579]) 
+ ( D1222 A  579  B  581 end service 701   D  581  reqTime_120.0  TW [360;463]) 
+ ( D1419 A  643  B  645 end service 690   D  645  reqTime_45.0  TW [360;583]) 
+ ( P1222 A  646  B  646 end service 646   D  648  reqTime_0.0  TW [600;1100]) 
+ ( D22p A  650  B  652 end service 652   D  652  reqTime_0.0  TW [604;1440]) 
+ ( P1419 A  653  B  653 end service 653   D  655  reqTime_0.0  TW [645;1145]) 
+ ( D19p A  655  B  657 end service 657   D  657  reqTime_0.0  TW [649;1440]) 
+
+
+ ( D1 A  660  B  660 end service 660   D  660  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 18 travelTime: 3.0 waitingTime: 0.0 serviceTime: 30.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 114.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  352  B  352 end service 352   D  352  reqTime_0.0  TW [0;0]) 
+
+
+ ( P29p A  358  B  360 end service 360   D  360  reqTime_0.0  TW [360;399]) 
+ ( D1429 A  360  B  377 end service 407   D  362  reqTime_30.0  TW [360;403]) 
+
+
+ ( P1429 A  450  B  450 end service 450   D  452  reqTime_0.0  TW [450;950]) 
+ ( D29p A  451  B  453 end service 483   D  455  reqTime_0.0  TW [453;1440]) 
+
+
+ ( D1 A  460  B  460 end service 460   D  460  reqTime_0.0  TW [0;0]) 
+
+
+
+ Route: 19 travelTime: 6.0 waitingTime: 0.0 serviceTime: 90.0 detour: 0.0 waiting Time to penalize: 0.0 durationRoute: 200.0
+ medical staff cost: 0.0
+ driver cost: 0.0
+ ( P1 A  353  B  353 end service 353   D  353  reqTime_0.0  TW [0;0]) 
+
+
+ ( P17p A  357  B  360 end service 360   D  359  reqTime_0.0  TW [360;398]) 
+ ( D1217 A  360  B  377 end service 467   D  362  reqTime_90.0  TW [360;403]) 
+
+
+ ( P1217 A  510  B  510 end service 510   D  512  reqTime_0.0  TW [510;1010]) 
+ ( D17p A  513  B  515 end service 605   D  517  reqTime_0.0  TW [515;1440]) 
+
+
+ ( D1 A  520  B  520 end service 520   D  520  reqTime_0.0  TW [0;0]) 
+
+
+
+
+
+ pc Time:
+
+9839.039601

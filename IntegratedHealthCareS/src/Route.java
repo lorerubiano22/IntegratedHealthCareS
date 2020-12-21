@@ -157,7 +157,7 @@ public class Route {
 	public HashMap<String, SubJobs> getJobsDirectory(){return positionJobs;}
 	public double getDurationRoute() {return durationRoute;}
 	public double getServiceTime() {return serviceTime;}
-	public double getWaitingTime() {return waitingTime;}
+	public double getWaitingTime() {return (int)waitingTime;}
 	public double gettimeWindowViolation() {return timeWindowViolation;}
 	public double getTravelTime() {return travelTime;}
 	public int getIdRoute() {return id;}
@@ -361,7 +361,7 @@ public class Route {
 			if(j.isPatient()) {
 				type="p";
 			}
-			s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+ "end service "+ j.getendServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
+			s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getStartTime()+";"+(int)j.getEndTime()+"]"+") \n");
 						}
 		s = s.concat("\n\n");
 	}
@@ -465,8 +465,8 @@ public class Route {
 					}
 				}
 			}
-			j.setWaitingTime(penalization);
-			j.setAdditionalWaitingTime(additionalWaitingRoute);
+			j.setWaitingTime(Math.abs(penalization));
+			j.setAdditionalWaitingTime(Math.abs(additionalWaitingRoute));
 		}}
 		this.setWaitingTime(penalizationRoute);
 		this.setAdditionalWaitingTime(additionalWaitingRoute);
@@ -675,6 +675,45 @@ public class Route {
 		System.out.println("total Paramedic"+ paramedic);
 		System.out.println("total");
 		
+	}
+
+
+
+
+
+	public void countingMedicalStaff() {
+	double paramedics=0;
+	double paramedicsAux=0;
+	double homeCareStaff=0;
+	double homeCareStaffAUX=0;
+	System.out.println(this.toString());
+	for(SubJobs j:this.getSubJobsList()) {
+		if(j.isPatient() ) {
+			if(j.getTotalPeople()>0) {
+			paramedicsAux++;
+			if(paramedicsAux>0) {
+				paramedics++;
+			}
+		}
+			else {
+				paramedicsAux--;
+			}
+		}
+		if(j.isClient() ) {
+			if(j.getTotalPeople()<0) {
+				homeCareStaffAUX++;
+			if(homeCareStaffAUX>0) {
+				homeCareStaff++;
+			}
+		}
+			else {
+				homeCareStaffAUX--;
+			}
+		}
+		
+	}
+	this.setAmountParamedic(paramedics);	
+	this.setHomeCareStaff(homeCareStaff);
 	} 
 
 

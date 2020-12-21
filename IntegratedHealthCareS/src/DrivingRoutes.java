@@ -88,12 +88,12 @@ public class DrivingRoutes {
 	}
 
 
-	private Solution merginShift(Solution initialSol) {
+	private Solution merginShift(Solution s) {
 		//		private  HashMap<String, Couple> dropoffHomeCareStaff= new HashMap<>();// hard time windows list of home care staff 
 		//		private  HashMap<String, Couple> dropoffpatientMedicalCentre= new HashMap<>();// hard time windows list of patient
 		//		private  HashMap<String, Couple> pickpatientMedicalCentre= new HashMap<>();// soft time windows list of patient
 		//		private  HashMap<String, Couple> pickUpHomeCareStaff= new HashMap<>();// soft time windows list of home care staff 
-
+Solution initialSol= new Solution(s);
 		HashMap<String, Couple> dropoffHomeCareStaff= new HashMap<>();// hard time windows list of home care staff 
 		for(Couple c:this.dropoffHomeCareStaff.values()) {
 			Couple paar=new Couple(c, inp,test);
@@ -111,7 +111,9 @@ public class DrivingRoutes {
 			Couple paar=new Couple(c, inp,test);
 			SubJobs startNode=(SubJobs)paar.getPresent();
 			SubJobs endNode=(SubJobs)paar.getFuture();
-
+if(startNode.getId()==55) {
+	System.out.println("stop");
+}
 			// adjusting time windows
 			startNode.setStartTime(Math.max(6*60,startNode.getArrivalTime()-test.getCumulativeWaitingTime()));
 			startNode.setEndTime(startNode.getArrivalTime());
@@ -151,8 +153,8 @@ public class DrivingRoutes {
 			// departure time
 			dropOffHomeCareStaff.setdepartureTime(dropOffHomeCareStaff.getArrivalTime()+test.getloadTimeHomeCareStaff());
 			pickUpHomeCareStaff.setdepartureTime(pickUpHomeCareStaff.getArrivalTime()+test.getloadTimeHomeCareStaff());
-			
-			
+
+
 			listJobs.add(dropOffHomeCareStaff);
 			listJobs.add(pickUpHomeCareStaff);
 			Parts p= new Parts(); 
@@ -190,13 +192,13 @@ public class DrivingRoutes {
 			// service start time
 			pickPatientupMC.setStartServiceTime(pickPatientupMC.getArrivalTime());
 			dropPattientOffHome.setStartServiceTime(dropPattientOffHome.getArrivalTime());
-			
+
 			// arrival time
 			pickPatientupMC.setarrivalTime(Math.max(6*60,pickPatientupMC.getStartTime()-test.getloadTimePatient()));
 			dropPattientOffHome.setarrivalTime(Math.max(6*60+0.0001,dropPattientOffHome.getStartTime()-test.getloadTimePatient()));
 			// departure time
-						pickPatientup.setdepartureTime(pickPatientup.getArrivalTime()+test.getloadTimePatient());
-						dropPattientParamedicOff.setdepartureTime(dropPattientParamedicOff.getArrivalTime()+test.getloadTimePatient());
+			pickPatientup.setdepartureTime(pickPatientup.getArrivalTime()+test.getloadTimePatient());
+			dropPattientParamedicOff.setdepartureTime(dropPattientParamedicOff.getArrivalTime()+test.getloadTimePatient());
 			listJobs.add(pickPatientupMC);
 			listJobs.add(dropPattientOffHome);
 			p.setListSubJobs(listJobs, inp, test);
@@ -206,7 +208,7 @@ public class DrivingRoutes {
 		ArrayList<Route> poolRoutes=insertingDepotConnections(poolParts);
 
 		mergingRoutes(poolRoutes);
-		
+
 		slackTime(poolRoutes);
 
 		Solution shift= new Solution ();
@@ -225,44 +227,71 @@ public class DrivingRoutes {
 			settingStartEndServiceTime(r);// setting arrival times and departure time
 		}
 		
+		for(Route r: poolRoutes) { // calculating the start service time
+			if(r.getWaitingTime()<0) {
+				double x=0;
+			}
+		}
 	}
 
 	private void settingStartEndServiceTime(Route r) {
 		for(int p=1;p<r.getPartsRoute().size()-1;p++) {
-		for(int i=0;i<r.getPartsRoute().get(p).getListSubJobs().size();i++) {
-			SubJobs nodeK=r.getPartsRoute().get(p).getListSubJobs().get(i);
-			double startServiceTime=0;
-			if(nodeK.isClient() ) {
-				if(nodeK.getTotalPeople()<0 ) {
-				startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimeHomeCareStaff()));
-			}
-				else {
-					startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()));		
+			for(int i=0;i<r.getPartsRoute().get(p).getListSubJobs().size();i++) {
+				SubJobs nodeK=r.getPartsRoute().get(p).getListSubJobs().get(i);
+				double startServiceTime=0;
+				if(nodeK.isClient() ) {
+					if(nodeK.getTotalPeople()<0 ) {
+						startServiceTime=Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimePatient());
+						
+						if(nodeK.getEndTime()>Math.max(nodeK.getStartTime(),nodeK.getArrivalTime())) {
+						startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimeHomeCareStaff()));
+					}}
+					else {
+						startServiceTime=Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimePatient());
+						
+						if(nodeK.getEndTime()>Math.max(nodeK.getStartTime(),nodeK.getArrivalTime())) {
+						startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()));		
+						}
+						}
 				}
-			}
-			if(nodeK.isMedicalCentre()) {
-				if(nodeK.getSubJobKey().equals("D1025")) {
-					System.out.println("Stop");
+				if(nodeK.isMedicalCentre()) {
+					if(nodeK.getSubJobKey().equals("D4752")) {
+						System.out.println("Stop");
+					}
+					if(nodeK.getTotalPeople()<0 ) {
+						startServiceTime=Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimePatient());
+						
+						if(nodeK.getEndTime()>Math.max(nodeK.getStartTime(),nodeK.getArrivalTime())) {
+						startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimePatient()+test.getRegistrationTime()));
+					}}
+					else {
+						startServiceTime=Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimePatient());
+						
+						if(nodeK.getEndTime()>Math.max(nodeK.getStartTime(),nodeK.getArrivalTime())) {
+						startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()));		
+					}}
 				}
-				if(nodeK.getTotalPeople()<0 ) {
-				startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimePatient()+test.getRegistrationTime()));
-			}
-				else {
-					startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()));		
+				if(nodeK.isPatient()) {
+					if(nodeK.getTotalPeople()<0 ) {
+						startServiceTime=Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimePatient());
+						
+						if(nodeK.getEndTime()>Math.max(nodeK.getStartTime(),nodeK.getArrivalTime())) {
+						startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimePatient()));
+					}}
+					else {
+						startServiceTime=Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimePatient());
+						
+						if(nodeK.getEndTime()>Math.max(nodeK.getStartTime(),nodeK.getArrivalTime())) {
+						startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()));		
+					}}
 				}
+				r.getPartsRoute().get(p).getListSubJobs().get(i).setStartServiceTime(startServiceTime);
+				r.getPartsRoute().get(p).getListSubJobs().get(i).setEndServiceTime(nodeK.getstartServiceTime()+r.getSubJobsList().get(i).getReqTime());
+			if(nodeK.getArrivalTime()>nodeK.getstartServiceTime()) {
+				System.out.println("Stop");
 			}
-			if(nodeK.isPatient()) {
-				if(nodeK.getTotalPeople()<0 ) {
-				startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()+test.getloadTimePatient()));
 			}
-				else {
-					startServiceTime=Math.min(nodeK.getEndTime(),Math.max(nodeK.getStartTime(),nodeK.getArrivalTime()));		
-				}
-			}
-			r.getPartsRoute().get(p).getListSubJobs().get(i).setStartServiceTime(startServiceTime);
-			r.getPartsRoute().get(p).getListSubJobs().get(i).setEndServiceTime(nodeK.getstartServiceTime()+r.getSubJobsList().get(i).getReqTime());
 		}
-	}
 		//r.updateRouteFromParts(inp, test, jobsInWalkingRoute);
 		System.out.println(r.toString());
 	}
@@ -270,29 +299,29 @@ public class DrivingRoutes {
 	private void settingArrivalDepartureTime(Route r) {
 		for(int p=1;p<r.getPartsRoute().size()-1;p++) {
 			for(int i=1;i<r.getPartsRoute().get(p).getListSubJobs().size();i++) {
-			SubJobs nodeK=r.getPartsRoute().get(p).getListSubJobs().get(i-1);
-			SubJobs nodeL=r.getPartsRoute().get(p).getListSubJobs().get(i);
-			double tv=inp.getCarCost().getCost(nodeK.getId()-1, nodeL.getId()-1);
-			 double arrivalTimeK=nodeL.getArrivalTime()-tv;
-			 nodeK.setarrivalTime(arrivalTimeK);
-			 if(nodeK.isClient()) {
-			 nodeK.setdepartureTime(nodeK.getArrivalTime()+test.getloadTimeHomeCareStaff());}
-		else {
-			nodeK.setdepartureTime(nodeK.getArrivalTime()+test.getloadTimePatient());
-		}
-		}}
+				SubJobs nodeK=r.getPartsRoute().get(p).getListSubJobs().get(i-1);
+				SubJobs nodeL=r.getPartsRoute().get(p).getListSubJobs().get(i);
+				double tv=inp.getCarCost().getCost(nodeK.getId()-1, nodeL.getId()-1);
+				double arrivalTimeK=nodeL.getArrivalTime()-tv;
+				nodeK.setarrivalTime(arrivalTimeK);
+				if(nodeK.isClient()) {
+					nodeK.setdepartureTime(nodeK.getArrivalTime()+test.getloadTimeHomeCareStaff());}
+				else {
+					nodeK.setdepartureTime(nodeK.getArrivalTime()+test.getloadTimePatient());
+				}
+			}}
 		//r.updateRouteFromParts(inp, test, jobsInWalkingRoute);
-	System.out.println(r.toString());
+		System.out.println(r.toString());
 	}
 
 	private void mergingRoutes(ArrayList<Route> poolRoutes) {
 		poolRoutes.sort(Route.SORT_BY_EarlyJob);
 		ArrayList<Route> newRoutes= new ArrayList<Route>();
 		ArrayList<Route> homeCareRoutes= new ArrayList<Route>();
-		
+
 		ArrayList<Route> paramedicRoutes= new ArrayList<Route>();
-		
-for(Route r:poolRoutes) {
+
+		for(Route r:poolRoutes) {
 			if(r.getSubJobsList().get(0).isClient()) {
 				homeCareRoutes.add(r);
 			}
@@ -302,9 +331,9 @@ for(Route r:poolRoutes) {
 		}
 		for(int indexA=0;indexA<homeCareRoutes.size();indexA++) {
 			for(int indexB=0;indexB<paramedicRoutes.size();indexB++) {
-if(indexA==1 && indexB== 12) {
-	System.out.println("Stop");
-}
+				if(indexA==1 && indexB== 12) {
+					System.out.println("Stop");
+				}
 				Route route1= homeCareRoutes.get(indexA);
 				Route route2= paramedicRoutes.get(indexB);
 				if(route1!=route2 && !route1.getSubJobsList().isEmpty() && !route2.getSubJobsList().isEmpty()) {
@@ -322,21 +351,22 @@ if(indexA==1 && indexB== 12) {
 						}
 
 						route1.updateRouteFromParts(inp, test, jobsInWalkingRoute);
-						route1.setAmountParamedic(newRoute.getAmountParamedic());
-						route1.setHomeCareStaff(newRoute.getHomeCareStaff());
+						route1.countingMedicalStaff();
+						//route1.setAmountParamedic(newRoute.getAmountParamedic());
+						//route1.setHomeCareStaff(newRoute.getHomeCareStaff());
 					}
 					newRoutes.add(route1);
 					newRoutes.add(route2);
 				}
 			}
 		}
-		
-		
+
+
 		for(int indexA=0;indexA<poolRoutes.size();indexA++) {
 			for(int indexB=0;indexB<poolRoutes.size();indexB++) {
-if(indexA==6 && indexB== 7) {
-	System.out.println("Stop");
-}
+				if(indexA==6 && indexB== 7) {
+					System.out.println("Stop");
+				}
 				Route route1= poolRoutes.get(indexA);
 				Route route2= poolRoutes.get(indexB);
 				if(route1!=route2 && !route1.getSubJobsList().isEmpty() && !route2.getSubJobsList().isEmpty()) {
@@ -354,6 +384,7 @@ if(indexA==6 && indexB== 7) {
 						}
 
 						route1.updateRouteFromParts(inp, test, jobsInWalkingRoute);
+						route1.countingMedicalStaff();
 						route1.setAmountParamedic(newRoute.getAmountParamedic());
 						route1.setHomeCareStaff(newRoute.getHomeCareStaff());
 					}
@@ -362,11 +393,11 @@ if(indexA==6 && indexB== 7) {
 				}
 			}
 		}
-for(Route newRoute:newRoutes) {
-	if(newRoute.getSubJobsList().isEmpty()) {
-		poolRoutes.remove(newRoute);
-	}
-}
+		for(Route newRoute:newRoutes) {
+			if(newRoute.getSubJobsList().isEmpty()) {
+				poolRoutes.remove(newRoute);
+			}
+		}
 	}
 
 	private Route merging(Route route1, Route route2) {
@@ -392,8 +423,8 @@ for(Route newRoute:newRoutes) {
 			SubJobs Jnode=jobsList.get(i);
 			double tv=inp.getCarCost().getCost(Inode.getId()-1, Jnode.getId()-1);
 			double xxx=Inode.getDepartureTime()+tv;
-			if(Inode.getDepartureTime()+tv<=Jnode.getEndTime()) {
-//			if(Inode.getDepartureTime()+tv<=Jnode.getEndTime() &&  Inode.getDepartureTime()+tv>=Jnode.getStartTime()) { // time window
+			//if(Inode.getDepartureTime()+tv<=Jnode.getEndTime()) {
+						if(Inode.getDepartureTime()+tv<=Jnode.getEndTime() &&  Inode.getDepartureTime()+tv>=Jnode.getStartTime()) { // time window
 				if(CapVehicle+Jnode.getTotalPeople()<inp.getVehicles().get(0).getMaxCapacity()) {
 					CapVehicle+=Jnode.getTotalPeople();
 					Jnode.setarrivalTime(Inode.getDepartureTime()+tv);
@@ -967,42 +998,48 @@ for(Route newRoute:newRoutes) {
 		Solution copySolution= assigmentVehicle(startingSol);// hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
 		Solution sol = merginShift(copySolution);
 
-		
+
 		System.out.println(copySolution.toString());
 		//for(int iter=0;iter<10;iter++) {
-			newSol=new Solution (sol);
-			Solution sol1 = chain(newSol);
-			//Solution sol1= intraMergingParts0(copySolution);
-			//sol1.checkingSolution(inp,test,jobsInWalkingRoute,this.initialSol);
-			System.out.println(sol1.getobjectiveFunction());
-			if(sol1.getobjectiveFunction()<newSol.getobjectiveFunction()) {
-				newSol=new Solution (sol1);
-			}
+		newSol=new Solution (sol);
+		Solution sol1 = chain(newSol);
+		System.out.println(sol1.getobjectiveFunction());
+		Solution sol2 = chain(copySolution);
+		System.out.println(sol2.getobjectiveFunction());
+		//Solution sol1= intraMergingParts0(copySolution);
+		//sol1.checkingSolution(inp,test,jobsInWalkingRoute,this.initialSol);
+		
+		if(sol2.getobjectiveFunction()<sol1.getobjectiveFunction()) {
+			sol1=new Solution (sol1);
+		}
+		if(sol1.getobjectiveFunction()<newSol.getobjectiveFunction()) {
+			newSol=new Solution (sol1);
+		}
 
-			copySolution= new Solution(newSol);
-			//areAllJobsAssigned=checkAssigment(newSol);
+		copySolution= new Solution(newSol);
+		//areAllJobsAssigned=checkAssigment(newSol);
 		//}
 		return newSol;
 	}
 
 
 	private Solution chain(Solution copySolution) {
-Solution sol= new Solution(copySolution);
-ArrayList<Route> routesList= new ArrayList<Route>();
-ArrayList<Route> newRoutes= new ArrayList<Route>();
-ArrayList<Route> routeToMerge= new ArrayList<Route>();
-for(Route r:sol.getRoutes()) {
-	routesList.add(r);
-}
-//for(int indexA=0;indexA<routesList.size();indexA++) {
-int totalRoutesToMerge=Math.min(2, routesList.size());
-if(totalRoutesToMerge>=2) {
-	while(routeToMerge.size()<totalRoutesToMerge ) {
-		int indexA=rn.nextInt(routesList.size()-1); 
-if(!routeToMerge.contains(routesList.get(indexA)) && !routesList.get(indexA).getPartsRoute().isEmpty()) {
-	routeToMerge.add(routesList.get(indexA));
-}}
-		//if(route1!=route2 && !route1.getSubJobsList().isEmpty() && !route2.getSubJobsList().isEmpty()) {
+		Solution sol= new Solution(copySolution);
+		ArrayList<Route> routesList= new ArrayList<Route>();
+		ArrayList<Route> newRoutes= new ArrayList<Route>();
+		ArrayList<Route> routeToMerge= new ArrayList<Route>();
+		for(Route r:sol.getRoutes()) {
+			routesList.add(r);
+		}
+		//for(int indexA=0;indexA<routesList.size();indexA++) {
+		int totalRoutesToMerge=Math.min(2, routesList.size());
+		if(totalRoutesToMerge>=2) {
+			while(routeToMerge.size()<totalRoutesToMerge ) {
+				int indexA=rn.nextInt(routesList.size()-1); 
+				if(!routeToMerge.contains(routesList.get(indexA)) && !routesList.get(indexA).getPartsRoute().isEmpty()) {
+					routeToMerge.add(routesList.get(indexA));
+				}}
+			//if(route1!=route2 && !route1.getSubJobsList().isEmpty() && !route2.getSubJobsList().isEmpty()) {
 			Route newRoute= mergingSetRoutes(routeToMerge);
 			if(newRoute!=null) {
 				for(Route r:routeToMerge) {
@@ -1017,34 +1054,35 @@ if(!routeToMerge.contains(routesList.get(indexA)) && !routesList.get(indexA).get
 				}
 
 				routeToMerge.get(0).updateRouteFromParts(inp, test, jobsInWalkingRoute);
-				routeToMerge.get(0).setAmountParamedic(newRoute.getAmountParamedic());
-				routeToMerge.get(0).setHomeCareStaff(newRoute.getHomeCareStaff());
+				routeToMerge.get(0).countingMedicalStaff();
+				//routeToMerge.get(0).setAmountParamedic(newRoute.getAmountParamedic());
+				//routeToMerge.get(0).setHomeCareStaff(newRoute.getHomeCareStaff());
 			}
-	}
-			for(Route r:routeToMerge) {
-				newRoutes.add(r);
-			}
+		}
+		for(Route r:routeToMerge) {
+			newRoutes.add(r);
+		}
 		//}
-	
-//}
 
-for(Route r:newRoutes) {
-	if(r.getPartsRoute().isEmpty()) {
-		routesList.remove(r);
-	}
-	
-}
-slackTime(routesList);
+		//}
 
-Solution shift= new Solution ();
+		for(Route r:newRoutes) {
+			if(r.getPartsRoute().isEmpty()) {
+				routesList.remove(r);
+			}
 
-for(Route route:routesList) {
-	if(!route.getPartsRoute().isEmpty()) {
-		shift.getRoutes().add(route);}
-}
-shift.checkingSolution(inp, test, jobsInWalkingRoute, shift);
+		}
+		slackTime(routesList);
 
-		
+		Solution shift= new Solution ();
+
+		for(Route route:routesList) {
+			if(!route.getPartsRoute().isEmpty()) {
+				shift.getRoutes().add(route);}
+		}
+		shift.checkingSolution(inp, test, jobsInWalkingRoute, shift);
+
+
 		return shift;
 	}
 
@@ -1054,22 +1092,22 @@ shift.checkingSolution(inp, test, jobsInWalkingRoute, shift);
 		ArrayList<SubJobs> jobsList= new ArrayList<SubJobs>(); 
 		for(Route r:routeToMerge) {
 			for(int p=1;p<r.getPartsRoute().size()-1;p++) {
-			for(SubJobs j:r.getPartsRoute().get(p).getListSubJobs()) {
-				jobsList.add(j);
-			}
+				for(SubJobs j:r.getPartsRoute().get(p).getListSubJobs()) {
+					jobsList.add(j);
+				}
 			}
 		}
-		
+
 		jobsList.sort(SubJobs.SORT_BY_STARTW);
 		ArrayList<SubJobs> sequenceJobs= new ArrayList<SubJobs>(); 
 		double paramedics=0;
 		double homeCareStaff=0;
 
 		for(Route r:routeToMerge) {
-				 paramedics+=r.getAmountParamedic();
-				 homeCareStaff+=r.getHomeCareStaff();
+			paramedics+=r.getAmountParamedic();
+			homeCareStaff+=r.getHomeCareStaff();
 		}
-		
+
 		double CapVehicle=homeCareStaff+paramedics;
 
 		CapVehicle+=jobsList.get(0).getTotalPeople();
@@ -1079,8 +1117,8 @@ shift.checkingSolution(inp, test, jobsInWalkingRoute, shift);
 			SubJobs Jnode=jobsList.get(i);
 			double tv=inp.getCarCost().getCost(Inode.getId()-1, Jnode.getId()-1);
 			double xxx=Inode.getDepartureTime()+tv;
-			if(Inode.getDepartureTime()+tv<=Jnode.getEndTime()) {
-//			if(Inode.getDepartureTime()+tv<=Jnode.getEndTime() &&  Inode.getDepartureTime()+tv>=Jnode.getStartTime()) { // time window
+			//if(Inode.getDepartureTime()+tv<=Jnode.getEndTime()) {
+							if(Inode.getDepartureTime()+tv<=Jnode.getEndTime() &&  Inode.getDepartureTime()+tv>=Jnode.getStartTime()) { // time window
 				if(CapVehicle+Jnode.getTotalPeople()<inp.getVehicles().get(0).getMaxCapacity()) {
 					CapVehicle+=Jnode.getTotalPeople();
 					Jnode.setarrivalTime(Inode.getDepartureTime()+tv);

@@ -116,7 +116,9 @@ public class Solution {
 	//s = s.concat("\nFO: Service time: " + serviceTime);
 	s = s.concat("\nWalking time: " + walkingTime);
 	s = s.concat("\n Waiting time: " + waitingTime);
-	s= s.concat("\n medical staff cost: "+ homeCareStaffCost);
+	s = s.concat("\n Amount home care staff: " + homeCareStaff);
+	s = s.concat("\n Amount paramedic: " + paramedic);
+	//s= s.concat("\n medical staff cost: "+ homeCareStaffCost);
 	s= s.concat("\n driver cost: "+ driverCost);
 	s= s.concat("\n time window violation: "+ timeWindowViolation);
 	s= s.concat("\n waiting Time to penalize: "+ additionalWaitingTime);
@@ -144,8 +146,8 @@ public class Solution {
 					if(j.isPatient()) {
 						type="p";
 					}
-					s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+j.getArrivalTime()+"  B  "+j.getstartServiceTime()+ "end service "+ j.getendServiceTime()+"   D  "+j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+j.getStartTime()+";"+j.getEndTime()+"]"+") \n");
-								}
+					s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getStartTime()+";"+(int)j.getEndTime()+"]"+") \n");
+													}
 				s = s.concat("\n\n");
 			}
 		}	
@@ -307,15 +309,15 @@ public class Solution {
 			durationSolution+=r.getDurationRoute();
 		}
 		this.setDurationSolution(durationSolution);
-		this.setWaitingTime(waitingTime);
-		this.setServiceTime(serviceTime);
-		this.setdrivingTime(drivingTime);
+		this.setWaitingTime(Math.abs(waitingTime));
+		this.setServiceTime(Math.abs(serviceTime));
+		this.setdrivingTime(Math.abs(drivingTime));
 		this.setParamedic(paramedic);
-		this.setParamedic(homeCareStaff);
-		this.setwAdditionalWaitingTime(additionalWaitingTime);
-		this.setdetourViolation(detourViolation);
-		this.settimeWindowViolation(timeWindowViolation);
-		this.setdetourDuration(detour);
+		this.setHomeCareStaff(homeCareStaff);
+		this.setwAdditionalWaitingTime(Math.abs(additionalWaitingTime));
+		this.setdetourViolation(Math.abs(detourViolation));
+		this.settimeWindowViolation(Math.abs(timeWindowViolation));
+		this.setdetourDuration(Math.abs(detour));
 
 	
 
