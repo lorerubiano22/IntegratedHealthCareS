@@ -427,7 +427,8 @@ public class Route {
 	public void checkingTimeWindows(Test test, Inputs inp) {
 		double penalization=0;
 		double penalizationRoute=0;
-		for(SubJobs j:this.getSubJobsList()) {
+		for(int p=1;p<this.getPartsRoute().size()-1;p++) {
+		for(SubJobs j:this.getPartsRoute().get(p).getListSubJobs()) {
 			if(j.isClient() || j.isMedicalCentre()) {
 				if(j.getTotalPeople()<0) {// drop-off
 					if(j.getstartServiceTime()>j.getEndTime()) {
@@ -438,7 +439,7 @@ public class Route {
 
 				}
 			}
-
+		}
 		}
 		this.settimeWindowViolation(penalizationRoute);
 		System.out.println(this.toString());
@@ -448,7 +449,8 @@ public class Route {
 		double penalization=0;
 		double penalizationRoute=0;
 		double additionalWaitingRoute=0;
-		for(SubJobs j:this.getSubJobsList()) { // se producen despues de terminar un servicio
+		for(int p=1;p<this.getPartsRoute().size()-1;p++) {
+			for(SubJobs j:this.getPartsRoute().get(p).getListSubJobs()) { // se producen despues de terminar un servicio
 			if((j.getArrivalTime()+j.getdeltaArrivalStartServiceTime())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
 				penalization=j.getstartServiceTime()-(j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime());
 				penalizationRoute+=penalization;
@@ -465,7 +467,7 @@ public class Route {
 			}
 			j.setWaitingTime(penalization);
 			j.setAdditionalWaitingTime(additionalWaitingRoute);
-		}
+		}}
 		this.setWaitingTime(penalizationRoute);
 		this.setAdditionalWaitingTime(additionalWaitingRoute);
 		System.out.println(this.toString());

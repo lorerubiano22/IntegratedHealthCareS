@@ -159,8 +159,8 @@ public class Solution {
 		int id=-1;
 		for(Route r: this.getRoutes()) {
 			id++;
-			computeStartTimeRoute(r.getSubJobsList().get(0),r,inp,test);
-			computeEndTimeRoute(r.getSubJobsList().get(r.getSubJobsList().size()-1),r,inp,test);
+			computeStartTimeRoute(r.getPartsRoute().get(1).getListSubJobs().get(0),r,inp,test);
+			computeEndTimeRoute(r.getPartsRoute().get(r.getPartsRoute().size()-2).getListSubJobs().get(r.getPartsRoute().get(r.getPartsRoute().size()-2).getListSubJobs().size()-1),r,inp,test);
 			r.setIdRoute(id);
 			r.setDurationRoute(r.getSubJobsList().getLast().getDepartureTime()-r.getSubJobsList().getFirst().getArrivalTime());
 			r.computeServiceTime(inp,jobsInWalkingRoute);
@@ -333,7 +333,7 @@ public class Solution {
 				travelTimeMedicalStaff+=e.gettravelTimeInRoute();	
 			}
 		}
-		homeCareStaffCost=travelTimeMedicalStaff+this.waitingTime;// los paramedicos que salen del depot
+		homeCareStaffCost=driverCost+this.waitingTime;// los paramedicos que salen del depot
 		this.sethomeCareStaffCost(homeCareStaffCost);
 
 		if(test.gethomeCareStaffObjective()==1) {

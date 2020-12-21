@@ -32,11 +32,12 @@ public class Algorithm {
 		rn=new Random(t.getSeed());
 		input = i;
 		//for(int iter=0;iter<200;iter++) {
+		
+			
+		subroutes = new WalkingRoutes(input, t, i.getNodes()); // stage 1: Creation of walking routes
 		for(int iter=0;iter<10;iter++) {
 			walkingList = new LinkedList<SubRoute>();
-		//subroutes = new WalkingRoutes(input, t, i.getNodes()); // stage 1: Creation of walking routes
-	
-		//selectionWalkingRoutes();
+			selectionWalkingRoutes();
 		
 		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
@@ -48,7 +49,7 @@ public class Algorithm {
 			objective=Double.MAX_VALUE;
 		}
 		else {
-			objective=newSolution.getobjectiveFunction();
+			objective=bestSolution.getobjectiveFunction();
 		}
 		if(newSolution.getobjectiveFunction()<objective) {
 			setBestSolution(drivingRoute.getSol());

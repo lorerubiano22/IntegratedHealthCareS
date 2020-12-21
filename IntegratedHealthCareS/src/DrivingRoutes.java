@@ -967,104 +967,151 @@ for(Route newRoute:newRoutes) {
 		Solution copySolution= assigmentVehicle(startingSol);// hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
 		Solution sol = merginShift(copySolution);
 
-		////
+		
 		System.out.println(copySolution.toString());
-		for(int iter=0;iter<10;iter++) {
-
-			Solution sol1= intraMergingParts0(copySolution);
-			sol1.checkingSolution(inp,test,jobsInWalkingRoute,this.initialSol);
+		//for(int iter=0;iter<10;iter++) {
+			newSol=new Solution (sol);
+			Solution sol1 = chain(newSol);
+			//Solution sol1= intraMergingParts0(copySolution);
+			//sol1.checkingSolution(inp,test,jobsInWalkingRoute,this.initialSol);
 			System.out.println(sol1.getobjectiveFunction());
-			if(sol1.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
+			if(sol1.getobjectiveFunction()<newSol.getobjectiveFunction()) {
 				newSol=new Solution (sol1);
-				startingSol=new Solution (sol1);
-			}
-			else {
-				newSol=new Solution (startingSol);
 			}
 
-
-			/**
-			 * No merging individuals 
-			 * */
-
-
-			Solution sol2= mergingIndividualsTrip(sol1);
-			sol2.checkingSolution(inp,test,jobsInWalkingRoute,this.initialSol);
-			System.out.println(sol2.getobjectiveFunction());
-
-			/**
-			 * 
-			 * */
-
-
-
-
-			Solution Sol2= interMergingParts(copySolution); // 1 merging parts (without complete parts)
-			Sol2.checkingSolution(inp,test,jobsInWalkingRoute,initialSol);
-
-			if(Sol2.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
-				newSol=new Solution (Sol2);
-				startingSol=new Solution (Sol2);
-			}
-			else {
-				newSol=new Solution (startingSol);
-			}
-
-			//			Solution sol0= treatment1(newSol);
-			//			sol0.checkingSolution(inp,test,jobsInWalkingRoute);
-			//			System.out.println(sol0.toString());
-			//			
-			//			if(sol0.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
-			//				newSol=new Solution (sol0);
-			//				startingSol=new Solution (sol0);
-			//			}
-			//			else {
-			//				newSol=new Solution (startingSol);
-			//			}
-
-			//		Solution s1= shaking(newSol);
-			//		System.out.println(s1.toString());
-			//		s1.checkingSolution(inp,test,jobsInWalkingRoute);
-			//		System.out.println(s1.toString());
-			//
-			//		if(s1.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
-			//			newSol=new Solution (s1);
-			//			startingSol=new Solution (s1);
-			//		}
-
-			//					Solution sol1= treatment2(startingSol);
-			//					sol1.checkingSolution(inp,test,jobsInWalkingRoute);
-			//					boolean areAllJobsAssigned=checkAssigment(sol1);
-			//			
-			//					
-			//					if(sol1.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
-			//						newSol=new Solution (sol1);
-			//						startingSol=new Solution (sol1);
-			//					}
-			//					
-			//					Solution sol2= treatment1(newSol);
-			//					sol2.checkingSolution(inp,test,jobsInWalkingRoute);
-			//					areAllJobsAssigned=checkAssigment(sol2);
-			//					if(sol2.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
-			//						newSol=new Solution (sol2);
-			//						startingSol=new Solution (sol2);
-			//					}
-			//					
-
-			//
-			//								Solution alternativeSolution= assigmentTurnsToVehicles(newSol);
-			//								alternativeSolution.checkingSolution(inp,test,jobsInWalkingRoute);
-			//						
-			//								if(alternativeSolution.getobjectiveFunction()<startingSol.getobjectiveFunction()) {
-			//									newSol=new Solution (alternativeSolution);
-			//									startingSol=new Solution (alternativeSolution);
-			//								}
 			copySolution= new Solution(newSol);
 			//areAllJobsAssigned=checkAssigment(newSol);
-		}
+		//}
 		return newSol;
 	}
 
+
+	private Solution chain(Solution copySolution) {
+Solution sol= new Solution(copySolution);
+ArrayList<Route> routesList= new ArrayList<Route>();
+ArrayList<Route> newRoutes= new ArrayList<Route>();
+ArrayList<Route> routeToMerge= new ArrayList<Route>();
+for(Route r:sol.getRoutes()) {
+	routesList.add(r);
+}
+//for(int indexA=0;indexA<routesList.size();indexA++) {
+int totalRoutesToMerge=Math.min(2, routesList.size());
+if(totalRoutesToMerge>=2) {
+	while(routeToMerge.size()<totalRoutesToMerge ) {
+		int indexA=rn.nextInt(routesList.size()-1); 
+if(!routeToMerge.contains(routesList.get(indexA)) && !routesList.get(indexA).getPartsRoute().isEmpty()) {
+	routeToMerge.add(routesList.get(indexA));
+}}
+		//if(route1!=route2 && !route1.getSubJobsList().isEmpty() && !route2.getSubJobsList().isEmpty()) {
+			Route newRoute= mergingSetRoutes(routeToMerge);
+			if(newRoute!=null) {
+				for(Route r:routeToMerge) {
+					r.getSubJobsList().clear();
+					r.getPartsRoute().clear();
+				}
+				for(SubJobs j:newRoute.getSubJobsList()) {
+					routeToMerge.get(0).getSubJobsList().add(j);
+				}
+				for(Parts p:newRoute.getPartsRoute()) {
+					routeToMerge.get(0).getPartsRoute().add(p);
+				}
+
+				routeToMerge.get(0).updateRouteFromParts(inp, test, jobsInWalkingRoute);
+				routeToMerge.get(0).setAmountParamedic(newRoute.getAmountParamedic());
+				routeToMerge.get(0).setHomeCareStaff(newRoute.getHomeCareStaff());
+			}
+	}
+			for(Route r:routeToMerge) {
+				newRoutes.add(r);
+			}
+		//}
+	
+//}
+
+for(Route r:newRoutes) {
+	if(r.getPartsRoute().isEmpty()) {
+		routesList.remove(r);
+	}
+	
+}
+slackTime(routesList);
+
+Solution shift= new Solution ();
+
+for(Route route:routesList) {
+	if(!route.getPartsRoute().isEmpty()) {
+		shift.getRoutes().add(route);}
+}
+shift.checkingSolution(inp, test, jobsInWalkingRoute, shift);
+
+		
+		return shift;
+	}
+
+	private Route mergingSetRoutes(ArrayList<Route> routeToMerge) {
+		routeToMerge.sort(Route.SORT_BY_EarlyJob);
+		Route newRoute=null;
+		ArrayList<SubJobs> jobsList= new ArrayList<SubJobs>(); 
+		for(Route r:routeToMerge) {
+			for(int p=1;p<r.getPartsRoute().size()-1;p++) {
+			for(SubJobs j:r.getPartsRoute().get(p).getListSubJobs()) {
+				jobsList.add(j);
+			}
+			}
+		}
+		
+		jobsList.sort(SubJobs.SORT_BY_STARTW);
+		ArrayList<SubJobs> sequenceJobs= new ArrayList<SubJobs>(); 
+		double paramedics=0;
+		double homeCareStaff=0;
+
+		for(Route r:routeToMerge) {
+				 paramedics+=r.getAmountParamedic();
+				 homeCareStaff+=r.getHomeCareStaff();
+		}
+		
+		double CapVehicle=homeCareStaff+paramedics;
+
+		CapVehicle+=jobsList.get(0).getTotalPeople();
+		sequenceJobs.add(jobsList.get(0));
+		for(int i=1;i<jobsList.size();i++) {
+			SubJobs Inode=jobsList.get(i-1);
+			SubJobs Jnode=jobsList.get(i);
+			double tv=inp.getCarCost().getCost(Inode.getId()-1, Jnode.getId()-1);
+			double xxx=Inode.getDepartureTime()+tv;
+			if(Inode.getDepartureTime()+tv<=Jnode.getEndTime()) {
+//			if(Inode.getDepartureTime()+tv<=Jnode.getEndTime() &&  Inode.getDepartureTime()+tv>=Jnode.getStartTime()) { // time window
+				if(CapVehicle+Jnode.getTotalPeople()<inp.getVehicles().get(0).getMaxCapacity()) {
+					CapVehicle+=Jnode.getTotalPeople();
+					Jnode.setarrivalTime(Inode.getDepartureTime()+tv);
+					Jnode.setdepartureTime(Jnode.getArrivalTime()+Jnode.getdeltaArrivalDeparture());
+					sequenceJobs.add(Jnode);
+				}
+				else {
+					sequenceJobs.clear();
+					break;
+				}
+			}
+			else {
+				sequenceJobs.clear();
+				break;
+			}
+		}
+		System.out.println("Stop");
+		if(!sequenceJobs.isEmpty()) {
+			newRoute=new Route();
+			Parts p = new Parts();
+
+			p.setListSubJobs(sequenceJobs, inp, test);
+			newRoute.getPartsRoute().add(routeToMerge.get(0).getPartsRoute().get(0));
+			newRoute.getPartsRoute().add(p);
+			newRoute.getPartsRoute().add(routeToMerge.get(0).getPartsRoute().get(routeToMerge.get(0).getPartsRoute().size()-1));
+			newRoute.updateRouteFromParts(inp, test, jobsInWalkingRoute);
+			newRoute.setAmountParamedic(paramedics);
+			newRoute.setHomeCareStaff(homeCareStaff);
+		}
+		return newRoute;
+	}
 
 	private Solution mergingIndividualsTrip(Solution s) {
 		Solution sol1 = new Solution (s);

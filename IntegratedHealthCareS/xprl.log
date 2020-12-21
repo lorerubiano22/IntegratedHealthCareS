@@ -2083,3 +2083,75 @@
 
 15/12/2020 13:53:25: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
 
+21/12/2020 10:44:16: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:44:16: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:44:16: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:44:16: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:45:52: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:45:52: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:45:52: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:45:52: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:47:01: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:47:01: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:47:01: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:47:01: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:48:32: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:48:32: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:48:32: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:48:32: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:52:58: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:52:58: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:52:58: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:52:58: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:56:02: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:56:02: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:56:02: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:56:02: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:56:16: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:56:16: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:56:16: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:56:16: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:58:44: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:58:44: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:58:44: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:58:44: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:58:57: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:58:57: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+21/12/2020 10:58:57: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+21/12/2020 10:58:57: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
