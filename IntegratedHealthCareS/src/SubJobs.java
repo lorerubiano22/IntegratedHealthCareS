@@ -41,12 +41,16 @@ public class SubJobs extends Jobs {
 		this.setClient(j.isClient());
 		this.setMedicalCentre(j.isMedicalCentre());
 		this.setIdUser(j.getIdUser());
+		this.setSoftStartTime(j.getSoftStartTime());
+		this.setSoftEndTime(j.getSoftEndTime());
 		//this.setTotalPeople(j.getTotalPeople());
 		this.setloadUnloadTime(j.getloadUnloadTime());
 		this.setloadUnloadRegistrationTime(j.getloadUnloadRegistrationTime());
 		this.setdeltaArrivalDeparture(j.getdeltaArrivalDeparture());
 		this.setdeltaArrivalStartServiceTime(j.getdeltaArrivalStartServiceTime());
 		this.setdeltarStartServiceTimeEndServiceTime(j.getdeltarStartServiceTimeEndServiceTime());
+		this.setsortETWSizeCriterion(j.getsortETWSizeCriterion());
+		this.setsortLTWSizeCriterion(j.getsortLTWSizeCriterion());
 	}
 
 	// Getters
@@ -76,6 +80,8 @@ public class SubJobs extends Jobs {
 	s = s.concat("\nId: " + (this.getSubJobKey()));
 	s = s.concat("\n start time: " + (this.getStartTime()));
 	s = s.concat("\n end time: " + (this.getEndTime()));
+	s = s.concat("\n soft start time: " + (this.getSoftStartTime()));
+	s = s.concat("\n soft end time: " + (this.getSoftEndTime()));
 	s = s.concat("\n arrival time: " + (this.getArrivalTime()));
 	s = s.concat("\n departure time: " + (this.getDepartureTime()));
 	s = s.concat("\n start service:" + this.getstartServiceTime());

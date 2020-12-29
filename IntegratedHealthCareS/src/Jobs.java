@@ -81,8 +81,8 @@ public class Jobs {
 		this.id = i.getId();
 		this.hardstartTime = i.getStartTime();
 		this.hardendTime = i.getEndTime();
-		this.softstartTime = i.getStartTime();
-		this.softendTime = i.getEndTime();
+		this.softstartTime = i.getSoftStartTime();
+		this.softendTime = i.getSoftEndTime();
 		this.departureTime=i.departureTime;
 		this.arrivalTime=i.arrivalTime;
 		this.reqQualification = i.getReqQualification();
@@ -120,8 +120,8 @@ public class Jobs {
 		this.id = i.getId();
 		this.hardstartTime = i.getStartTime();
 		this.hardendTime = i.getEndTime();
-		this.softstartTime = i.getStartTime();
-		this.softendTime = i.getEndTime();
+		this.softstartTime = i.getSoftStartTime();
+		this.softendTime = i.getSoftEndTime();
 		this.reqQualification = i.getReqQualification();
 		this.serviceTime = i.getReqTime();
 //		this.vehicleArrivalTime=i.vehicleArrivalTime;
@@ -150,6 +150,10 @@ public class Jobs {
 		deltarStartServiceTimeEndServiceTime=i.deltarStartServiceTimeEndServiceTime;
 	}
 
+	
+	// private double sortETWSizeCriterion; // sort criterion the size of time window and the earliest time
+	//private double sortLTWSizeCriterion; // sort criterion the size of time window and the latest time
+	
 	/* SET METHODS */
 	public void setdeltaArrivalDeparture(double a) {this.deltaArrivalDeparture = a;}
 	public void setdeltaArrivalStartServiceTime(double a) {this.deltaArrivalStartServiceTime = a;}
@@ -167,8 +171,11 @@ public class Jobs {
 	public void setloadUnloadTime(double time) {this.loadUnloadTime = time;}
 	public void setStartServiceTime(double B) {this.startServiceTime = B;}
 	public void setEndServiceTime(double B) {this.endServiceTime = B;}
-	public void setStartTime(double B) {this.hardstartTime = B;}
-	public void setEndTime(double B) {	this.hardendTime = B;}
+	
+	public void setStartTime(double B) {this.hardstartTime = (int) Math.ceil(B);}
+	public void setSoftStartTime(double B) {this.softstartTime = B;}
+	public void setEndTime(double B) {	this.hardendTime = (int) Math.ceil(B);}
+	public void setSoftEndTime(double B) {	this.softendTime= B;}
 	public void setserviceTime(double B) {	this.serviceTime = B;}
 	public void setClient(boolean client) {isClient= client;}
 	public void setPatient(boolean patient) {this.isPatient = patient;}
@@ -187,7 +194,8 @@ public class Jobs {
 			this.waitingTime = startService-arrivalTime;	
 		}
 	}
-
+	public void setsortETWSizeCriterion(double B) {	this.sortETWSizeCriterion = B;}
+	public void setsortLTWSizeCriterion(double B) {	this.sortLTWSizeCriterion = B;}
 	
 	/* GET METHODS */
 	public boolean isServerd() {return isServerd;}
@@ -378,6 +386,8 @@ public class Jobs {
 		s = s.concat("\nJob Id: " + this.id);
 		s = s.concat("\nstartTime: " + this.hardstartTime);
 		s = s.concat("\nendTime: " + this.hardendTime);
+		s = s.concat("\nsoft startTime: " + this.softstartTime);
+		s = s.concat("\nsoft endTime: " + this.softendTime);
 		s = s.concat("\nservice start Time: " + this.startServiceTime);
 		s = s.concat("\nservice end Time: " + this.endServiceTime);
 		s = s.concat("\nArrival Time: " + (this.arrivalTime));
