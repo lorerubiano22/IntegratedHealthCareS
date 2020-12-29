@@ -229,9 +229,7 @@ public class DrivingRoutes {
 			}
 		}while(!insertionOrder.isEmpty());
 
-		
-		
-		
+		mergingParts(poolParts);  // merging Parts
 		ArrayList<Route> poolRoutes=insertingDepotConnections(poolParts);
 
 		mergingRoutes(poolRoutes);
@@ -248,6 +246,11 @@ public class DrivingRoutes {
 		return shift;
 	}
 
+
+	private void mergingParts(ArrayList<Parts> poolParts) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	private HashMap<String, Couple> selectingHomeCareStaffPickUpCouple(HashMap<String, Couple> dropoffHomeCareStaff2) {
 		HashMap<String, Couple> dropoffHomeCareStaff= new HashMap<>();// hard time windows list of home care staff 
@@ -416,10 +419,10 @@ public class DrivingRoutes {
 			}
 			sequence.sort(Jobs.SORT_BY_STARTW);
 
-			double arrival_a=sequence.get(0).getstartServiceTime();
+			
 			double departure_a=sequence.get(0).getDepartureTime();
 
-
+if(vehicleCapacityPart(sequence)) {
 			for(int index=1;index<sequence.size();index++) {
 				SubJobs a=sequence.get(index-1);
 				SubJobs b=sequence.get(index);
@@ -435,6 +438,7 @@ public class DrivingRoutes {
 					break;
 				}
 			}
+		}
 			if(inserted) {
 				//
 				for(int index=1;index<sequence.size();index++) {
