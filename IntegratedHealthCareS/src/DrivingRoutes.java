@@ -248,9 +248,112 @@ public class DrivingRoutes {
 
 
 	private void mergingParts(ArrayList<Parts> poolParts) {
-		// TODO Auto-generated method stub
+		ArrayList<Parts> partsCopy = new ArrayList<Parts>();
+		for(Parts p1:poolParts) {
+			partsCopy.add(new Parts(p1));
+		}
+		ArrayList<Parts> parts = null;
+		for(int i=0;i<partsCopy.size();i++) {
+			Parts p1=partsCopy.get(i);
+			System.out.println(p1.toString());
+			for(int j=0;j<partsCopy.size();j++) { // siempre se pone al final de cada parte
+				Parts p2=partsCopy.get(j);
+				System.out.println(p2.toString());
+				if(p1!=p2 && !p1.getListSubJobs().isEmpty() && !p2.getListSubJobs().isEmpty()) {// solo se mezclan las partes que son diferentes entre ellas
+					SubJobs lastP1=p1.getListSubJobs().get(p1.getListSubJobs().size()-1);
+					SubJobs firstP2=p2.getListSubJobs().get(0);
+					if(lastP1.getDepartureTime()<firstP2.getArrivalTime()) { // siempre se pone al final de cada parte
+						double travelTime=inp.getCarCost().getCost(lastP1.getId()-1, firstP2.getId()-1);
+						if(lastP1.getDepartureTime()+travelTime+firstP2.getloadUnloadRegistrationTime()+firstP2.getloadUnloadTime()<=firstP2.getEndTime() && lastP1.getDepartureTime()+travelTime+firstP2.getloadUnloadRegistrationTime()+firstP2.getloadUnloadTime()>=firstP2.getStartTime()) {						
+							parts = new ArrayList<Parts>();
+							parts.add(poolParts.get(i));
+							parts.add(poolParts.get(j));
+							
+							ArrayList<SubJobs> sequence = new ArrayList<SubJobs>();
+							for(Parts p:parts) {
+								for(SubJobs sj: p.getListSubJobs()) {
+									sequence.add(sj);
+								}	
+							}
+							sequence.sort(Jobs.SORT_BY_STARTW);
+							boolean inserted=checkingSequenceVehicleCapacity(sequence);
+							
+							if(inserted) {
+								for(int index=1;index<sequence.size();index++) {
+									SubJobs a=sequence.get(index-1);
+									SubJobs b=sequence.get(index);
+									double tv=inp.getCarCost().getCost(a.getId()-1, b.getId()-1);
+									double calculatedStartTime=0;
+									double possibleStartTime=0;
+									if(b.isMedicalCentre() ) {
+										if(b.getTotalPeople()<0) {
+											calculatedStartTime=(a.getDepartureTime()+tv+test.getRegistrationTime());
+											possibleStartTime=Math.max(b.getEndTime(), calculatedStartTime);
+										}
+										else {
+											calculatedStartTime=(a.getDepartureTime()+tv);
+											possibleStartTime=Math.max(b.getStartTime(), calculatedStartTime);
+										}
+									}
+									else {
+										if(b.isClient()) {
+											calculatedStartTime=(a.getDepartureTime()+tv+test.getloadTimeHomeCareStaff());
+										}
+										else {
+											calculatedStartTime=(a.getDepartureTime()+tv+test.getloadTimePatient());
+										}
+										possibleStartTime=Math.max(b.getSoftStartTime(), calculatedStartTime);
+									}
+
+									b.setStartServiceTime(possibleStartTime);
+									b.setarrivalTime(a.getDepartureTime()+tv);
+
+									if(b.isClient()) {
+										if(b.getTotalPeople()<0) {
+											b.setdepartureTime(b.getArrivalTime()+test.getloadTimeHomeCareStaff());
+											b.setEndServiceTime(b.getstartServiceTime()+b.getReqTime());}
+										else {
+											b.setdepartureTime(b.getArrivalTime()+test.getloadTimeHomeCareStaff());
+											b.setEndServiceTime(b.getDepartureTime());
+										}
+									}
+									else {
+										if(b.getTotalPeople()<0) {
+											b.setdepartureTime(b.getArrivalTime()+test.getloadTimePatient());
+											b.setEndServiceTime(b.getstartServiceTime()+b.getReqTime());}
+										else {
+											b.setdepartureTime(b.getArrivalTime()+test.getloadTimePatient());
+											b.setEndServiceTime(b.getDepartureTime());
+										}
+									}
+								}
+							
+							// revisar la secuencia de las horas
+							p2.getListSubJobs().clear();
+							break;
+							}
+						}
+					}
+				}
+			}
+			if(parts!=null) {
+				ArrayList<SubJobs> sequence = new ArrayList<SubJobs>();
+				for(Parts p2:parts) {
+					for(SubJobs job:p2.getListSubJobs()) {
+						sequence.add(job);
+					}
+				}
+				p1.getListSubJobs().clear();
+				p1.setListSubJobs(sequence, inp, test);
+			}
+		System.out.println("Parts "+ p1.toString());
 		
+		}
+		
+
 	}
+
+	
 
 	private HashMap<String, Couple> selectingHomeCareStaffPickUpCouple(HashMap<String, Couple> dropoffHomeCareStaff2) {
 		HashMap<String, Couple> dropoffHomeCareStaff= new HashMap<>();// hard time windows list of home care staff 
@@ -387,7 +490,7 @@ public class DrivingRoutes {
 					else {
 						calculatedStartTime=(a.getDepartureTime()+tv);
 						possibleStartTime=Math.max(b.getStartTime(), calculatedStartTime);
-						
+
 					}
 				}
 				else {
@@ -407,7 +510,6 @@ public class DrivingRoutes {
 				p.getListSubJobs().add(b);
 			}
 
-
 		}
 		else { // iterating over Route
 			ArrayList<SubJobs> sequence= new ArrayList<SubJobs>();
@@ -418,27 +520,8 @@ public class DrivingRoutes {
 				sequence.add(jobsInRoute);
 			}
 			sequence.sort(Jobs.SORT_BY_STARTW);
-
-			
-			double departure_a=sequence.get(0).getDepartureTime();
-
-if(vehicleCapacityPart(sequence)) {
-			for(int index=1;index<sequence.size();index++) {
-				SubJobs a=sequence.get(index-1);
-				SubJobs b=sequence.get(index);
-
-				double tv=inp.getCarCost().getCost(a.getId()-1, b.getId()-1);
-				double test= departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadTime();
-				if(departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadTime()<=b.getEndTime() && departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadRegistrationTime()>=b.getStartTime()) {
-					departure_a=departure_a+tv+b.getloadUnloadTime();
-					inserted=true;
-				}
-				else {
-					inserted=false;
-					break;
-				}
-			}
-		}
+			inserted=checkingSequenceVehicleCapacity(sequence);
+	
 			if(inserted) {
 				//
 				for(int index=1;index<sequence.size();index++) {
@@ -481,8 +564,8 @@ if(vehicleCapacityPart(sequence)) {
 					}
 					else {
 						if(b.getTotalPeople()<0) {
-						b.setdepartureTime(b.getArrivalTime()+test.getloadTimePatient());
-						b.setEndServiceTime(b.getstartServiceTime()+b.getReqTime());}
+							b.setdepartureTime(b.getArrivalTime()+test.getloadTimePatient());
+							b.setEndServiceTime(b.getstartServiceTime()+b.getReqTime());}
 						else {
 							b.setdepartureTime(b.getArrivalTime()+test.getloadTimePatient());
 							b.setEndServiceTime(b.getDepartureTime());
@@ -498,6 +581,29 @@ if(vehicleCapacityPart(sequence)) {
 				}
 			}
 		}
+		return inserted;
+	}
+
+	private boolean checkingSequenceVehicleCapacity(ArrayList<SubJobs> sequence) {
+		boolean inserted=false;
+		double departure_a=sequence.get(0).getDepartureTime();
+		//if(vehicleCapacityPart(sequence)) {
+			for(int index=1;index<sequence.size();index++) {
+				SubJobs a=sequence.get(index-1);
+				SubJobs b=sequence.get(index);
+
+				double tv=inp.getCarCost().getCost(a.getId()-1, b.getId()-1);
+				double test= departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadTime();
+				if(departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadTime()<=b.getEndTime() && departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadRegistrationTime()>=b.getStartTime()) {
+					departure_a=departure_a+tv+b.getloadUnloadTime();
+					inserted=true;
+				}
+				else {
+					inserted=false;
+					break;
+				}
+			}
+		//}
 		return inserted;
 	}
 

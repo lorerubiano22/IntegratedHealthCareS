@@ -1259,3 +1259,11 @@
 
 30/12/2020 00:31:30: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
 
+01/01/2021 12:17:46: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+01/01/2021 12:17:46: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
+01/01/2021 12:17:46: Assertion failed: threadWithLicensingLock == Thread_GetCurrentThreadID() in file exports.c on line 552
+
+01/01/2021 12:17:46: Assertion failed: licensingLockCount > 0 in file exports.c on line 553
+
