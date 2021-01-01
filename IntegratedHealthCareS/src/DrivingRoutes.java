@@ -232,6 +232,8 @@ public class DrivingRoutes {
 		mergingParts(poolParts);  // merging Parts
 		ArrayList<Route> poolRoutes=insertingDepotConnections(poolParts);
 
+		stackingRoutes(poolRoutes);
+		
 		mergingRoutes(poolRoutes);
 
 		slackTime(poolRoutes);
@@ -246,6 +248,19 @@ public class DrivingRoutes {
 		return shift;
 	}
 
+
+	private void stackingRoutes(ArrayList<Route> poolRoutes) {
+		for(Route r1:poolRoutes ) {
+			for(Route r2:poolRoutes ) {
+				if(r1!=r2 && r) {// it is inserted at the end of the route.
+					
+				}
+				
+			}
+			
+		}
+		
+	}
 
 	private void mergingParts(ArrayList<Parts> poolParts) {
 		ArrayList<Parts> partsCopy = new ArrayList<Parts>();
@@ -264,6 +279,12 @@ public class DrivingRoutes {
 					SubJobs firstP2=p2.getListSubJobs().get(0);
 					if(lastP1.getDepartureTime()<firstP2.getArrivalTime()) { // siempre se pone al final de cada parte
 						double travelTime=inp.getCarCost().getCost(lastP1.getId()-1, firstP2.getId()-1);
+						double possibleArrivalTime=lastP1.getDepartureTime()+travelTime+firstP2.getloadUnloadRegistrationTime()+firstP2.getloadUnloadTime();
+						
+						System.out.println("Start time "+ firstP2.getStartTime());
+						System.out.println("End time "+ firstP2.getEndTime());
+						System.out.println("Posible arrival time" + possibleArrivalTime);
+						
 						if(lastP1.getDepartureTime()+travelTime+firstP2.getloadUnloadRegistrationTime()+firstP2.getloadUnloadTime()<=firstP2.getEndTime() && lastP1.getDepartureTime()+travelTime+firstP2.getloadUnloadRegistrationTime()+firstP2.getloadUnloadTime()>=firstP2.getStartTime()) {						
 							parts = new ArrayList<Parts>();
 							parts.add(poolParts.get(i));
@@ -346,6 +367,7 @@ public class DrivingRoutes {
 				p1.getListSubJobs().clear();
 				p1.setListSubJobs(sequence, inp, test);
 			}
+			
 		System.out.println("Parts "+ p1.toString());
 		
 		}
@@ -749,10 +771,11 @@ public class DrivingRoutes {
 			SubJobs startNode=(SubJobs)paar.getPresent();
 			SubJobs endNode=(SubJobs)paar.getFuture();
 			// adjusting time windows
-			startNode.setSoftStartTime(inp.getNodes().get(startNode.getId()-1).getStartTime());
+			startNode.setSoftStartTime(inp.getNodes().get(startNode.getId()-1).getStartTime()); // saving original times
 			startNode.setSoftEndTime(inp.getNodes().get(startNode.getId()-1).getEndTime());
-			startNode.setStartTime(Math.max(startNode.getStartTime()-test.getCumulativeWaitingTime(), 0));
-			endNode.setEndTime(endNode.getStartTime()+test.getCumulativeWaitingTime());
+			startNode.setStartTime(Math.max(startNode.getStartTime()-test.getCumulativeWaitingTime(), 0)); // including start service time
+			endNode.setStartTime(startNode.getStartTime()+startNode.getReqTime()+test.getCumulativeWaitingTime());
+			endNode.setEndTime(startNode.getEndTime()+startNode.getReqTime()+test.getCumulativeWaitingTime());
 			dropoffHomeCareStaff.put(startNode.getSubJobKey(), paar);
 		}
 		return dropoffHomeCareStaff;
