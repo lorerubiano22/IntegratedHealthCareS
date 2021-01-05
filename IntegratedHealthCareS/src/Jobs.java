@@ -40,7 +40,7 @@ public class Jobs {
 	private boolean isPatient;// type of job in the system- patient job at patient home
 	private boolean isMedicalCentre;// type of job in the system- patient job at medical centre home
 	private boolean isClient;// type of job in the system- patient job at client home
-	private ArrayList<Jobs> assignedJob= new ArrayList<Jobs>(); // Walking Route
+	private LinkedList<Jobs> assignedJob= new LinkedList<Jobs>(); // Walking Route
 	private Route shiftMedicalStaff= new Route(); // Walking Route
 	
 	private int idCouple=0;
@@ -114,6 +114,11 @@ public class Jobs {
 		deltaArrivalStartServiceTime=i.deltaArrivalStartServiceTime;
 		deltarStartServiceTimeEndServiceTime=i.deltarStartServiceTimeEndServiceTime;
 		this.shiftMedicalStaff= new Route(i.shiftMedicalStaff);
+		if(!i.assignedJob.isEmpty()) {
+			for(Jobs j:assignedJob) {
+				this.assignedJob.add(j);
+			}
+		}
 	}
 
 	public Jobs(Jobs i) {
@@ -135,9 +140,9 @@ public class Jobs {
 		this.sortETWSizeCriterion=(hardstartTime)*(sizeTW);
 		this.sortLTWSizeCriterion=(hardendTime)*(sizeTW);
 		this.startServiceTime=i.getstartServiceTime();
-		isPatient=i.isPatient();// type of job in the system- patient job at patient home
-		isMedicalCentre=i.isMedicalCentre;// type of job in the system- patient job at medical centre home
-		isClient=i.isClient;// type of job in the system- patient job at client home
+		this.isPatient=i.isPatient();// type of job in the system- patient job at patient home
+		this.isMedicalCentre=i.isMedicalCentre;// type of job in the system- patient job at medical centre home
+		this.isClient=i.isClient;// type of job in the system- patient job at client home
 		endServiceTime=i.endServiceTime;
 		subJobKey=i.subJobKey;
 		idUser=i.idUser;
@@ -148,6 +153,11 @@ public class Jobs {
 		deltaArrivalDeparture=i.deltaArrivalDeparture;
 		deltaArrivalStartServiceTime=i.deltaArrivalStartServiceTime;
 		deltarStartServiceTimeEndServiceTime=i.deltarStartServiceTimeEndServiceTime;
+		if(!i.getAssignedJobToMedicalCentre().isEmpty()) {
+			for(Jobs j:i.getAssignedJobToMedicalCentre()) {
+				this.assignedJob.add(j);
+			}
+		}
 	}
 
 	
@@ -159,7 +169,7 @@ public class Jobs {
 	public void setdeltaArrivalStartServiceTime(double a) {this.deltaArrivalStartServiceTime = a;}
 	public void setdeltarStartServiceTimeEndServiceTime(double a) {this.deltarStartServiceTimeEndServiceTime = a;}
 	
-	public void setAssignedJobToMedicalCentre(ArrayList<Jobs> jobs) {this.assignedJob = jobs;}
+	public void setAssignedJobToMedicalCentre(LinkedList<Jobs> jobs) {this.assignedJob = jobs;}
 	public void setServerd(boolean isServerd) {this.isServerd = isServerd;}
 	public void setTotalPeople(int i) {	
 		subJobKey=creatingKey(i);
@@ -231,7 +241,7 @@ public class Jobs {
 	public Jobs getsubJobPair() {return subJobPair;}
 	public int getIdUser() {return idUser;}
 	public double getWalkingTime() {return walkingTime;}
-	public ArrayList<Jobs> getAssignedJobToMedicalCentre() {return assignedJob;}
+	public LinkedList<Jobs> getAssignedJobToMedicalCentre() {return assignedJob;}
 	public HashMap<Integer,SubJobs> getSubJobs() {return subJobs;}
 
 	public double getTW() { return hardendTime-hardstartTime; }

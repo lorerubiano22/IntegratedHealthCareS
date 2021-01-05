@@ -34,6 +34,8 @@ public class Inputs {
 		this.vehicles = vehicles;
 		maxQualificationLevel= Integer.MIN_VALUE;
 		for(Jobs j:nodes) {
+			j.setStartTime(j.getStartTime());
+			j.setSoftEndTime(j.getEndTime());
 			directoryNodes.put(j.getId(),j.getReqTime());
 			if(j.getReqQualification()>0 && j.getStartTime()!=0) {
 				j.setClient(true);

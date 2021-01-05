@@ -17,7 +17,7 @@ public class Edge implements Comparable<Edge>
 		end = endNode;
 		timeDirectConnections=inp.getCarCost().getCost(originNode.getId()-1, endNode.getId()-1);
 		key=originNode.getSubJobKey()+endNode.getSubJobKey();
-		detour=inp.getCarCost().getCost(originNode.getId()-1, endNode.getId()-1)*test.getDetour();
+		detour=(int) Math.ceil(inp.getCarCost().getCost(originNode.getId()-1, endNode.getId()-1)*test.getDetour());
 	}
 
 	public Edge(Edge e) {

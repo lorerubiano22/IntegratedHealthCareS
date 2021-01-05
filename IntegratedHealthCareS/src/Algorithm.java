@@ -37,8 +37,10 @@ public class Algorithm {
 		
 			//for(int iter=0;iter<10;iter++) {
 				walkingList = new LinkedList<SubRoute>();
-			//	selectionWalkingRoutes();
 			
+				subroutes = new WalkingRoutes(input, t, i.getNodes()); // stage 1: Creation of walking routes
+				
+				selectionWalkingRoutes(false);
 			updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 			drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
 			drivingRoute.generateAfeasibleSolution();
@@ -369,11 +371,13 @@ if(j.getId()==14){
 		// j.getsubJobPair()- location: Medical centre
 		Jobs presentJob= new Jobs(j);// Patient home - pick up
 		presentJob.setPatient(true);
+		presentJob.setMedicalCentre(false);
 		presentJob.setloadUnloadTime(test.getloadTimePatient());
 		Jobs futureJob= new Jobs(j.getsubJobPair().getId(), j.getStartTime(),j.getEndTime(), j.getReqQualification(), j.getReqTime()); // medical centre - drop-off 
 		futureJob.setloadUnloadTime(test.getloadTimePatient());
 		futureJob.setloadUnloadRegistrationTime(test.getRegistrationTime());
 		futureJob.setMedicalCentre(true);
+		futureJob.setPatient(false);
 		presentJob.setPair(futureJob);
 		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1); // setting the time for picking up the patient at home patient
 		Couple pairPatientMedicalCentre=creatingPairPatientMedicalCentre(presentJob,futureJob, directConnectionDistance);
@@ -412,9 +416,11 @@ if(j.getId()==14){
 
 		Jobs present= new Jobs(pairPatientMedicalCentre.getFuture());// pick up at medical centre
 		present.setMedicalCentre(true);
+		present.setPatient(false);
 		settingInformationPatientPickUpMC(present);	
 		Jobs future= new Jobs(pairPatientMedicalCentre.getPresent());// drop off patient home
 		future.setPatient(true);
+		future.setMedicalCentre(false);
 		settingInformationPatientDropOffHome(present,future);	
 
 		double tv= input.getCarCost().getCost(present.getId()-1, future.getId()-1);
@@ -450,6 +456,7 @@ if(j.getId()==14){
 	private void settingInformationPatientDropOffHome(Jobs present, Jobs dropOffPatientHome) {
 		dropOffPatientHome.setTotalPeople(-1);
 		dropOffPatientHome.setPatient(true);
+		dropOffPatientHome.setMedicalCentre(false);
 		dropOffPatientHome.setloadUnloadTime(test.getloadTimePatient());
 		// 1. Setting the start service time -- startServiceTime
 		//double travel=input.getCarCost().getCost(present.getId()-1, dropOffPatientHome.getId()-1)*test.getDetour(); // es necesario considerar el travel time porque involucra dos locaciones
@@ -470,6 +477,7 @@ if(j.getId()==14){
 	private void settingInformationPatientPickUpMC(Jobs pickUpMedicalCentre) {
 		pickUpMedicalCentre.setTotalPeople(2); // 5. Setting the total people (+) pick up   (-) drop-off
 		pickUpMedicalCentre.setMedicalCentre(true);
+		pickUpMedicalCentre.setPatient(false);
 		pickUpMedicalCentre.setloadUnloadTime(test.getloadTimePatient());
 		pickUpMedicalCentre.setStartTime(pickUpMedicalCentre.getDepartureTime());
 		pickUpMedicalCentre.setEndTime(pickUpMedicalCentre.getDepartureTime());
@@ -652,7 +660,8 @@ if(j.getId()==14){
 						System.out.println("couple ");
 					}
 					Jobs present=creatinngPresentJobFromWR(r.getDropOffNode(),walkingRouteLength);
-
+					r.getDropOffNode().setAssignedJobToMedicalCentre(r.getJobSequence());
+					present.setAssignedJobToMedicalCentre(r.getJobSequence());
 					Jobs future=creatinngFutureJobFromWR(present, r.getPickUpNode());
 					//1. creation of couple
 					Couple pairPickUpDropOffHCS=creatingCoupleClientHome(present,future); 

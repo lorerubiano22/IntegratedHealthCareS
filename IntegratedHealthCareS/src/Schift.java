@@ -13,12 +13,10 @@ public class Schift {
 	private boolean driver=false;
 	private  Route route; // the shift is a route in order to count the working hours
 	private  ArrayList<Parts> routeParts= new ArrayList<>(); // the shift is a route in order to count the working hours
-	private  ArrayList<Parts> routeParts1= new ArrayList<Parts>();
 	private  ArrayList<Edge> listConnections= new ArrayList<Edge>();
-
 	// debo cambiar tambien la siguiente
 	private  HashMap<String, Parts> listParts= new HashMap<>(); // the shift is a route in order to count the working hours
-	
+
 
 	// constructor
 	public Schift(Route r1, int id) {
@@ -76,6 +74,42 @@ public class Schift {
 
 
 
+	public Schift(ArrayList<Parts> p, Inputs inp, Test t) {
+		// 	qualification level
+		int max=Integer.MIN_VALUE;
+Parts newPart= new Parts();
+		for(Parts part: p) {
+			if(part.getQualificationLevel()>max) {
+				max=part.getQualificationLevel();
+			}
+			routeParts.add(newPart); // saving las partes de turno
+		}
+
+		qualificationLevel=max;
+		if(qualificationLevel==0) {
+			paramedicSchift=true;
+		}
+		else {
+			homecareStaffSchift=true;
+		}
+
+		// generating connections
+
+		ArrayList<SubJobs> listJobs= new ArrayList<SubJobs>();
+		for(Parts part:routeParts) {
+			for(SubJobs sj:part.getListSubJobs()) {
+				listJobs.add(sj);
+			}
+		}
+		for(int i=1;i<listJobs.size();i++) {
+			SubJobs origen=listJobs.get(i-1);
+			SubJobs end=listJobs.get(i);
+			Edge e= new Edge(origen,end, inp,t);
+			listConnections.add(e);
+		}
+	}
+
+
 	// setters
 	public void setParamedicSchift(boolean paramedicSchift) {this.paramedicSchift = paramedicSchift;}
 	public void setRouteList(Route route) {this.route = route;}
@@ -96,7 +130,7 @@ public class Schift {
 	public int getQualificationLevel() {return qualificationLevel;}
 	public String getKey() {return key;}
 	public ArrayList<Edge> getConnections() {return listConnections;}
-	
+
 
 
 

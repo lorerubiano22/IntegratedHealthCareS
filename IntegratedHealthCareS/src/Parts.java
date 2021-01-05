@@ -24,6 +24,9 @@ public class Parts {
 		homecareStaffSchift=part.isHomecareStaffSchift();
 		driver=part.isDriver();
 		for(SubJobs n:part.getListSubJobs()) {
+			if(!n.getAssignedJobToMedicalCentre().isEmpty()) {
+				System.out.println("Stop");
+			}
 			Jobs formalJob=new Jobs(n);
 			listSubJobs.add(new SubJobs(formalJob));
 			directorySubjobs.put(n.getSubJobKey(), n);

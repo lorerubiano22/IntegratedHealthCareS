@@ -51,6 +51,12 @@ public class SubJobs extends Jobs {
 		this.setdeltarStartServiceTimeEndServiceTime(j.getdeltarStartServiceTimeEndServiceTime());
 		this.setsortETWSizeCriterion(j.getsortETWSizeCriterion());
 		this.setsortLTWSizeCriterion(j.getsortLTWSizeCriterion());
+		
+		if(!j.getAssignedJobToMedicalCentre().isEmpty()) {
+			for(Jobs i:j.getAssignedJobToMedicalCentre()) {
+				this.getAssignedJobToMedicalCentre().add(i);
+			}
+		}
 	}
 
 	// Getters
