@@ -206,7 +206,7 @@ public class DrivingRoutes {
 
 		do {
 			for(Jobs j: insertionOrder) {
-				if(j.getSubJobKey().equals("D1025")) {
+				if(j.getSubJobKey().equals("D27")) {
 					System.out.println("Couple"+pickupHomeCareStaff.get("P5"));
 				}
 				if(j.getSubJobKey().equals("D28")) {
@@ -819,6 +819,12 @@ public class DrivingRoutes {
 		}
 
 		for(SubJobs inRoute:changing.getListSubJobs()) {
+			if(inRoute.getSubJobKey().equals("D27")) {
+				System.out.println("Stop");
+			}
+			if(inRoute.isMedicalCentre()) {
+				System.out.println("Stop");
+			}
 			if(inRoute.isMedicalCentre() && inRoute.getTotalPeople()<0) {// option 1: drop off medical centre
 				Couple part1=dropoffpatientMedicalCentre2.get(inRoute.getSubJobKey());
 				SubJobs dropOffMC=(SubJobs)part1.getFuture();
@@ -829,13 +835,18 @@ public class DrivingRoutes {
 				SubJobs present=(SubJobs)part2.getPresent();
 				present.setloadUnloadRegistrationTime(0);
 				SubJobs future=(SubJobs)part2.getFuture();
-				if(!listKJobs.containsKey(future.getSubJobKey())) {
-					double startServiceTime=part1.getFuture().getstartServiceTime()+part1.getFuture().getReqTime()+test.getloadTimePatient();
+				if(!listKJobs.containsKey(present.getSubJobKey())) {
+					double startServiceTime=inRoute.getendServiceTime();
 					present.setStartTime(startServiceTime);
 					present.setEndTime(present.getStartTime()+test.getCumulativeWaitingTime());
+				}
+				if(!listKJobs.containsKey(future.getSubJobKey())) {
+					//double startServiceTime=part1.getFuture().getstartServiceTime()+part1.getFuture().getReqTime()+test.getloadTimePatient();
+					//present.setStartTime(startServiceTime);
+					//present.setEndTime(present.getStartTime()+test.getCumulativeWaitingTime());
 					double travelTime= inp.getCarCost().getCost(present.getId()-1, future.getId()-1);
 					double detour=(int) Math.ceil(travelTime*test.getDetour());
-					startServiceTime=present.getStartTime()+test.getloadTimePatient()+travelTime;
+					double startServiceTime=present.getStartTime()+test.getloadTimePatient()+travelTime;
 					future.setStartTime(startServiceTime);
 					startServiceTime=present.getEndTime()+test.getloadTimePatient()+detour;
 					future.setEndTime(startServiceTime);
@@ -887,7 +898,8 @@ public class DrivingRoutes {
 					subJobsList.get(0).setStartServiceTime(subJobsList.get(0).getSoftStartTime());
 					subJobsList.get(0).setarrivalTime(subJobsList.get(0).getstartServiceTime());
 					subJobsList.get(0).setdepartureTime(subJobsList.get(0).getArrivalTime()+test.getloadTimePatient());
-					subJobsList.get(0).setEndServiceTime(subJobsList.get(0).getDepartureTime());
+					System.out.println(subJobsList.get(0).getReqTime());
+					subJobsList.get(0).setEndServiceTime(subJobsList.get(0).getstartServiceTime()+subJobsList.get(0).getReqTime());
 				}
 				else {
 					{ // pick up 

@@ -453,23 +453,46 @@ public class Route {
 		double additionalWaitingRoute=0;
 		for(int p=1;p<this.getPartsRoute().size()-1;p++) {
 			for(SubJobs j:this.getPartsRoute().get(p).getListSubJobs()) { // se producen despues de terminar un servicio
-				if((j.getArrivalTime()+j.getdeltaArrivalStartServiceTime())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
-					penalization=j.getstartServiceTime()-(j.getArrivalTime()+j.getloadUnloadRegistrationTime()+j.getloadUnloadTime());
-					penalizationRoute+=penalization;
-				}
-
-				else { // llega antes el personal tiene que esperar al vehiculo
-					if((j.getArrivalTime()+j.getdeltaArrivalStartServiceTime())>j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
-						penalization=(j.getArrivalTime()+j.getdeltaArrivalStartServiceTime())-j.getstartServiceTime();
-						penalizationRoute+=penalization;
-						if(penalization>test.getCumulativeWaitingTime()) {
-							additionalWaitingRoute+=Math.abs(test.getCumulativeWaitingTime()-penalization);
+				System.out.println("Id "+j.getSubJobKey()+" Arrival "+ j.getArrivalTime()+ " Start service time " + j.getstartServiceTime());
+				System.out.println(" Calculated Start service time" + (j.getArrivalTime()+j.getdeltaArrivalStartServiceTime()));
+				if(j.getTotalPeople()<0) { // drop off 
+					// Home health care
+					if(j.isClient()) { // hard time window
+						if((j.getArrivalTime()+test.getloadTimeHomeCareStaff())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
+							penalization=j.getstartServiceTime()-(j.getArrivalTime()+test.getloadTimeHomeCareStaff());
+							penalizationRoute+=penalization;
+						}	
+					}
+					else {
+						if(j.isMedicalCentre()) { // fixed time
+							if((j.getArrivalTime()+test.getRegistrationTime()+test.getloadTimePatient())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
+								penalization=j.getstartServiceTime()-(j.getArrivalTime()+test.getRegistrationTime()+test.getloadTimePatient());
+								penalizationRoute+=penalization;
+							}	
+						}
+						else { // patient
+							if((j.getArrivalTime()+test.getloadTimePatient())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
+								penalization=j.getstartServiceTime()-(j.getArrivalTime()+test.getloadTimePatient());
+								penalizationRoute+=penalization;
+							}
 						}
 					}
+
+					j.setWaitingTime(Math.abs(penalization));
+					j.setAdditionalWaitingTime(Math.abs(additionalWaitingRoute));
 				}
-				j.setWaitingTime(Math.abs(penalization));
-				j.setAdditionalWaitingTime(Math.abs(additionalWaitingRoute));
-			}}
+				else { // pick up
+					if(j.isClient() || j.isMedicalCentre()) {
+						if(j.getArrivalTime()>j.getStartTime()) {
+							penalization=j.getArrivalTime()-j.getStartTime();
+							penalizationRoute+=penalization;}}
+				}
+
+			}
+		if(penalization<0) {
+			System.out.println("Stop");
+		}	
+		}
 		this.setWaitingTime(penalizationRoute);
 		this.setAdditionalWaitingTime(additionalWaitingRoute);
 		System.out.println(this.toString());

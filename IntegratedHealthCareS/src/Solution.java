@@ -168,7 +168,7 @@ public class Solution {
 		System.out.println(initialSol.toString());
 		int id=-1;
 		for(Route r: this.getRoutes()) {
-			r.getEdges().clear();
+			//r.getEdges().clear();
 			// checking
 			for(Parts p: r.getPartsRoute()) {
 			for(SubJobs sj:p.getListSubJobs()) {
