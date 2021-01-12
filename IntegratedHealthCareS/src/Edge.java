@@ -1,5 +1,7 @@
+import java.io.Serializable;
+import java.util.Comparator;
 
-public class Edge implements Comparable<Edge>
+public class Edge implements Serializable
 {
 	/* INSTANCE FIELDS & CONSTRUCTOR */
 	private String key="";
@@ -49,15 +51,21 @@ public class Edge implements Comparable<Edge>
 	@Override
 	public String toString() 
 	{   String s = "";
+	s = s.concat("\n edge: (" +this.getOrigin().getSubJobKey()+", "+ this.end.getSubJobKey()+")");
+	s = s.concat("\n travel time: " + this.getTime());
+	s = s.concat("\n travel time in route: " + this.gettravelTimeInRoute());
 	s = s.concat("\nEdge origin job: " + this.getOrigin()+","+this.getEnd());
 	//s = s.concat("\nEdge end job: " + this.getEnd());
 	s = s.concat("\nEdge time: " + (this.getTime()));
 	return s;
 	}
 
-	@Override
-	public int compareTo(Edge arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+
+	static final Comparator<Edge> startServiceTimeOrigenNode = new Comparator<Edge>(){
+		public int compare(Edge a1, Edge a2){
+			if (a1.getOrigin().getstartServiceTime() > a2.getOrigin().getstartServiceTime()) return 1;
+			if (a1.getOrigin().getstartServiceTime() < a2.getOrigin().getstartServiceTime()) return -1;
+			return 0;
+			}
+		};
 }

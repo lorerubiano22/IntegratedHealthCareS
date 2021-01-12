@@ -38,9 +38,9 @@ public class Algorithm {
 			//for(int iter=0;iter<10;iter++) {
 				walkingList = new LinkedList<SubRoute>();
 			
-				subroutes = new WalkingRoutes(input, t, i.getNodes()); // stage 1: Creation of walking routes
+				//subroutes = new WalkingRoutes(input, t, i.getNodes()); // stage 1: Creation of walking routes
 				
-				selectionWalkingRoutes(false);
+				//selectionWalkingRoutes(false);
 			updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 			drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
 			drivingRoute.generateAfeasibleSolution();
@@ -55,7 +55,7 @@ public class Algorithm {
 			}
 			if(newSolution0.getobjectiveFunction()<objective) {
 				setBestSolution(drivingRoute.getSol());
-				setInitialSolution(drivingRoute.getInitialSol());
+				setInitialSolution(drivingRoute.getSol().getShift());
 			}
 		//}
 			
@@ -77,7 +77,7 @@ public class Algorithm {
 			}
 			if(newSolution1.getobjectiveFunction()<objective) {
 				setBestSolution(drivingRoute.getSol());
-				setInitialSolution(drivingRoute.getInitialSol());
+				setInitialSolution(drivingRoute.getSol().getShift());
 			}
 		/////////////////////////////////	
 		
@@ -101,7 +101,7 @@ public class Algorithm {
 		}
 		if(newSolution.getobjectiveFunction()<objective) {
 			setBestSolution(drivingRoute.getSol());
-			setInitialSolution(drivingRoute.getInitialSol());
+			setInitialSolution(drivingRoute.getSol().getShift());
 		}
 	}
 		

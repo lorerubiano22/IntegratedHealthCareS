@@ -1,7 +1,4 @@
-/**
- * @author Angel A. Juan - http://ajuanp.wordpress.com
- * @version 130119
- */
+
 public class ElapsedTime
 {
     public ElapsedTime() {}

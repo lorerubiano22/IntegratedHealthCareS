@@ -66,8 +66,10 @@ public class Parts {
 	public void setKeyParts(String k) {this.key = k;}
 	public void setQualificationParts(int q) {this.qualificationLevel = q;}
 	public void setListSubJobs(ArrayList<SubJobs> listSubJobs, Inputs inp, Test test) {
+		this.directorySubjobs.clear();
 		this.listSubJobs = listSubJobs;
 		for(SubJobs j:listSubJobs) {
+			directorySubjobs.put(j.getSubJobKey(), j);
 			if(j.getReqQualification()>qualificationLevel) {
 				qualificationLevel=j.getReqQualification();
 			}
