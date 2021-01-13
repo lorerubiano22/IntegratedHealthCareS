@@ -38,7 +38,33 @@ public class Outputs {
 		out.println("Driving Routes");
 		out.println("--------------------------------------------");
 		out.println("\n Initial solution \n");
-		out.println(initialSolution.toString() + "\r\n");
+		//out.println(initialSolution.toString() + "\r\n");
+		for(Route r:initialSolution.getRoutes()) {
+			if(!r.getSubJobsList().isEmpty()) {
+				int paramedic=0;
+				int homeCareStaff=0;
+				if(r.getAmountParamedic()>0) {
+					paramedic++;
+				out.println("\n Paramedic "+paramedic );
+				}
+				else {
+					homeCareStaff++;
+					out.println("\n Home care Staff " + homeCareStaff );}
+				}
+					for(Parts p:r.getPartsRoute()) {
+					for(SubJobs j:p.getListSubJobs()) {
+						String type="";
+						if(j.isClient()) {
+							type="c";
+						}
+						if(j.isPatient()) {
+							type="p";
+						}
+						out.println(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getStartTime()+";"+(int)j.getEndTime()+"]"+") \n");
+					}
+					//out.println("\n\n");
+				}
+			}	
 		out.println("\n Best solution \n");
 		out.println(solution.toString() + "\r\n");
 

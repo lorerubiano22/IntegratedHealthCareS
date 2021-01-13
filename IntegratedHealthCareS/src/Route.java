@@ -193,21 +193,29 @@ public class Route {
 
 	public void computeTravelTime(Inputs inp) {
 		double travelTimeDuration=0;
-		ArrayList<SubJobs> sequence= new ArrayList<SubJobs>();
-		for(Parts p:this.getPartsRoute()) {
-			for(SubJobs sj:p.getListSubJobs()) {		
-				sequence.add(sj);
-			}	
+		for(Edge e:this.edges.values()) {
+			if(e.getTime()==0) {
+				System.out.println("Stop");
+			}
+			
+			travelTimeDuration+=e.getTime();
 		}
 		
-		for(int j=1; j<sequence.size();j++) {
-			Jobs jNode=sequence.get(j-1);
-			//if(j!=this.getSubJobsList().size()-1 && jNode.getId()!=0) { // travel time
-				Jobs kNode=sequence.get(j);
-				double time=inp.getCarCost().getCost(jNode.getId()-1, kNode.getId()-1);
-				travelTimeDuration+=time;
-		//	}
-		}
+//		ArrayList<SubJobs> sequence= new ArrayList<SubJobs>();
+//		for(Parts p:this.getPartsRoute()) {
+//			for(SubJobs sj:p.getListSubJobs()) {		
+//				sequence.add(sj);
+//			}	
+//		}
+//
+//		for(int j=1; j<sequence.size();j++) {
+//			Jobs jNode=sequence.get(j-1);
+//			//if(j!=this.getSubJobsList().size()-1 && jNode.getId()!=0) { // travel time
+//			Jobs kNode=sequence.get(j);
+//			double time=inp.getCarCost().getCost(jNode.getId()-1, kNode.getId()-1);
+//			travelTimeDuration+=time;
+//			//	}
+//		}
 		travelTime=travelTimeDuration;
 		this.driverCost=travelTimeDuration;
 	}
@@ -499,9 +507,9 @@ public class Route {
 				}
 
 			}
-		if(penalization<0) {
-			System.out.println("Stop");
-		}	
+			if(penalization<0) {
+				System.out.println("Stop");
+			}	
 		}
 		this.setWaitingTime(penalizationRoute);
 		this.setAdditionalWaitingTime(additionalWaitingRoute);
@@ -513,79 +521,92 @@ public class Route {
 
 
 	public void checkingDetour(Test test, Inputs inp, Solution initialSol) {
-		double penalization=0;
-		double penalizationRotue=0;
 		double detour=0;
-		double detourHomeCareStaff=0;
-		double detourParamedic=0;
-		// calculating detour
-		computingDetours(inp,test,initialSol);
-		// calculating additional times per edge
-		HashMap<String, SubJobs> subJobsList= new HashMap<String, SubJobs>();
-		for(Parts p:this.getPartsRoute()) {
-			for(SubJobs sj:p.getListSubJobs()) {
-				subJobsList.put(sj.getSubJobKey(), sj);
-			}	
-		}
-	//	for(Route r: initialSol.getRoutes()) {
-		for(Route r: initialSol.getRoutes()) {
-			for(Edge e: r.getEdges().values()) {
-				if(e.getTime()> e.gettravelTimeInRoute()) {
-					System.out.println(" Error ");
-				}
-			//for(Edge e:this.getEdges().values()) {
-				SubJobs origen=e.getOrigin();
-				SubJobs end=e.getEnd();
-				if(origen.getSubJobKey().equals("P1") && end.getSubJobKey().equals("P72")) {
-					System.out.println("Stop");
-				}
-				
-				if(end.getId()!=1) {
-					System.out.println("Stop");
-				
-				if(subJobsList.containsKey(origen.getSubJobKey()) && subJobsList.containsKey(end.getSubJobKey()) ) {
+	double detourToPenalize=0;
+		for(Edge e: this.edges.values()) {
+			SubJobs origen=e.getOrigin();
+			SubJobs end=e.getEnd();
+			Route r1=selectionRoute(origen,initialSol);
+			Route r2=selectionRoute(end,initialSol);
+			if(r1==r2) { // there is a connection in the route
+				double travelTime=0;
+				boolean startCount=false;
+				for(Parts p:r1.getPartsRoute()) {
+					for(SubJobs j:p.getListSubJobs()) {
 					
-					this.getEdges().put(e.getEdgeKey(), e);
-					if(e.gettravelTimeInRoute()>e.getDetour()) {
-						penalization=e.gettravelTimeInRoute()-e.getDetour();
-						penalizationRotue+=penalization;
+						if(origen.getSubJobKey().equals(j.getSubJobKey())) {
+							startCount=true;
+							travelTime=0;
+						}
+						if(startCount) {
+							travelTime+=inp.getCarCost().getCost(origen.getId()-1, j.getId()-1);
+						}
+						if(j.getSubJobKey().equals(end.getSubJobKey())) {
+							break;
+						}
+
 					}
-					e.setadditionalTime(penalization);
-					if(e.gettravelTimeInRoute()<e.getTime()) {
-						System.out.println("Stop");
-					}
-					if(this.getHomeCareStaff()==1) {
-						detourHomeCareStaff+=(e.gettravelTimeInRoute()-e.getTime());
-					}
-					if(this.getAmountParamedic()==1) {
-						detourParamedic+=(e.gettravelTimeInRoute()-e.getTime());
-					}
-					if((e.gettravelTimeInRoute()-e.getTime())<0) {
-						System.out.println("Stop");
-					}
-					detour+=(e.gettravelTimeInRoute()-e.getTime());
-					if(detour>0) {
-						System.out.println("Stop");
-					}}}
+				}
+				e.setTravelTimeInRoute(travelTime);
+				if(e.getTime()>e.gettravelTimeInRoute()) {
+					System.out.println(" Edge "+ e.toString());
+				}
 			}
-	//	}
-			if(detourHomeCareStaff<0) {
-				System.out.println("Stop");
+			 
+			 if(e.getTime()<e.gettravelTimeInRoute()) {
+				 detour+=(e.gettravelTimeInRoute()-e.getTime());
+				 if(e.gettravelTimeInRoute()>e.getDetour()) {
+					 detourToPenalize=(e.getDetour()-e.gettravelTimeInRoute()); 
+				 }
+			 }
+		}
+		
+			this.setDetour(detour);
+			this.setdetourViolation(detourToPenalize);
+			if(this.getAmountParamedic()>0) {
+				this.setdetourPromParamedic(detour);
 			}
-			if(detourParamedic<0) {
-				System.out.println("Stop");
+			else {
+				this.setdetourPromHomeCareStaff(detour);
 			}
-			if(penalizationRotue<0) {
-				System.out.println("Stop");
+		
+		System.out.println(" Finish ");
+		}
+
+
+
+
+
+	private Route selectionRoute(SubJobs present, Solution diversifiedSolneighborhood) {
+		Route r=null;
+		String key="";
+		if(present==null){
+			key="D11";
+		}
+		else {
+			key=present.getSubJobKey();
+		}
+		for(Route routeInRoute:diversifiedSolneighborhood.getRoutes()) {
+			HashMap<String, SubJobs> subJobsList= new HashMap<String, SubJobs>();
+			if(routeInRoute.getPartsRoute().isEmpty()) {
+				System.out.print("Stop");
 			}
-			if(detour<0) {
-				System.out.println("Stop");
+			for(Parts p:routeInRoute.getPartsRoute()) {
+				if(p.getListSubJobs().isEmpty()) {
+					System.out.print("Stop");
+				}
+				for(SubJobs j:p.getListSubJobs()) {
+					subJobsList.put(j.getSubJobKey(), j);
+				}
+				if(subJobsList.containsKey(key)) {
+					r=routeInRoute;
+					break;
+				}
 			}
-		this.setdetourPromHomeCareStaff(detourHomeCareStaff);
-		this.setdetourPromParamedic(detourParamedic);
-		this.setdetourViolation(penalizationRotue);		
-		this.setDetour(detour);
-	}}
+		}
+		return r;
+	}
+
 
 
 
@@ -601,16 +622,16 @@ public class Route {
 				sequence.add(sj);
 			}	
 		}
-		
+
 		for(int i=1;i<sequence.size()-1;i++) {
 			SubJobs origen=sequence.get(i-1);
 			SubJobs end=sequence.get(i);
 			Edge ef=new Edge(origen,end,inp,test);
 			Edge e=null;
-		if(this.getEdges().containsKey(ef.getEdgeKey())) {
-			 e=this.getEdges().get(ef.getEdgeKey());
-		}
-		
+			if(this.getEdges().containsKey(ef.getEdgeKey())) {
+				e=this.getEdges().get(ef.getEdgeKey());
+			}
+
 		}
 		ArrayList<Edge> connectionsList= new ArrayList<>();
 		for(int i=1;i<sequence.size()-1;i++) {
@@ -621,7 +642,7 @@ public class Route {
 				connectionsList.add(e);
 			}
 		}
-		
+
 		for(Route route:initialSol.getRoutes()) {
 			for(Edge e: route.getEdges().values()) { // is there a detour??
 				SubJobs origen=e.getOrigin();
@@ -632,7 +653,7 @@ public class Route {
 				if(origen.getSubJobKey().equals("P1") && end.getSubJobKey().equals("P72")) {
 					System.out.println("Stop");
 				}
-				
+
 				if(subJobsList.containsKey(origen.getSubJobKey()) && subJobsList.containsKey(end.getSubJobKey()) ) {
 					double travelTime=0;
 					boolean startCount=false;
@@ -657,11 +678,11 @@ public class Route {
 					System.out.println("Print edge in the vehicle shift "+e.toString());
 					if(this.getEdges().containsKey(e.getEdgeKey())) {
 						Edge edgeInRoute=this.getEdges().get(e.getEdgeKey());
-					this.getEdges().get(e.getEdgeKey()).setTravelTimeInRoute(travelTime);
-					System.out.println("Print edge in the vehicle route "+edgeInRoute.toString());
+						this.getEdges().get(e.getEdgeKey()).setTravelTimeInRoute(travelTime);
+						System.out.println("Print edge in the vehicle route "+edgeInRoute.toString());
 					}
 					else {System.out.println("sTOP");
-						
+
 					}
 					System.out.println(e.toString());
 					if(e.getTime()> e.gettravelTimeInRoute()) {
@@ -682,7 +703,7 @@ public class Route {
 		for(Edge e:this.edges.values()) {
 			distance+=e.gettravelTimeInRoute();
 		}
-this.homeCareStaffCost=distance+this.waitingTime;
+		this.homeCareStaffCost=distance+this.waitingTime;
 	}
 
 
