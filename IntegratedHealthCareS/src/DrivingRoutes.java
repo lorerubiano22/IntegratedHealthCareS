@@ -85,6 +85,14 @@ public class DrivingRoutes {
 		System.out.println(initialSol.toString());
 
 		solution= assigningRoutesToDrivers(initialSol);
+		ArrayList<Route> list= new ArrayList<Route> ();
+		for(Route r: solution.getRoutes()) {
+			list.add(r);
+		}
+		boolean goodSolution=validationSequenceRoutes(list);
+		if(!goodSolution) {
+			System.out.println("Stop");
+		}
 	}
 
 
@@ -667,23 +675,23 @@ public class DrivingRoutes {
 			feasible= true;
 		}
 		boolean allJobs=checkingJobs(poolRoutes);
-		
+
 		if(allJobs && feasible) return true;
 		return false;
 	}
 
 	private boolean checkingJobs(ArrayList<Route> poolRoutes) {
 		boolean feasible= true;
-//		private  HashMap<String, Couple> dropoffHomeCareStaff= new HashMap<>();// hard time windows list of home care staff 
-//		private  HashMap<String, Couple> dropoffpatientMedicalCentre= new HashMap<>();// hard time windows list of patient
-//		private  HashMap<String, Couple> pickpatientMedicalCentre= new HashMap<>();// soft time windows list of patient
-//		private  HashMap<String, Couple> pickUpHomeCareStaff= new HashMap<>();// soft time windows list of home care staff 
+		//		private  HashMap<String, Couple> dropoffHomeCareStaff= new HashMap<>();// hard time windows list of home care staff 
+		//		private  HashMap<String, Couple> dropoffpatientMedicalCentre= new HashMap<>();// hard time windows list of patient
+		//		private  HashMap<String, Couple> pickpatientMedicalCentre= new HashMap<>();// soft time windows list of patient
+		//		private  HashMap<String, Couple> pickUpHomeCareStaff= new HashMap<>();// soft time windows list of home care staff 
 
 		for(Couple c:dropoffHomeCareStaff.values()) {
 			SubJobs present= new SubJobs(c.getPresent());
-if(present.getId()==11) {
-	System.out.println("Stop");
-}
+			if(present.getId()==11) {
+				System.out.println("Stop");
+			}
 			Route r=selectionRoute(present,poolRoutes);
 			if(r==null) {
 				feasible= false;
@@ -1589,7 +1597,24 @@ if(present.getId()==11) {
 				bestRoutes.add(p);	
 			}
 		}
+		computingFactorToSortRoutes(j,bestRoutes);
+		bestRoutes.sort(Parts.SORT_BY_RouteDistanceNode);
 		return bestRoutes;
+	}
+
+	private void computingFactorToSortRoutes(Jobs j, ArrayList<Parts> bestRoutes) {
+
+		for(Parts p:bestRoutes) {
+			if(!p.getListSubJobs().isEmpty()) {
+				SubJobs lastNode=p.getListSubJobs().get(p.getListSubJobs().size()-1);
+				double tv=inp.getCarCost().getCost(lastNode.getId()-1, j.getId()-1);
+				p.setAdditionalCriterion(tv);
+			}
+			else {
+				p.setAdditionalCriterion(1000);
+			}
+		}
+		
 	}
 
 	private ArrayList<Parts> poolPartscreationRoute() {
@@ -1620,8 +1645,18 @@ if(present.getId()==11) {
 			j.setsortLTWSizeCriterion(size);
 			sort.add(j);
 		}
-		sort.sort(Jobs.TWSIZE_Early);
+		computingAdditionalCriteria(sort, 1);
+
 		return sort;
+	}
+
+	private void computingAdditionalCriteria(ArrayList<Jobs> sort, int idLastConnectedNode) {
+		// sort according to the last connected node
+		for(Jobs sj: sort) {
+			double tv=inp.getCarCost().getCost(idLastConnectedNode-1, sj.getId()-1);
+			sj.setAdditionalCriterion(tv);
+		}
+
 	}
 
 	private HashMap<String, Couple> selectingCouplepickpatientMedicalCentre(HashMap<String, Couple> dropoffpatientMedicalCentre2) {
@@ -1737,7 +1772,7 @@ if(present.getId()==11) {
 		Route r=null;
 		String key="";
 		if(present==null){
-			 key="D11";
+			key="D11";
 		}
 		else {
 			key=present.getSubJobKey();
@@ -1765,7 +1800,7 @@ if(present.getId()==11) {
 
 	private Route selectionRoute(SubJobs present, ArrayList<Route> diversifiedSolneighborhood) {
 		Route r=null;
-		
+
 		for(Route routeInRoute:diversifiedSolneighborhood) {
 			HashMap<String, SubJobs> subJobsList= new HashMap<String, SubJobs>();
 			if(routeInRoute.getPartsRoute().isEmpty()) {
@@ -2591,17 +2626,17 @@ if(present.getId()==11) {
 			routeList.add(r);
 		}
 		boolean goodSolution=validationSequenceRoutes(routeList);
-	
-		
+
+
 		// verfication
-		
+
 		if(neighborhood.getobjectiveFunction()<diversifiedSolneighborhood.getobjectiveFunction()) {
 			newSol=new Solution (neighborhood);
 		}
 		else {
 			newSol=new Solution (diversifiedSolneighborhood);
 		}
-		
+
 		return newSol;
 	}
 
@@ -2673,7 +2708,7 @@ if(present.getId()==11) {
 		boolean goodSolution=validationSequenceRoutes(routeList);
 		Solution vecindario1= intraRoutesMovements(newSol); // todo para solucionar los detours
 		System.out.println("Solution vecindario1" + vecindario1.toString());
-		 routeList= new ArrayList<Route>();
+		routeList= new ArrayList<Route>();
 		for(Route r: vecindario1.getRoutes()) {
 			routeList.add(r);
 		}
@@ -2703,7 +2738,7 @@ if(present.getId()==11) {
 
 		Solution currentSolution=new Solution(sol);
 		ArrayList<Route> transferRoute= new ArrayList<Route>();
-		
+
 		////
 		ArrayList<Route> routeList= new ArrayList<Route>();
 		for(Route r: sol.getRoutes()) {
@@ -2712,13 +2747,13 @@ if(present.getId()==11) {
 		boolean goodSolution=validationSequenceRoutes(routeList);
 		SubJobs future=null;
 		Route ir=selectionRoute(future,currentSolution);
-		
+
 		////
 		Solution newSolution=new Solution();
 		System.out.println("Solution 123" + currentSolution.toString());
 		int[][] combination= new int[currentSolution.getRoutes().size()][currentSolution.getRoutes().size()];
 		int totalRoutes=currentSolution.getRoutes().size();
-		
+
 		for(int i=0;i<totalRoutes;i++) {
 			Solution PartialSolution=new Solution();
 			int indexR=rn.nextInt(currentSolution.getRoutes().size()-1); 
@@ -2756,9 +2791,9 @@ if(present.getId()==11) {
 					}
 				}
 				//else {
-//					newSolution.getRoutes().add(currentSolution.getRoutes().get(indexR));
-//					newSolution.getRoutes().add(currentSolution.getRoutes().get(indexT));
-//				}
+				//					newSolution.getRoutes().add(currentSolution.getRoutes().get(indexR));
+				//					newSolution.getRoutes().add(currentSolution.getRoutes().get(indexT));
+				//				}
 			}
 		}
 
@@ -2772,7 +2807,7 @@ if(present.getId()==11) {
 
 		System.out.println("Solution " + newSolution.toString());
 		System.out.println("Current Solution " + currentSolution.toString());
-		 routeList= new ArrayList<Route>();
+		routeList= new ArrayList<Route>();
 		for(Route r: newSolution.getRoutes()) {
 			routeList.add(r);
 		}
@@ -7342,7 +7377,7 @@ if(present.getId()==11) {
 	private int typeOfParts(Parts parts, Parts parts2) {
 		// typeParts: 1 patient-patient 2 homeCare-patient or patient-homeCare 3 homeCare-homeCare 
 		int typeParts=-1;
-		
+
 		if(parts.getQualificationLevel()>0 && parts2.getQualificationLevel()==0 ||parts2.getQualificationLevel()>0 && parts.getQualificationLevel()==0) {
 			typeParts=2;
 		}

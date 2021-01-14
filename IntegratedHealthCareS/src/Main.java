@@ -30,11 +30,16 @@ public class Main {
 			Inputs inputs = InputsReader.readInputs(inputSource);
 			long t = System.nanoTime();
 			String objective="";
-			if(currentTest.getdriverObjective()==1) {
+			if(currentTest.getdriverObjective()==1 && currentTest.gethomeCareStaffObjective()==0) {
 				objective="Driver";
 			}
 			else {
-				objective="Home_Care_Staff";	
+				if(currentTest.getdriverObjective()==0 && currentTest.gethomeCareStaffObjective()==1) {
+					objective="Home_Care_Staff";	
+				}
+				else { // integrated
+					objective="Integrated";	
+				}
 			}
 			String outputsFilePath = outputFolder + File.separator +
 					currentTest.getInstanceName() + "_" + currentTest.getSeed() +"_"+objective+  sufixFileOutput;

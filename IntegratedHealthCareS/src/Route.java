@@ -154,10 +154,11 @@ public class Route {
 	public void setdetourViolation(double detour) {detourViolation= detour;}
 	public void setdetourPromParamedic(double wt) {detourPromParamedic=wt;}
 	public void setdetourPromHomeCareStaff(double detour) {detourPromHomeCareStaff= detour;}
-
+	
 
 
 	// Getters
+	
 	public HashMap<String, SubJobs> getJobsDirectory(){return positionJobs;}
 	public double getDurationRoute() {return durationRoute;}
 	public double getServiceTime() {return serviceTime;}
@@ -365,12 +366,12 @@ public class Route {
 
 	public String toString() 
 	{   String s = "";
-	//	s = s.concat("\nRute duration: " + (this.getDurationRoute()));
-	//	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
-	//	s = s.concat("\nRute service time: " + (this.getServiceTime()));
-	//	s = s.concat("\nRute idle time: " + (this.getIdleTime()));
-	//	s = s.concat("\nRuta home care staff:" + this.getHomeCareStaff());
-	//	s = s.concat("\nRuta paramedic staff:" + this.getAmountParamedic());
+		s = s.concat("\nRute duration: " + (this.getDurationRoute()));
+		s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
+		s = s.concat("\nRute service time: " + (this.getServiceTime()));
+		s = s.concat("\nRute idle time: " + (this.getIdleTime()));
+		s = s.concat("\nRuta home care staff:" + this.getHomeCareStaff());
+		s = s.concat("\nRuta paramedic staff:" + this.getAmountParamedic());
 	s = s.concat("\njobs: ");
 	for(Parts p:this.getPartsRoute()) {
 		for(SubJobs j:p.getListSubJobs()) {
@@ -526,25 +527,39 @@ public class Route {
 		for(Edge e: this.edges.values()) {
 			SubJobs origen=e.getOrigin();
 			SubJobs end=e.getEnd();
+			if(origen.getSubJobKey().equals("D73") && end.getSubJobKey().equals("P57")) {
+				System.out.println(" Edge "+ e.toString());
+			}
 			Route r1=selectionRoute(origen,initialSol);
 			Route r2=selectionRoute(end,initialSol);
 			if(r1==r2) { // there is a connection in the route
 				double travelTime=0;
 				boolean startCount=false;
 				for(Parts p:r1.getPartsRoute()) {
+					boolean breakCycle=false;
 					for(SubJobs j:p.getListSubJobs()) {
 					
 						if(origen.getSubJobKey().equals(j.getSubJobKey())) {
 							startCount=true;
 							travelTime=0;
 						}
+						if(origen.getSubJobKey().equals("P1") && startCount) { // cuando el personal pasa idle time en el depot
+							startCount=true;
+							travelTime=inp.getCarCost().getCost(0, end.getId()-1);
+							e.setTime(travelTime);
+							travelTime=0;
+						}
 						if(startCount) {
 							travelTime+=inp.getCarCost().getCost(origen.getId()-1, j.getId()-1);
 						}
 						if(j.getSubJobKey().equals(end.getSubJobKey())) {
+							breakCycle=true;
 							break;
 						}
 
+					}
+					if(breakCycle) {
+						break;
 					}
 				}
 				e.setTravelTimeInRoute(travelTime);
@@ -556,11 +571,14 @@ public class Route {
 			 if(e.getTime()<e.gettravelTimeInRoute()) {
 				 detour+=(e.gettravelTimeInRoute()-e.getTime());
 				 if(e.gettravelTimeInRoute()>e.getDetour()) {
-					 detourToPenalize=(e.getDetour()-e.gettravelTimeInRoute()); 
+					 detourToPenalize=(e.gettravelTimeInRoute()-e.getDetour()); 
 				 }
 			 }
 		}
 		
+		if(detour<0 || detourToPenalize<0) {
+			System.out.println("Stop");
+		}
 			this.setDetour(detour);
 			this.setdetourViolation(detourToPenalize);
 			if(this.getAmountParamedic()>0) {
@@ -713,11 +731,31 @@ public class Route {
 
 		public int compare(Route r1, Route r2) { 
 
-			if (r1.getSubJobsList().get(0).getstartServiceTime() < r2.getSubJobsList().get(0).getstartServiceTime()) 
+			if (r1.getSubJobsList().get(0).getstartServiceTime() > r2.getSubJobsList().get(0).getstartServiceTime()) 
 
 				return 1; 
 
-			if (r1.getSubJobsList().get(0).getstartServiceTime() > r2.getSubJobsList().get(0).getstartServiceTime()) 
+			if (r1.getSubJobsList().get(0).getstartServiceTime() < r2.getSubJobsList().get(0).getstartServiceTime()) 
+
+				return -1; 
+
+			return 0; 
+
+		} 
+
+	}; 
+	
+	public static Comparator<Route> SORT_BY_departureTimeDepot = new Comparator<Route>() { 
+// earliest to latest
+		@Override 
+
+		public int compare(Route r1, Route r2) { 
+
+			if (r1.getPartsRoute().get(0).getListSubJobs().get(0).getArrivalTime() > r2.getPartsRoute().get(0).getListSubJobs().get(0).getArrivalTime()) 
+
+				return 1; 
+
+			if (r1.getPartsRoute().get(0).getListSubJobs().get(0).getArrivalTime() < r2.getPartsRoute().get(0).getListSubJobs().get(0).getArrivalTime()) 
 
 				return -1; 
 

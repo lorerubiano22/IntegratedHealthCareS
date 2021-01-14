@@ -40,6 +40,7 @@ private RandomStream rng;
 	}
 
 	/* GET METHODS */
+
 	public double getdriverObjective(){return driverObjective;}
 	public double gethomeCareStaffObjective() { return homeCareStaffObjective; }
 	public long getSeed(){return seed;}

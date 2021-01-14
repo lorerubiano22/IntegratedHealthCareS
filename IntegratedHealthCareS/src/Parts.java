@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class Parts {
@@ -13,7 +14,7 @@ public class Parts {
 	private SubJobs nodeReference;
 	private  HashMap<String, SubJobs> directorySubjobs= new HashMap<>(); // the shift is a route in order to count the working hours
 	private  HashMap<String, Edge> directoryConnections= new HashMap<>(); // las conecciones entre las partes// este me permite controlar los subtours
-
+	private double sortLDistaceLastConnectedNode; // sort criterion the to the last inserted node
 
 	// set of getters
 
@@ -59,8 +60,10 @@ public class Parts {
 	public HashMap<String, SubJobs> getDirectorySubjobs() {return directorySubjobs;}
 	public HashMap<String, Edge> getDirectoryConnections() {return directoryConnections;}
 	public SubJobs getReferenceNode() {return nodeReference;}
+	public double getDistaceLastConnectedNode() { return sortLDistaceLastConnectedNode; }
 
 	// Setters
+	public void setAdditionalCriterion(double B) {	this.sortLDistaceLastConnectedNode = B;}
 	public void setParamedicSchift(boolean a) { paramedicSchift=a;}
 	public void setHomecareStaffSchift(boolean b) { homecareStaffSchift=b;}
 	public void setKeyParts(String k) {this.key = k;}
@@ -119,7 +122,28 @@ public class Parts {
 	return s;
 	}
 
+	public static Comparator<Parts> SORT_BY_RouteDistanceNode = new Comparator<Parts>() { 
 
+		public int compare(Parts r1, Parts r2) { 
+
+			if (r1.getDistaceLastConnectedNode() > r2.getDistaceLastConnectedNode() ) 
+
+				return 1; 
+
+			if (r1.getDistaceLastConnectedNode() < r2.getDistaceLastConnectedNode() ) 
+
+				return -1; 
+
+			return 0; 
+
+		}
+
+		
+
+	};
+	
+	
+	
 	public void settingConnections(Parts parts, Parts parts2) {
 		this.getDirectoryConnections().clear();
 		for(Edge e:parts.getDirectoryConnections().values()) {

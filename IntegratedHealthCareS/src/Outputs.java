@@ -9,7 +9,7 @@ public class Outputs {
 
 
 	public Outputs(Algorithm algorithm) {
-		subroutes=algorithm.getSubroutes();
+		subroutes=algorithm.getSolution().getWalkingRoute();
 		initialSolution=algorithm.getInitialSolution();
 		solution=algorithm.getSolution();
 	}
@@ -39,10 +39,10 @@ public class Outputs {
 		out.println("--------------------------------------------");
 		out.println("\n Initial solution \n");
 		//out.println(initialSolution.toString() + "\r\n");
+		int paramedic=0;
+		int homeCareStaff=0;
 		for(Route r:initialSolution.getRoutes()) {
-			if(!r.getSubJobsList().isEmpty()) {
-				int paramedic=0;
-				int homeCareStaff=0;
+			if(!r.getSubJobsList().isEmpty()) {	
 				if(r.getAmountParamedic()>0) {
 					paramedic++;
 				out.println("\n Paramedic "+paramedic );

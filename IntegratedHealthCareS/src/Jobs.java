@@ -22,6 +22,7 @@ public class Jobs {
 	private double serviceTime; // required service time
 	private double sortETWSizeCriterion; // sort criterion the size of time window and the earliest time
 	private double sortLTWSizeCriterion; // sort criterion the size of time window and the latest time
+	private double sortLDistaceLastConnectedNode; // sort criterion the to the last inserted node
 	private int totalPeople=0; // people involven in the service:
 	// vehicle 
 //	private double vehicleArrivalTime=0; // time for vehicle
@@ -206,6 +207,8 @@ public class Jobs {
 	}
 	public void setsortETWSizeCriterion(double B) {	this.sortETWSizeCriterion = B;}
 	public void setsortLTWSizeCriterion(double B) {	this.sortLTWSizeCriterion = B;}
+	public void setAdditionalCriterion(double B) {	this.sortLDistaceLastConnectedNode = B;}
+	
 	
 	/* GET METHODS */
 	public boolean isServerd() {return isServerd;}
@@ -243,9 +246,9 @@ public class Jobs {
 	public double getWalkingTime() {return walkingTime;}
 	public LinkedList<Jobs> getAssignedJobToMedicalCentre() {return assignedJob;}
 	public HashMap<Integer,SubJobs> getSubJobs() {return subJobs;}
-
+	public double getDistaceLastConnectedNode() { return sortLDistaceLastConnectedNode; }
 	public double getTW() { return hardendTime-hardstartTime; }
-
+	
 	// Setters
 	public void setTimeWindowsDropOffMedicalCentre(int registrationTime) {
 		double startTime=this.getStartTime();
@@ -338,6 +341,18 @@ public class Jobs {
 
 	};
 
+	public static Comparator<Jobs> SORT_DistaceLastConnectedNode = new Comparator<Jobs>() {
+		@Override
+		public int compare(Jobs o1, Jobs o2) {
+			if (o1.sortLDistaceLastConnectedNode > o2.sortLDistaceLastConnectedNode )
+				return 1;
+			if (o1.sortLDistaceLastConnectedNode < o2.sortLDistaceLastConnectedNode )
+				return -1;
+			return 0;
+		}
+
+	};
+	
 
 	public static Comparator<Jobs> SKILLS = new Comparator<Jobs>() {
 		@Override

@@ -31,8 +31,7 @@ public class Algorithm {
 		test = t;
 		rn=new Random(t.getSeed());
 		input = i;
-		//for(int iter=0;iter<200;iter++) {
-		///////////////////////////////////
+	
 	//  option 1
 		
 			//for(int iter=0;iter<10;iter++) {
@@ -44,7 +43,10 @@ public class Algorithm {
 			updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 			drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
 			drivingRoute.generateAfeasibleSolution();
+			drivingRoute.getSol().getRoutes().sort(Route.SORT_BY_departureTimeDepot);
+			drivingRoute.getSol().setWalkingRoutes(walkingList);
 			Solution newSolution0= new Solution(drivingRoute.getSol());
+			newSolution0.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
 			//iterations++;
 			double objective=0;
 			if(bestSolution==null) {
@@ -66,7 +68,9 @@ public class Algorithm {
 			updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 			drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
 			drivingRoute.generateAfeasibleSolution();
+			drivingRoute.getSol().setWalkingRoutes(walkingList);
 			Solution newSolution1= new Solution(drivingRoute.getSol());
+			newSolution1.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
 			//iterations++;
 			objective=0;
 			if(bestSolution==null) {
@@ -90,8 +94,9 @@ public class Algorithm {
 		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
 		drivingRoute.generateAfeasibleSolution();
+		drivingRoute.getSol().setWalkingRoutes(walkingList);
 		newSolution= new Solution(drivingRoute.getSol());
-		//iterations++;
+		newSolution.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
 		objective=0;
 		if(bestSolution==null) {
 			objective=Double.MAX_VALUE;
@@ -148,7 +153,7 @@ public class Algorithm {
 			addingWaitingTime(solution);
 			solution.setId(iterations);
 			double durationW=0;
-			for(SubRoute r:walkingList) {
+			for(SubRoute r:sol.getWalkingRoute()) {
 				durationW+=r.getDurationWalkingRoute();
 			}
 			solution.setWalkingTime(durationW);
@@ -170,7 +175,7 @@ public class Algorithm {
 				addingWaitingTime(bestSolution);
 				bestSolution.setId(iterations);
 				double durationW=0;
-				for(SubRoute r:walkingList) {
+				for(SubRoute r:sol.getWalkingRoute()) {
 					durationW+=r.getDurationWalkingRoute();
 				}
 				bestSolution.setWalkingTime(durationW);
@@ -186,12 +191,12 @@ public class Algorithm {
 	public void setInitialSolution(Solution initialSolution) {
 		this.initialSolution = initialSolution;
 		addingWaitingTime(initialSolution);
-		initialSolution.setId(iterations);
-		double durationW=0;
-		for(SubRoute r:walkingList) {
-			durationW+=r.getDurationWalkingRoute();
-		}
-		initialSolution.setWalkingTime(durationW);
+//		initialSolution.setId(iterations);
+//		double durationW=0;
+//		for(SubRoute r:initialSolution.getWalkingRoute()) {
+//			durationW+=r.getDurationWalkingRoute();
+//		}
+//		initialSolution.setWalkingTime(durationW);
 		//initialSolution.setWalkingTime(subroutes.getTotalTravelTime());
 	}
 
