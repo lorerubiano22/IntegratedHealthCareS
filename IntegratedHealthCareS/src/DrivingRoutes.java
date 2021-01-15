@@ -1614,7 +1614,7 @@ public class DrivingRoutes {
 				p.setAdditionalCriterion(1000);
 			}
 		}
-		
+
 	}
 
 	private ArrayList<Parts> poolPartscreationRoute() {
@@ -2850,51 +2850,51 @@ public class DrivingRoutes {
 			}
 		}
 		subJobsList.sort(SubJobs.SORT_BY_STARTW);
-
-		double departure_a=subJobsList.get(0).getStartTime()+(subJobsList.get(0).getDepartureTime()-subJobsList.get(0).getArrivalTime());
-		boolean inserted=false;
-		if(vehicleCapacityPart(subJobsList) ) {
-			for(int index=1;index<subJobsList.size();index++) {
-				SubJobs a=subJobsList.get(index-1);
-				SubJobs b=subJobsList.get(index);
-				double tv=inp.getCarCost().getCost(a.getId()-1, b.getId()-1);
-				double test= departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadTime();
-				if(departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadTime()<=b.getEndTime() && departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadRegistrationTime()>=b.getStartTime()) {
-					departure_a=departure_a+tv+b.getloadUnloadTime();
-					inserted=true;
-				}
-				else {
-					inserted=false;
-					break;
+		if(!subJobsList.isEmpty()) {
+			double departure_a=subJobsList.get(0).getStartTime()+(subJobsList.get(0).getDepartureTime()-subJobsList.get(0).getArrivalTime());
+			boolean inserted=false;
+			if(vehicleCapacityPart(subJobsList) ) {
+				for(int index=1;index<subJobsList.size();index++) {
+					SubJobs a=subJobsList.get(index-1);
+					SubJobs b=subJobsList.get(index);
+					double tv=inp.getCarCost().getCost(a.getId()-1, b.getId()-1);
+					double test= departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadTime();
+					if(departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadTime()<=b.getEndTime() && departure_a+tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadRegistrationTime()>=b.getStartTime()) {
+						departure_a=departure_a+tv+b.getloadUnloadTime();
+						inserted=true;
+					}
+					else {
+						inserted=false;
+						break;
+					}
 				}
 			}
-		}
-		if(inserted) {
-			departure_a=subJobsList.get(0).getStartTime()+(subJobsList.get(0).getDepartureTime()-subJobsList.get(0).getArrivalTime());
-			SubJobs firstJob=subJobsList.get(0);
-			firstJob.setarrivalTime(subJobsList.get(0).getStartTime());
-			firstJob.setdepartureTime(departure_a);
-			for(int index=1;index<subJobsList.size();index++) {
-				SubJobs a=subJobsList.get(index-1);
-				SubJobs b=subJobsList.get(index);
-				double tv=inp.getCarCost().getCost(a.getId()-1, b.getId()-1);
-				double delta=b.getDepartureTime()-b.getArrivalTime();
-				b.setarrivalTime(departure_a+tv);
-				b.setdepartureTime(b.getArrivalTime()+delta);
-				departure_a=b.getDepartureTime();
-			}	
-		}
-		Parts p= new Parts();
-		p.setListSubJobs(subJobsList, inp, test);
-		ArrayList<Parts> schift2= new ArrayList<Parts>();
-		schift2.add(p);
-		ArrayList<Route> poolRoutes=insertingDepotConnections(schift2);
-		for(Route r: sol.getRoutes()) { // selecting routes con un solo trabajo
-			if(!routesList.contains(r)) {
-				poolRoutes.add(r);
+			if(inserted) {
+				departure_a=subJobsList.get(0).getStartTime()+(subJobsList.get(0).getDepartureTime()-subJobsList.get(0).getArrivalTime());
+				SubJobs firstJob=subJobsList.get(0);
+				firstJob.setarrivalTime(subJobsList.get(0).getStartTime());
+				firstJob.setdepartureTime(departure_a);
+				for(int index=1;index<subJobsList.size();index++) {
+					SubJobs a=subJobsList.get(index-1);
+					SubJobs b=subJobsList.get(index);
+					double tv=inp.getCarCost().getCost(a.getId()-1, b.getId()-1);
+					double delta=b.getDepartureTime()-b.getArrivalTime();
+					b.setarrivalTime(departure_a+tv);
+					b.setdepartureTime(b.getArrivalTime()+delta);
+					departure_a=b.getDepartureTime();
+				}	
 			}
-		}
-
+			Parts p= new Parts();
+			p.setListSubJobs(subJobsList, inp, test);
+			ArrayList<Parts> schift2= new ArrayList<Parts>();
+			schift2.add(p);
+			ArrayList<Route> poolRoutes=insertingDepotConnections(schift2);
+			for(Route r: sol.getRoutes()) { // selecting routes con un solo trabajo
+				if(!routesList.contains(r)) {
+					poolRoutes.add(r);
+				}
+			}
+		
 		stackingRoutes(poolRoutes);
 		for(Route r: poolRoutes) {
 			newSol.getRoutes().add(r);
@@ -2910,7 +2910,10 @@ public class DrivingRoutes {
 
 		Solution shift= shiftDefinition(newSol);
 		newSol.setShift(shift);
-
+	}
+		else {
+			newSol=new Solution (solsorting);
+		}
 
 		return newSol;
 	}
