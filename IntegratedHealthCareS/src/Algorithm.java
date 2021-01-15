@@ -34,64 +34,63 @@ public class Algorithm {
 	
 	//  option 1
 		
-			//for(int iter=0;iter<10;iter++) {
+		
 				walkingList = new LinkedList<SubRoute>();
-			
-				//subroutes = new WalkingRoutes(input, t, i.getNodes()); // stage 1: Creation of walking routes
-				
-				//selectionWalkingRoutes(false);
-			updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
-			drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
-			drivingRoute.generateAfeasibleSolution();
-			drivingRoute.getSol().getRoutes().sort(Route.SORT_BY_departureTimeDepot);
-			drivingRoute.getSol().setWalkingRoutes(walkingList);
-			Solution newSolution0= new Solution(drivingRoute.getSol());
-			newSolution0.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
-			//iterations++;
+//			
+//			
+//			updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
+//			drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
+//			drivingRoute.generateAfeasibleSolution();
+//			drivingRoute.getSol().getRoutes().sort(Route.SORT_BY_departureTimeDepot);
+//			drivingRoute.getSol().setWalkingRoutes(walkingList);
+//			Solution newSolution0= new Solution(drivingRoute.getSol());
+//			newSolution0.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
+//		
 			double objective=0;
-			if(bestSolution==null) {
-				objective=Double.MAX_VALUE;
-			}
-			else {
-				objective=bestSolution.getobjectiveFunction();
-			}
-			if(newSolution0.getobjectiveFunction()<objective) {
-				setBestSolution(drivingRoute.getSol());
-				setInitialSolution(drivingRoute.getSol().getShift());
-			}
-		//}
+//			if(bestSolution==null) {
+//				objective=Double.MAX_VALUE;
+//			}
+//			else {
+//				objective=bestSolution.getobjectiveFunction();
+//			}
+//			if(newSolution0.getobjectiveFunction()<objective) {
+//				setBestSolution(drivingRoute.getSol());
+//				setInitialSolution(drivingRoute.getSol().getShift());
+//			}
+	
 			
 			// option 2
 			subroutes = new WalkingRoutes(input, t, i.getNodes()); // stage 1: Creation of walking routes
 			
-			selectionWalkingRoutes(true);
-			updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
-			drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
-			drivingRoute.generateAfeasibleSolution();
-			drivingRoute.getSol().setWalkingRoutes(walkingList);
-			Solution newSolution1= new Solution(drivingRoute.getSol());
-			newSolution1.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
-			//iterations++;
-			objective=0;
-			if(bestSolution==null) {
-				objective=Double.MAX_VALUE;
-			}
-			else {
-				objective=bestSolution.getobjectiveFunction();
-			}
-			if(newSolution1.getobjectiveFunction()<objective) {
-				setBestSolution(drivingRoute.getSol());
-				setInitialSolution(drivingRoute.getSol().getShift());
-			}
+//			selectionWalkingRoutes(true);
+//			updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
+//			drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
+//			drivingRoute.generateAfeasibleSolution();
+//			drivingRoute.getSol().setWalkingRoutes(walkingList);
+//			Solution newSolution1= new Solution(drivingRoute.getSol());
+//			newSolution1.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
+//			objective=0;
+//			if(bestSolution==null) {
+//				objective=Double.MAX_VALUE;
+//			}
+//			else {
+//				objective=bestSolution.getobjectiveFunction();
+//			}
+//			if(newSolution1.getobjectiveFunction()<objective) {
+//				setBestSolution(drivingRoute.getSol());
+//				setInitialSolution(drivingRoute.getSol().getShift());
+//			}
 		/////////////////////////////////	
 		
 		
 		
 		for(int iter=0;iter<10;iter++) {
+			//iter=1;
 			walkingList = new LinkedList<SubRoute>();
 			selectionWalkingRoutes(false);
 		
 		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
+		boolean chekingWalkingRouteList= correctCouple(subJobsList,walkingList);
 		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
 		drivingRoute.generateAfeasibleSolution();
 		drivingRoute.getSol().setWalkingRoutes(walkingList);
@@ -114,9 +113,33 @@ public class Algorithm {
 		
 	}
 
+	private boolean correctCouple(HashMap<String, Couple> subJobsList2, LinkedList<SubRoute> walkingList2) {
+		boolean correctCoupe= false;
+		// pick-up Nodes
+		
+				for(SubRoute r:walkingList2) {
+					SubJobs start=new SubJobs(r.getJobSequence().get(0));
+					String key="P"+start.getId();
+					if(subJobsList2.containsKey(key)) {
+						Couple j=subJobsList2.get(key);
+						System.out.println("Stop");
+					}
+				}
+				for(SubRoute r:walkingList2) {
+					SubJobs start=new SubJobs(r.getJobSequence().get(r.getJobSequence().size()-1));
+					String key="D"+start.getId();
+					if(subJobsList2.containsKey(key)) {
+						System.out.println("Stop");
+					}
+				}
+		// Drop-off nodes
+		return correctCoupe;
+	}
+
 	private void selectionWalkingRoutes(boolean b) {
 		if(!b) {
-		int totalWalkingRoutes = this.rn.nextInt(subroutes.getWalkingRoutes().size()-1);
+		//int totalWalkingRoutes = this.rn.nextInt(subroutes.getWalkingRoutes().size()-1);
+			int totalWalkingRoutes = 1;
 		int id=-1;
 		for(int i=0;i<totalWalkingRoutes;i++) {
 			int r2 = this.rn.nextInt(subroutes.getWalkingRoutes().size()-1);
@@ -214,6 +237,7 @@ public class Algorithm {
 
 
 	private void updateListJobs() {
+		subJobsList.clear();
 		// stage 0: set the jobs which are not in a walking route - * Hard time window
 		ArrayList<Couple> clientJobs= createClientJobs(); //  (Drop-off home care staff at client home)* -------- (Pick up home care staff at client home)
 
@@ -228,16 +252,25 @@ public class Algorithm {
 		int i=-1;
 		for(Couple j:clientJobs) {
 			i++;
+			if(i==67) {
+				System.out.println("Error");
+			}
 			System.out.println(j.toString());
 			j.setIdCouple(i);
 			j.getPresent().setIDcouple(i);
+			if(j.getPresent().getId()==70) {
+				System.out.println("Error");
+			}
+			if(j.getPresent().getId()==38) {
+				System.out.println("Error");
+			}
 			j.getFuture().setIDcouple(i);
 			subJobsList.put(j.getPresent().getSubJobKey(),j);
 			subJobsList.put(j.getFuture().getSubJobKey(),j);
 			if(j.getPresent().getStartTime()>j.getFuture().getStartTime()) {
 				System.out.println("Error");
 			}
-
+			
 		}
 
 		for(Couple j:patientJobs) {
@@ -528,7 +561,7 @@ if(j.getId()==14){
 		// Individual client JOBS
 		if(!input.getclients().isEmpty()) {
 			for(Jobs j: input.getclients().values()) {
-				if(j.getId()==1) {
+				if(j.getId()==70) {
 					System.out.println("stop");
 				}
 				// Creating the request for picking up the nurse
@@ -540,8 +573,14 @@ if(j.getId()==14){
 					presentJob.setloadUnloadTime(test.getloadTimeHomeCareStaff());
 					settingPresentTimeClient(presentJob);
 					Jobs futureJob= creatingSubPairJOb(j);
+					
 					//0. creation of couple
 					Couple pickUpDropOff= creatingCoupleforIndividualJobs(presentJob,futureJob); // individula jobs <- not walking routes
+					
+				if(presentJob.getId()==70 || futureJob.getId()==70 ) {
+					String key="P70";
+				}
+					
 					// 1. fixing time windows
 					//computingTimeatClientHomeSubJob(pickUpDropOff,j); // considering the load un loading time
 					// 2. fixing number of people involved

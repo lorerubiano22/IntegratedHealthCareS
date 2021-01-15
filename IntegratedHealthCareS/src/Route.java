@@ -201,22 +201,7 @@ public class Route {
 			
 			travelTimeDuration+=e.getTime();
 		}
-		
-//		ArrayList<SubJobs> sequence= new ArrayList<SubJobs>();
-//		for(Parts p:this.getPartsRoute()) {
-//			for(SubJobs sj:p.getListSubJobs()) {		
-//				sequence.add(sj);
-//			}	
-//		}
-//
-//		for(int j=1; j<sequence.size();j++) {
-//			Jobs jNode=sequence.get(j-1);
-//			//if(j!=this.getSubJobsList().size()-1 && jNode.getId()!=0) { // travel time
-//			Jobs kNode=sequence.get(j);
-//			double time=inp.getCarCost().getCost(jNode.getId()-1, kNode.getId()-1);
-//			travelTimeDuration+=time;
-//			//	}
-//		}
+	
 		travelTime=travelTimeDuration;
 		this.driverCost=travelTimeDuration;
 	}

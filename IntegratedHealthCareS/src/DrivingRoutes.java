@@ -13,8 +13,6 @@ public class DrivingRoutes {
 	private Test test; // input problem
 	private Random rn;
 	// Routes
-	private  ArrayList<Route> routeList= new ArrayList<Route>(); // dummy routes
-	private  HashMap<Integer, Jobs> subJobs= new HashMap<>();
 
 
 	private  HashMap<String, Couple> dropoffHomeCareStaff= new HashMap<>();// hard time windows list of home care staff 
@@ -34,8 +32,6 @@ public class DrivingRoutes {
 	private  ArrayList<Couple> subJobsLowestQualification= new ArrayList<Couple>();
 	private  ArrayList<Couple> subJobspatients= new ArrayList<Couple>();
 	private HashMap<String, SubJobs>assignedJobs=new HashMap<String, SubJobs>();
-	private HashMap<Integer, Jobs>jobsVehicle=new HashMap<Integer, Jobs>();
-	private HashMap<Integer, Jobs>checkedFutureJobs=new HashMap<Integer, Jobs>();
 	private ArrayList<Parts> schift= new ArrayList<>();
 	private ArrayList<Schift>splittedSchift= new ArrayList<Schift>();
 
@@ -85,16 +81,67 @@ public class DrivingRoutes {
 		System.out.println(initialSol.toString());
 
 		solution= assigningRoutesToDrivers(initialSol);
-		ArrayList<Route> list= new ArrayList<Route> ();
-		for(Route r: solution.getRoutes()) {
-			list.add(r);
-		}
-		boolean goodSolution=validationSequenceRoutes(list);
+
+
+		boolean goodSolution=solutionValitadion(solution);
+
+
 		if(!goodSolution) {
 			System.out.println("Stop");
 		}
+
+		System.out.println("Stop");
+
 	}
 
+
+	private boolean solutionValitadion(Solution solution) {
+		boolean noError= false;
+		ArrayList<Route> list= new ArrayList<Route> ();
+		for(Route r:solution.getRoutes()) {
+			list.add(r);
+		}
+		boolean feasible= validationSequenceRoutes(list);
+		if(!feasible) {
+			System.out.println("Stop");
+		}
+
+		boolean equivalent=true;
+		for(Route r:solution.getRoutes()) {
+			equivalent=true;
+			for(SubJobs j:r.getSubJobsList()) {
+				Route r2=selectionRoute(j,solution.getShift());
+				SubJobs driver=r.getJobsDirectory().get(j.getSubJobKey());
+				SubJobs medicalStaff=r2.getJobsDirectory().get(j.getSubJobKey());
+				equivalent= checkingDeriverRouteVSshift(driver,medicalStaff);
+				if(!equivalent) {
+					break;
+				}
+			}
+
+			if(!equivalent) {
+				break;
+			}
+		}
+		
+		if(feasible && equivalent) {
+			noError=true;
+			System.out.println("Stop");
+		}
+		return noError;
+	}
+
+	private boolean checkingDeriverRouteVSshift(SubJobs driver, SubJobs medicalStaff) {
+		boolean equivalent= false;
+
+		if(driver.getArrivalTime()==medicalStaff.getArrivalTime() && driver.getDepartureTime()==medicalStaff.getDepartureTime()) { // arrival and departure
+			if(driver.getstartServiceTime()==medicalStaff.getstartServiceTime() && driver.getendServiceTime()==medicalStaff.getendServiceTime()) { // start service time and end service time
+				equivalent= true;
+			}
+		}
+
+		return equivalent;
+	}
 
 	private Solution merginShift(Solution s) {
 		//		private  HashMap<String, Couple> dropoffHomeCareStaff= new HashMap<>();// hard time windows list of home care staff 
@@ -257,11 +304,11 @@ public class DrivingRoutes {
 
 		poolRoutes.sort(Route.SORT_BY_EarlyJob);
 
-		boolean goodSolution=validationSequenceRoutes(poolRoutes);
-		System.out.println("Routes list ");
-		for(Route route:poolRoutes) {
-			System.out.println("Route "+ route.toString());
-		}
+		//		boolean goodSolution=validationSequenceRoutes(poolRoutes);
+		//		System.out.println("Routes list ");
+		//		for(Route route:poolRoutes) {
+		//			System.out.println("Route "+ route.toString());
+		//		}
 
 		Solution solution= new Solution ();
 		for(Route route:poolRoutes) {
@@ -286,7 +333,12 @@ public class DrivingRoutes {
 		solution.checkingSolution(inp, test, jobsInWalkingRoute, shift);
 
 
-		/// solution 
+		boolean goodSolution=solutionValitadion(solution);
+
+
+		if(!goodSolution) {
+			System.out.println("Stop");
+		}
 
 
 		return solution;
@@ -337,7 +389,7 @@ public class DrivingRoutes {
 		stackingRoutes(poolRoutes);
 
 		poolRoutes.sort(Route.SORT_BY_EarlyJob);
-		boolean goodSolution=validationSequenceRoutes(poolRoutes);
+		//boolean goodSolution=validationSequenceRoutes(poolRoutes);
 		System.out.println("Routes list ");
 		for(Route route:poolRoutes) {
 			System.out.println("Route "+ route.toString());
@@ -392,7 +444,7 @@ public class DrivingRoutes {
 
 	private Route selectionRoutes(SubJobs j, LinkedList<Route> routes) {
 		Route r= null;
-		String key="P7";
+		String key="P28";
 		for(Route inR:routes ) {
 			if(inR.getJobsDirectory().containsKey(key)) {
 				r=inR;
@@ -567,17 +619,24 @@ public class DrivingRoutes {
 		jobsList.sort(Jobs.SORT_BY_STARTW);
 		// Assignment
 		for(SubJobs j:jobsList) { // iterating over the list of jobs
-			if(j.getSubJobKey().equals("P7")) {
+			if(j.getSubJobKey().equals("D70")) {
 				System.out.println("Stop");
 			}
-			if(j.getSubJobKey().equals("D7")) {
+			if(j.getSubJobKey().equals("D29")) {
+				System.out.println("Stop");
+			}
+			if(j.getId()==38) {
 				System.out.println("Stop");
 			}
 			boolean inserted=false;
+
 			for(ArrayList<Parts> shift:shiftQualification) { // iterating over the list of medical 
 				// private ArrayList<ArrayList<SubJobs>> assigmentJobsQualification(int i, ArrayList<SubJobs> jobsList, HashMap<String, Couple> dropoffHomeCareStaff2, HashMap<String, Couple> pickupHomeCareStaff2, HashMap<String, Couple> dropoffpatientMedicalCentre2, HashMap<String, Couple> pickpatientMedicalCentre2) {
 
 				inserted=assigningJobsToMedicalStaff(j,shift, dropoffHomeCareStaff2,  pickupHomeCareStaff2,  dropoffpatientMedicalCentre2,  pickpatientMedicalCentre2);
+				if(inserted) {
+					break;
+				}
 			}
 			if(!inserted) { // se crea un nuevo turno
 				ArrayList<Parts> shift = new ArrayList<Parts> ();
@@ -623,10 +682,12 @@ public class DrivingRoutes {
 		// HashMap<String, Couple> dropoffHomeCareStaff2, HashMap<String, Couple> pickupHomeCareStaff2, HashMap<String, Couple> dropoffpatientMedicalCentre2, HashMap<String, Couple> pickpatientMedicalCentre2
 		Parts p= callingParts(j, dropoffHomeCareStaff2,  pickupHomeCareStaff2,  dropoffpatientMedicalCentre2,  pickpatientMedicalCentre2);
 		if(shift.isEmpty()) {
+			inserted=true;
 			shift.add(p);	
 		}
 		else { // se intenta insertar al final de la secuencia
 			if(shift.get(shift.size()-1).getListSubJobs().get(shift.get(shift.size()-1).getListSubJobs().size()-1).getDepartureTime()<p.getListSubJobs().get(0).getArrivalTime()) {
+				inserted=true;
 				shift.add(p);		
 			}	
 		}
@@ -675,6 +736,9 @@ public class DrivingRoutes {
 			feasible= true;
 		}
 		boolean allJobs=checkingJobs(poolRoutes);
+
+
+
 
 		if(allJobs && feasible) return true;
 		return false;
@@ -1830,6 +1894,15 @@ public class DrivingRoutes {
 			Couple paar=new Couple(c, inp,test);
 			SubJobs startNode=(SubJobs)paar.getPresent();
 			SubJobs endNode=(SubJobs)paar.getFuture();
+			if(startNode.getId()==8) {
+				System.out.println("Stop");
+			}
+			if(startNode.getId()==29) {
+				System.out.println("Stop");
+			}
+			if(jobsInWalkingRoute.containsKey(startNode.getId()) && !jobsInWalkingRoute.containsKey(endNode.getId()) ) {
+				System.out.println("Stop");
+			}
 			// adjusting time windows
 			startNode.setSoftStartTime(inp.getNodes().get(startNode.getId()-1).getStartTime()); // saving original times
 			startNode.setSoftEndTime(inp.getNodes().get(startNode.getId()-1).getEndTime());
@@ -2625,10 +2698,6 @@ public class DrivingRoutes {
 		for(Route r: diversifiedSolneighborhood.getRoutes()) {
 			routeList.add(r);
 		}
-		boolean goodSolution=validationSequenceRoutes(routeList);
-
-
-		// verfication
 
 		if(neighborhood.getobjectiveFunction()<diversifiedSolneighborhood.getobjectiveFunction()) {
 			newSol=new Solution (neighborhood);
@@ -2637,9 +2706,22 @@ public class DrivingRoutes {
 			newSol=new Solution (diversifiedSolneighborhood);
 		}
 
+		updatingShifts(newSol);
+		boolean goodSolution=solutionValitadion(newSol);
+
+
+		if(!goodSolution) {
+			System.out.println("Stop");
+		}
 		return newSol;
 	}
 
+
+	private void updatingShifts(Solution newSol) {
+		for(Route r:newSol.getShift().getRoutes()) {
+			r.updateRouteFromParts(inp, test, jobsInWalkingRoute);
+		}
+	}
 
 	private Solution shiftDefinition(Solution diversifiedSolneighborhood) {
 
@@ -2659,9 +2741,10 @@ public class DrivingRoutes {
 		Solution shift= new Solution ();
 		for(Route route:poolshifts) {
 			if(!route.getPartsRoute().isEmpty()) {
+				route.updateRouteFromParts(inp, test, jobsInWalkingRoute);
 				shift.getRoutes().add(route);}
 		}
-		SubJobs j=null;
+
 
 		return shift;
 	}
@@ -2705,14 +2788,14 @@ public class DrivingRoutes {
 		for(Route r: newSol.getRoutes()) {
 			routeList.add(r);
 		}
-		boolean goodSolution=validationSequenceRoutes(routeList);
+		//boolean goodSolution=validationSequenceRoutes(routeList);
 		Solution vecindario1= intraRoutesMovements(newSol); // todo para solucionar los detours
 		System.out.println("Solution vecindario1" + vecindario1.toString());
 		routeList= new ArrayList<Route>();
 		for(Route r: vecindario1.getRoutes()) {
 			routeList.add(r);
 		}
-		goodSolution=validationSequenceRoutes(routeList);
+		//goodSolution=validationSequenceRoutes(routeList);
 		if(vecindario1.getobjectiveFunction()<=solsorting.getobjectiveFunction()) {
 			newSol=new Solution(vecindario1);
 		}
@@ -2725,12 +2808,21 @@ public class DrivingRoutes {
 		for(Route r: vecindario2.getRoutes()) {
 			routeList.add(r);
 		}
-		goodSolution=validationSequenceRoutes(routeList);
+		//goodSolution=validationSequenceRoutes(routeList);
 		System.out.println("Solution  "+vecindario2.toString());
 		if(vecindario2.getobjectiveFunction()<=newSol.getobjectiveFunction()) {
 			newSol=new Solution(vecindario2);
 		}
 
+
+		///
+
+		boolean goodSolution=solutionValitadion(newSol);
+
+
+		if(!goodSolution) {
+			System.out.println("Stop");
+		}
 		return newSol;
 	}
 
@@ -2744,7 +2836,7 @@ public class DrivingRoutes {
 		for(Route r: sol.getRoutes()) {
 			routeList.add(r);
 		}
-		boolean goodSolution=validationSequenceRoutes(routeList);
+		//boolean goodSolution=validationSequenceRoutes(routeList);
 		SubJobs future=null;
 		Route ir=selectionRoute(future,currentSolution);
 
@@ -2811,7 +2903,7 @@ public class DrivingRoutes {
 		for(Route r: newSolution.getRoutes()) {
 			routeList.add(r);
 		}
-		goodSolution=validationSequenceRoutes(routeList);
+		//goodSolution=validationSequenceRoutes(routeList);
 		Solution shift= shiftDefinition(newSolution);
 		newSolution.setShift(shift);
 		newSolution.checkingSolution(inp, test, jobsInWalkingRoute, newSolution.getShift());
@@ -2894,23 +2986,23 @@ public class DrivingRoutes {
 					poolRoutes.add(r);
 				}
 			}
-		
-		stackingRoutes(poolRoutes);
-		for(Route r: poolRoutes) {
-			newSol.getRoutes().add(r);
+
+			stackingRoutes(poolRoutes);
+			for(Route r: poolRoutes) {
+				newSol.getRoutes().add(r);
+			}
+
+
+
+			newSol.setShift(sol.getShift());
+			newSol.checkingSolution(inp, test, jobsInWalkingRoute, newSol.getShift());
+			System.out.println("Solution");
+			System.out.println(newSol.toString());
+
+
+			Solution shift= shiftDefinition(newSol);
+			newSol.setShift(shift);
 		}
-
-
-
-		newSol.setShift(sol.getShift());
-		newSol.checkingSolution(inp, test, jobsInWalkingRoute, newSol.getShift());
-		System.out.println("Solution");
-		System.out.println(newSol.toString());
-
-
-		Solution shift= shiftDefinition(newSol);
-		newSol.setShift(shift);
-	}
 		else {
 			newSol=new Solution (solsorting);
 		}
