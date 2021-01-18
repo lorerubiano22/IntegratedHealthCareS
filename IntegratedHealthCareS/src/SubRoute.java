@@ -16,9 +16,9 @@ public class SubRoute {
 	private Jobs pickUpNode; // drop-off node
 	private double totalTravelTime = 0.0; // route total travel time
 	private double totalServiceTime = 0.0; // route total service time in the route
-	private LinkedList<Jobs> jobSequence; // list of subroutes which describe the job sequence respecting all restrictions
-	private HashMap<Integer,Jobs> jobList;
-	private LinkedList<Edge> edges; // list of edges in the walking route
+	private LinkedList<Jobs> jobSequence= new LinkedList<Jobs>(); // list of subroutes which describe the job sequence respecting all restrictions
+	private HashMap<Integer,Jobs> jobList = new HashMap<Integer,Jobs>();
+	private LinkedList<Edge> edges = new LinkedList<Edge>(); // list of edges in the walking route
 	private double durationWalkingRoute=0; // service time + walking time + waitingTimeRoute
 	private double waitingTimeRoute=0; // waiting time
 	private double startServiceTime=0;
@@ -33,6 +33,23 @@ public class SubRoute {
 
 	// Setters
 
+
+	public SubRoute(SubRoute sr) {
+		this.slotID=sr.slotID;
+		this.dropOffNode=new Jobs(sr.dropOffNode);  // pick-up Node
+		this.pickUpNode =new Jobs(sr.pickUpNode); // drop-off node
+		this.totalTravelTime = sr.totalTravelTime; // route total travel time
+		this.totalServiceTime =sr.totalServiceTime; // route total service time in the route
+		for(Jobs j: sr.getJobSequence()) {
+			this.jobSequence.add(new Jobs(j));	
+			this.jobList.put(j.getId(), j);
+		}		
+
+		this.durationWalkingRoute=sr.durationWalkingRoute; // service time + walking time + waitingTimeRoute
+		this.waitingTimeRoute=sr.waitingTimeRoute; // waiting time
+		this.startServiceTime=sr.startServiceTime;
+		this.reqQualification=sr.reqQualification;
+	}
 
 	public void setEdges(LinkedList<Edge> edges) {
 		this.edges = edges;
@@ -134,14 +151,14 @@ public class SubRoute {
 	public String toString() 
 	{ String s = "";
 	if(this.getJobSequence().size()>1) {  
-		s = s.concat("\nID route: " + this.slotID);
-		s = s.concat("\nRequired Qualification: " + this.reqQualification);
+		s = s.concat("\n Walking Route: ");
+		s = s.concat("\n Required Qualification: " + this.reqQualification);
 		s = s.concat("\n duration walking route: " + this.durationWalkingRoute);
 		s = s.concat("\n cumulative walking time: " + this.totalTravelTime);
 		s = s.concat("\n cumulative service time: " + this.totalServiceTime);
 		s = s.concat("\n cumulative waiting time: " + this.waitingTimeRoute);
 		s=s.concat("\n start service time: " + this.startServiceTime);
-		s = s.concat("\nEdge total of job in the walking route: " + (this.getJobSequence().size()));
+		s = s.concat("\n Edge total of job in the walking route: " + (this.getJobSequence().size()));
 		s = s.concat("\n List of jobs: ");
 		for(Jobs j:this.getJobSequence()) {
 			s = s.concat(" j_( Id" + j.getId()+"  A  "+ j.getArrivalTime() +" , B_ "+j.getstartServiceTime()+" ) TW["+j.getStartTime()+";"+j.getEndTime()+"]");	

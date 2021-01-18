@@ -28,7 +28,7 @@ public class Solution {
 	private double penalization=0;
 	private double objectiveFunction=0;
 	private Solution shifts;
-	private LinkedList<SubRoute> walkingList;
+	private LinkedList<SubRoute> walkingList= new LinkedList<SubRoute>();
 
 	public Solution(Solution initialSol) {
 
@@ -89,7 +89,12 @@ public class Solution {
 	public void setdetourDuration(double detour) {detourDuration= detour;}
 	public void setdetourPromParamedics(double detour) {detourPromParamedico= detour;}
 	public void setdetourPromHomeCareStaff(double detour) {detourPromHomeCareStaff= detour;}
-	public void setWalkingRoutes(LinkedList<SubRoute> walkingList) {this.walkingList=walkingList;}
+	public void setWalkingRoutes(LinkedList<SubRoute> walkingList) {
+		for(SubRoute sr: walkingList) {
+			this.walkingList.add(new SubRoute(sr));
+		}
+
+	}
 
 
 
@@ -151,7 +156,7 @@ public class Solution {
 			s= s.concat("\n Route: "+ r.getIdRoute());
 			s= s.concat(" travelTime: "+ r.getTravelTime());
 			s= s.concat(" waitingTime: "+ r.getWaitingTime());
-				s= s.concat(" serviceTime: "+ r.getServiceTime());
+			s= s.concat(" serviceTime: "+ r.getServiceTime());
 			s= s.concat(" detour: "+ r.getDetour());
 			s= s.concat(" detour to penalize: "+ r.getdetourViolation());
 			s= s.concat(" waiting Time to penalize: "+ r.getAdditionalwaitingTime());
@@ -185,8 +190,9 @@ public class Solution {
 		int id=-1;
 
 		for(Route r: this.getRoutes()) {
-			//r.getEdges().clear();
-			// checking
+			r.checkingConnectionsRoute(test,inp);
+
+
 			for(Parts p: r.getPartsRoute()) {
 				for(SubJobs sj:p.getListSubJobs()) {
 					if(sj.getId()!=1) {
@@ -205,20 +211,23 @@ public class Solution {
 			// revisar las ventanas de tiempo si se pueden mover
 			r.checkingTimeWindows(test,inp);
 			// revisar los tiempos de espera
-			r.checkingWaitingTimes(test,inp);
+
 			// revisar los detours
 			//r.checkingDetour(test,inp,initialSol);	
 			// metrics Home- care staff cost
-			r.computeHomCareStaffCost(initialSol);
-			r.computeTravelTime(inp);
+
+			r.computeDriverCost(test,inp);
+			r.computeTravelTime(inp); // calcula las distancias entre puntos
+
 			System.out.println(this.toString());
 			r.updatingJobsList();
 			r.totalMedicalStaff();
 		}
 		// computing detour
 		for(Route r: initialSol.getRoutes()) {
+			r.checkingWaitingTimes(test,inp);
 			r.checkingDetour(test,inp,this);	
-
+			r.computeHomCareStaffCost(test,inp);
 		}
 		this.computeCosts( inp,  test,initialSol,jobsInWalkingRoute);
 	}
@@ -403,19 +412,15 @@ public class Solution {
 		double timeWindowViolation=0;
 		double travelTimeDriverCost=0;
 		for(Route r:this.getRoutes()) {
-			waitingTime+=r.getWaitingTime();
+
 			serviceTime+=r.getServiceTime();
-			additionalWaitingTime+=r.getAdditionalwaitingTime();
+
 			timeWindowViolation+=r.gettimeWindowViolation();
 			durationSolution+=r.getDurationRoute();
-			travelTimeDriverCost+=r.getTravelTime();
+			travelTimeDriverCost+=r.getdriverCost();
 		}
 		// cost for home care staff
-		for(Route r:initialSol.getRoutes()) {
-			System.out.println("Total paramedics" + r.getAmountParamedic());
-			paramedic+=r.getAmountParamedic();
-			homeCareStaff+=r.getHomeCareStaff();
-		}
+
 
 		double drivingTimeMedicalStaff=0;
 		double detourParamedic=0;
@@ -423,9 +428,12 @@ public class Solution {
 		double detourViolation=0;
 		double detour=0;
 		for(Route r:initialSol.getRoutes()) {
-			for(Edge e:r.getEdges().values()) {
-				drivingTimeMedicalStaff+=e.gettravelTimeInRoute();
-			}
+			System.out.println("Total paramedics" + r.getAmountParamedic());
+			paramedic+=r.getAmountParamedic();
+			homeCareStaff+=r.getHomeCareStaff();
+			drivingTimeMedicalStaff+=r.gethomeCareStaffCost();
+			waitingTime+=r.getWaitingTime();
+			additionalWaitingTime+=r.getAdditionalwaitingTime();
 			if(r.getAmountParamedic()>0) {
 				detourParamedic+=r.getdetourPromParamedic();
 			}
@@ -434,6 +442,7 @@ public class Solution {
 			}
 			detour+=r.getDetour();
 		}
+
 		// calcula 
 		//double travelTimeDriverCost=0;
 		//for(Route r:this.getRoutes()) {
@@ -479,8 +488,8 @@ public class Solution {
 
 		// computing costo for medical staff paramedic and home care staff
 
-		homeCareStaffCost=drivingTimeMedicalStaff+this.waitingTime;// los paramedicos que salen del depot
-		this.sethomeCareStaffCost(homeCareStaffCost);
+
+		this.sethomeCareStaffCost(drivingTimeMedicalStaff);
 
 		if(test.gethomeCareStaffObjective()==1 && test.gethomeCareStaffObjective()==0) {
 			objectiveFunction=this.homeCareStaffCost+penalization;

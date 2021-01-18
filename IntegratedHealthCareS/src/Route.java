@@ -154,11 +154,11 @@ public class Route {
 	public void setdetourViolation(double detour) {detourViolation= detour;}
 	public void setdetourPromParamedic(double wt) {detourPromParamedic=wt;}
 	public void setdetourPromHomeCareStaff(double detour) {detourPromHomeCareStaff= detour;}
-	
+
 
 
 	// Getters
-	
+
 	public HashMap<String, SubJobs> getJobsDirectory(){return positionJobs;}
 	public double getDurationRoute() {return durationRoute;}
 	public double getServiceTime() {return serviceTime;}
@@ -198,12 +198,11 @@ public class Route {
 			if(e.getTime()==0) {
 				System.out.println("Stop");
 			}
-			
+
 			travelTimeDuration+=e.getTime();
 		}
-	
-		travelTime=travelTimeDuration;
-		this.driverCost=travelTimeDuration;
+		this.setTravelTime(travelTimeDuration);
+		
 	}
 
 	public void computeDriverTravelTime(Inputs inp) {
@@ -351,12 +350,14 @@ public class Route {
 
 	public String toString() 
 	{   String s = "";
-		s = s.concat("\nRute duration: " + (this.getDurationRoute()));
-		s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
-		s = s.concat("\nRute service time: " + (this.getServiceTime()));
-		s = s.concat("\nRute idle time: " + (this.getIdleTime()));
-		s = s.concat("\nRuta home care staff:" + this.getHomeCareStaff());
-		s = s.concat("\nRuta paramedic staff:" + this.getAmountParamedic());
+	s = s.concat("\nRute duration: " + (this.getDurationRoute()));
+	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
+	s = s.concat("\nRute service time: " + (this.getServiceTime()));
+	s = s.concat("\nRute idle time: " + (this.getIdleTime()));
+	s = s.concat("\nRuta home care staff:" + this.getHomeCareStaff());
+	s = s.concat("\nRuta paramedic staff:" + this.getAmountParamedic());
+	s = s.concat("\nHome care staff and paramedic cost:" + this.gethomeCareStaffCost());
+	s = s.concat("\nDriver cost:" + this.getdriverCost());
 	s = s.concat("\njobs: ");
 	for(Parts p:this.getPartsRoute()) {
 		for(SubJobs j:p.getListSubJobs()) {
@@ -508,7 +509,7 @@ public class Route {
 
 	public void checkingDetour(Test test, Inputs inp, Solution initialSol) {
 		double detour=0;
-	double detourToPenalize=0;
+		double detourToPenalize=0;
 		for(Edge e: this.edges.values()) {
 			SubJobs origen=e.getOrigin();
 			SubJobs end=e.getEnd();
@@ -523,7 +524,7 @@ public class Route {
 				for(Parts p:r1.getPartsRoute()) {
 					boolean breakCycle=false;
 					for(SubJobs j:p.getListSubJobs()) {
-					
+
 						if(origen.getSubJobKey().equals(j.getSubJobKey())) {
 							startCount=true;
 							travelTime=0;
@@ -552,29 +553,29 @@ public class Route {
 					System.out.println(" Edge "+ e.toString());
 				}
 			}
-			 
-			 if(e.getTime()<e.gettravelTimeInRoute()) {
-				 detour+=(e.gettravelTimeInRoute()-e.getTime());
-				 if(e.gettravelTimeInRoute()>e.getDetour()) {
-					 detourToPenalize=(e.gettravelTimeInRoute()-e.getDetour()); 
-				 }
-			 }
+
+			if(e.getTime()<e.gettravelTimeInRoute()) {
+				detour+=(e.gettravelTimeInRoute()-e.getTime());
+				if(e.gettravelTimeInRoute()>e.getDetour()) {
+					detourToPenalize=(e.gettravelTimeInRoute()-e.getDetour()); 
+				}
+			}
 		}
-		
+
 		if(detour<0 || detourToPenalize<0) {
 			System.out.println("Stop");
 		}
-			this.setDetour(detour);
-			this.setdetourViolation(detourToPenalize);
-			if(this.getAmountParamedic()>0) {
-				this.setdetourPromParamedic(detour);
-			}
-			else {
-				this.setdetourPromHomeCareStaff(detour);
-			}
-		
-		System.out.println(" Finish ");
+		this.setDetour(detour);
+		this.setdetourViolation(detourToPenalize);
+		if(this.getAmountParamedic()>0) {
+			this.setdetourPromParamedic(detour);
 		}
+		else {
+			this.setdetourPromHomeCareStaff(detour);
+		}
+
+		System.out.println(" Finish ");
+	}
 
 
 
@@ -701,12 +702,20 @@ public class Route {
 
 
 
-	public void computeHomCareStaffCost(Solution initialSol) {
+	public void computeHomCareStaffCost(Test test, Inputs inp) {
 		double distance=0;
 		for(Edge e:this.edges.values()) {
 			distance+=e.gettravelTimeInRoute();
 		}
-		this.homeCareStaffCost=distance+this.waitingTime;
+		double factor=0;
+		if(this.amountParamedics>0) {
+			factor=test.getloadTimePatient();
+		}
+		else {
+			factor=test.getloadTimeHomeCareStaff();
+		}
+		double loadUnloadTIme=factor*this.subJobsList.size();
+		this.homeCareStaffCost=distance+loadUnloadTIme+this.getWaitingTime();
 	}
 
 
@@ -729,9 +738,9 @@ public class Route {
 		} 
 
 	}; 
-	
+
 	public static Comparator<Route> SORT_BY_departureTimeDepot = new Comparator<Route>() { 
-// earliest to latest
+		// earliest to latest
 		@Override 
 
 		public int compare(Route r1, Route r2) { 
@@ -895,6 +904,57 @@ public class Route {
 		}
 		this.setAmountParamedic(paramedics);	
 		this.setHomeCareStaff(homeCareStaff);
+	}
+
+
+
+
+
+	public void checkingConnectionsRoute(Test test, Inputs inp) {
+		ArrayList<SubJobs> jobsList= new ArrayList<SubJobs>(); 
+		for(Parts p: this.getPartsRoute()) { // iterando por partes
+			for(SubJobs sj:p.getListSubJobs()) {
+				jobsList.add(sj);
+			}
+		}
+		ArrayList<Edge> edgesList= new ArrayList<Edge>(); 
+		double travelTimeDuration=0;
+		for(int i=1;i<jobsList.size();i++) {
+			SubJobs iNode=jobsList.get(i-1);
+			SubJobs jNode=jobsList.get(i);
+			Edge newEdge= new Edge(iNode,jNode,inp,test);
+			edgesList.add(newEdge);
+			travelTimeDuration=newEdge.getTime();
+		}
+this.getEdges().clear();
+for(Edge e:edgesList) {
+	this.getEdges().put(e.getEdgeKey(), e);
+}
+	}
+
+
+
+
+
+	public void computeDriverCost(Test test, Inputs inp) {
+	double driverCost=0; // considera los tiempos que el conductor tiene que esperar para el cargue y descarge de personas
+	double departureDepot=0;
+	double arrivalDepot=0;
+	for(Parts p:this.getPartsRoute()) {
+		
+			if(p.getListSubJobs().size()==1 && p.getListSubJobs().get(0).getSubJobKey().equals("P1")) { // part 1
+				departureDepot= p.getListSubJobs().get(0).getArrivalTime();
+		}
+			if(p.getListSubJobs().size()==1 && p.getListSubJobs().get(0).getSubJobKey().equals("D1")) { // part 1
+				arrivalDepot= p.getListSubJobs().get(0).getArrivalTime();
+		}
+			if(departureDepot!=arrivalDepot && departureDepot!=0 && arrivalDepot!=0) {
+				driverCost+=(arrivalDepot-departureDepot);
+				arrivalDepot= 0;
+				departureDepot= 0;	
+			}
+	}
+		this.setdriverCost(driverCost);
 	}
 
 

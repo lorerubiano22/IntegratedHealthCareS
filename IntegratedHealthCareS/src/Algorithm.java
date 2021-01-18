@@ -45,6 +45,8 @@ public class Algorithm {
 		drivingRoute.getSol().setWalkingRoutes(walkingList);
 		Solution newSolution0= new Solution(drivingRoute.getSol());
 		newSolution0.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
+		System.out.println("Walking Route");
+		System.out.println(newSolution0.toString());
 		//		
 		double objective=0;
 		if(bestSolution==null) {
@@ -90,7 +92,7 @@ public class Algorithm {
 			selectionWalkingRoutes(false);
 
 			updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
-			boolean chekingWalkingRouteList= correctCouple(subJobsList,walkingList);
+			// boolean chekingWalkingRouteList= correctCouple(subJobsList,walkingList);
 			drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
 			drivingRoute.generateAfeasibleSolution();
 			drivingRoute.getSol().setWalkingRoutes(walkingList);
