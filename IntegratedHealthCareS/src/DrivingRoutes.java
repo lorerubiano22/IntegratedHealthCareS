@@ -76,11 +76,11 @@ public class DrivingRoutes {
 		t.setRandomStream(stream);
 	}
 
-	public void generateAfeasibleSolution() { 
-		initialSol= createInitialSolution(); // la ruta ya deberia tener los arrival times
+	public void generateAfeasibleSolution( int iteration) { 
+		initialSol= createInitialSolution(iteration); // la ruta ya deberia tener los arrival times
 		System.out.println(initialSol.toString());
 
-		solution= assigningRoutesToDrivers(initialSol);
+		solution= assigningRoutesToDrivers(iteration,initialSol);
 
 
 		boolean goodSolution=solutionValitadion(solution);
@@ -123,7 +123,7 @@ public class DrivingRoutes {
 				break;
 			}
 		}
-		
+
 		if(feasible && equivalent) {
 			noError=true;
 			System.out.println("Stop");
@@ -241,24 +241,19 @@ public class DrivingRoutes {
 	}
 
 
-	private Solution sortInsertionProcedure(Solution s, boolean timeOrden) {
+	private Solution sortInsertionProcedure(int iteration,boolean timeOrden) {
 		//		private  HashMap<String, Couple> dropoffHomeCareStaff= new HashMap<>();// hard time windows list of home care staff 
 		//		private  HashMap<String, Couple> dropoffpatientMedicalCentre= new HashMap<>();// hard time windows list of patient
 		//		private  HashMap<String, Couple> pickpatientMedicalCentre= new HashMap<>();// soft time windows list of patient
 		//		private  HashMap<String, Couple> pickUpHomeCareStaff= new HashMap<>();// soft time windows list of home care staff 
-		Solution initialSol= new Solution(s);
 		HashMap<String, Couple> dropoffHomeCareStaff= selectingHomeCareStaffCouple();// hard time windows list of home care staff 
 		HashMap<String, Couple> pickupHomeCareStaff= selectingHomeCareStaffPickUpCouple(dropoffHomeCareStaff);
 		HashMap<String, Couple> dropoffpatientMedicalCentre= selectingCoupleDropOffMedical();// hard time windows list of patient
 		HashMap<String, Couple> pickpatientMedicalCentre= selectingCouplepickpatientMedicalCentre(dropoffpatientMedicalCentre);// soft time windows list of patient
 
 		ArrayList<Jobs> insertionOrder=sortingJobsList(dropoffHomeCareStaff,dropoffpatientMedicalCentre);
-		if(timeOrden) { // sort according the earliest time
-			insertionOrder.sort(Jobs.TWSIZE_Early);
-		}
-		else {
-			insertionOrder.sort(Jobs.SORT_BY_STARTW);
-		}
+		
+		
 		HashMap<String,SubJobs> toInsert= new HashMap<String,SubJobs>();
 
 		// pool of routes
@@ -284,12 +279,8 @@ public class DrivingRoutes {
 						insertionOrder.add(sb);
 					}
 					toInsert.clear();
-					if(timeOrden) { // sort according the earliest time
-						insertionOrder.sort(Jobs.TWSIZE_Early);
-					}
-					else {
-						insertionOrder.sort(Jobs.SORT_BY_STARTW);
-					}
+					computingFactor(iteration,insertionOrder);
+					insertionOrder.sort(Jobs.SORT_FactordNode);
 					break;
 				}
 			}
@@ -344,6 +335,15 @@ public class DrivingRoutes {
 		return solution;
 	}
 
+
+	private void computingFactor(int iteration, ArrayList<Jobs> insertionOrder) {
+		if(iteration>=1) { // se computa un factor para cada trabajo
+			for(Jobs j: insertionOrder) {
+				double factor=rn.nextInt(((int)j.getEndTime()-(int)j.getStartTime())+1)/iteration;  
+				j.setfactorOrder(factor+j.getStartTime());
+			}
+		}	
+	}
 
 	private Solution sortInsertionProcedurePartial(Solution s) {
 		//		private  HashMap<String, Couple> dropoffHomeCareStaff= new HashMap<>();// hard time windows list of home care staff 
@@ -2165,17 +2165,11 @@ public class DrivingRoutes {
 
 	}
 
-	private Solution createInitialSolution() {
-
-
+	private Solution createInitialSolution(int iter) {
 		ArrayList<ArrayList<Couple>> clasification= clasificationjob(); // classification according to the job qualification
 		assigmentJobsToQualifications(clasification);
-		ArrayList<Route> route=insertingDepotConnections(schift);
-		Solution assigmentPersonnalJob= solutionInformation(route); 
-		savingInformationSchifts(assigmentPersonnalJob);
-		assigmentPersonnalJob.checkingSolution(inp,test,jobsInWalkingRoute,assigmentPersonnalJob);
-		System.out.println(assigmentPersonnalJob.toString());
-		return new Solution(assigmentPersonnalJob);
+		Solution solsorting = sortInsertionProcedure(iter,false);
+		return new Solution(solsorting);
 	}
 
 
@@ -2681,39 +2675,37 @@ public class DrivingRoutes {
 		return check;
 	}
 
-	private Solution assigningRoutesToDrivers(Solution initialSol) {
-
-
-		Solution startingSol=new Solution(initialSol);
+	private Solution assigningRoutesToDrivers(int iteration, Solution initialSol) {
 
 		Solution newSol=null;
+//		Solution startingSol=new Solution(initialSol);
+//
+//		Solution neighborhood = neighborhoods(startingSol);
+//		Solution diversifiedSol = sortInsertionProcedure(iteration,true);
+//		Solution diversifiedSolneighborhood = neighborhoods(diversifiedSol);
+//		ArrayList<Route> routeList= new ArrayList<Route>();
+//		for(Route r: diversifiedSolneighborhood.getRoutes()) {
+//			routeList.add(r);
+//		}
+//
+//		if(neighborhood.getobjectiveFunction()<diversifiedSolneighborhood.getobjectiveFunction()) {
+//			newSol=new Solution (neighborhood);
+//		}
+//		else {
+//			newSol=new Solution (diversifiedSolneighborhood);
+//		}
+//
+//		updatingShifts(newSol);
+//		boolean goodSolution=solutionValitadion(newSol);
+//
+//
+//		if(!goodSolution) {
+//			System.out.println("Stop");
+//		}
+		
+	//	return newSol;
 
-		Solution copySolution= assigmentVehicle(startingSol);// hasta aquí algunas rutas pueden tener menos horas que las de la jornada laboral
-		//Solution sol = merginShift(copySolution);
-		Solution solsorting = sortInsertionProcedure(copySolution,false);
-		Solution neighborhood = neighborhoods(solsorting);
-		Solution diversifiedSol = sortInsertionProcedure(copySolution,true);
-		Solution diversifiedSolneighborhood = neighborhoods(diversifiedSol);
-		ArrayList<Route> routeList= new ArrayList<Route>();
-		for(Route r: diversifiedSolneighborhood.getRoutes()) {
-			routeList.add(r);
-		}
-
-		if(neighborhood.getobjectiveFunction()<diversifiedSolneighborhood.getobjectiveFunction()) {
-			newSol=new Solution (neighborhood);
-		}
-		else {
-			newSol=new Solution (diversifiedSolneighborhood);
-		}
-
-		updatingShifts(newSol);
-		boolean goodSolution=solutionValitadion(newSol);
-
-
-		if(!goodSolution) {
-			System.out.println("Stop");
-		}
-		return newSol;
+		return initialSol; // to remove
 	}
 
 

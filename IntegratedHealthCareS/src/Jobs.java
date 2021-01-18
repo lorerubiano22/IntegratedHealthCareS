@@ -24,6 +24,7 @@ public class Jobs {
 	private double sortLTWSizeCriterion; // sort criterion the size of time window and the latest time
 	private double sortLDistaceLastConnectedNode; // sort criterion the to the last inserted node
 	private int totalPeople=0; // people involven in the service:
+	private static double factor=1; // motivar el cambio del orden de los nodos
 	// vehicle 
 //	private double vehicleArrivalTime=0; // time for vehicle
 //	private double vehicleDepartureTime=0; // time for vehicle
@@ -80,6 +81,7 @@ public class Jobs {
 
 	public Jobs(Jobs i, double serviceStartTime) {
 		this.id = i.getId();
+		this.factor=i.factor;
 		this.hardstartTime = i.getStartTime();
 		this.hardendTime = i.getEndTime();
 		this.softstartTime = i.getSoftStartTime();
@@ -124,6 +126,7 @@ public class Jobs {
 
 	public Jobs(Jobs i) {
 		this.id = i.getId();
+		this.factor=i.factor;
 		this.hardstartTime = i.getStartTime();
 		this.hardendTime = i.getEndTime();
 		this.softstartTime = i.getSoftStartTime();
@@ -169,7 +172,9 @@ public class Jobs {
 	public void setdeltaArrivalDeparture(double a) {this.deltaArrivalDeparture = a;}
 	public void setdeltaArrivalStartServiceTime(double a) {this.deltaArrivalStartServiceTime = a;}
 	public void setdeltarStartServiceTimeEndServiceTime(double a) {this.deltarStartServiceTimeEndServiceTime = a;}
+	public void setfactorOrder(double a) {this.factor = a;}
 	
+
 	public void setAssignedJobToMedicalCentre(LinkedList<Jobs> jobs) {this.assignedJob = jobs;}
 	public void setServerd(boolean isServerd) {this.isServerd = isServerd;}
 	public void setTotalPeople(int i) {	
@@ -205,12 +210,15 @@ public class Jobs {
 			this.waitingTime = startService-arrivalTime;	
 		}
 	}
+	// comparetors criteria
 	public void setsortETWSizeCriterion(double B) {	this.sortETWSizeCriterion = B;}
 	public void setsortLTWSizeCriterion(double B) {	this.sortLTWSizeCriterion = B;}
 	public void setAdditionalCriterion(double B) {	this.sortLDistaceLastConnectedNode = B;}
 	
 	
 	/* GET METHODS */
+	
+	public double getfactorOrder() {return factor;}
 	public boolean isServerd() {return isServerd;}
 	public boolean isPatient() {return isPatient;}
 	public boolean isMedicalCentre() {return isMedicalCentre;	}
@@ -296,9 +304,9 @@ public class Jobs {
 	public static Comparator<Jobs> SORT_BY_ENDTW = new Comparator<Jobs>() {
 		@Override
 		public int compare(Jobs o1, Jobs o2) {
-			if (o1.getEndTime() > o2.getEndTime())
+			if ((o1.getEndTime()) > o2.getEndTime())
 				return 1;
-			if (o1.getEndTime() < o2.getEndTime())
+			if ((o1.getEndTime()) < o2.getEndTime())
 				return -1;
 			return 0;
 		}
@@ -308,9 +316,9 @@ public class Jobs {
 	public static Comparator<Jobs> SORT_BY_STARTSERVICETIME = new Comparator<Jobs>() {
 		@Override
 		public int compare(Jobs o1, Jobs o2) {
-			if (o1.getstartServiceTime() > o2.getstartServiceTime() )
+			if ((o1.getstartServiceTime()) > o2.getstartServiceTime())
 				return 1;
-			if (o1.getstartServiceTime()  < o2.getstartServiceTime() )
+			if ((o1.getstartServiceTime())  < (o2.getstartServiceTime()) )
 				return -1;
 			return 0;
 		}
@@ -320,9 +328,9 @@ public class Jobs {
 	public static Comparator<Jobs> SORT_BY_ENDSERVICETIME = new Comparator<Jobs>() {
 		@Override
 		public int compare(Jobs o1, Jobs o2) {
-			if (o1.getendServiceTime() > o2.getendServiceTime())
+			if ((o1.getendServiceTime()) > (o2.getendServiceTime()))
 				return 1;
-			if (o1.getendServiceTime()  < o2.getendServiceTime() )
+			if ((o1.getendServiceTime())  < (o2.getendServiceTime()) )
 				return -1;
 			return 0;
 		}
@@ -332,9 +340,9 @@ public class Jobs {
 	public static Comparator<Jobs> SORT_BY_ARRIVALTIME = new Comparator<Jobs>() {
 		@Override
 		public int compare(Jobs o1, Jobs o2) {
-			if (o1.getArrivalTime() > o2.getArrivalTime() )
+			if ((o1.getArrivalTime()*factor) > o2.getArrivalTime())
 				return 1;
-			if (o1.getArrivalTime()  < o2.getArrivalTime() )
+			if ((o1.getArrivalTime()*factor)  < o2.getArrivalTime() )
 				return -1;
 			return 0;
 		}
@@ -347,6 +355,18 @@ public class Jobs {
 			if (o1.sortLDistaceLastConnectedNode > o2.sortLDistaceLastConnectedNode )
 				return 1;
 			if (o1.sortLDistaceLastConnectedNode < o2.sortLDistaceLastConnectedNode )
+				return -1;
+			return 0;
+		}
+
+	};
+	
+	public static Comparator<Jobs> SORT_FactordNode = new Comparator<Jobs>() {
+		@Override
+		public int compare(Jobs o1, Jobs o2) {
+			if (o1.getfactorOrder() > o2.getfactorOrder())
+				return 1;
+			if (o1.getfactorOrder() < o2.getfactorOrder())
 				return -1;
 			return 0;
 		}
