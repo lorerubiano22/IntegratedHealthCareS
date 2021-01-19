@@ -73,7 +73,7 @@ public class ExactAllocation {
 
 		// 2. Objective function
 		for (int i = 0; i < jobSlots.size(); i++) {
-			lobj.add(WR[i].mul(jobSlots.get(i).getDurationWalkingRoute()));
+			lobj.add(WR[i].mul(jobSlots.get(i).getTotalTravelTime()));
 			p.setObj(lobj);
 		}
 

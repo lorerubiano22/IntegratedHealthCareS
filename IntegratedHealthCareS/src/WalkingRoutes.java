@@ -29,11 +29,12 @@ public class WalkingRoutes {
 
 
 	// Methods
-	public WalkingRoutes(Inputs input, Test t, List<Jobs> nodes) {
+	public WalkingRoutes(Random rn2, Inputs input, Test t, List<Jobs> nodes) {
 		// Information
 		jobList= new ArrayList<Jobs>();
 		inp=input;
 		test=t;
+		rn=rn2;
 		for(Jobs i: nodes) {// List a client jobs
 			if(i.getReqQualification()!=0) {
 				i.setStartServiceTime(i.getStartTime()); // the start time of the service  is fixed as the earliest time
@@ -43,7 +44,9 @@ public class WalkingRoutes {
 		if(!jobList.isEmpty()) {
 			// 1. sorting jobs
 			//	jobList.sort(Jobs.TWSIZE_Early); // sorting list of jobs according the earliest time and the size of the TW
-			jobList.sort(Jobs.SORT_BY_STARTW); // sorting list of jobs according the earliest time and the start time of the TW
+			computingFactor(jobList);
+			jobList.sort(Jobs.SORT_FactordNode); // sorting list of jobs according the earliest time and the start time of the TW
+			//jobList.sort(Jobs.SORT_BY_STARTW); // sorting list of jobs according the earliest time and the start time of the TW
 			jobSlots= new LinkedList<SubRoute>();
 
 			//2. Criteria for setting the service start time
@@ -127,6 +130,15 @@ public class WalkingRoutes {
 			// 8. Making walking routes into big tasks 
 			walkingRouteToJob(); // fix the pick-up and drop-off nodes for each walking route
 		}
+	}
+
+
+	private void computingFactor(ArrayList<Jobs> insertionOrder){
+			for(Jobs j: insertionOrder) {
+				double factor=rn.nextInt(((int)j.getEndTime()-(int)j.getStartTime())+1);  
+				j.setfactorOrder(factor+j.getStartTime());
+			}
+			
 	}
 
 

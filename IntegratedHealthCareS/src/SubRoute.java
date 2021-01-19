@@ -151,12 +151,12 @@ public class SubRoute {
 	public String toString() 
 	{ String s = "";
 	if(this.getJobSequence().size()>1) {  
-		s = s.concat("\n Walking Route: ");
+		s = s.concat("\n Walking Route: "+this.getSlotID());
 		s = s.concat("\n Required Qualification: " + this.reqQualification);
-		s = s.concat("\n duration walking route: " + this.durationWalkingRoute);
-		s = s.concat("\n cumulative walking time: " + this.totalTravelTime);
-		s = s.concat("\n cumulative service time: " + this.totalServiceTime);
-		s = s.concat("\n cumulative waiting time: " + this.waitingTimeRoute);
+		s = s.concat("\n duration walking travel time: " + this.totalTravelTime);
+		//s = s.concat("\n cumulative walking time: " + this.totalTravelTime);
+		//s = s.concat("\n cumulative service time: " + this.totalServiceTime);
+		//s = s.concat("\n cumulative waiting time: " + this.waitingTimeRoute);
 		s=s.concat("\n start service time: " + this.startServiceTime);
 		s = s.concat("\n Edge total of job in the walking route: " + (this.getJobSequence().size()));
 		s = s.concat("\n List of jobs: ");

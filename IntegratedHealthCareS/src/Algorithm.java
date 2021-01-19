@@ -36,65 +36,70 @@ public class Algorithm {
 
 
 		walkingList = new LinkedList<SubRoute>();
-//		//			
-//		//			
-//		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
-//		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
-//		drivingRoute.generateAfeasibleSolution();
-//		drivingRoute.getSol().getRoutes().sort(Route.SORT_BY_departureTimeDepot);
-//		drivingRoute.getSol().setWalkingRoutes(walkingList);
-//		Solution newSolution0= new Solution(drivingRoute.getSol());
-//		newSolution0.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
-//		System.out.println("Walking Route");
-//		System.out.println(newSolution0.toString());
-//		//		
+		//		//			
+		//		//			
+		//		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
+		//		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
+		//		drivingRoute.generateAfeasibleSolution();
+		//		drivingRoute.getSol().getRoutes().sort(Route.SORT_BY_departureTimeDepot);
+		//		drivingRoute.getSol().setWalkingRoutes(walkingList);
+		//		Solution newSolution0= new Solution(drivingRoute.getSol());
+		//		newSolution0.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
+		//		System.out.println("Walking Route");
+		//		System.out.println(newSolution0.toString());
+		//		//		
 		double objective=0;
-//		if(bestSolution==null) {
-//			objective=Double.MAX_VALUE;
-//		}
-//		else {
-//			objective=bestSolution.getobjectiveFunction();
-//		}
-//		if(newSolution0.getobjectiveFunction()<objective) {
-//			setBestSolution(drivingRoute.getSol());
-//			setInitialSolution(drivingRoute.getSol().getShift());
-//		}
-//
-//
-//		// option 2
-		subroutes = new WalkingRoutes(input, t, i.getNodes()); // stage 1: Creation of walking routes
-//
-//		selectionWalkingRoutes(true);
-//		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
-//		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
-//		drivingRoute.generateAfeasibleSolution();
-//		drivingRoute.getSol().setWalkingRoutes(walkingList);
-//		Solution newSolution1= new Solution(drivingRoute.getSol());
-//		newSolution1.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
-//		objective=0;
-//		if(bestSolution==null) {
-//			objective=Double.MAX_VALUE;
-//		}
-//		else {
-//			objective=bestSolution.getobjectiveFunction();
-//		}
-//		if(newSolution1.getobjectiveFunction()<objective) {
-//			setBestSolution(drivingRoute.getSol());
-//			setInitialSolution(drivingRoute.getSol().getShift());
-//		}
-//		/////////////////////////////////	
-//
-//
-
-		for(int iter=0;iter<10;iter++) {
-			//iter=1;
+		//		if(bestSolution==null) {
+		//			objective=Double.MAX_VALUE;
+		//		}
+		//		else {
+		//			objective=bestSolution.getobjectiveFunction();
+		//		}
+		//		if(newSolution0.getobjectiveFunction()<objective) {
+		//			setBestSolution(drivingRoute.getSol());
+		//			setInitialSolution(drivingRoute.getSol().getShift());
+		//		}
+		//
+		//
+		//		// option 2
+		subroutes = new WalkingRoutes(rn,input, t, i.getNodes()); // stage 1: Creation of walking routes
+		//
+		//		selectionWalkingRoutes(true);
+		//		updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
+		//		drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
+		//		drivingRoute.generateAfeasibleSolution();
+		//		drivingRoute.getSol().setWalkingRoutes(walkingList);
+		//		Solution newSolution1= new Solution(drivingRoute.getSol());
+		//		newSolution1.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
+		//		objective=0;
+		//		if(bestSolution==null) {
+		//			objective=Double.MAX_VALUE;
+		//		}
+		//		else {
+		//			objective=bestSolution.getobjectiveFunction();
+		//		}
+		//		if(newSolution1.getobjectiveFunction()<objective) {
+		//			setBestSolution(drivingRoute.getSol());
+		//			setInitialSolution(drivingRoute.getSol().getShift());
+		//		}
+		//		/////////////////////////////////	
+		//
+		//
+		boolean intensification=false;
+		boolean diversification= false;
+		for(int iter=0;iter<20;iter++) {
+			if(iter==1) {
+				System.out.println("Stop");
+			}
+			if(solution== null ||diversification) {
 			walkingList = new LinkedList<SubRoute>();
-			selectionWalkingRoutes(false);
+			selectionWalkingRoutes(true);
 
 			updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
-			// boolean chekingWalkingRouteList= correctCouple(subJobsList,walkingList);
+			 boolean chekingWalkingRouteList= correctCouple(subJobsList,walkingList);
 			drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
-			drivingRoute.generateAfeasibleSolution(iter);
+			}
+			drivingRoute.generateAfeasibleSolution(iter,solution,diversification);
 			drivingRoute.getSol().setWalkingRoutes(walkingList);
 			newSolution= new Solution(drivingRoute.getSol());
 			newSolution.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
@@ -108,7 +113,45 @@ public class Algorithm {
 			if(newSolution.getobjectiveFunction()<objective) {
 				setBestSolution(drivingRoute.getSol());
 				setInitialSolution(drivingRoute.getSol().getShift());
+				//solution=null;
 			}
+			else {
+				
+				if(newSolution.getobjectiveFunction()>objective) {// darle una oportunidad a la mala solución
+				boolean continueSearching =true;
+				while(continueSearching) {
+					intensification=true;
+					drivingRoute.assigningRoutesToDrivers(iter,new Solution(newSolution));
+					solution= new Solution(drivingRoute.getSol());
+					solution.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
+					objective=0;
+					if(bestSolution==null) {
+						objective=Double.MAX_VALUE;
+					}
+					else {
+						objective=bestSolution.getobjectiveFunction();
+					}
+					if(solution.getobjectiveFunction()<newSolution.getobjectiveFunction()) {
+						continueSearching=true;
+						newSolution=new Solution(solution);
+						if(newSolution.getobjectiveFunction()<objective) {
+							setBestSolution(drivingRoute.getSol());
+							setInitialSolution(drivingRoute.getSol().getShift());
+							diversification=false;
+						}
+					}
+					else {
+						continueSearching=false;
+						diversification=true;
+					}
+				}
+			}
+				else {
+					diversification=true;
+				}
+		}
+
+
 		}
 
 
@@ -167,6 +210,11 @@ public class Algorithm {
 			}
 
 		}
+		int id=-1;
+		for(SubRoute wr:walkingList) {
+			id++;
+			wr.setSlotID(id);
+		}
 	}
 
 	private void setBestSolution(Solution sol) {
@@ -179,7 +227,7 @@ public class Algorithm {
 			solution.setId(iterations);
 			double durationW=0;
 			for(SubRoute r:sol.getWalkingRoute()) {
-				durationW+=r.getDurationWalkingRoute();
+				durationW+=r.getTotalTravelTime();
 			}
 			solution.setWalkingTime(durationW);
 			setInitialSolution(drivingRoute.getInitialSol());
@@ -194,20 +242,20 @@ public class Algorithm {
 			newSolution=new Solution (sol);
 			addingWaitingTime(sol);
 			newSolution.setId(iterations);
-			newSolution.setWalkingTime(subroutes.getdurationWalkingRoute());
+			newSolution.setWalkingTime(subroutes.getTotalTravelTime());
 			if(newSolution.getobjectiveFunction()<solution.getobjectiveFunction()) {
 				bestSolution=new Solution (newSolution);
 				addingWaitingTime(bestSolution);
 				bestSolution.setId(iterations);
 				double durationW=0;
 				for(SubRoute r:sol.getWalkingRoute()) {
-					durationW+=r.getDurationWalkingRoute();
+					durationW+=r.getTotalTravelTime();
 				}
 				bestSolution.setWalkingTime(durationW);
 				solution=new Solution (newSolution);
 				addingWaitingTime(solution);
 				solution.setId(iterations);
-				solution.setWalkingTime(subroutes.getdurationWalkingRoute());
+				solution.setWalkingTime(subroutes.getTotalTravelTime());
 				setInitialSolution(drivingRoute.getInitialSol());  
 			}
 		}

@@ -76,11 +76,17 @@ public class DrivingRoutes {
 		t.setRandomStream(stream);
 	}
 
-	public void generateAfeasibleSolution( int iteration) { 
+	public void generateAfeasibleSolution( int iteration, Solution sol, boolean diversification) { 
+		Solution newSol=null;
+		if(sol== null || diversification) {
 		initialSol= createInitialSolution(iteration); // la ruta ya deberia tener los arrival times
 		System.out.println(initialSol.toString());
-
-		solution= assigningRoutesToDrivers(iteration,initialSol);
+		newSol= new Solution (initialSol);
+		}
+		else {
+			newSol= new Solution (sol);
+		}
+		solution= assigningRoutesToDrivers(iteration,newSol);
 
 
 		boolean goodSolution=solutionValitadion(solution);
@@ -251,6 +257,9 @@ public class DrivingRoutes {
 		HashMap<String, Couple> dropoffpatientMedicalCentre= selectingCoupleDropOffMedical();// hard time windows list of patient
 		HashMap<String, Couple> pickpatientMedicalCentre= selectingCouplepickpatientMedicalCentre(dropoffpatientMedicalCentre);// soft time windows list of patient
 
+		if(dropoffpatientMedicalCentre.isEmpty()) {
+			dropoffpatientMedicalCentre= selectingCoupleDropOffMedical();
+		}
 		ArrayList<Jobs> insertionOrder=sortingJobsList(dropoffHomeCareStaff,dropoffpatientMedicalCentre);
 		
 		
@@ -481,7 +490,7 @@ public class DrivingRoutes {
 		ArrayList<ArrayList<Parts>>  shifthomeCareStaffQ1= assigmentJobsQualification(1,jobsQualification.get(1), dropoffHomeCareStaff2, pickupHomeCareStaff2, dropoffpatientMedicalCentre2, pickpatientMedicalCentre2); // including the list of jobs
 		ArrayList<ArrayList<Parts>>  shifthomeCareStaffQ2= assigmentJobsQualification(2,jobsQualification.get(2), dropoffHomeCareStaff2, pickupHomeCareStaff2, dropoffpatientMedicalCentre2, pickpatientMedicalCentre2); // including the list of jobs
 		ArrayList<ArrayList<Parts>>  shifthomeCareStaffQ3= assigmentJobsQualification(3,jobsQualification.get(3), dropoffHomeCareStaff2, pickupHomeCareStaff2, dropoffpatientMedicalCentre2, pickpatientMedicalCentre2); // including the list of jobs
-
+		
 		// se evaluan los posibles downgradings. (1) trabajos de qualification 1 son asignados a home care staff de qualification 2 (2) trabajos de qualification 2 son asignados a home care staff de qualification 1
 		downgradings(shifthomeCareStaffQ3,shifthomeCareStaffQ2,shifthomeCareStaffQ1);
 
@@ -2675,37 +2684,40 @@ public class DrivingRoutes {
 		return check;
 	}
 
-	private Solution assigningRoutesToDrivers(int iteration, Solution initialSol) {
+	Solution assigningRoutesToDrivers(int iteration, Solution initialSol) {
 
 		Solution newSol=null;
-//		Solution startingSol=new Solution(initialSol);
-//
-//		Solution neighborhood = neighborhoods(startingSol);
-//		Solution diversifiedSol = sortInsertionProcedure(iteration,true);
-//		Solution diversifiedSolneighborhood = neighborhoods(diversifiedSol);
-//		ArrayList<Route> routeList= new ArrayList<Route>();
-//		for(Route r: diversifiedSolneighborhood.getRoutes()) {
-//			routeList.add(r);
-//		}
-//
-//		if(neighborhood.getobjectiveFunction()<diversifiedSolneighborhood.getobjectiveFunction()) {
-//			newSol=new Solution (neighborhood);
-//		}
-//		else {
-//			newSol=new Solution (diversifiedSolneighborhood);
-//		}
-//
-//		updatingShifts(newSol);
-//		boolean goodSolution=solutionValitadion(newSol);
-//
-//
-//		if(!goodSolution) {
-//			System.out.println("Stop");
-//		}
-		
-	//	return newSol;
+		Solution startingSol=new Solution(initialSol);
+		System.out.println("Iteration"+ iteration);
+		Solution neighborhood = neighborhoods(iteration,startingSol);
+		System.out.println("Iteration"+ iteration);
+		Solution diversifiedSol = sortInsertionProcedure(iteration,true);
+		System.out.println("Iteration"+ iteration);
+		Solution diversifiedSolneighborhood = neighborhoods(iteration,diversifiedSol);
+		System.out.println("Iteration"+ iteration);
+		ArrayList<Route> routeList= new ArrayList<Route>();
+		for(Route r: diversifiedSolneighborhood.getRoutes()) {
+			routeList.add(r);
+		}
 
-		return initialSol; // to remove
+		if(neighborhood.getobjectiveFunction()<diversifiedSolneighborhood.getobjectiveFunction()) {
+			newSol=new Solution (neighborhood);
+		}
+		else {
+			newSol=new Solution (diversifiedSolneighborhood);
+		}
+
+		updatingShifts(newSol);
+		boolean goodSolution=solutionValitadion(newSol);
+
+
+		if(!goodSolution) {
+			System.out.println("Stop");
+		}
+		
+		return newSol;
+
+		
 	}
 
 
@@ -2715,18 +2727,22 @@ public class DrivingRoutes {
 		}
 	}
 
-	private Solution shiftDefinition(Solution diversifiedSolneighborhood) {
+	private Solution shiftDefinition(int iteration, Solution diversifiedSolneighborhood) {
 
 		// to remove
 		HashMap<String, Couple> dropoffHomeCareStaff= selectingHomeCareStaffCouple(diversifiedSolneighborhood);// hard time windows list of home care staff 
 		HashMap<String, Couple> pickupHomeCareStaff= selectingHomeCareStaffPickUpCouple(dropoffHomeCareStaff,diversifiedSolneighborhood);
 		HashMap<String, Couple> dropoffpatientMedicalCentre= selectingCoupleDropOffMedical(diversifiedSolneighborhood);// hard time windows list of patient
 		HashMap<String, Couple> pickpatientMedicalCentre= selectingCouplepickpatientMedicalCentre(dropoffpatientMedicalCentre,diversifiedSolneighborhood);// soft time windows list of patient
-
+		if(dropoffpatientMedicalCentre.isEmpty()) {
+			dropoffpatientMedicalCentre= selectingCoupleDropOffMedical(diversifiedSolneighborhood);// hard time windows list of patient
+			
+		}
 		ArrayList<Route> poolRoutes = new ArrayList<Route>();
 		for(Route r:diversifiedSolneighborhood.getRoutes()) {
 			poolRoutes.add(r);
 		}
+		System.out.println("Iteration # " +iteration);
 		ArrayList<Parts> shifts= assigmentShifts(poolRoutes,dropoffHomeCareStaff,pickupHomeCareStaff,dropoffpatientMedicalCentre,pickpatientMedicalCentre);
 		ArrayList<Route> poolshifts=insertingDepotConnections(shifts);
 
@@ -2774,14 +2790,15 @@ public class DrivingRoutes {
 	}
 
 
-	private Solution neighborhoods(Solution solsorting) {
-		Solution newSol= reducingVehicles(solsorting); // todo para solucionar los detours
+	private Solution neighborhoods(int iteration, Solution solsorting) {
+		Solution newSol= reducingVehicles(iteration,solsorting); // todo para solucionar los detours
 		ArrayList<Route> routeList= new ArrayList<Route>();
 		for(Route r: newSol.getRoutes()) {
 			routeList.add(r);
 		}
 		//boolean goodSolution=validationSequenceRoutes(routeList);
-		Solution vecindario1= intraRoutesMovements(newSol); // todo para solucionar los detours
+		System.out.println("Solution iteration" + iteration);
+		Solution vecindario1= intraRoutesMovements(iteration,newSol); // todo para solucionar los detours
 		System.out.println("Solution vecindario1" + vecindario1.toString());
 		routeList= new ArrayList<Route>();
 		for(Route r: vecindario1.getRoutes()) {
@@ -2795,7 +2812,8 @@ public class DrivingRoutes {
 			newSol=new Solution(newSol);
 		}
 		System.out.println("Solution before inter changes" + newSol);
-		Solution vecindario2= interRoutesMovements(newSol);
+		System.out.println("Solution iteration" + iteration);
+		Solution vecindario2= interRoutesMovements(iteration,newSol);
 		routeList= new ArrayList<Route>();
 		for(Route r: vecindario2.getRoutes()) {
 			routeList.add(r);
@@ -2818,7 +2836,7 @@ public class DrivingRoutes {
 		return newSol;
 	}
 
-	private Solution interRoutesMovements(Solution sol) {
+	private Solution interRoutesMovements(int iteration, Solution sol) {
 
 		Solution currentSolution=new Solution(sol);
 		ArrayList<Route> transferRoute= new ArrayList<Route>();
@@ -2896,7 +2914,7 @@ public class DrivingRoutes {
 			routeList.add(r);
 		}
 		//goodSolution=validationSequenceRoutes(routeList);
-		Solution shift= shiftDefinition(newSolution);
+		Solution shift= shiftDefinition(iteration,newSolution);
 		newSolution.setShift(shift);
 		newSolution.checkingSolution(inp, test, jobsInWalkingRoute, newSolution.getShift());
 		return newSolution;
@@ -2917,7 +2935,7 @@ public class DrivingRoutes {
 		return same;
 	}
 
-	private Solution reducingVehicles(Solution solsorting) {
+	private Solution reducingVehicles(int iteration, Solution solsorting) {
 		Solution sol= new Solution(solsorting);
 		Solution newSol= new Solution();
 		ArrayList<Route> routesList= new ArrayList<Route>();
@@ -2992,7 +3010,7 @@ public class DrivingRoutes {
 			System.out.println(newSol.toString());
 
 
-			Solution shift= shiftDefinition(newSol);
+			Solution shift= shiftDefinition(iteration,newSol);
 			newSol.setShift(shift);
 		}
 		else {
@@ -3004,7 +3022,7 @@ public class DrivingRoutes {
 
 
 
-	private Solution intraRoutesMovements(Solution sol) {
+	private Solution intraRoutesMovements(int iteration, Solution sol) {
 		Solution currentSol= new Solution(sol);
 		System.out.println("Solution before intra changes" + currentSol.toString());
 
@@ -3032,7 +3050,7 @@ public class DrivingRoutes {
 			}
 		}
 		newSol.checkingSolution(inp, test, jobsInWalkingRoute, newSol);
-		Solution shift= shiftDefinition(newSol);
+		Solution shift= shiftDefinition(iteration,newSol);
 		newSol.setShift(shift);
 		newSol.checkingSolution(inp, test, jobsInWalkingRoute, newSol.getShift());
 		System.out.println("Solution after intra changes" + newSol.toString());

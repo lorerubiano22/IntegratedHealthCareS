@@ -145,39 +145,39 @@ public class Solution {
 	s= s.concat("\n driver cost: "+ driverCost);
 	s= s.concat("\n home care staff and paramedic cost: "+ homeCareStaffCost);
 	s= s.concat("\n detour: "+ detourDuration);
-	s= s.concat("\n detour prom paramedic: "+ detourPromParamedico);
-	s= s.concat("\n detour prom home care staff: "+ detourPromHomeCareStaff);
+	s= s.concat("\n detour average paramedic: "+ detourPromParamedico);
+	s= s.concat("\n detour average home care staff: "+ detourPromHomeCareStaff);
 	s= s.concat("\n time window violation: "+ timeWindowViolation);
 	s= s.concat("\n waiting Time to penalize: "+ additionalWaitingTime);
 	s= s.concat(" Detour time to penalize: "+ detourViolation);
 	s = s.concat("\n List of jobs: ");
 	for(Route r:routes) {
-		if(!r.getSubJobsList().isEmpty()) {
-			s= s.concat("\n Route: "+ r.getIdRoute());
-			s= s.concat(" travelTime: "+ r.getTravelTime());
-			s= s.concat(" waitingTime: "+ r.getWaitingTime());
-			s= s.concat(" serviceTime: "+ r.getServiceTime());
-			s= s.concat(" detour: "+ r.getDetour());
-			s= s.concat(" detour to penalize: "+ r.getdetourViolation());
-			s= s.concat(" waiting Time to penalize: "+ r.getAdditionalwaitingTime());
-			s= s.concat(" durationRoute: "+ r.getDurationRoute());
-			s= s.concat("\n medical staff cost: "+ r.gethomeCareStaffCost());
-			s= s.concat("\n driver cost: "+ r.getdriverCost());
-			s= s.concat("\n");
-			for(Parts p:r.getPartsRoute()) {
-				for(SubJobs j:p.getListSubJobs()) {
-					String type="";
-					if(j.isClient()) {
-						type="c";
-					}
-					if(j.isPatient()) {
-						type="p";
-					}
-					s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getStartTime()+";"+(int)j.getEndTime()+"]"+") \n");
-				}
-				//s = s.concat("\n\n");
-			}
-		}	
+		r.toString();
+//		if(!r.getSubJobsList().isEmpty()) {
+//			s= s.concat("\n Route: "+ r.getIdRoute());
+//			s= s.concat(" travelTime: "+ r.getTravelTime());
+//			s= s.concat(" waitingTime: "+ r.getWaitingTime());
+//			s= s.concat(" serviceTime: "+ r.getServiceTime());
+//			s= s.concat(" detour: "+ r.getDetour());
+//			s= s.concat(" detour to penalize: "+ r.getdetourViolation());
+//			s= s.concat(" waiting Time to penalize: "+ r.getAdditionalwaitingTime());
+//			s= s.concat(" durationRoute: "+ r.getDurationRoute());
+//			s= s.concat("\n medical staff cost: "+ r.gethomeCareStaffCost());
+//			s= s.concat("\n driver cost: "+ r.getdriverCost());
+//			s= s.concat("\n");
+//			for(Parts p:r.getPartsRoute()) {
+//				for(SubJobs j:p.getListSubJobs()) {
+//					String type="";
+//					if(j.isClient()) {
+//						type="c";
+//					}
+//					if(j.isPatient()) {
+//						type="p";
+//					}
+//					s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getStartTime()+";"+(int)j.getEndTime()+"]"+") \n");
+//				}
+//			}
+//		}	
 	}
 	return s;
 	}
@@ -492,7 +492,7 @@ public class Solution {
 		this.sethomeCareStaffCost(drivingTimeMedicalStaff);
 
 		if(test.gethomeCareStaffObjective()==1 && test.gethomeCareStaffObjective()==0) {
-			objectiveFunction=this.homeCareStaffCost+penalization;
+			objectiveFunction=this.homeCareStaffCost+this.waitingTime+penalization;
 		}
 		else {
 			if(test.gethomeCareStaffObjective()==0 && test.gethomeCareStaffObjective()==1) {

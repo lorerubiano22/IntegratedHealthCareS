@@ -353,9 +353,9 @@ public class Route {
 	s = s.concat("\nRute duration: " + (this.getDurationRoute()));
 	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
 	s = s.concat("\nRute service time: " + (this.getServiceTime()));
-	s = s.concat("\nRute idle time: " + (this.getIdleTime()));
-	s = s.concat("\nRuta home care staff:" + this.getHomeCareStaff());
-	s = s.concat("\nRuta paramedic staff:" + this.getAmountParamedic());
+	//s = s.concat("\nRute idle time: " + (this.getIdleTime()));
+	s = s.concat("\nAmount home care staff:" + this.getHomeCareStaff());
+	s = s.concat("\nAmount paramedic staff:" + this.getAmountParamedic());
 	s = s.concat("\nHome care staff and paramedic cost:" + this.gethomeCareStaffCost());
 	s = s.concat("\nDriver cost:" + this.getdriverCost());
 	s = s.concat("\njobs: ");
