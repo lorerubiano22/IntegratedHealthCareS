@@ -47,78 +47,86 @@ ROWS
 
 COLUMNS
     WR_(0)    slot_1    1
-    WR_(0)    *OBJ*     1e+006
-    WR_(1)    slot_2    1
+    WR_(0)    slot_3    1
+    WR_(0)    *OBJ*     1
+    WR_(1)    slot_4    1
     WR_(1)    *OBJ*     1e+006
-    WR_(2)    slot_3    1
+    WR_(2)    slot_5    1
     WR_(2)    *OBJ*     1e+006
-    WR_(3)    slot_4    1
+    WR_(3)    slot_6    1
     WR_(3)    *OBJ*     1e+006
-    WR_(4)    slot_5    1
+    WR_(4)    slot_7    1
     WR_(4)    *OBJ*     1e+006
-    WR_(5)    slot_6    1
+    WR_(5)    slot_13   1
     WR_(5)    *OBJ*     1e+006
-    WR_(6)    slot_7    1
+    WR_(6)    slot_16   1
     WR_(6)    *OBJ*     1e+006
-    WR_(7)    slot_8    1
+    WR_(7)    slot_21   1
     WR_(7)    *OBJ*     1e+006
-    WR_(8)    slot_9    1
+    WR_(8)    slot_32   1
     WR_(8)    *OBJ*     1e+006
-    WR_(9)    slot_10   1
+    WR_(9)    slot_33   1
     WR_(9)    *OBJ*     1e+006
-    WR_(10)   slot_11   1
+    WR_(10)   slot_35   1
     WR_(10)   *OBJ*     1e+006
-    WR_(11)   slot_12   1
+    WR_(11)   slot_37   1
     WR_(11)   *OBJ*     1e+006
-    WR_(12)   slot_13   1
-    WR_(12)   *OBJ*     1e+006
-    WR_(13)   slot_14   1
-    WR_(13)   *OBJ*     1e+006
-    WR_(14)   slot_15   1
+    WR_(12)   slot_8    1
+    WR_(12)   slot_21   1
+    WR_(12)   *OBJ*     4
+    WR_(13)   slot_2    1
+    WR_(13)   slot_9    1
+    WR_(13)   slot_12   1
+    WR_(13)   *OBJ*     6
+    WR_(14)   slot_10   1
     WR_(14)   *OBJ*     1e+006
-    WR_(15)   slot_16   1
-    WR_(15)   *OBJ*     1e+006
-    WR_(16)   slot_17   1
-    WR_(16)   *OBJ*     1e+006
-    WR_(17)   slot_18   1
+    WR_(15)   slot_2    1
+    WR_(15)   slot_11   1
+    WR_(15)   slot_12   1
+    WR_(15)   *OBJ*     4
+    WR_(16)   slot_12   1
+    WR_(16)   slot_14   1
+    WR_(16)   *OBJ*     2
+    WR_(17)   slot_15   1
     WR_(17)   *OBJ*     1e+006
-    WR_(18)   slot_19   1
+    WR_(18)   slot_17   1
     WR_(18)   *OBJ*     1e+006
-    WR_(19)   slot_20   1
+    WR_(19)   slot_18   1
     WR_(19)   *OBJ*     1e+006
-    WR_(20)   slot_21   1
+    WR_(20)   slot_19   1
     WR_(20)   *OBJ*     1e+006
-    WR_(21)   slot_22   1
+    WR_(21)   slot_20   1
     WR_(21)   *OBJ*     1e+006
-    WR_(22)   slot_23   1
+    WR_(22)   slot_22   1
     WR_(22)   *OBJ*     1e+006
-    WR_(23)   slot_24   1
+    WR_(23)   slot_23   1
     WR_(23)   *OBJ*     1e+006
-    WR_(24)   slot_25   1
+    WR_(24)   slot_24   1
     WR_(24)   *OBJ*     1e+006
-    WR_(25)   slot_26   1
+    WR_(25)   slot_25   1
     WR_(25)   *OBJ*     1e+006
-    WR_(26)   slot_27   1
+    WR_(26)   slot_26   1
     WR_(26)   *OBJ*     1e+006
-    WR_(27)   slot_28   1
+    WR_(27)   slot_31   1
     WR_(27)   *OBJ*     1e+006
-    WR_(28)   slot_29   1
-    WR_(28)   *OBJ*     1e+006
-    WR_(29)   slot_30   1
+    WR_(28)   slot_13   1
+    WR_(28)   slot_36   1
+    WR_(28)   *OBJ*     5
+    WR_(29)   slot_2    1
     WR_(29)   *OBJ*     1e+006
-    WR_(30)   slot_31   1
+    WR_(30)   slot_3    1
     WR_(30)   *OBJ*     1e+006
-    WR_(31)   slot_32   1
+    WR_(31)   slot_12   1
     WR_(31)   *OBJ*     1e+006
-    WR_(32)   slot_33   1
+    WR_(32)   slot_27   1
     WR_(32)   *OBJ*     1e+006
-    WR_(33)   slot_34   1
+    WR_(33)   slot_28   1
     WR_(33)   *OBJ*     1e+006
-    WR_(34)   slot_35   1
+    WR_(34)   slot_29   1
     WR_(34)   *OBJ*     1e+006
-    WR_(35)   slot_36   1
+    WR_(35)   slot_30   1
     WR_(35)   *OBJ*     1e+006
-    WR_(36)   slot_37   1
+    WR_(36)   slot_34   1
     WR_(36)   *OBJ*     1e+006
     WR_(37)   slot_38   1
     WR_(37)   *OBJ*     1e+006
@@ -133,141 +141,111 @@ COLUMNS
     WR_(42)   slot_43   1
     WR_(42)   *OBJ*     1e+006
     WR_(43)   slot_1    1
-    WR_(43)   slot_3    1
-    WR_(43)   *OBJ*     1
-    WR_(44)   slot_2    1
+    WR_(43)   *OBJ*     1e+006
     WR_(44)   slot_4    1
-    WR_(44)   slot_9    1
-    WR_(44)   slot_11   1
-    WR_(44)   *OBJ*     19
-    WR_(45)   slot_1    1
-    WR_(45)   slot_3    1
-    WR_(45)   *OBJ*     1
-    WR_(46)   slot_4    1
-    WR_(46)   slot_12   1
-    WR_(46)   slot_14   1
-    WR_(46)   *OBJ*     11
-    WR_(47)   slot_5    1
-    WR_(47)   slot_17   1
-    WR_(47)   slot_26   1
-    WR_(47)   *OBJ*     11
-    WR_(48)   slot_6    1
-    WR_(48)   slot_22   1
-    WR_(48)   *OBJ*     5
-    WR_(49)   slot_7    1
-    WR_(49)   slot_13   1
-    WR_(49)   slot_21   1
-    WR_(49)   *OBJ*     19
+    WR_(44)   *OBJ*     1e+006
+    WR_(45)   slot_5    1
+    WR_(45)   slot_17   1
+    WR_(45)   *OBJ*     5
+    WR_(46)   slot_6    1
+    WR_(46)   slot_22   1
+    WR_(46)   *OBJ*     5
+    WR_(47)   slot_7    1
+    WR_(47)   *OBJ*     1e+006
+    WR_(48)   slot_13   1
+    WR_(48)   slot_27   1
+    WR_(48)   slot_36   1
+    WR_(48)   *OBJ*     10
+    WR_(49)   slot_16   1
+    WR_(49)   *OBJ*     1e+006
     WR_(50)   slot_8    1
-    WR_(50)   slot_13   1
     WR_(50)   slot_21   1
-    WR_(50)   *OBJ*     17
-    WR_(51)   slot_2    1
-    WR_(51)   slot_4    1
-    WR_(51)   slot_9    1
-    WR_(51)   slot_33   1
-    WR_(51)   *OBJ*     19
-    WR_(52)   slot_10   1
-    WR_(52)   slot_18   1
-    WR_(52)   slot_24   1
-    WR_(52)   *OBJ*     11
-    WR_(53)   slot_2    1
-    WR_(53)   slot_4    1
-    WR_(53)   slot_9    1
-    WR_(53)   slot_11   1
-    WR_(53)   *OBJ*     19
-    WR_(54)   slot_4    1
-    WR_(54)   slot_12   1
-    WR_(54)   slot_14   1
-    WR_(54)   *OBJ*     19
-    WR_(55)   slot_13   1
+    WR_(50)   slot_27   1
+    WR_(50)   slot_36   1
+    WR_(50)   *OBJ*     10
+    WR_(51)   slot_32   1
+    WR_(51)   *OBJ*     1e+006
+    WR_(52)   slot_4    1
+    WR_(52)   slot_33   1
+    WR_(52)   *OBJ*     5
+    WR_(53)   slot_35   1
+    WR_(53)   *OBJ*     1e+006
+    WR_(54)   slot_37   1
+    WR_(54)   *OBJ*     1e+006
+    WR_(55)   slot_8    1
+    WR_(55)   slot_21   1
     WR_(55)   slot_27   1
     WR_(55)   slot_36   1
-    WR_(55)   *OBJ*     15
-    WR_(56)   slot_4    1
+    WR_(55)   *OBJ*     14
+    WR_(56)   slot_2    1
+    WR_(56)   slot_9    1
+    WR_(56)   slot_11   1
     WR_(56)   slot_12   1
     WR_(56)   slot_14   1
-    WR_(56)   *OBJ*     19
-    WR_(57)   slot_15   1
+    WR_(56)   *OBJ*     7
+    WR_(57)   slot_10   1
     WR_(57)   *OBJ*     1e+006
-    WR_(58)   slot_16   1
-    WR_(58)   slot_17   1
-    WR_(58)   slot_26   1
-    WR_(58)   *OBJ*     15
-    WR_(59)   slot_17   1
-    WR_(59)   slot_26   1
-    WR_(59)   *OBJ*     6
-    WR_(60)   slot_18   1
-    WR_(60)   slot_24   1
-    WR_(60)   *OBJ*     2
-    WR_(61)   slot_19   1
-    WR_(61)   slot_25   1
-    WR_(61)   *OBJ*     8
-    WR_(62)   slot_20   1
-    WR_(62)   *OBJ*     1e+006
-    WR_(63)   slot_8    1
-    WR_(63)   slot_13   1
-    WR_(63)   slot_21   1
-    WR_(63)   slot_28   1
-    WR_(63)   *OBJ*     19
-    WR_(64)   slot_22   1
+    WR_(58)   slot_2    1
+    WR_(58)   slot_9    1
+    WR_(58)   slot_11   1
+    WR_(58)   slot_12   1
+    WR_(58)   slot_14   1
+    WR_(58)   *OBJ*     9
+    WR_(59)   slot_12   1
+    WR_(59)   slot_14   1
+    WR_(59)   *OBJ*     2
+    WR_(60)   slot_15   1
+    WR_(60)   *OBJ*     1e+006
+    WR_(61)   slot_17   1
+    WR_(61)   *OBJ*     1e+006
+    WR_(62)   slot_18   1
+    WR_(62)   slot_24   1
+    WR_(62)   *OBJ*     2
+    WR_(63)   slot_19   1
+    WR_(63)   *OBJ*     1e+006
+    WR_(64)   slot_20   1
     WR_(64)   *OBJ*     1e+006
-    WR_(65)   slot_23   1
+    WR_(65)   slot_22   1
     WR_(65)   *OBJ*     1e+006
-    WR_(66)   slot_18   1
-    WR_(66)   slot_24   1
-    WR_(66)   *OBJ*     2
-    WR_(67)   slot_19   1
-    WR_(67)   slot_25   1
-    WR_(67)   *OBJ*     8
-    WR_(68)   slot_17   1
-    WR_(68)   slot_26   1
-    WR_(68)   *OBJ*     6
-    WR_(69)   slot_27   1
+    WR_(66)   slot_23   1
+    WR_(66)   *OBJ*     1e+006
+    WR_(67)   slot_18   1
+    WR_(67)   slot_24   1
+    WR_(67)   *OBJ*     2
+    WR_(68)   slot_25   1
+    WR_(68)   *OBJ*     1e+006
+    WR_(69)   slot_26   1
     WR_(69)   *OBJ*     1e+006
-    WR_(70)   slot_28   1
+    WR_(70)   slot_31   1
     WR_(70)   *OBJ*     1e+006
-    WR_(71)   slot_29   1
-    WR_(71)   *OBJ*     1e+006
-    WR_(72)   slot_30   1
-    WR_(72)   *OBJ*     1e+006
-    WR_(73)   slot_19   1
-    WR_(73)   slot_25   1
-    WR_(73)   slot_31   1
-    WR_(73)   *OBJ*     14
-    WR_(74)   slot_32   1
+    WR_(71)   slot_13   1
+    WR_(71)   slot_36   1
+    WR_(71)   *OBJ*     5
+    WR_(72)   slot_2    1
+    WR_(72)   slot_12   1
+    WR_(72)   *OBJ*     2
+    WR_(73)   slot_3    1
+    WR_(73)   *OBJ*     1e+006
+    WR_(74)   slot_12   1
     WR_(74)   *OBJ*     1e+006
-    WR_(75)   slot_2    1
-    WR_(75)   slot_4    1
-    WR_(75)   slot_9    1
-    WR_(75)   slot_11   1
-    WR_(75)   slot_12   1
-    WR_(75)   slot_14   1
-    WR_(75)   slot_33   1
-    WR_(75)   *OBJ*     18
-    WR_(76)   slot_30   1
-    WR_(76)   slot_34   1
-    WR_(76)   *OBJ*     7
-    WR_(77)   slot_16   1
-    WR_(77)   slot_17   1
-    WR_(77)   slot_35   1
-    WR_(77)   *OBJ*     15
-    WR_(78)   slot_13   1
-    WR_(78)   slot_27   1
-    WR_(78)   slot_36   1
-    WR_(78)   *OBJ*     15
-    WR_(79)   slot_37   1
+    WR_(75)   slot_27   1
+    WR_(75)   *OBJ*     1e+006
+    WR_(76)   slot_28   1
+    WR_(76)   *OBJ*     1e+006
+    WR_(77)   slot_29   1
+    WR_(77)   *OBJ*     1e+006
+    WR_(78)   slot_30   1
+    WR_(78)   *OBJ*     1e+006
+    WR_(79)   slot_34   1
     WR_(79)   *OBJ*     1e+006
     WR_(80)   slot_38   1
     WR_(80)   *OBJ*     1e+006
     WR_(81)   slot_39   1
     WR_(81)   *OBJ*     1e+006
     WR_(82)   slot_40   1
-    WR_(82)   slot_41   1
-    WR_(82)   *OBJ*     6
-    WR_(83)   slot_40   1
+    WR_(82)   *OBJ*     1e+006
     WR_(83)   slot_41   1
-    WR_(83)   *OBJ*     6
+    WR_(83)   *OBJ*     1e+006
     WR_(84)   slot_42   1
     WR_(84)   *OBJ*     1e+006
     WR_(85)   slot_43   1
@@ -275,138 +253,97 @@ COLUMNS
     WR_(86)   slot_1    1
     WR_(86)   slot_3    1
     WR_(86)   *OBJ*     1
-    WR_(87)   slot_2    1
     WR_(87)   slot_4    1
-    WR_(87)   slot_9    1
-    WR_(87)   slot_11   1
-    WR_(87)   *OBJ*     19
-    WR_(88)   slot_1    1
-    WR_(88)   slot_3    1
-    WR_(88)   *OBJ*     1
-    WR_(89)   slot_4    1
-    WR_(89)   slot_12   1
-    WR_(89)   slot_14   1
-    WR_(89)   *OBJ*     11
-    WR_(90)   slot_5    1
-    WR_(90)   slot_17   1
-    WR_(90)   slot_26   1
-    WR_(90)   *OBJ*     11
-    WR_(91)   slot_6    1
-    WR_(91)   slot_22   1
-    WR_(91)   *OBJ*     5
-    WR_(92)   slot_7    1
-    WR_(92)   slot_13   1
-    WR_(92)   slot_21   1
-    WR_(92)   *OBJ*     19
-    WR_(93)   slot_8    1
-    WR_(93)   slot_13   1
+    WR_(87)   *OBJ*     1e+006
+    WR_(88)   slot_5    1
+    WR_(88)   *OBJ*     1e+006
+    WR_(89)   slot_6    1
+    WR_(89)   *OBJ*     1e+006
+    WR_(90)   slot_7    1
+    WR_(90)   slot_28   1
+    WR_(90)   *OBJ*     1
+    WR_(91)   slot_13   1
+    WR_(91)   *OBJ*     1e+006
+    WR_(92)   slot_16   1
+    WR_(92)   *OBJ*     1e+006
     WR_(93)   slot_21   1
-    WR_(93)   *OBJ*     17
-    WR_(94)   slot_2    1
-    WR_(94)   slot_4    1
-    WR_(94)   slot_9    1
-    WR_(94)   slot_33   1
-    WR_(94)   *OBJ*     19
-    WR_(95)   slot_10   1
-    WR_(95)   slot_18   1
-    WR_(95)   slot_24   1
-    WR_(95)   *OBJ*     11
-    WR_(96)   slot_2    1
-    WR_(96)   slot_4    1
-    WR_(96)   slot_9    1
-    WR_(96)   slot_11   1
-    WR_(96)   *OBJ*     19
-    WR_(97)   slot_4    1
-    WR_(97)   slot_12   1
-    WR_(97)   slot_14   1
-    WR_(97)   *OBJ*     19
-    WR_(98)   slot_13   1
-    WR_(98)   slot_27   1
-    WR_(98)   slot_36   1
-    WR_(98)   *OBJ*     15
-    WR_(99)   slot_4    1
+    WR_(93)   *OBJ*     1e+006
+    WR_(94)   slot_32   1
+    WR_(94)   *OBJ*     1e+006
+    WR_(95)   slot_33   1
+    WR_(95)   *OBJ*     1e+006
+    WR_(96)   slot_35   1
+    WR_(96)   *OBJ*     1e+006
+    WR_(97)   slot_37   1
+    WR_(97)   *OBJ*     1e+006
+    WR_(98)   slot_8    1
+    WR_(98)   slot_21   1
+    WR_(98)   *OBJ*     4
+    WR_(99)   slot_2    1
+    WR_(99)   slot_9    1
     WR_(99)   slot_12   1
-    WR_(99)   slot_14   1
-    WR_(99)   *OBJ*     19
-    WR_(100)  slot_15   1
+    WR_(99)   *OBJ*     6
+    WR_(100)  slot_10   1
     WR_(100)  *OBJ*     1e+006
-    WR_(101)  slot_16   1
-    WR_(101)  slot_17   1
-    WR_(101)  slot_26   1
-    WR_(101)  *OBJ*     15
-    WR_(102)  slot_17   1
-    WR_(102)  slot_26   1
-    WR_(102)  *OBJ*     6
-    WR_(103)  slot_18   1
-    WR_(103)  slot_24   1
-    WR_(103)  *OBJ*     2
-    WR_(104)  slot_19   1
-    WR_(104)  slot_25   1
-    WR_(104)  *OBJ*     8
-    WR_(105)  slot_20   1
-    WR_(105)  *OBJ*     1e+006
-    WR_(106)  slot_8    1
-    WR_(106)  slot_13   1
-    WR_(106)  slot_21   1
-    WR_(106)  slot_28   1
-    WR_(106)  *OBJ*     19
-    WR_(107)  slot_22   1
+    WR_(101)  slot_2    1
+    WR_(101)  slot_9    1
+    WR_(101)  slot_11   1
+    WR_(101)  slot_12   1
+    WR_(101)  *OBJ*     8
+    WR_(102)  slot_12   1
+    WR_(102)  slot_14   1
+    WR_(102)  *OBJ*     2
+    WR_(103)  slot_15   1
+    WR_(103)  *OBJ*     1e+006
+    WR_(104)  slot_17   1
+    WR_(104)  *OBJ*     1e+006
+    WR_(105)  slot_18   1
+    WR_(105)  slot_24   1
+    WR_(105)  *OBJ*     2
+    WR_(106)  slot_19   1
+    WR_(106)  *OBJ*     1e+006
+    WR_(107)  slot_20   1
     WR_(107)  *OBJ*     1e+006
-    WR_(108)  slot_23   1
+    WR_(108)  slot_22   1
     WR_(108)  *OBJ*     1e+006
-    WR_(109)  slot_18   1
-    WR_(109)  slot_24   1
-    WR_(109)  *OBJ*     2
-    WR_(110)  slot_19   1
-    WR_(110)  slot_25   1
-    WR_(110)  *OBJ*     8
-    WR_(111)  slot_17   1
-    WR_(111)  slot_26   1
-    WR_(111)  *OBJ*     6
-    WR_(112)  slot_27   1
+    WR_(109)  slot_23   1
+    WR_(109)  *OBJ*     1e+006
+    WR_(110)  slot_24   1
+    WR_(110)  *OBJ*     1e+006
+    WR_(111)  slot_25   1
+    WR_(111)  *OBJ*     1e+006
+    WR_(112)  slot_26   1
     WR_(112)  *OBJ*     1e+006
-    WR_(113)  slot_28   1
+    WR_(113)  slot_31   1
     WR_(113)  *OBJ*     1e+006
-    WR_(114)  slot_29   1
-    WR_(114)  *OBJ*     1e+006
-    WR_(115)  slot_30   1
-    WR_(115)  *OBJ*     1e+006
-    WR_(116)  slot_19   1
-    WR_(116)  slot_25   1
-    WR_(116)  slot_31   1
-    WR_(116)  *OBJ*     14
-    WR_(117)  slot_32   1
+    WR_(114)  slot_13   1
+    WR_(114)  slot_36   1
+    WR_(114)  *OBJ*     5
+    WR_(115)  slot_2    1
+    WR_(115)  slot_12   1
+    WR_(115)  *OBJ*     2
+    WR_(116)  slot_3    1
+    WR_(116)  *OBJ*     1e+006
+    WR_(117)  slot_12   1
     WR_(117)  *OBJ*     1e+006
-    WR_(118)  slot_4    1
-    WR_(118)  slot_9    1
-    WR_(118)  slot_11   1
-    WR_(118)  slot_12   1
-    WR_(118)  slot_14   1
-    WR_(118)  slot_33   1
-    WR_(118)  *OBJ*     17
-    WR_(119)  slot_30   1
-    WR_(119)  slot_34   1
-    WR_(119)  *OBJ*     7
-    WR_(120)  slot_16   1
-    WR_(120)  slot_17   1
-    WR_(120)  slot_35   1
-    WR_(120)  *OBJ*     15
-    WR_(121)  slot_13   1
-    WR_(121)  slot_27   1
-    WR_(121)  slot_36   1
-    WR_(121)  *OBJ*     15
-    WR_(122)  slot_37   1
+    WR_(118)  slot_27   1
+    WR_(118)  *OBJ*     1e+006
+    WR_(119)  slot_28   1
+    WR_(119)  *OBJ*     1e+006
+    WR_(120)  slot_29   1
+    WR_(120)  *OBJ*     1e+006
+    WR_(121)  slot_30   1
+    WR_(121)  *OBJ*     1e+006
+    WR_(122)  slot_34   1
     WR_(122)  *OBJ*     1e+006
     WR_(123)  slot_38   1
     WR_(123)  *OBJ*     1e+006
     WR_(124)  slot_39   1
     WR_(124)  *OBJ*     1e+006
     WR_(125)  slot_40   1
-    WR_(125)  slot_41   1
-    WR_(125)  *OBJ*     6
-    WR_(126)  slot_40   1
+    WR_(125)  *OBJ*     1e+006
     WR_(126)  slot_41   1
-    WR_(126)  *OBJ*     6
+    WR_(126)  *OBJ*     1e+006
     WR_(127)  slot_42   1
     WR_(127)  *OBJ*     1e+006
     WR_(128)  slot_43   1

@@ -44,9 +44,9 @@ public class WalkingRoutes {
 		if(!jobList.isEmpty()) {
 			// 1. sorting jobs
 			//	jobList.sort(Jobs.TWSIZE_Early); // sorting list of jobs according the earliest time and the size of the TW
-			computingFactor(jobList);
-			jobList.sort(Jobs.SORT_FactordNode); // sorting list of jobs according the earliest time and the start time of the TW
-			//jobList.sort(Jobs.SORT_BY_STARTW); // sorting list of jobs according the earliest time and the start time of the TW
+			//computingFactor(jobList);
+			//jobList.sort(Jobs.SORT_FactordNode); // sorting list of jobs according the earliest time and the start time of the TW
+			jobList.sort(Jobs.SORT_BY_STARTW); // sorting list of jobs according the earliest time and the start time of the TW
 			jobSlots= new LinkedList<SubRoute>();
 
 			//2. Criteria for setting the service start time

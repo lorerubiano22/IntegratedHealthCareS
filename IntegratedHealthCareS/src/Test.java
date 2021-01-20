@@ -24,7 +24,7 @@ private RandomStream rng;
 			 double walking2jobs, double detour, double cumulativeWalkingTime, double cumulativeWaitingTime, int p,int HCS, int registrationTime,double driverOb, double homeOb){
 		
 		instanceName = name;
-		testTime = maxTime*60;
+		testTime = maxTime;
 		this.seed = seed;
 		this.routeLenght=routeLenght;
 		this.workingTime=workingTime;
