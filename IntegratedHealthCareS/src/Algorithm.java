@@ -62,6 +62,9 @@ public class Algorithm {
 			}
 			if(newSolution.getobjectiveFunction()<objective) {
 				System.out.println(" itertarion "+ iter);
+				if(iter==2) {
+					System.out.println(" itertarion "+ iter);
+				}
 				setBestSolution(drivingRoute.getSol());
 				setInitialSolution(drivingRoute.getSol().getShift());
 				//solution=null;

@@ -73,10 +73,10 @@ public class DrivingRoutes {
 				jobsInWalkingRoute.put(startNode.getId(), wr);
 			}
 		}
-		
-//		RandomStreamBase stream = new LFSR113(); // L'Ecuyer stream
-//		t.setRandomStream(stream);
-//		rn=new Random(t.getSeed());
+
+		//		RandomStreamBase stream = new LFSR113(); // L'Ecuyer stream
+		//		t.setRandomStream(stream);
+		//		rn=new Random(t.getSeed());
 	}
 
 	public void generateAfeasibleSolution( int iteration, Solution sol, boolean diversification) { 
@@ -1037,6 +1037,182 @@ public class DrivingRoutes {
 	}
 
 	private void mergingParts(ArrayList<Parts> poolParts) {
+		mergingCompletePart(poolParts);
+		disagregatedParts(poolParts);
+
+
+	}
+
+
+
+	private void disagregatedParts(ArrayList<Parts> poolParts) {
+		// copy
+		ArrayList<Parts> list= new ArrayList<Parts>();
+		for(Parts r: poolParts) {
+			list.add(r)	;
+		}
+		int itertation =list.size();
+		for(int i=0; i<itertation;i++) {
+		// seleccionar dos partes
+		int indexPart1=0;
+		int indexPart2=0;
+				while(indexPart1==indexPart2) {
+					 indexPart1=rn.nextInt(list.size()-1);
+				 indexPart2=rn.nextInt(list.size()-1);
+				}
+		Parts p1=list.get(indexPart1);
+		Parts p2=list.get(indexPart2);
+
+		Parts newPart= mergingJobByJob(p1,p2);// intentar mezclarlas
+		if(newPart!=null) {
+			list.remove(Math.max(indexPart1, indexPart2));
+			list.remove(Math.min(indexPart1, indexPart2));
+			list.add(newPart);
+		}
+	}
+
+
+		// actualizar las ventanas de tiempo de los trabajos futuros
+
+	}
+
+	private Parts mergingJobByJob(Parts p1, Parts p2) {
+		Parts part=null;
+		ArrayList<SubJobs> jobs= new ArrayList<SubJobs>();
+
+		for(SubJobs j:p1.getListSubJobs() ) {
+			jobs.add(j);
+		}
+		for(SubJobs j:p2.getListSubJobs() ) {
+			jobs.add(j);
+		}
+		jobs.sort(Jobs.SORT_BY_STARTW);
+		orderingSequence(jobs);
+		if(!jobs.isEmpty()) {
+		//if(checkingSequenceVehicleCapacity(jobs)) {
+			for(int index=1;index<jobs.size();index++) {
+				SubJobs a=jobs.get(index-1);
+				SubJobs b=jobs.get(index);
+				double tv=inp.getCarCost().getCost(a.getId()-1, b.getId()-1);
+				double calculatedStartTime=0;
+				double possibleStartTime=0;
+				if(b.isMedicalCentre() ) {
+					if(b.getTotalPeople()<0) {
+						calculatedStartTime=(a.getDepartureTime()+tv+test.getRegistrationTime());
+						possibleStartTime=Math.max(b.getEndTime(), calculatedStartTime);
+					}
+					else {
+						calculatedStartTime=(a.getDepartureTime()+tv);
+						possibleStartTime=Math.max(b.getStartTime(), calculatedStartTime);
+					}
+				}
+				else {
+					if(b.isClient()) {
+						calculatedStartTime=(a.getDepartureTime()+tv+test.getloadTimeHomeCareStaff());
+					}
+					else {
+						calculatedStartTime=(a.getDepartureTime()+tv+test.getloadTimePatient());
+					}
+					possibleStartTime=Math.max(b.getSoftStartTime(), calculatedStartTime);
+				}
+
+				b.setStartServiceTime(possibleStartTime);
+				b.setarrivalTime(a.getDepartureTime()+tv);
+
+				if(b.isClient()) {
+					if(b.getTotalPeople()<0) {
+						b.setdepartureTime(b.getArrivalTime()+test.getloadTimeHomeCareStaff());
+						b.setEndServiceTime(b.getstartServiceTime()+b.getReqTime());}
+					else {
+						b.setdepartureTime(b.getArrivalTime()+test.getloadTimeHomeCareStaff());
+						b.setEndServiceTime(b.getDepartureTime());
+					}
+				}
+				else {
+					if(b.getTotalPeople()<0) {
+						b.setdepartureTime(b.getArrivalTime()+test.getloadTimePatient());
+						b.setEndServiceTime(b.getstartServiceTime()+b.getReqTime());}
+					else {
+						b.setdepartureTime(b.getArrivalTime()+test.getloadTimePatient());
+						b.setEndServiceTime(b.getDepartureTime());
+					}
+				}
+			}
+
+			// revisar la secuencia de las horas
+			part=new Parts();
+			part.setListSubJobs(jobs, inp, test);
+			//p2.getListSubJobs().clear();
+
+
+		}
+		return part;
+	}
+
+	private void orderingSequence(ArrayList<SubJobs> jobs) { 
+		ArrayList<SubJobs> jobsCopy= new ArrayList<SubJobs>();	// copy
+		for(SubJobs j: jobs) {
+			jobsCopy.add(new SubJobs(j));
+		}
+		ArrayList<SubJobs> jobsSequence= new ArrayList<SubJobs>();
+		jobsSequence.add(jobsCopy.get(0));
+		jobsCopy.remove(jobsCopy.get(0));
+		boolean inserting=true;
+		while(inserting) {
+			if(jobsCopy.isEmpty()) {
+				inserting=false;
+			}
+			for(int index=0;index<jobsCopy.size();index++) {
+				SubJobs a=jobsSequence.get(jobsSequence.size()-1);
+				SubJobs b=jobsCopy.get(index);
+				if(!jobsSequence.contains(b)) {
+					double tv=inp.getCarCost().getCost(a.getId()-1, b.getId()-1);
+					double test=a.getStartTime()-tv+b.getloadUnloadRegistrationTime()+b.getloadUnloadTime();
+					if(test<=b.getEndTime()) {
+						//if(test<=b.getEndTime() && test>=b.getStartTime()) {
+						ArrayList<SubJobs> newSequence= new ArrayList<SubJobs>();	// copy
+						for(SubJobs j: jobsSequence) {
+							newSequence.add(new SubJobs(j));
+						}
+						newSequence.add(new SubJobs(b));
+						if(vehicleCapacityPart(newSequence)) {
+							jobsSequence.add(b);
+							jobsCopy.remove(b);
+							break;
+						}
+						else {
+							inserting=false;
+							jobs.clear();
+							break;
+						}
+					}
+					else {
+						inserting=false;
+						jobs.clear();
+						break;
+					}
+				}
+				if(jobsCopy.isEmpty()) {
+					inserting=false;
+				}
+			}
+		}
+		//.checkingSequenceVehicleCapacity(sequence)
+	}
+
+	private boolean worthlyContinueExploring(HashMap<String, SubJobs> evaluated, ArrayList<SubJobs> jobsCopy) {
+		boolean exploring=true;
+		if(!jobsCopy.isEmpty()) {
+		if(evaluated.size()==jobsCopy.size()) {
+			exploring=false;
+		}}
+		else {
+			exploring=false;
+		}
+		return exploring;
+	}
+
+	private void mergingCompletePart(ArrayList<Parts> poolParts) {
 		ArrayList<Parts> partsCopy = new ArrayList<Parts>();
 		for(Parts p1:poolParts) {
 			partsCopy.add(new Parts(p1));
@@ -1156,8 +1332,6 @@ public class DrivingRoutes {
 		}
 
 	}
-
-
 
 	private HashMap<String, Couple> selectingHomeCareStaffPickUpCouple(HashMap<String, Couple> dropoffHomeCareStaff2) {
 		HashMap<String, Couple> dropoffHomeCareStaff= new HashMap<>();// hard time windows list of home care staff 
@@ -2846,28 +3020,21 @@ public class DrivingRoutes {
 		}
 		System.out.println("Solution before inter changes" + newSol);
 		System.out.println("Solution iteration" + iteration);
-		Solution vecindario2= interRoutesMovements(iteration,newSol);
-		routeList= new ArrayList<Route>();
-		for(Route r: vecindario2.getRoutes()) {
-			routeList.add(r);
-		}
-		//goodSolution=validationSequenceRoutes(routeList);
-		System.out.println("Solution  "+vecindario2.toString());
-		if(vecindario2.getobjectiveFunction()<=newSol.getobjectiveFunction()) {
-			newSol=new Solution(vecindario2);
-		}
-
-
-		///
-//		Solution vecindario3= fixingPercentageRoutes(iteration,newSol);
-//		boolean goodSolution=solutionValitadion(vecindario3);
-//		if(vecindario3.getobjectiveFunction()<=newSol.getobjectiveFunction()) {
+		
+		
+//		Solution vecindario2= interRoutesMovements(iteration,newSol);
+//		routeList= new ArrayList<Route>();
+//		for(Route r: vecindario2.getRoutes()) {
+//			routeList.add(r);
+//		}
+//		//goodSolution=validationSequenceRoutes(routeList);
+//		System.out.println("Solution  "+vecindario2.toString());
+//		if(vecindario2.getobjectiveFunction()<=newSol.getobjectiveFunction()) {
 //			newSol=new Solution(vecindario2);
 //		}
-//
-//		if(!goodSolution) {
-//			System.out.println("Stop");
-//		}
+
+
+	
 		return newSol;
 	}
 
@@ -2899,13 +3066,13 @@ public class DrivingRoutes {
 		Solution newSol = new Solution ();
 		for(Route r:sol.getRoutes()) {
 			if(!routeList.contains(r)) {
-			newSol.getRoutes().add(r);}
+				newSol.getRoutes().add(r);}
 		}
 		for(Route r:newPartialSol.getRoutes()) {
 			newSol.getRoutes().add(r);
 		}
-		
-		
+
+
 		routeList= new ArrayList<Route>();
 		for(Route r: newSol.getRoutes()) {
 			routeList.add(r);
