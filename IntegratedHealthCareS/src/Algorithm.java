@@ -34,11 +34,11 @@ public class Algorithm {
 		walkingList = new LinkedList<SubRoute>();
 		double objective=0;
 		subroutes = new WalkingRoutes(rn,input, t, i.getNodes()); // stage 1: Creation of walking routes
-		boolean intensification=false;
+
 		boolean diversification= false;
 		System.out.println("Stop " +test.getTestTime());
 		for(int iter=0;iter<test.getTestTime();iter++) {
-			if(iter==1) {
+			if(iter==6) {
 				System.out.println("Stop");
 			}
 			if(solution== null ||diversification) {
@@ -72,7 +72,6 @@ public class Algorithm {
 			else {
 				if(newSolution.getobjectiveFunction()>objective) {// darle una oportunidad a la mala solución
 					//while(continueSearching) {
-					intensification=true;
 					drivingRoute.assigningRoutesToDrivers(iter,new Solution(newSolution));
 					solution= new Solution(drivingRoute.getSol());
 					solution.getRoutes().sort(Route.SORT_BY_departureTimeDepot);

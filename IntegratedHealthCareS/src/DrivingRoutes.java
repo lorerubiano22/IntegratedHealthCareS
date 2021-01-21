@@ -271,7 +271,7 @@ public class DrivingRoutes {
 		// pool of routes
 		ArrayList<Parts> poolParts= poolPartscreationRoute();		
 
-
+		//Solution solution= solutionGenerator(insertionOrder,poolParts,dropoffHomeCareStaff,dropoffpatientMedicalCentre,pickpatientMedicalCentre,pickupHomeCareStaff,toInsert);
 		do {
 			for(Jobs j: insertionOrder) {
 				if(j.getSubJobKey().equals("D27")) {
@@ -335,10 +335,6 @@ public class DrivingRoutes {
 			if(!route.getPartsRoute().isEmpty()) {
 				shift.getRoutes().add(route);}
 		}
-		SubJobs j=null;
-		Route r1=selectionRoutes(j,shift.getRoutes());
-		Route r2=selectionRoutes(j,solution.getRoutes());
-		System.out.println("Initial schedulle" + shift.toString());
 		solution.setShift(shift);
 		solution.checkingSolution(inp, test, jobsInWalkingRoute, shift);
 
@@ -354,6 +350,67 @@ public class DrivingRoutes {
 		return solution;
 	}
 
+
+	private Solution solutionGenerator(ArrayList<Jobs> insertionOrder, ArrayList<Parts> poolParts, HashMap<String, Couple> dropoffHomeCareStaff,
+			HashMap<String, Couple> dropoffpatientMedicalCentre, HashMap<String, Couple> pickpatientMedicalCentre,
+			HashMap<String, Couple> pickupHomeCareStaff, HashMap<String, SubJobs> toInsert) {
+		
+		do {
+			for(Jobs j: insertionOrder) {
+				if(j.getSubJobKey().equals("D27")) {
+					System.out.println("Couple"+pickupHomeCareStaff.get("P5"));
+				}
+				if(j.getSubJobKey().equals("D28")) {
+					System.out.println("Couple"+pickupHomeCareStaff.get("P5"));
+				}
+				boolean inserted= insertionJobSelectingRoute(poolParts,j,dropoffHomeCareStaff,dropoffpatientMedicalCentre,pickpatientMedicalCentre,pickupHomeCareStaff,toInsert);
+				if(inserted) {
+					insertionOrder.remove(j);
+					for(Jobs sb: insertionOrder){
+						toInsert.put(sb.getSubJobKey(),(SubJobs) sb);
+					}
+					insertionOrder.clear();
+					for(SubJobs sb: toInsert.values()){
+						insertionOrder.add(sb);
+					}
+					toInsert.clear();
+					int sortCriterion=rn.nextInt(3)+1;// 1 distance depot // 2 early TW // 3 size 
+					switch(sortCriterion){
+					case 1:  insertionOrder.sort(Jobs.SORT_BY_STARTW);
+					break;
+					case 2:  insertionOrder.sort(Jobs.TWSIZE_Early);
+					break;
+					case 3:  Collections.shuffle(insertionOrder);
+					break;
+					}
+					break;
+				}
+			}
+		}while(!insertionOrder.isEmpty());
+
+		mergingParts(poolParts);  // merging Parts
+		ArrayList<Route> poolRoutes=insertingDepotConnections(poolParts);
+		//mergingRoutes(poolRoutes);
+
+		//slackTime(poolRoutes);
+		stackingRoutes(poolRoutes);
+
+		poolRoutes.sort(Route.SORT_BY_EarlyJob);
+
+		//		boolean goodSolution=validationSequenceRoutes(poolRoutes);
+		//		System.out.println("Routes list ");
+		//		for(Route route:poolRoutes) {
+		//			System.out.println("Route "+ route.toString());
+		//		}
+
+		Solution solution= new Solution ();
+		for(Route route:poolRoutes) {
+			if(!route.getPartsRoute().isEmpty()) {
+				solution.getRoutes().add(route);}
+		}
+
+		return solution;
+	}
 
 	private void computingFactor(int iteration, ArrayList<Jobs> insertionOrder) {
 		if(iteration>=1) { // se computa un factor para cada trabajo
@@ -3020,7 +3077,7 @@ public class DrivingRoutes {
 		}
 		System.out.println("Solution before inter changes" + newSol);
 		System.out.println("Solution iteration" + iteration);
-		
+		//Solution vecindario2= interRoutesMovements(iteration,newSol);
 		
 //		Solution vecindario2= interRoutesMovements(iteration,newSol);
 //		routeList= new ArrayList<Route>();
@@ -3035,6 +3092,57 @@ public class DrivingRoutes {
 
 
 	
+		return newSol;
+	}
+
+	private Solution interRoutesMovements(int iteration, Solution sol) {
+		Solution newSol= new Solution(sol); // todo para solucionar los detours
+		
+		// selection 2 rutas
+		int indexPart1=0;
+		int indexPart2=0;
+				while(indexPart1==indexPart2) {
+					 indexPart1=rn.nextInt(newSol.getRoutes().size());
+				 indexPart2=rn.nextInt(newSol.getRoutes().size());
+				}
+		
+				ArrayList<Route> routeList= new ArrayList<Route>();
+				routeList.add(newSol.getRoutes().get(indexPart1));
+				routeList.add(newSol.getRoutes().get(indexPart2));
+				
+		ArrayList<Parts> partsList= new ArrayList<Parts>();
+		for(Route r:routeList) {
+			for(Parts p: r.getPartsRoute()) {
+				if(p.getListSubJobs().get(0).getId()!=1) {
+					partsList.add(new Parts(p));
+				}
+			}
+			
+		}
+		partsList.sort(Parts.SORT_BY_StartTimeTW);
+		System.out.print("Iternation " + iteration);
+		mergingParts(partsList);  // merging Parts
+		if(iteration==10) {
+			System.out.print("Iternation " + iteration);
+		}
+		if(iteration==10) {
+			System.out.print("Iternation " + iteration);
+		}
+		System.out.print("Iternation " + iteration);
+		ArrayList<Route> poolRoutes=insertingDepotConnections(partsList);
+		stackingRoutes(poolRoutes);
+		poolRoutes.sort(Route.SORT_BY_EarlyJob);
+		newSol.getRoutes().remove(Math.max(indexPart1, indexPart2));
+		newSol.getRoutes().remove(Math.min(indexPart1, indexPart2));
+		
+		for(Route r: poolRoutes) {
+			newSol.getRoutes().add(r);
+		}
+		
+		Solution shift= shiftDefinition(iteration,newSol);
+		newSol.setShift(shift);
+		newSol.checkingSolution(inp, test, jobsInWalkingRoute, newSol.getShift());
+		
 		return newSol;
 	}
 
@@ -3084,89 +3192,89 @@ public class DrivingRoutes {
 		return newSol;
 	}
 
-	private Solution interRoutesMovements(int iteration, Solution sol) {
-
-		Solution currentSolution=new Solution(sol);
-		ArrayList<Route> transferRoute= new ArrayList<Route>();
-
-		////
-		ArrayList<Route> routeList= new ArrayList<Route>();
-		for(Route r: sol.getRoutes()) {
-			routeList.add(r);
-		}
-		//boolean goodSolution=validationSequenceRoutes(routeList);
-		SubJobs future=null;
-		Route ir=selectionRoute(future,currentSolution);
-
-		////
-		Solution newSolution=new Solution();
-		System.out.println("Solution 123" + currentSolution.toString());
-		int[][] combination= new int[currentSolution.getRoutes().size()][currentSolution.getRoutes().size()];
-		int totalRoutes=currentSolution.getRoutes().size();
-
-		for(int i=0;i<totalRoutes;i++) {
-			Solution PartialSolution=new Solution();
-			int indexR=rn.nextInt(currentSolution.getRoutes().size()-1); 
-			Route RouteR=currentSolution.getRoutes().get(indexR);
-			boolean checkJObs=readingRoute(RouteR);
-			if(checkJObs==false) {
-				System.out.println(" Index " + RouteR);
-			}
-			int indexT=	rn.nextInt(currentSolution.getRoutes().size()-1); 
-			Route RouteT=currentSolution.getRoutes().get(indexT);
-			checkJObs=readingRoute(RouteT);
-			if(checkJObs==false) {
-				System.out.println(" Index " + RouteT);
-			}
-			if(indexR!=indexT && !transferRoute.contains(RouteT) && !transferRoute.contains(RouteR)) {
-				if(RouteR.getIdRoute()==9||RouteT.getIdRoute()==9) {
-					System.out.println(" index " + indexT + " Index " + indexR);
-				}
-				if(RouteR.getJobsDirectory().isEmpty()||RouteT.getJobsDirectory().isEmpty()) {
-					System.out.println(" index " + indexT + " Index " + indexR);
-				}
-				if(RouteR.getJobsDirectory().containsKey("D11")||RouteT.getJobsDirectory().containsKey("D11")) {
-					System.out.println(" index " + RouteT + " Index " + RouteR);
-				}
-				PartialSolution.getRoutes().add(new Route(currentSolution.getRoutes().get(indexR)));
-				PartialSolution.getRoutes().add(new Route(currentSolution.getRoutes().get(indexT)));
-				PartialSolution.checkingSolution(inp, test, jobsInWalkingRoute, PartialSolution);
-				Solution newPartialSol=sortInsertionProcedurePartial(PartialSolution);
-				if(!newPartialSol.getRoutes().isEmpty()) {
-					transferRoute.add(currentSolution.getRoutes().get(indexR));
-					transferRoute.add(currentSolution.getRoutes().get(indexT));
-					for(Route r:newPartialSol.getRoutes()) {
-						if(!r.getPartsRoute().isEmpty()) {
-							newSolution.getRoutes().add(r);}
-					}
-				}
-				//else {
-				//					newSolution.getRoutes().add(currentSolution.getRoutes().get(indexR));
-				//					newSolution.getRoutes().add(currentSolution.getRoutes().get(indexT));
-				//				}
-			}
-		}
-
-		// adding the additional routes
-		for(Route r: currentSolution.getRoutes()) {
-			if(!transferRoute.contains(r)) {
-				newSolution.getRoutes().add(r);
-			}
-		}
-
-
-		System.out.println("Solution " + newSolution.toString());
-		System.out.println("Current Solution " + currentSolution.toString());
-		routeList= new ArrayList<Route>();
-		for(Route r: newSolution.getRoutes()) {
-			routeList.add(r);
-		}
-		//goodSolution=validationSequenceRoutes(routeList);
-		Solution shift= shiftDefinition(iteration,newSolution);
-		newSolution.setShift(shift);
-		newSolution.checkingSolution(inp, test, jobsInWalkingRoute, newSolution.getShift());
-		return newSolution;
-	}
+//	private Solution interRoutesMovements(int iteration, Solution sol) {
+//
+//		Solution currentSolution=new Solution(sol);
+//		ArrayList<Route> transferRoute= new ArrayList<Route>();
+//
+//		////
+//		ArrayList<Route> routeList= new ArrayList<Route>();
+//		for(Route r: sol.getRoutes()) {
+//			routeList.add(r);
+//		}
+//		//boolean goodSolution=validationSequenceRoutes(routeList);
+//		SubJobs future=null;
+//		Route ir=selectionRoute(future,currentSolution);
+//
+//		////
+//		Solution newSolution=new Solution();
+//		System.out.println("Solution 123" + currentSolution.toString());
+//		int[][] combination= new int[currentSolution.getRoutes().size()][currentSolution.getRoutes().size()];
+//		int totalRoutes=currentSolution.getRoutes().size();
+//
+//		for(int i=0;i<totalRoutes;i++) {
+//			Solution PartialSolution=new Solution();
+//			int indexR=rn.nextInt(currentSolution.getRoutes().size()-1); 
+//			Route RouteR=currentSolution.getRoutes().get(indexR);
+//			boolean checkJObs=readingRoute(RouteR);
+//			if(checkJObs==false) {
+//				System.out.println(" Index " + RouteR);
+//			}
+//			int indexT=	rn.nextInt(currentSolution.getRoutes().size()-1); 
+//			Route RouteT=currentSolution.getRoutes().get(indexT);
+//			checkJObs=readingRoute(RouteT);
+//			if(checkJObs==false) {
+//				System.out.println(" Index " + RouteT);
+//			}
+//			if(indexR!=indexT && !transferRoute.contains(RouteT) && !transferRoute.contains(RouteR)) {
+//				if(RouteR.getIdRoute()==9||RouteT.getIdRoute()==9) {
+//					System.out.println(" index " + indexT + " Index " + indexR);
+//				}
+//				if(RouteR.getJobsDirectory().isEmpty()||RouteT.getJobsDirectory().isEmpty()) {
+//					System.out.println(" index " + indexT + " Index " + indexR);
+//				}
+//				if(RouteR.getJobsDirectory().containsKey("D11")||RouteT.getJobsDirectory().containsKey("D11")) {
+//					System.out.println(" index " + RouteT + " Index " + RouteR);
+//				}
+//				PartialSolution.getRoutes().add(new Route(currentSolution.getRoutes().get(indexR)));
+//				PartialSolution.getRoutes().add(new Route(currentSolution.getRoutes().get(indexT)));
+//				PartialSolution.checkingSolution(inp, test, jobsInWalkingRoute, PartialSolution);
+//				Solution newPartialSol=sortInsertionProcedurePartial(PartialSolution);
+//				if(!newPartialSol.getRoutes().isEmpty()) {
+//					transferRoute.add(currentSolution.getRoutes().get(indexR));
+//					transferRoute.add(currentSolution.getRoutes().get(indexT));
+//					for(Route r:newPartialSol.getRoutes()) {
+//						if(!r.getPartsRoute().isEmpty()) {
+//							newSolution.getRoutes().add(r);}
+//					}
+//				}
+//				//else {
+//				//					newSolution.getRoutes().add(currentSolution.getRoutes().get(indexR));
+//				//					newSolution.getRoutes().add(currentSolution.getRoutes().get(indexT));
+//				//				}
+//			}
+//		}
+//
+//		// adding the additional routes
+//		for(Route r: currentSolution.getRoutes()) {
+//			if(!transferRoute.contains(r)) {
+//				newSolution.getRoutes().add(r);
+//			}
+//		}
+//
+//
+//		System.out.println("Solution " + newSolution.toString());
+//		System.out.println("Current Solution " + currentSolution.toString());
+//		routeList= new ArrayList<Route>();
+//		for(Route r: newSolution.getRoutes()) {
+//			routeList.add(r);
+//		}
+//		//goodSolution=validationSequenceRoutes(routeList);
+//		Solution shift= shiftDefinition(iteration,newSolution);
+//		newSolution.setShift(shift);
+//		newSolution.checkingSolution(inp, test, jobsInWalkingRoute, newSolution.getShift());
+//		return newSolution;
+//	}
 
 	private boolean readingRoute(Route routeR) {
 		boolean same=false;
@@ -5927,6 +6035,9 @@ public class DrivingRoutes {
 				System.out.println("stop");
 			}
 			p.settingConnections(p.getListSubJobs(),inp,test);
+			if(p.getDirectoryConnections().size()==100) {
+				System.out.println("Stop");
+			}
 		}
 
 	}

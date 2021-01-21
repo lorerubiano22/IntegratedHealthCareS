@@ -145,8 +145,8 @@ public class Solution {
 	s= s.concat("\n driver cost: "+ driverCost);
 	s= s.concat("\n home care staff and paramedic cost: "+ homeCareStaffCost);
 	s= s.concat("\n detour: "+ detourDuration);
-	s= s.concat("\n detour average paramedic: "+ detourPromParamedico);
-	s= s.concat("\n detour average home care staff: "+ detourPromHomeCareStaff);
+	s= s.concat("\n detour average paramedic: "+ Math.ceil(detourPromParamedico));
+	s= s.concat("\n detour average home care staff: "+ Math.ceil(detourPromHomeCareStaff));
 	s= s.concat("\n time window violation: "+ timeWindowViolation);
 	s= s.concat("\n waiting Time to penalize: "+ additionalWaitingTime);
 	s= s.concat(" Detour time to penalize: "+ detourViolation);

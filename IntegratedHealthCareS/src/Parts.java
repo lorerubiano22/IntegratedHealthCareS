@@ -68,6 +68,7 @@ public class Parts {
 	public void setHomecareStaffSchift(boolean b) { homecareStaffSchift=b;}
 	public void setKeyParts(String k) {this.key = k;}
 	public void setQualificationParts(int q) {this.qualificationLevel = q;}
+	
 	public void setListSubJobs(ArrayList<SubJobs> listSubJobs, Inputs inp, Test test) {
 		this.directorySubjobs.clear();
 		this.listSubJobs = listSubJobs;
@@ -104,6 +105,9 @@ public class Parts {
 			Edge e= new Edge(iNode,jNode, inp,test);
 			directoryConnections.put(e.getEdgeKey(), e);
 		}
+		if(directoryConnections.size()==100) {
+			System.out.println("end");
+		}
 		for(Edge e:directoryConnections.values()) {
 			System.out.print(e.toString());
 		}
@@ -131,6 +135,27 @@ public class Parts {
 				return 1; 
 
 			if (r1.getDistaceLastConnectedNode() < r2.getDistaceLastConnectedNode() ) 
+
+				return -1; 
+
+			return 0; 
+
+		}
+
+		
+
+	};
+	
+	
+	public static Comparator<Parts> SORT_BY_StartTimeTW = new Comparator<Parts>() { 
+
+		public int compare(Parts r1, Parts r2) { 
+
+			if (r1.getListSubJobs().get(0).getStartTime() > r2.getListSubJobs().get(0).getStartTime() ) 
+
+				return 1; 
+
+			if (r1.getListSubJobs().get(0).getStartTime() < r2.getListSubJobs().get(0).getStartTime()) 
 
 				return -1; 
 
