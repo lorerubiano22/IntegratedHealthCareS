@@ -34,6 +34,7 @@ public class Route {
 	private double additionalWaitingTime=0;
 	double timeWindowViolation=0;
 	double detourViolation=0;
+	int qualificationLevel=-1;
 
 	// Constructors
 	public Route(Route r) {
@@ -61,6 +62,15 @@ public class Route {
 		copySubJobs(r.subJobsList); // subjobs list (pick up and delivary)
 		copyDirectories(r.getJobsDirectory());
 		copyPart(r.getPartsRoute());
+		qualificationLevel=-1;
+		for(SubJobs j:this.subJobsList) {
+	if(qualificationLevel<j.getReqQualification()) {
+		qualificationLevel=j.getReqQualification();
+	}		
+		}
+	
+		
+		
 		if(r.schift!=null) {
 			schift= new Schift(r.getSchiftRoute());
 		}
@@ -93,6 +103,7 @@ public class Route {
 		jobsList= new LinkedList<Couple>(); // subjobs list (pick up and delivary)
 		subJobsList=new LinkedList<SubJobs>(); // subjobs list (pick up and delivary)
 		positionJobs=new HashMap<String, SubJobs>();
+		qualificationLevel=-1;
 	}
 
 	private void copySubJobs( LinkedList<SubJobs>  SubJobs) {
@@ -154,11 +165,12 @@ public class Route {
 	public void setdetourViolation(double detour) {detourViolation= detour;}
 	public void setdetourPromParamedic(double wt) {detourPromParamedic=wt;}
 	public void setdetourPromHomeCareStaff(double detour) {detourPromHomeCareStaff= detour;}
-
+	public void setQualificationLevel(int q) {qualificationLevel=q;}
 
 
 	// Getters
 
+	public int getQualificationLevel() {return qualificationLevel;}
 	public HashMap<String, SubJobs> getJobsDirectory(){return positionJobs;}
 	public double getDurationRoute() {return durationRoute;}
 	public double getServiceTime() {return serviceTime;}
@@ -585,7 +597,37 @@ public class Route {
 		Route r=null;
 		String key="";
 		if(present==null){
-			key="D11";
+			key="D32";
+		}
+		else {
+			key=present.getSubJobKey();
+		}
+		for(Route routeInRoute:diversifiedSolneighborhood.getRoutes()) {
+			HashMap<String, SubJobs> subJobsList= new HashMap<String, SubJobs>();
+			if(routeInRoute.getPartsRoute().isEmpty()) {
+				System.out.print("Stop");
+			}
+			for(Parts p:routeInRoute.getPartsRoute()) {
+				if(p.getListSubJobs().isEmpty()) {
+					System.out.print("Stop");
+				}
+				for(SubJobs j:p.getListSubJobs()) {
+					subJobsList.put(j.getSubJobKey(), j);
+				}
+				if(subJobsList.containsKey(key)) {
+					r=routeInRoute;
+					break;
+				}
+			}
+		}
+		return r;
+	}
+	
+	private Route selectionRoute1(SubJobs present, Solution diversifiedSolneighborhood) {
+		Route r=null;
+		String key="";
+		if(present==null){
+			key="P26";
 		}
 		else {
 			key=present.getSubJobKey();

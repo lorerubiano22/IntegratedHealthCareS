@@ -116,7 +116,7 @@ public class Inputs {
 	}
 	
 	
-	public List<AttributeNurse> getNurse() {
+	public List<AttributeNurse> gethomeCareStaffInf() {
 		return nurses;
 	}
 	public List<AttributeParamedics> getParamedic() {

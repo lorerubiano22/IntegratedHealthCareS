@@ -72,7 +72,19 @@ public class Solution {
 	public void setRoutes(LinkedList<Route> routes) {this.routes = routes;}
 	public void setObjectiveFunction(double of) {this.objectiveFunction = of;}
 	public void setPassengers(int p) {this.passengers = p;}
-	public void setShift(Solution sol) {this.shifts = sol;}
+	public void setShift(Solution sol) {
+		this.shifts = sol;
+	// set qualification level
+		for(Route r:shifts.getRoutes()) {
+			int qualification=-1;
+			for(SubJobs j:r.getSubJobsList()) {
+				if(j.getReqQualification()>qualification) {
+					qualification=j.getReqQualification();
+				}
+			}
+			r.setQualificationLevel(qualification);
+		}
+	}
 
 	public void setParamedic(double w) {paramedic=w;}
 	public void setHomeCareStaff(double w) {homeCareStaff=w;}
