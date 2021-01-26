@@ -161,12 +161,15 @@ public class DrivingRoutes {
 		//		private  HashMap<String, Couple> pickpatientMedicalCentre= new HashMap<>();// soft time windows list of patient
 		//		private  HashMap<String, Couple> pickUpHomeCareStaff= new HashMap<>();// soft time windows list of home care staff 
 		int amountVehicles=Integer.MAX_VALUE;
-
+		Solution sol=null;
+		HashMap<String, Couple> dropoffHomeCareStaff= selectingHomeCareStaffCouple();// hard time windows list of home care staff 
+		HashMap<String, Couple> pickupHomeCareStaff= selectingHomeCareStaffPickUpCouple(dropoffHomeCareStaff);
+		HashMap<String, Couple> dropoffpatientMedicalCentre= selectingCoupleDropOffMedical();// hard time windows list of patient
+		HashMap<String, Couple> pickpatientMedicalCentre= selectingCouplepickpatientMedicalCentre(dropoffpatientMedicalCentre);// soft time windows list of patient
+		boolean feasibleStaff=false;
+		do {
+	
 		while(inp.getVehicles().get(0).getQuantity()<amountVehicles) {
-			HashMap<String, Couple> dropoffHomeCareStaff= selectingHomeCareStaffCouple();// hard time windows list of home care staff 
-			HashMap<String, Couple> pickupHomeCareStaff= selectingHomeCareStaffPickUpCouple(dropoffHomeCareStaff);
-			HashMap<String, Couple> dropoffpatientMedicalCentre= selectingCoupleDropOffMedical();// hard time windows list of patient
-			HashMap<String, Couple> pickpatientMedicalCentre= selectingCouplepickpatientMedicalCentre(dropoffpatientMedicalCentre);// soft time windows list of patient
 
 			if(dropoffpatientMedicalCentre.isEmpty()) {
 				dropoffpatientMedicalCentre= selectingCoupleDropOffMedical();
@@ -178,30 +181,25 @@ public class DrivingRoutes {
 			// pool of routes
 			ArrayList<Parts> poolParts= poolPartscreationRoute();		
 
-			Solution solution= solutionGenerator(insertionOrder,poolParts,dropoffHomeCareStaff,dropoffpatientMedicalCentre,pickpatientMedicalCentre,pickupHomeCareStaff,toInsert);
-			amountVehicles=solution.getRoutes().size();
+			sol= solutionGenerator(insertionOrder,poolParts,dropoffHomeCareStaff,dropoffpatientMedicalCentre,pickpatientMedicalCentre,pickupHomeCareStaff,toInsert);
+			amountVehicles=sol.getRoutes().size();
 		}
 		ArrayList<Route> poolRoutes=new ArrayList<>();
-		for(Route r:solution.getRoutes()) {
-			poolRoutes.add(r);
+		if(sol!=null) {
+			for(Route r:sol.getRoutes()) {
+				poolRoutes.add(r);
+			}
 		}
-
-		// definition of shifts
-		//			ArrayList<Parts> shifts= assigmentShifts(poolRoutes,dropoffHomeCareStaff,pickupHomeCareStaff,dropoffpatientMedicalCentre,pickpatientMedicalCentre);
-		//			ArrayList<Route> poolshifts=insertingDepotConnections(shifts);
-		//
-		//			Solution shift= new Solution ();
-		//			for(Route route:poolshifts) {
-		//				if(!route.getPartsRoute().isEmpty()) {
-		//					shift.getRoutes().add(route);}
-		//			}
-		//			solution.setShift(shift);
-		//			solution.checkingSolution(inp, test, jobsInWalkingRoute, shift);
+		//definition of shifts
+		Solution shift= shiftDefinition(iteration,sol);
+		sol.setShift(shift);
+		sol.checkingSolution(inp, test, jobsInWalkingRoute, shift);
 
 
-		solution.setShift(solution);
-		//feasible=checkingFeasibility(solution);
-		boolean goodSolution=solutionValitadion(solution);
+
+		feasibleStaff=checkingFeasibility(sol);
+	}while(!feasibleStaff);
+		boolean goodSolution=solutionValitadion(sol);
 		if(!goodSolution) {
 			System.out.println("Stop");
 		}
@@ -210,7 +208,7 @@ public class DrivingRoutes {
 
 
 
-		return solution;
+		return sol;
 	}
 
 
@@ -226,12 +224,7 @@ public class DrivingRoutes {
 				paramedics++;
 			}
 			else { // home care staff
-				if(r.getQualificationLevel()==1) {
-					q1++;
-				}
-				if(r.getQualificationLevel()==2) {
-					q2++;
-				}
+				
 				switch(r.getQualificationLevel()){
 				case 1:
 					q1++;
@@ -251,11 +244,15 @@ public class DrivingRoutes {
 			numVeh++;
 		}
 		boolean testMedicalStaff=false;
-		if(paramedics== inp.getParamedic().get(0).getQuantity() && q1== inp.gethomeCareStaffInf().get(2).getQuantity() && q2== inp.gethomeCareStaffInf().get(1).getQuantity()&& q3== inp.gethomeCareStaffInf().get(0).getQuantity()) {
+		System.out.println("paramedics: used " + paramedics+ "avaliability "+inp.getParamedic().get(0).getQuantity());
+		System.out.println("q1: used " + q1+ "avaliability "+inp.gethomeCareStaffInf().get(2).getQuantity());
+		System.out.println("q2: used " + q2+ "avaliability "+inp.gethomeCareStaffInf().get(1).getQuantity());
+		System.out.println("q3: used " + q2+ "avaliability "+inp.gethomeCareStaffInf().get(0).getQuantity());
+		if(paramedics<= inp.getParamedic().get(0).getQuantity() && q1<= inp.gethomeCareStaffInf().get(0).getQuantity() && q2<= inp.gethomeCareStaffInf().get(1).getQuantity() && q3<= inp.gethomeCareStaffInf().get(2).getQuantity()) {
 			testMedicalStaff=true;
 		}
 		boolean testVehicle=false;
-		if(numVeh==inp.getVehicles().get(0).getQuantity()) {
+		if(numVeh<=inp.getVehicles().get(0).getQuantity()) {
 			testVehicle=true;
 		}
 		if(testVehicle && testMedicalStaff) {
@@ -294,16 +291,16 @@ public class DrivingRoutes {
 						insertionOrder.add(sb);
 					}
 					toInsert.clear();
-					insertionOrder.sort(Jobs.TWSIZE_Early);
-					//					int sortCriterion=rn.nextInt(3)+1;// 1 distance depot // 2 early TW // 3 size 
-					//										switch(sortCriterion){
-					//										case 1:  insertionOrder.sort(Jobs.SORT_BY_STARTW);
-					//										break;
-					//										case 2:  insertionOrder.sort(Jobs.TWSIZE_Early);
-					//										break;
-					//										case 3:  Collections.shuffle(insertionOrder);
-					//										break;
-					//										}
+					//insertionOrder.sort(Jobs.TWSIZE_Early);
+					int sortCriterion=rn.nextInt(3)+1;// 1 distance depot // 2 early TW // 3 size 
+					switch(sortCriterion){
+					case 1:  insertionOrder.sort(Jobs.SORT_BY_STARTW);
+					break;
+					case 2:  insertionOrder.sort(Jobs.TWSIZE_Early);
+					break;
+					case 3:  Collections.shuffle(insertionOrder);
+					break;
+					}
 					break;
 				}
 			}
@@ -1676,7 +1673,7 @@ public class DrivingRoutes {
 	}
 
 	private void SettingTimesSequence(ArrayList<SubJobs> sequence) {
-		
+
 		for(int index=1;index<sequence.size();index++) {
 			SubJobs a=sequence.get(index-1);
 			SubJobs b=sequence.get(index);
