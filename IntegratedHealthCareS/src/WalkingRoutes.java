@@ -600,7 +600,6 @@ public class WalkingRoutes {
 					i.setStartServiceTime(i.getEndTime());
 				}
 				else {// random start service time
-					rn = new Random(this.test.getSeed()); 
 					double min=i.getStartTime();
 					double max=i.getEndTime();
 					double randomTime=rn.nextInt((int)max - (int)min + 1) + min ;

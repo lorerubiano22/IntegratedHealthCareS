@@ -128,7 +128,7 @@ public class Solution {
 	public double getimeWindowViolation() {return timeWindowViolation;}
 	public double getdetourViolation() {	return detourViolation;}
 	public double getobjectiveFunction() {	return objectiveFunction;}
-	public double getdetourDuration() {	return detourDuration;}
+	public double getdetourDuration() {	return Math.ceil(detourDuration);}
 	public Solution getShift() {return shifts;}
 
 	// auxiliar methods
@@ -187,6 +187,7 @@ public class Solution {
 					}
 					s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getStartTime()+";"+(int)j.getEndTime()+"]"+") \n");
 				}
+				s= s.concat("\n");
 			}
 		}	
 	}

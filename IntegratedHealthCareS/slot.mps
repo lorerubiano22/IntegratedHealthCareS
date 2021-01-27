@@ -303,12 +303,15 @@ COLUMNS
     WR_(89)   slot_6    1
     WR_(89)   *OBJ*     1e+006
     WR_(90)   slot_7    1
+    WR_(90)   slot_8    1
     WR_(90)   slot_13   1
     WR_(90)   slot_21   1
     WR_(90)   slot_27   1
-    WR_(90)   *OBJ*     25
+    WR_(90)   slot_36   1
+    WR_(90)   *OBJ*     29
     WR_(91)   slot_13   1
     WR_(91)   slot_27   1
+    WR_(91)   slot_36   1
     WR_(91)   *OBJ*     10
     WR_(92)   slot_16   1
     WR_(92)   slot_17   1
@@ -336,16 +339,20 @@ COLUMNS
     WR_(98)   *OBJ*     23
     WR_(99)   slot_2    1
     WR_(99)   slot_9    1
+    WR_(99)   slot_11   1
     WR_(99)   slot_12   1
-    WR_(99)   *OBJ*     6
+    WR_(99)   slot_14   1
+    WR_(99)   *OBJ*     7
     WR_(100)  slot_10   1
     WR_(100)  slot_18   1
-    WR_(100)  *OBJ*     9
+    WR_(100)  slot_24   1
+    WR_(100)  *OBJ*     11
     WR_(101)  slot_2    1
     WR_(101)  slot_9    1
     WR_(101)  slot_11   1
     WR_(101)  slot_12   1
-    WR_(101)  *OBJ*     8
+    WR_(101)  slot_14   1
+    WR_(101)  *OBJ*     9
     WR_(102)  slot_12   1
     WR_(102)  slot_14   1
     WR_(102)  *OBJ*     2
@@ -354,24 +361,29 @@ COLUMNS
     WR_(104)  slot_17   1
     WR_(104)  *OBJ*     1e+006
     WR_(105)  slot_18   1
-    WR_(105)  slot_24   1
-    WR_(105)  *OBJ*     2
+    WR_(105)  *OBJ*     1e+006
     WR_(106)  slot_19   1
-    WR_(106)  *OBJ*     1e+006
+    WR_(106)  slot_25   1
+    WR_(106)  *OBJ*     8
     WR_(107)  slot_20   1
     WR_(107)  *OBJ*     1e+006
     WR_(108)  slot_22   1
     WR_(108)  *OBJ*     1e+006
     WR_(109)  slot_23   1
     WR_(109)  *OBJ*     1e+006
+    WR_(110)  slot_18   1
     WR_(110)  slot_24   1
-    WR_(110)  *OBJ*     1e+006
+    WR_(110)  *OBJ*     2
+    WR_(111)  slot_19   1
     WR_(111)  slot_25   1
-    WR_(111)  *OBJ*     1e+006
+    WR_(111)  *OBJ*     8
+    WR_(112)  slot_17   1
     WR_(112)  slot_26   1
-    WR_(112)  *OBJ*     1e+006
+    WR_(112)  *OBJ*     6
+    WR_(113)  slot_19   1
+    WR_(113)  slot_25   1
     WR_(113)  slot_31   1
-    WR_(113)  *OBJ*     1e+006
+    WR_(113)  *OBJ*     14
     WR_(114)  slot_13   1
     WR_(114)  slot_27   1
     WR_(114)  slot_36   1
@@ -399,8 +411,7 @@ COLUMNS
     WR_(124)  slot_39   1
     WR_(124)  *OBJ*     1e+006
     WR_(125)  slot_40   1
-    WR_(125)  slot_41   1
-    WR_(125)  *OBJ*     6
+    WR_(125)  *OBJ*     1e+006
     WR_(126)  slot_40   1
     WR_(126)  slot_41   1
     WR_(126)  *OBJ*     6
