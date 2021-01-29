@@ -42,7 +42,7 @@ public class Main {
 				}
 			}
 			String outputsFilePath = outputFolder + File.separator +
-					currentTest.getInstanceName() + "_" + currentTest.getSeed() +"_"+objective+  sufixFileOutput;
+					currentTest.getInstanceName() + "_" + currentTest.getSeed() +"_"+objective+"_waiting "+currentTest.getCumulativeWaitingTime()+  sufixFileOutput;
 			// 2.2. USE THE MULTI-START ALGORITHM TO SOLVE THE INSTANCE
 			Algorithm algorithm = new Algorithm(currentTest, inputs, rng);
 			Outputs output = new Outputs(algorithm);

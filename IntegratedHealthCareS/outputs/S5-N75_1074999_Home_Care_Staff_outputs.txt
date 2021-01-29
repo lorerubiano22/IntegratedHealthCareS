@@ -1,0 +1,980 @@
+***************************************************
+*                      OUTPUTS                    *
+***************************************************
+
+
+--------------------------------------------
+
+ Walking Routes:
+
+--------------------------------------------
+[
+ Walking Route: 0
+ Required Qualification: 2
+ duration walking travel time: 14.0
+ start service time: 630.0
+ Edge total of job in the walking route: 3
+ List of jobs:  j_( Id32  A  629.0 , B_ 630.0 ) TW[630.0;900.0] j_( Id20  A  726.0 , B_ 726.0 ) TW[630.0;900.0] j_( Id26  A  794.0 , B_ 794.0 ) TW[630.0;900.0]
+Edge route duration (service+ walking time): 224.0, 
+ Walking Route: 1
+ Required Qualification: 3
+ duration walking travel time: 11.0
+ start service time: 360.0
+ Edge total of job in the walking route: 3
+ List of jobs:  j_( Id6  A  594.0 , B_ 595.0 ) TW[360.0;1170.0] j_( Id18  A  630.0 , B_ 630.0 ) TW[630.0;900.0] j_( Id27  A  726.0 , B_ 726.0 ) TW[630.0;900.0]
+Edge route duration (service+ walking time): 221.0, 
+ Walking Route: 2
+ Required Qualification: 3
+ duration walking travel time: 7.0
+ start service time: 958.0
+ Edge total of job in the walking route: 2
+ List of jobs:  j_( Id35  A  957.0 , B_ 958.0 ) TW[900.0;1170.0] j_( Id31  A  995.0 , B_ 995.0 ) TW[900.0;1170.0]
+Edge route duration (service+ walking time): 67.0, 
+ Walking Route: 3
+ Required Qualification: 2
+ duration walking travel time: 1.0
+ start service time: 630.0
+ Edge total of job in the walking route: 2
+ List of jobs:  j_( Id2  A  868.0 , B_ 630.0 ) TW[360.0;630.0] j_( Id4  A  900.0 , B_ 900.0 ) TW[900.0;1170.0]
+Edge route duration (service+ walking time): 106.0, 
+ Walking Route: 4
+ Required Qualification: 3
+ duration walking travel time: 19.0
+ start service time: 360.0
+ Edge total of job in the walking route: 7
+ List of jobs:  j_( Id34  A  359.0 , B_ 360.0 ) TW[360.0;1170.0] j_( Id5  A  410.0 , B_ 410.0 ) TW[360.0;630.0] j_( Id10  A  775.0 , B_ 775.0 ) TW[630.0;900.0] j_( Id12  A  837.0 , B_ 837.0 ) TW[630.0;900.0] j_( Id15  A  869.0 , B_ 869.0 ) TW[630.0;900.0] j_( Id3  A  900.0 , B_ 900.0 ) TW[900.0;1170.0] j_( Id13  A  932.0 , B_ 932.0 ) TW[900.0;1170.0]
+Edge route duration (service+ walking time): 364.0, 
+ Walking Route: 5
+ Required Qualification: 2
+ duration walking travel time: 5.0
+ start service time: 360.0
+ Edge total of job in the walking route: 2
+ List of jobs:  j_( Id7  A  564.0 , B_ 565.0 ) TW[360.0;1170.0] j_( Id23  A  630.0 , B_ 630.0 ) TW[630.0;900.0]
+Edge route duration (service+ walking time): 95.0, 
+ Walking Route: 6
+ Required Qualification: 2
+ duration walking travel time: 11.0
+ start service time: 769.0
+ Edge total of job in the walking route: 3
+ List of jobs:  j_( Id11  A  768.0 , B_ 769.0 ) TW[630.0;900.0] j_( Id19  A  808.0 , B_ 808.0 ) TW[630.0;900.0] j_( Id25  A  840.0 , B_ 840.0 ) TW[630.0;900.0]
+Edge route duration (service+ walking time): 161.0]
+
+--------------------------------------------
+Driving Routes
+--------------------------------------------
+
+ Initial solution 
+
+
+ Paramedic 1
+ ( P1 A  402  B  402 end service 402   D  402  reqTime_0.0  TW [0;0]) 
+
+ ( P55p A  406  B  406 end service 408   D  408  reqTime_0.0  TW [406;416]) 
+
+ ( D5055 A  412  B  427 end service 517   D  414  reqTime_90.0  TW [410;420]) 
+
+ ( P5055 A  517  B  517 end service 519   D  519  reqTime_0.0  TW [517;527]) 
+
+ ( D55p A  524  B  524 end service 524   D  526  reqTime_0.0  TW [522;532]) 
+
+ ( P58p A  527  B  527 end service 529   D  529  reqTime_0.0  TW [527;537]) 
+
+ ( D4658 A  532  B  547 end service 577   D  534  reqTime_30.0  TW [530;540]) 
+
+ ( P4658 A  577  B  577 end service 579   D  579  reqTime_0.0  TW [577;587]) 
+
+ ( D58p A  582  B  582 end service 582   D  584  reqTime_0.0  TW [580;590]) 
+
+ ( P57p A  597  B  599 end service 599   D  599  reqTime_0.0  TW [587;597]) 
+
+ ( D4557 A  592  B  607 end service 652   D  594  reqTime_45.0  TW [590;600]) 
+
+ ( P4557 A  652  B  652 end service 654   D  654  reqTime_0.0  TW [652;662]) 
+
+ ( D57p A  657  B  657 end service 657   D  659  reqTime_0.0  TW [655;665]) 
+
+ ( D1 A  664  B  664 end service 664   D  664  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 2
+ ( P1 A  372  B  372 end service 372   D  372  reqTime_0.0  TW [0;0]) 
+
+ ( P72p A  378  B  407 end service 380   D  380  reqTime_0.0  TW [407;417]) 
+
+ ( D4972 A  405  B  420 end service 450   D  407  reqTime_30.0  TW [410;420]) 
+
+ ( P4972 A  450  B  450 end service 452   D  452  reqTime_0.0  TW [450;460]) 
+
+ ( D72p A  456  B  456 end service 456   D  458  reqTime_0.0  TW [454;464]) 
+
+ ( P60p A  478  B  480 end service 480   D  480  reqTime_0.0  TW [466;476]) 
+
+ ( D4860 A  472  B  487 end service 547   D  474  reqTime_60.0  TW [470;480]) 
+
+ ( P4860 A  547  B  547 end service 549   D  549  reqTime_0.0  TW [547;557]) 
+
+ ( D60p A  553  B  553 end service 553   D  555  reqTime_0.0  TW [551;561]) 
+
+ ( P64p A  658  B  660 end service 660   D  660  reqTime_0.0  TW [645;655]) 
+
+ ( D4864 A  652  B  667 end service 757   D  654  reqTime_90.0  TW [650;660]) 
+
+ ( P4864 A  757  B  757 end service 759   D  759  reqTime_0.0  TW [757;767]) 
+
+ ( D64p A  763  B  763 end service 763   D  765  reqTime_0.0  TW [761;771]) 
+
+ ( D1 A  767  B  767 end service 767   D  767  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 3
+ ( P1 A  469  B  469 end service 469   D  469  reqTime_0.0  TW [0;0]) 
+
+ ( P65p A  476  B  478 end service 478   D  478  reqTime_0.0  TW [465;475]) 
+
+ ( D4965 A  463  B  480 end service 600   D  465  reqTime_120.0  TW [470;480]) 
+
+ ( P4965 A  600  B  600 end service 602   D  602  reqTime_0.0  TW [600;610]) 
+
+ ( D65p A  607  B  607 end service 607   D  609  reqTime_0.0  TW [605;615]) 
+
+ ( P74p A  657  B  659 end service 659   D  659  reqTime_0.0  TW [647;657]) 
+
+ ( D5174 A  652  B  667 end service 757   D  654  reqTime_90.0  TW [650;660]) 
+
+ ( P5174 A  757  B  757 end service 759   D  759  reqTime_0.0  TW [757;767]) 
+
+ ( D74p A  762  B  762 end service 762   D  764  reqTime_0.0  TW [760;770]) 
+
+ ( D1 A  767  B  767 end service 767   D  767  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 4
+ ( P1 A  462  B  462 end service 462   D  462  reqTime_0.0  TW [0;0]) 
+
+ ( P73p A  464  B  464 end service 466   D  466  reqTime_0.0  TW [464;474]) 
+
+ ( D5073 A  472  B  487 end service 517   D  474  reqTime_30.0  TW [470;480]) 
+
+ ( P5073 A  517  B  517 end service 519   D  519  reqTime_0.0  TW [517;527]) 
+
+ ( D73p A  526  B  526 end service 526   D  528  reqTime_0.0  TW [524;534]) 
+
+ ( P67p A  546  B  589 end service 548   D  548  reqTime_0.0  TW [589;599]) 
+
+ ( D5167 A  567  B  600 end service 630   D  569  reqTime_30.0  TW [590;600]) 
+
+ ( P5167 A  630  B  630 end service 632   D  632  reqTime_0.0  TW [630;640]) 
+
+ ( D67p A  633  B  633 end service 633   D  635  reqTime_0.0  TW [631;641]) 
+
+ ( D1 A  639  B  639 end service 639   D  639  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 5
+ ( P1 A  472  B  472 end service 472   D  472  reqTime_0.0  TW [0;0]) 
+
+ ( P52p A  478  B  480 end service 480   D  480  reqTime_0.0  TW [466;476]) 
+
+ ( D4752 A  472  B  487 end service 547   D  474  reqTime_60.0  TW [470;480]) 
+
+ ( P4752 A  547  B  547 end service 549   D  549  reqTime_0.0  TW [547;557]) 
+
+ ( D52p A  553  B  553 end service 553   D  555  reqTime_0.0  TW [551;561]) 
+
+ ( P56p A  596  B  646 end service 598   D  598  reqTime_0.0  TW [646;656]) 
+
+ ( D5156 A  602  B  660 end service 690   D  604  reqTime_30.0  TW [650;660]) 
+
+ ( P5156 A  690  B  690 end service 692   D  692  reqTime_0.0  TW [690;700]) 
+
+ ( D56p A  695  B  695 end service 695   D  697  reqTime_0.0  TW [693;703]) 
+
+ ( D1 A  701  B  701 end service 701   D  701  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 6
+ ( P1 A  462  B  462 end service 462   D  462  reqTime_0.0  TW [0;0]) 
+
+ ( P69p A  464  B  464 end service 466   D  466  reqTime_0.0  TW [464;474]) 
+
+ ( D4669 A  472  B  487 end service 577   D  474  reqTime_90.0  TW [470;480]) 
+
+ ( P4669 A  577  B  577 end service 579   D  579  reqTime_0.0  TW [577;587]) 
+
+ ( D69p A  584  B  584 end service 584   D  586  reqTime_0.0  TW [582;592]) 
+
+ ( P76p A  590  B  646 end service 592   D  592  reqTime_0.0  TW [646;656]) 
+
+ ( D4676 A  607  B  660 end service 720   D  609  reqTime_60.0  TW [650;660]) 
+
+ ( P4676 A  720  B  720 end service 722   D  722  reqTime_0.0  TW [720;730]) 
+
+ ( D76p A  727  B  727 end service 727   D  729  reqTime_0.0  TW [725;735]) 
+
+ ( D1 A  733  B  733 end service 733   D  733  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 7
+ ( P1 A  519  B  519 end service 519   D  519  reqTime_0.0  TW [0;0]) 
+
+ ( P63p A  526  B  526 end service 528   D  528  reqTime_0.0  TW [526;536]) 
+
+ ( D5163 A  532  B  547 end service 577   D  534  reqTime_30.0  TW [530;540]) 
+
+ ( P5163 A  577  B  577 end service 579   D  579  reqTime_0.0  TW [577;587]) 
+
+ ( D63p A  584  B  584 end service 584   D  586  reqTime_0.0  TW [582;592]) 
+
+ ( P62p A  601  B  647 end service 603   D  603  reqTime_0.0  TW [647;657]) 
+
+ ( D5062 A  617  B  660 end service 720   D  619  reqTime_60.0  TW [650;660]) 
+
+ ( P5062 A  720  B  720 end service 722   D  722  reqTime_0.0  TW [720;730]) 
+
+ ( D62p A  725  B  725 end service 725   D  727  reqTime_0.0  TW [723;733]) 
+
+ ( D1 A  734  B  734 end service 734   D  734  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 8
+ ( P1 A  461  B  461 end service 461   D  461  reqTime_0.0  TW [0;0]) 
+
+ ( P54p A  468  B  527 end service 470   D  470  reqTime_0.0  TW [527;537]) 
+
+ ( D4954 A  483  B  540 end service 615   D  485  reqTime_75.0  TW [530;540]) 
+
+ ( P4954 A  615  B  615 end service 617   D  617  reqTime_0.0  TW [615;625]) 
+
+ ( D54p A  620  B  620 end service 620   D  622  reqTime_0.0  TW [618;628]) 
+
+ ( D1 A  629  B  629 end service 629   D  629  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 9
+ ( P1 A  466  B  466 end service 466   D  466  reqTime_0.0  TW [0;0]) 
+
+ ( P59p A  472  B  525 end service 474   D  474  reqTime_0.0  TW [525;535]) 
+
+ ( D4759 A  487  B  540 end service 600   D  489  reqTime_60.0  TW [530;540]) 
+
+ ( P4759 A  600  B  600 end service 602   D  602  reqTime_0.0  TW [600;610]) 
+
+ ( D59p A  605  B  605 end service 605   D  607  reqTime_0.0  TW [603;613]) 
+
+ ( P68p A  609  B  642 end service 611   D  611  reqTime_0.0  TW [642;652]) 
+
+ ( D4568 A  622  B  660 end service 720   D  624  reqTime_60.0  TW [650;660]) 
+
+ ( P4568 A  720  B  720 end service 722   D  722  reqTime_0.0  TW [720;730]) 
+
+ ( D68p A  729  B  729 end service 729   D  731  reqTime_0.0  TW [727;737]) 
+
+ ( D1 A  733  B  733 end service 733   D  733  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 10
+ ( P1 A  522  B  522 end service 522   D  522  reqTime_0.0  TW [0;0]) 
+
+ ( P71p A  526  B  526 end service 528   D  528  reqTime_0.0  TW [526;536]) 
+
+ ( D4871 A  532  B  547 end service 577   D  534  reqTime_30.0  TW [530;540]) 
+
+ ( P4871 A  577  B  577 end service 579   D  579  reqTime_0.0  TW [577;587]) 
+
+ ( D71p A  584  B  584 end service 584   D  586  reqTime_0.0  TW [582;592]) 
+
+ ( D1 A  590  B  590 end service 590   D  590  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 11
+ ( P1 A  479  B  479 end service 479   D  479  reqTime_0.0  TW [0;0]) 
+
+ ( P70p A  481  B  527 end service 483   D  483  reqTime_0.0  TW [527;537]) 
+
+ ( D4770 A  499  B  540 end service 585   D  501  reqTime_45.0  TW [530;540]) 
+
+ ( P4770 A  585  B  585 end service 587   D  587  reqTime_0.0  TW [585;595]) 
+
+ ( D70p A  590  B  590 end service 590   D  592  reqTime_0.0  TW [588;598]) 
+
+ ( D1 A  594  B  594 end service 594   D  594  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 12
+ ( P1 A  476  B  476 end service 476   D  476  reqTime_0.0  TW [0;0]) 
+
+ ( P61p A  482  B  526 end service 484   D  484  reqTime_0.0  TW [526;536]) 
+
+ ( D4961 A  493  B  540 end service 600   D  495  reqTime_60.0  TW [530;540]) 
+
+ ( P4961 A  600  B  600 end service 602   D  602  reqTime_0.0  TW [600;610]) 
+
+ ( D61p A  606  B  606 end service 606   D  608  reqTime_0.0  TW [604;614]) 
+
+ ( D1 A  613  B  613 end service 613   D  613  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 13
+ ( P1 A  482  B  482 end service 482   D  482  reqTime_0.0  TW [0;0]) 
+
+ ( P53p A  488  B  525 end service 490   D  490  reqTime_0.0  TW [525;535]) 
+
+ ( D4853 A  500  B  540 end service 600   D  502  reqTime_60.0  TW [530;540]) 
+
+ ( P4853 A  600  B  600 end service 602   D  602  reqTime_0.0  TW [600;610]) 
+
+ ( D53p A  606  B  606 end service 606   D  608  reqTime_0.0  TW [604;614]) 
+
+ ( D1 A  615  B  615 end service 615   D  615  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 14
+ ( P1 A  488  B  488 end service 488   D  488  reqTime_0.0  TW [0;0]) 
+
+ ( P66p A  491  B  583 end service 493   D  493  reqTime_0.0  TW [583;593]) 
+
+ ( D5066 A  500  B  600 end service 630   D  502  reqTime_30.0  TW [590;600]) 
+
+ ( P5066 A  630  B  630 end service 632   D  632  reqTime_0.0  TW [630;640]) 
+
+ ( D66p A  639  B  639 end service 639   D  641  reqTime_0.0  TW [637;647]) 
+
+ ( D1 A  644  B  644 end service 644   D  644  reqTime_0.0  TW [0;0]) 
+
+
+ Paramedic 15
+ ( P1 A  479  B  479 end service 479   D  479  reqTime_0.0  TW [0;0]) 
+
+ ( P75p A  484  B  646 end service 486   D  486  reqTime_0.0  TW [646;656]) 
+
+ ( D4575 A  505  B  660 end service 690   D  507  reqTime_30.0  TW [650;660]) 
+
+ ( P4575 A  690  B  690 end service 692   D  692  reqTime_0.0  TW [690;700]) 
+
+ ( D75p A  695  B  695 end service 695   D  697  reqTime_0.0  TW [693;703]) 
+
+ ( D1 A  703  B  703 end service 703   D  703  reqTime_0.0  TW [0;0]) 
+
+
+ Home care Staff 1
+ ( P1 A  518  B  518 end service 518   D  518  reqTime_0.0  TW [0;0]) 
+
+ ( D28c A  524  B  900 end service 960   D  525  reqTime_60.0  TW [890;1170]) 
+
+ ( P28c A  471  B  960 end service 472   D  472  reqTime_0.0  TW [960;1240]) 
+
+ ( D1 A  478  B  478 end service 478   D  478  reqTime_0.0  TW [0;0]) 
+
+
+ Home care Staff 2
+ ( P1 A  517  B  517 end service 517   D  517  reqTime_0.0  TW [0;0]) 
+
+ ( D24c A  521  B  630 end service 690   D  522  reqTime_60.0  TW [620;900]) 
+
+ ( P24c A  474  B  690 end service 475   D  475  reqTime_0.0  TW [690;970]) 
+
+ ( D2c A  393  B  394 end service 500   D  394  reqTime_106.0  TW [350;630]) 
+
+ ( P4c A  466  B  466 end service 468   D  468  reqTime_0.0  TW [466;746]) 
+
+ ( D11c A  516  B  630 end service 791   D  517  reqTime_161.0  TW [620;900]) 
+
+ ( P25c A  791  B  791 end service 793   D  793  reqTime_0.0  TW [791;1071]) 
+
+ ( D1 A  796  B  796 end service 796   D  796  reqTime_0.0  TW [0;0]) 
+
+
+ Home care Staff 3
+ ( P1 A  396  B  396 end service 396   D  396  reqTime_0.0  TW [0;0]) 
+
+ ( D7c A  398  B  399 end service 494   D  399  reqTime_95.0  TW [350;1170]) 
+
+ ( P23c A  455  B  455 end service 457   D  457  reqTime_0.0  TW [455;1275]) 
+
+ ( D43c A  491  B  900 end service 930   D  492  reqTime_30.0  TW [890;1170]) 
+
+ ( P43c A  692  B  930 end service 693   D  693  reqTime_0.0  TW [930;1210]) 
+
+ ( D1 A  698  B  698 end service 698   D  698  reqTime_0.0  TW [0;0]) 
+
+
+ Home care Staff 4
+ ( P1 A  369  B  369 end service 369   D  369  reqTime_0.0  TW [0;0]) 
+
+ ( P38c A  372  B  390 end service 373   D  373  reqTime_0.0  TW [390;1210]) 
+
+ ( D38c A  407  B  408 end service 438   D  408  reqTime_30.0  TW [350;1170]) 
+
+ ( P14c A  383  B  390 end service 384   D  384  reqTime_0.0  TW [390;1210]) 
+
+ ( D14c A  705  B  706 end service 736   D  706  reqTime_30.0  TW [350;1170]) 
+
+ ( D1 A  711  B  711 end service 711   D  711  reqTime_0.0  TW [0;0]) 
+
+
+ Home care Staff 5
+ ( P1 A  410  B  410 end service 410   D  410  reqTime_0.0  TW [0;0]) 
+
+ ( D37c A  416  B  630 end service 720   D  417  reqTime_90.0  TW [620;900]) 
+
+ ( P37c A  377  B  720 end service 378   D  378  reqTime_0.0  TW [720;1000]) 
+
+ ( D33c A  388  B  389 end service 479   D  389  reqTime_90.0  TW [350;1170]) 
+
+ ( P33c A  364  B  450 end service 365   D  365  reqTime_0.0  TW [450;1270]) 
+
+ ( D17c A  388  B  389 end service 419   D  389  reqTime_30.0  TW [350;630]) 
+
+ ( P17c A  366  B  390 end service 367   D  367  reqTime_0.0  TW [390;670]) 
+
+ ( D21c A  510  B  630 end service 750   D  511  reqTime_120.0  TW [620;900]) 
+
+ ( P21c A  373  B  750 end service 374   D  374  reqTime_0.0  TW [750;1030]) 
+
+ ( P8c A  381  B  405 end service 382   D  382  reqTime_0.0  TW [405;1225]) 
+
+ ( D8c A  490  B  491 end service 536   D  491  reqTime_45.0  TW [350;1170]) 
+
+ ( D9c A  578  B  630 end service 675   D  579  reqTime_45.0  TW [620;900]) 
+
+ ( P9c A  557  B  675 end service 558   D  558  reqTime_0.0  TW [675;955]) 
+
+ ( P27c A  581  B  581 end service 583   D  583  reqTime_0.0  TW [581;1401]) 
+
+ ( D6c A  710  B  711 end service 932   D  711  reqTime_221.0  TW [350;1170]) 
+
+ ( D30c A  859  B  900 end service 930   D  860  reqTime_30.0  TW [890;1170]) 
+
+ ( P30c A  858  B  930 end service 859   D  859  reqTime_0.0  TW [930;1210]) 
+
+ ( D35c A  861  B  900 end service 967   D  862  reqTime_67.0  TW [890;1170]) 
+
+ ( P31c A  967  B  967 end service 969   D  969  reqTime_0.0  TW [967;1247]) 
+
+ ( D1 A  973  B  973 end service 973   D  973  reqTime_0.0  TW [0;0]) 
+
+
+ Home care Staff 6
+ ( P1 A  373  B  373 end service 373   D  373  reqTime_0.0  TW [0;0]) 
+
+ ( P22c A  379  B  390 end service 380   D  380  reqTime_0.0  TW [390;1210]) 
+
+ ( D22c A  394  B  395 end service 425   D  395  reqTime_30.0  TW [350;1170]) 
+
+ ( D34c A  398  B  399 end service 763   D  399  reqTime_364.0  TW [350;1170]) 
+
+ ( P13c A  724  B  724 end service 726   D  726  reqTime_0.0  TW [724;1544]) 
+
+ ( D41c A  726  B  900 end service 930   D  727  reqTime_30.0  TW [890;1170]) 
+
+ ( P41c A  696  B  930 end service 697   D  697  reqTime_0.0  TW [930;1210]) 
+
+ ( D39c A  729  B  900 end service 930   D  730  reqTime_30.0  TW [890;1170]) 
+
+ ( P39c A  543  B  930 end service 544   D  544  reqTime_0.0  TW [930;1210]) 
+
+ ( D42c A  663  B  900 end service 930   D  664  reqTime_30.0  TW [890;1170]) 
+
+ ( P42c A  662  B  930 end service 663   D  663  reqTime_0.0  TW [930;1210]) 
+
+ ( P16c A  664  B  720 end service 665   D  665  reqTime_0.0  TW [720;1000]) 
+
+ ( D16c A  738  B  739 end service 829   D  739  reqTime_90.0  TW [620;900]) 
+
+ ( D29c A  744  B  900 end service 990   D  745  reqTime_90.0  TW [890;1170]) 
+
+ ( P29c A  727  B  990 end service 728   D  728  reqTime_0.0  TW [990;1270]) 
+
+ ( D32c A  732  B  733 end service 957   D  733  reqTime_224.0  TW [620;900]) 
+
+ ( P26c A  854  B  854 end service 856   D  856  reqTime_0.0  TW [854;1134]) 
+
+ ( D1 A  861  B  861 end service 861   D  861  reqTime_0.0  TW [0;0]) 
+
+
+ Home care Staff 7
+ ( P1 A  399  B  399 end service 399   D  399  reqTime_0.0  TW [0;0]) 
+
+ ( D36c A  402  B  403 end service 448   D  403  reqTime_45.0  TW [350;630]) 
+
+ ( P36c A  675  B  675 end service 675   D  676  reqTime_0.0  TW [405;685]) 
+
+ ( D40c A  718  B  900 end service 990   D  719  reqTime_90.0  TW [890;1170]) 
+
+ ( P40c A  683  B  990 end service 684   D  684  reqTime_0.0  TW [990;1270]) 
+
+ ( D44c A  722  B  900 end service 930   D  723  reqTime_30.0  TW [890;1170]) 
+
+ ( P44c A  687  B  930 end service 688   D  688  reqTime_0.0  TW [930;1210]) 
+
+ ( D1 A  693  B  693 end service 693   D  693  reqTime_0.0  TW [0;0]) 
+
+
+ Best solution 
+
+
+ID Solution: 1
+FO: Duration: 2157.0
+FO: Travel time: 1156.0
+Walking time: 68.0
+ Waiting time: 3341.0
+ Amount home care staff: 7.0
+ Amount paramedic: 15.0
+ driver cost: 1156.0
+ home care staff and paramedic cost: 4230.0
+ detour: 396.0
+ detour average paramedic: 11.0
+ detour average home care staff: 35.0
+ time window violation: 119.0
+ waiting Time to penalize: 0.0 Detour time to penalize: 0.0
+ List of jobs: 
+ Route: 0 travelTime: 233.0 waitingTime: 1270.0 serviceTime: 858.0 detour: 0.0 detour to penalize: 0.0 waiting Time to penalize: 0.0 durationRoute: 571.0
+ medical staff cost: 301.0
+ driver cost: 301.0
+ ( P1 A  402  B  402 end service 402   D  402  reqTime_0.0  TW [0;0]) 
+
+ ( P55p A  406  B  406 end service 408   D  408  reqTime_0.0  TW [406;416]) 
+ ( D5055 A  412  B  427 end service 517   D  414  reqTime_90.0  TW [410;420]) 
+
+
+ ( D1 A  420  B  420 end service 420   D  420  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  446  B  446 end service 446   D  446  reqTime_0.0  TW [0;0]) 
+
+ ( P4972 A  450  B  450 end service 452   D  452  reqTime_0.0  TW [450;460]) 
+ ( D72p A  456  B  456 end service 456   D  458  reqTime_0.0  TW [454;464]) 
+
+ ( D1 A  464  B  464 end service 464   D  464  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  466  B  466 end service 466   D  466  reqTime_0.0  TW [0;0]) 
+
+ ( D4860 A  472  B  487 end service 547   D  474  reqTime_60.0  TW [470;480]) 
+ ( P60p A  478  B  480 end service 480   D  480  reqTime_0.0  TW [466;476]) 
+
+ ( P75p A  484  B  646 end service 486   D  486  reqTime_0.0  TW [646;656]) 
+ ( P66p A  491  B  583 end service 493   D  493  reqTime_0.0  TW [583;593]) 
+ ( D5066 A  500  B  600 end service 630   D  502  reqTime_30.0  TW [590;600]) 
+
+ ( D4575 A  505  B  660 end service 690   D  507  reqTime_30.0  TW [650;660]) 
+
+ ( D1 A  514  B  514 end service 514   D  514  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  519  B  519 end service 519   D  519  reqTime_0.0  TW [0;0]) 
+
+ ( P63p A  526  B  526 end service 528   D  528  reqTime_0.0  TW [526;536]) 
+ ( D5163 A  532  B  547 end service 577   D  534  reqTime_30.0  TW [530;540]) 
+
+
+ ( D1 A  538  B  538 end service 538   D  538  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  544  B  544 end service 544   D  544  reqTime_0.0  TW [0;0]) 
+
+ ( P4752 A  547  B  547 end service 549   D  549  reqTime_0.0  TW [547;557]) 
+ ( D52p A  553  B  553 end service 553   D  555  reqTime_0.0  TW [551;561]) 
+
+ ( D1 A  561  B  561 end service 561   D  561  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  571  B  571 end service 571   D  571  reqTime_0.0  TW [0;0]) 
+
+ ( P4669 A  577  B  577 end service 579   D  579  reqTime_0.0  TW [577;587]) 
+ ( D69p A  584  B  584 end service 584   D  586  reqTime_0.0  TW [582;592]) 
+
+ ( D1 A  588  B  588 end service 588   D  588  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  596  B  596 end service 596   D  596  reqTime_0.0  TW [0;0]) 
+
+ ( P4965 A  600  B  600 end service 602   D  602  reqTime_0.0  TW [600;610]) 
+ ( D65p A  607  B  607 end service 607   D  609  reqTime_0.0  TW [605;615]) 
+
+ ( D1 A  615  B  615 end service 615   D  615  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  627  B  627 end service 627   D  627  reqTime_0.0  TW [0;0]) 
+
+ ( P5167 A  630  B  630 end service 632   D  632  reqTime_0.0  TW [630;640]) 
+ ( D67p A  633  B  633 end service 633   D  635  reqTime_0.0  TW [631;641]) 
+
+ ( D1 A  639  B  639 end service 639   D  639  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  644  B  644 end service 644   D  644  reqTime_0.0  TW [0;0]) 
+
+ ( P4557 A  652  B  652 end service 654   D  654  reqTime_0.0  TW [652;662]) 
+ ( D57p A  657  B  657 end service 657   D  659  reqTime_0.0  TW [655;665]) 
+
+ ( D1 A  664  B  664 end service 664   D  664  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  672  B  672 end service 672   D  672  reqTime_0.0  TW [0;0]) 
+
+ ( P36c A  675  B  675 end service 675   D  676  reqTime_0.0  TW [405;685]) 
+ ( P40c A  683  B  990 end service 684   D  684  reqTime_0.0  TW [990;1270]) 
+ ( P44c A  687  B  930 end service 688   D  688  reqTime_0.0  TW [930;1210]) 
+ ( P43c A  692  B  930 end service 693   D  693  reqTime_0.0  TW [930;1210]) 
+ ( P41c A  696  B  930 end service 697   D  697  reqTime_0.0  TW [930;1210]) 
+ ( D14c A  705  B  706 end service 736   D  706  reqTime_30.0  TW [350;1170]) 
+ ( D6c A  710  B  711 end service 932   D  711  reqTime_221.0  TW [350;1170]) 
+ ( D40c A  718  B  900 end service 990   D  719  reqTime_90.0  TW [890;1170]) 
+ ( D44c A  722  B  900 end service 930   D  723  reqTime_30.0  TW [890;1170]) 
+ ( D41c A  726  B  900 end service 930   D  727  reqTime_30.0  TW [890;1170]) 
+ ( D39c A  729  B  900 end service 930   D  730  reqTime_30.0  TW [890;1170]) 
+
+
+ ( D1 A  734  B  734 end service 734   D  734  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  751  B  751 end service 751   D  751  reqTime_0.0  TW [0;0]) 
+
+ ( P4864 A  757  B  757 end service 759   D  759  reqTime_0.0  TW [757;767]) 
+ ( D64p A  763  B  763 end service 763   D  765  reqTime_0.0  TW [761;771]) 
+
+ ( D1 A  767  B  767 end service 767   D  767  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  788  B  788 end service 788   D  788  reqTime_0.0  TW [0;0]) 
+
+ ( P25c A  791  B  791 end service 793   D  793  reqTime_0.0  TW [791;1071]) 
+
+ ( D1 A  796  B  796 end service 796   D  796  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  849  B  849 end service 849   D  849  reqTime_0.0  TW [0;0]) 
+
+ ( P26c A  854  B  854 end service 856   D  856  reqTime_0.0  TW [854;1134]) 
+ ( P30c A  858  B  930 end service 859   D  859  reqTime_0.0  TW [930;1210]) 
+ ( D30c A  859  B  900 end service 930   D  860  reqTime_30.0  TW [890;1170]) 
+ ( D35c A  861  B  900 end service 967   D  862  reqTime_67.0  TW [890;1170]) 
+
+ ( D1 A  866  B  866 end service 866   D  866  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  963  B  963 end service 963   D  963  reqTime_0.0  TW [0;0]) 
+
+ ( P31c A  967  B  967 end service 969   D  969  reqTime_0.0  TW [967;1247]) 
+
+ ( D1 A  973  B  973 end service 973   D  973  reqTime_0.0  TW [0;0]) 
+
+
+ Route: 1 travelTime: 201.0 waitingTime: 484.0 serviceTime: 666.0 detour: 0.0 detour to penalize: 0.0 waiting Time to penalize: 0.0 durationRoute: 406.0
+ medical staff cost: 263.0
+ driver cost: 263.0
+ ( P1 A  361  B  361 end service 361   D  361  reqTime_0.0  TW [0;0]) 
+
+ ( P33c A  364  B  450 end service 365   D  365  reqTime_0.0  TW [450;1270]) 
+ ( P17c A  366  B  390 end service 367   D  367  reqTime_0.0  TW [390;670]) 
+ ( P38c A  372  B  390 end service 373   D  373  reqTime_0.0  TW [390;1210]) 
+ ( P72p A  378  B  407 end service 380   D  380  reqTime_0.0  TW [407;417]) 
+ ( D17c A  388  B  389 end service 419   D  389  reqTime_30.0  TW [350;630]) 
+ ( D2c A  393  B  394 end service 500   D  394  reqTime_106.0  TW [350;630]) 
+ ( D7c A  398  B  399 end service 494   D  399  reqTime_95.0  TW [350;1170]) 
+ ( D4972 A  405  B  420 end service 450   D  407  reqTime_30.0  TW [410;420]) 
+
+
+ ( D1 A  412  B  412 end service 412   D  412  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  453  B  453 end service 453   D  453  reqTime_0.0  TW [0;0]) 
+
+ ( P23c A  455  B  455 end service 457   D  457  reqTime_0.0  TW [455;1275]) 
+ ( D4965 A  463  B  480 end service 600   D  465  reqTime_120.0  TW [470;480]) 
+
+ ( P54p A  468  B  527 end service 470   D  470  reqTime_0.0  TW [527;537]) 
+ ( P59p A  472  B  525 end service 474   D  474  reqTime_0.0  TW [525;535]) 
+ ( P65p A  476  B  478 end service 478   D  478  reqTime_0.0  TW [465;475]) 
+ ( D4954 A  483  B  540 end service 615   D  485  reqTime_75.0  TW [530;540]) 
+ ( D4759 A  487  B  540 end service 600   D  489  reqTime_60.0  TW [530;540]) 
+ ( D43c A  491  B  900 end service 930   D  492  reqTime_30.0  TW [890;1170]) 
+
+ ( D1 A  497  B  497 end service 497   D  497  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  511  B  511 end service 511   D  511  reqTime_0.0  TW [0;0]) 
+
+ ( P5055 A  517  B  517 end service 519   D  519  reqTime_0.0  TW [517;527]) 
+ ( D55p A  524  B  524 end service 524   D  526  reqTime_0.0  TW [522;532]) 
+
+ ( D1 A  530  B  530 end service 530   D  530  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  541  B  541 end service 541   D  541  reqTime_0.0  TW [0;0]) 
+
+ ( P4860 A  547  B  547 end service 549   D  549  reqTime_0.0  TW [547;557]) 
+ ( D60p A  553  B  553 end service 553   D  555  reqTime_0.0  TW [551;561]) 
+
+ ( D1 A  558  B  558 end service 558   D  558  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  571  B  571 end service 571   D  571  reqTime_0.0  TW [0;0]) 
+
+ ( P4871 A  577  B  577 end service 579   D  579  reqTime_0.0  TW [577;587]) 
+ ( D71p A  584  B  584 end service 584   D  586  reqTime_0.0  TW [582;592]) 
+
+ ( D1 A  590  B  590 end service 590   D  590  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  596  B  596 end service 596   D  596  reqTime_0.0  TW [0;0]) 
+
+ ( P4961 A  600  B  600 end service 602   D  602  reqTime_0.0  TW [600;610]) 
+ ( D61p A  606  B  606 end service 606   D  608  reqTime_0.0  TW [604;614]) 
+
+ ( D1 A  613  B  613 end service 613   D  613  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  624  B  624 end service 624   D  624  reqTime_0.0  TW [0;0]) 
+
+ ( P5066 A  630  B  630 end service 632   D  632  reqTime_0.0  TW [630;640]) 
+ ( D66p A  639  B  639 end service 639   D  641  reqTime_0.0  TW [637;647]) 
+
+ ( D1 A  644  B  644 end service 644   D  644  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  646  B  646 end service 646   D  646  reqTime_0.0  TW [0;0]) 
+
+ ( D4864 A  652  B  667 end service 757   D  654  reqTime_90.0  TW [650;660]) 
+ ( P64p A  658  B  660 end service 660   D  660  reqTime_0.0  TW [645;655]) 
+
+ ( P16c A  664  B  720 end service 665   D  665  reqTime_0.0  TW [720;1000]) 
+
+ ( D1 A  667  B  667 end service 667   D  667  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  682  B  682 end service 682   D  682  reqTime_0.0  TW [0;0]) 
+
+ ( P4575 A  690  B  690 end service 692   D  692  reqTime_0.0  TW [690;700]) 
+ ( D75p A  695  B  695 end service 695   D  697  reqTime_0.0  TW [693;703]) 
+
+ ( D1 A  703  B  703 end service 703   D  703  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  712  B  712 end service 712   D  712  reqTime_0.0  TW [0;0]) 
+
+ ( P4568 A  720  B  720 end service 722   D  722  reqTime_0.0  TW [720;730]) 
+ ( D68p A  729  B  729 end service 729   D  731  reqTime_0.0  TW [727;737]) 
+
+ ( D1 A  733  B  733 end service 733   D  733  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  754  B  754 end service 754   D  754  reqTime_0.0  TW [0;0]) 
+
+ ( P5174 A  757  B  757 end service 759   D  759  reqTime_0.0  TW [757;767]) 
+ ( D74p A  762  B  762 end service 762   D  764  reqTime_0.0  TW [760;770]) 
+
+ ( D1 A  767  B  767 end service 767   D  767  reqTime_0.0  TW [0;0]) 
+
+
+ Route: 2 travelTime: 74.0 waitingTime: 0.0 serviceTime: 60.0 detour: 0.0 detour to penalize: 0.0 waiting Time to penalize: 0.0 durationRoute: 271.0
+ medical staff cost: 94.0
+ driver cost: 94.0
+ ( P1 A  462  B  462 end service 462   D  462  reqTime_0.0  TW [0;0]) 
+
+ ( P73p A  464  B  464 end service 466   D  466  reqTime_0.0  TW [464;474]) 
+ ( D5073 A  472  B  487 end service 517   D  474  reqTime_30.0  TW [470;480]) 
+
+
+ ( D1 A  480  B  480 end service 480   D  480  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  522  B  522 end service 522   D  522  reqTime_0.0  TW [0;0]) 
+
+ ( P71p A  526  B  526 end service 528   D  528  reqTime_0.0  TW [526;536]) 
+ ( D4871 A  532  B  547 end service 577   D  534  reqTime_30.0  TW [530;540]) 
+
+
+ ( D1 A  540  B  540 end service 540   D  540  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  571  B  571 end service 571   D  571  reqTime_0.0  TW [0;0]) 
+
+ ( P4658 A  577  B  577 end service 579   D  579  reqTime_0.0  TW [577;587]) 
+ ( D58p A  582  B  582 end service 582   D  584  reqTime_0.0  TW [580;590]) 
+
+ ( D1 A  589  B  589 end service 589   D  589  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  594  B  594 end service 594   D  594  reqTime_0.0  TW [0;0]) 
+
+ ( P4853 A  600  B  600 end service 602   D  602  reqTime_0.0  TW [600;610]) 
+ ( D53p A  606  B  606 end service 606   D  608  reqTime_0.0  TW [604;614]) 
+
+ ( D1 A  615  B  615 end service 615   D  615  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  714  B  714 end service 714   D  714  reqTime_0.0  TW [0;0]) 
+
+ ( P4676 A  720  B  720 end service 722   D  722  reqTime_0.0  TW [720;730]) 
+ ( D76p A  727  B  727 end service 727   D  729  reqTime_0.0  TW [725;735]) 
+
+ ( D1 A  733  B  733 end service 733   D  733  reqTime_0.0  TW [0;0]) 
+
+
+ Route: 3 travelTime: 108.0 waitingTime: 971.0 serviceTime: 1075.0 detour: 0.0 detour to penalize: 0.0 waiting Time to penalize: 0.0 durationRoute: 288.0
+ medical staff cost: 137.0
+ driver cost: 137.0
+ ( P1 A  462  B  462 end service 462   D  462  reqTime_0.0  TW [0;0]) 
+
+ ( P4c A  466  B  466 end service 468   D  468  reqTime_0.0  TW [466;746]) 
+ ( P28c A  471  B  960 end service 472   D  472  reqTime_0.0  TW [960;1240]) 
+ ( P24c A  474  B  690 end service 475   D  475  reqTime_0.0  TW [690;970]) 
+ ( P70p A  481  B  527 end service 483   D  483  reqTime_0.0  TW [527;537]) 
+ ( D8c A  490  B  491 end service 536   D  491  reqTime_45.0  TW [350;1170]) 
+ ( D4770 A  499  B  540 end service 585   D  501  reqTime_45.0  TW [530;540]) 
+ ( D21c A  510  B  630 end service 750   D  511  reqTime_120.0  TW [620;900]) 
+ ( D11c A  516  B  630 end service 791   D  517  reqTime_161.0  TW [620;900]) 
+
+ ( D24c A  521  B  630 end service 690   D  522  reqTime_60.0  TW [620;900]) 
+ ( D28c A  524  B  900 end service 960   D  525  reqTime_60.0  TW [890;1170]) 
+
+ ( D1 A  531  B  531 end service 531   D  531  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  578  B  578 end service 578   D  578  reqTime_0.0  TW [0;0]) 
+
+ ( P27c A  581  B  581 end service 583   D  583  reqTime_0.0  TW [581;1401]) 
+ ( P76p A  590  B  646 end service 592   D  592  reqTime_0.0  TW [646;656]) 
+ ( P56p A  596  B  646 end service 598   D  598  reqTime_0.0  TW [646;656]) 
+ ( D5156 A  602  B  660 end service 690   D  604  reqTime_30.0  TW [650;660]) 
+ ( D4676 A  607  B  660 end service 720   D  609  reqTime_60.0  TW [650;660]) 
+
+
+ ( D1 A  615  B  615 end service 615   D  615  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  719  B  719 end service 719   D  719  reqTime_0.0  TW [0;0]) 
+
+ ( P13c A  724  B  724 end service 726   D  726  reqTime_0.0  TW [724;1544]) 
+ ( P29c A  727  B  990 end service 728   D  728  reqTime_0.0  TW [990;1270]) 
+ ( D32c A  732  B  733 end service 957   D  733  reqTime_224.0  TW [620;900]) 
+ ( D16c A  738  B  739 end service 829   D  739  reqTime_90.0  TW [620;900]) 
+ ( D29c A  744  B  900 end service 990   D  745  reqTime_90.0  TW [890;1170]) 
+
+
+ ( D1 A  750  B  750 end service 750   D  750  reqTime_0.0  TW [0;0]) 
+
+
+ Route: 4 travelTime: 63.0 waitingTime: 53.0 serviceTime: 210.0 detour: 0.0 detour to penalize: 0.0 waiting Time to penalize: 0.0 durationRoute: 160.0
+ medical staff cost: 87.0
+ driver cost: 87.0
+ ( P1 A  469  B  469 end service 469   D  469  reqTime_0.0  TW [0;0]) 
+
+ ( D4752 A  472  B  487 end service 547   D  474  reqTime_60.0  TW [470;480]) 
+ ( P52p A  478  B  480 end service 480   D  480  reqTime_0.0  TW [466;476]) 
+
+ ( P61p A  482  B  526 end service 484   D  484  reqTime_0.0  TW [526;536]) 
+ ( P53p A  488  B  525 end service 490   D  490  reqTime_0.0  TW [525;535]) 
+ ( D4961 A  493  B  540 end service 600   D  495  reqTime_60.0  TW [530;540]) 
+
+ ( D4853 A  500  B  540 end service 600   D  502  reqTime_60.0  TW [530;540]) 
+
+ ( D1 A  508  B  508 end service 508   D  508  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  522  B  522 end service 522   D  522  reqTime_0.0  TW [0;0]) 
+
+ ( P58p A  527  B  527 end service 529   D  529  reqTime_0.0  TW [527;537]) 
+ ( D4658 A  532  B  547 end service 577   D  534  reqTime_30.0  TW [530;540]) 
+
+
+ ( D1 A  540  B  540 end service 540   D  540  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  582  B  582 end service 582   D  582  reqTime_0.0  TW [0;0]) 
+
+ ( P4770 A  585  B  585 end service 587   D  587  reqTime_0.0  TW [585;595]) 
+ ( D70p A  590  B  590 end service 590   D  592  reqTime_0.0  TW [588;598]) 
+
+ ( D1 A  594  B  594 end service 594   D  594  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  611  B  611 end service 611   D  611  reqTime_0.0  TW [0;0]) 
+
+ ( P4954 A  615  B  615 end service 617   D  617  reqTime_0.0  TW [615;625]) 
+ ( D54p A  620  B  620 end service 620   D  622  reqTime_0.0  TW [618;628]) 
+
+ ( D1 A  629  B  629 end service 629   D  629  reqTime_0.0  TW [0;0]) 
+
+
+ Route: 5 travelTime: 35.0 waitingTime: 47.0 serviceTime: 165.0 detour: 0.0 detour to penalize: 0.0 waiting Time to penalize: 0.0 durationRoute: 47.0
+ medical staff cost: 47.0
+ driver cost: 47.0
+ ( P1 A  584  B  584 end service 584   D  584  reqTime_0.0  TW [0;0]) 
+
+ ( D4557 A  592  B  607 end service 652   D  594  reqTime_45.0  TW [590;600]) 
+ ( P57p A  597  B  599 end service 599   D  599  reqTime_0.0  TW [587;597]) 
+
+ ( P62p A  601  B  647 end service 603   D  603  reqTime_0.0  TW [647;657]) 
+ ( P68p A  609  B  642 end service 611   D  611  reqTime_0.0  TW [642;652]) 
+ ( D5062 A  617  B  660 end service 720   D  619  reqTime_60.0  TW [650;660]) 
+
+ ( D4568 A  622  B  660 end service 720   D  624  reqTime_60.0  TW [650;660]) 
+
+ ( D1 A  631  B  631 end service 631   D  631  reqTime_0.0  TW [0;0]) 
+
+
+ Route: 6 travelTime: 140.0 waitingTime: 449.0 serviceTime: 934.0 detour: 0.0 detour to penalize: 0.0 waiting Time to penalize: 0.0 durationRoute: 368.0
+ medical staff cost: 181.0
+ driver cost: 181.0
+ ( P1 A  366  B  366 end service 366   D  366  reqTime_0.0  TW [0;0]) 
+
+ ( P21c A  373  B  750 end service 374   D  374  reqTime_0.0  TW [750;1030]) 
+ ( P37c A  377  B  720 end service 378   D  378  reqTime_0.0  TW [720;1000]) 
+ ( P22c A  379  B  390 end service 380   D  380  reqTime_0.0  TW [390;1210]) 
+ ( P8c A  381  B  405 end service 382   D  382  reqTime_0.0  TW [405;1225]) 
+ ( P14c A  383  B  390 end service 384   D  384  reqTime_0.0  TW [390;1210]) 
+ ( D33c A  388  B  389 end service 479   D  389  reqTime_90.0  TW [350;1170]) 
+ ( D22c A  394  B  395 end service 425   D  395  reqTime_30.0  TW [350;1170]) 
+ ( D34c A  398  B  399 end service 763   D  399  reqTime_364.0  TW [350;1170]) 
+ ( D36c A  402  B  403 end service 448   D  403  reqTime_45.0  TW [350;630]) 
+ ( D38c A  407  B  408 end service 438   D  408  reqTime_30.0  TW [350;1170]) 
+ ( D37c A  416  B  630 end service 720   D  417  reqTime_90.0  TW [620;900]) 
+
+
+ ( D1 A  423  B  423 end service 423   D  423  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  462  B  462 end service 462   D  462  reqTime_0.0  TW [0;0]) 
+
+ ( P69p A  464  B  464 end service 466   D  466  reqTime_0.0  TW [464;474]) 
+ ( D4669 A  472  B  487 end service 577   D  474  reqTime_90.0  TW [470;480]) 
+
+
+ ( D1 A  480  B  480 end service 480   D  480  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  511  B  511 end service 511   D  511  reqTime_0.0  TW [0;0]) 
+
+ ( P5073 A  517  B  517 end service 519   D  519  reqTime_0.0  TW [517;527]) 
+ ( D73p A  526  B  526 end service 526   D  528  reqTime_0.0  TW [524;534]) 
+
+ ( D1 A  530  B  530 end service 530   D  530  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  574  B  574 end service 574   D  574  reqTime_0.0  TW [0;0]) 
+
+ ( P5163 A  577  B  577 end service 579   D  579  reqTime_0.0  TW [577;587]) 
+ ( D63p A  584  B  584 end service 584   D  586  reqTime_0.0  TW [582;592]) 
+
+ ( D1 A  592  B  592 end service 592   D  592  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  597  B  597 end service 597   D  597  reqTime_0.0  TW [0;0]) 
+
+ ( P4759 A  600  B  600 end service 602   D  602  reqTime_0.0  TW [600;610]) 
+ ( D59p A  605  B  605 end service 605   D  607  reqTime_0.0  TW [603;613]) 
+
+ ( D1 A  613  B  613 end service 613   D  613  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  649  B  649 end service 649   D  649  reqTime_0.0  TW [0;0]) 
+
+ ( D5174 A  652  B  667 end service 757   D  654  reqTime_90.0  TW [650;660]) 
+ ( P74p A  657  B  659 end service 659   D  659  reqTime_0.0  TW [647;657]) 
+
+ ( P42c A  662  B  930 end service 663   D  663  reqTime_0.0  TW [930;1210]) 
+ ( D42c A  663  B  900 end service 930   D  664  reqTime_30.0  TW [890;1170]) 
+
+
+ ( D1 A  668  B  668 end service 668   D  668  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  687  B  687 end service 687   D  687  reqTime_0.0  TW [0;0]) 
+
+ ( P5156 A  690  B  690 end service 692   D  692  reqTime_0.0  TW [690;700]) 
+ ( D56p A  695  B  695 end service 695   D  697  reqTime_0.0  TW [693;703]) 
+
+ ( D1 A  701  B  701 end service 701   D  701  reqTime_0.0  TW [0;0]) 
+
+ ( P1 A  714  B  714 end service 714   D  714  reqTime_0.0  TW [0;0]) 
+
+ ( P5062 A  720  B  720 end service 722   D  722  reqTime_0.0  TW [720;730]) 
+ ( D62p A  725  B  725 end service 725   D  727  reqTime_0.0  TW [723;733]) 
+
+ ( D1 A  734  B  734 end service 734   D  734  reqTime_0.0  TW [0;0]) 
+
+
+ Route: 7 travelTime: 39.0 waitingTime: 67.0 serviceTime: 75.0 detour: 0.0 detour to penalize: 0.0 waiting Time to penalize: 0.0 durationRoute: 46.0
+ medical staff cost: 46.0
+ driver cost: 46.0
+ ( P1 A  539  B  539 end service 539   D  539  reqTime_0.0  TW [0;0]) 
+
+ ( P39c A  543  B  930 end service 544   D  544  reqTime_0.0  TW [930;1210]) 
+ ( P67p A  546  B  589 end service 548   D  548  reqTime_0.0  TW [589;599]) 
+ ( P9c A  557  B  675 end service 558   D  558  reqTime_0.0  TW [675;955]) 
+ ( D5167 A  567  B  600 end service 630   D  569  reqTime_30.0  TW [590;600]) 
+ ( D9c A  578  B  630 end service 675   D  579  reqTime_45.0  TW [620;900]) 
+
+ ( D1 A  585  B  585 end service 585   D  585  reqTime_0.0  TW [0;0]) 
+
+
+
+
+ pc Time:
+
+727625.6926

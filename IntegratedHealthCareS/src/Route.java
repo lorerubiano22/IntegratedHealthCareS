@@ -208,7 +208,7 @@ public class Route {
 		double travelTimeDuration=0;
 		for(Edge e:this.edges.values()) {
 			if(e.getTime()==0) {
-				System.out.println("Stop");
+				System.out.println("computeTravelTime=0");
 			}
 
 			travelTimeDuration+=e.getTime();
@@ -507,7 +507,7 @@ public class Route {
 
 			}
 			if(penalization<0) {
-				System.out.println("Stop");
+				System.out.println("penalization<0");
 			}	
 		}
 		this.setWaitingTime(penalizationRoute);
@@ -575,7 +575,7 @@ public class Route {
 		}
 
 		if(detour<0 || detourToPenalize<0) {
-			System.out.println("Stop");
+			System.out.println("detour<0 || detourToPenalize<0");
 		}
 		this.setDetour(detour);
 		this.setdetourViolation(detourToPenalize);
@@ -757,6 +757,7 @@ public class Route {
 			factor=test.getloadTimeHomeCareStaff();
 		}
 		double loadUnloadTIme=factor*this.subJobsList.size();
+		this.setTravelTime(distance);
 		this.homeCareStaffCost=distance+loadUnloadTIme+this.getWaitingTime();
 	}
 
@@ -859,8 +860,16 @@ public class Route {
 		partObject= new Parts();
 		partObject.setListSubJobs(partEnd,inp,test);
 		this.getPartsRoute().add(partObject);
-		this.updateRouteFromParts(inp,test,jobsInWalkingRoute);
-
+		this.getSubJobsList().clear();
+		this.getJobsDirectory().clear();
+for(Parts p:this.getPartsRoute()) {
+	for(SubJobs j:p.getListSubJobs()) {
+		if(j.getId()!=1) {
+			this.getSubJobsList().add(j);
+			this.getJobsDirectory().put(j.getSubJobKey(), j);
+		}
+	}
+}
 	}
 
 

@@ -38,17 +38,17 @@ public class Algorithm {
 		boolean diversification= false;
 		System.out.println("Stop " +test.getTestTime());
 		for(int iter=0;iter<test.getTestTime();iter++) {
-			if(iter==6) {
+			if(iter==7) {
 				System.out.println("Stop");
 			}
-			if(solution== null ||diversification) {
+			//if(solution== null ||diversification) {
 				walkingList = new LinkedList<SubRoute>();
 				if(subroutes.getWalkingRoutes()!=null) {
 					selectionWalkingRoutes(false);
 				}
 				updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 				drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
-			}
+			//}
 			drivingRoute.generateAfeasibleSolution(iter,solution,diversification);
 			drivingRoute.getSol().setWalkingRoutes(walkingList);
 			newSolution= new Solution(drivingRoute.getSol());

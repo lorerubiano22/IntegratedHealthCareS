@@ -505,7 +505,7 @@ public class Solution {
 
 		if(test.gethomeCareStaffObjective()==1 && test.getdriverObjective()==0) {
 		//	objectiveFunction=this.homeCareStaffCost+this.waitingTime+penalization;
-			objectiveFunction=this.homeCareStaffCost+penalization;
+			objectiveFunction=this.homeCareStaffCost + this.waitingTime;
 		}
 		else {
 			if(test.gethomeCareStaffObjective()==0 && test.getdriverObjective()==1) {
