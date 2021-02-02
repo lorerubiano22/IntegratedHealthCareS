@@ -22,6 +22,7 @@ public class Solution {
 	private double homeCareStaff=0;// los paramedicos que salen del depot
 	private double driverCost=0;// los paramedicos que salen del depot
 	private double homeCareStaffCost=0;// los paramedicos que salen del depot
+	private double travelTimeHHC=0;// los paramedicos que salen del depot
 	private double additionalWaitingTime=0; // 
 	private double timeWindowViolation=0;
 	private double detourViolation=0;
@@ -44,6 +45,7 @@ public class Solution {
 		waitingTime=initialSol.waitingTime;// Total waiting time
 		driverCost=initialSol.driverCost;// los paramedicos que salen del depot
 		homeCareStaffCost=initialSol.homeCareStaffCost;// los paramedicos que salen del depot
+		travelTimeHHC=initialSol.travelTimeHHC;
 		serviceTime=initialSol.serviceTime;
 		drivingTime=initialSol.drivingTime;
 		walkingTime=initialSol.walkingTime;
@@ -95,6 +97,8 @@ public class Solution {
 	public void setIdleTime(double idleTime) {idleTimeSol=	idleTime;}
 	public void setdriverCost(double dr) {driverCost=	dr;}
 	public void sethomeCareStaffCost(double dr) {homeCareStaffCost=	dr;}
+	public void sethomeCareStaffTravelTime(double dr) {travelTimeHHC=	dr;}
+	
 	public void setwAdditionalWaitingTime(double dr) {additionalWaitingTime=	dr;}
 	public void settimeWindowViolation(double dr) {timeWindowViolation=	dr;}
 	public void setdetourViolation(double detour) {detourViolation= detour;}
@@ -124,12 +128,15 @@ public class Solution {
 	public double getWalkingTime() {return walkingTime;}
 	public double getdriverCost() {return driverCost;}
 	public double gethomeCareStaffCost() {return homeCareStaffCost;}
+	public double gethomeCareStaffTravelTime() {return travelTimeHHC;}
 	public double geAdditionalWaitingTime() {return additionalWaitingTime;}
 	public double getimeWindowViolation() {return timeWindowViolation;}
 	public double getdetourViolation() {	return detourViolation;}
 	public double getobjectiveFunction() {	return objectiveFunction;}
 	public double getdetourDuration() {	return Math.ceil(detourDuration);}
 	public Solution getShift() {return shifts;}
+	
+	
 
 	// auxiliar methods
 
@@ -156,6 +163,7 @@ public class Solution {
 	//s= s.concat("\n medical staff cost: "+ homeCareStaffCost);
 	s= s.concat("\n driver cost: "+ driverCost);
 	s= s.concat("\n home care staff and paramedic cost: "+ homeCareStaffCost);
+	s= s.concat("\n home care staff and paramedic travel time: "+ gethomeCareStaffTravelTime());
 	s= s.concat("\n detour: "+ detourDuration);
 	s= s.concat("\n detour average paramedic: "+ Math.ceil(detourPromParamedico));
 	s= s.concat("\n detour average home care staff: "+ Math.ceil(detourPromHomeCareStaff));
@@ -185,7 +193,7 @@ public class Solution {
 					if(j.isPatient()) {
 						type="p";
 					}
-					s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getStartTime()+";"+(int)j.getEndTime()+"]"+") \n");
+					s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getSoftStartTime()+";"+(int)j.getSoftEndTime()+"]"+") \n");
 				}
 				s= s.concat("\n");
 			}
@@ -433,7 +441,7 @@ public class Solution {
 		}
 		// cost for home care staff
 
-
+double travelTime=0;
 		double drivingTimeMedicalStaff=0;
 		double detourParamedic=0;
 		double detourhhc=0;
@@ -441,6 +449,7 @@ public class Solution {
 		double detour=0;
 		for(Route r:initialSol.getRoutes()) {
 			System.out.println("Total paramedics" + r.getAmountParamedic());
+			travelTime+=r.getTravelTime();
 			paramedic+=r.getAmountParamedic();
 			homeCareStaff+=r.getHomeCareStaff();
 			drivingTimeMedicalStaff+=r.gethomeCareStaffCost();
@@ -454,7 +463,7 @@ public class Solution {
 			}
 			detour+=r.getDetour();
 		}
-
+		initialSol.setdrivingTime(travelTime);
 		// calcula 
 		//double travelTimeDriverCost=0;
 		//for(Route r:this.getRoutes()) {
@@ -464,7 +473,7 @@ public class Solution {
 		//}
 
 		System.out.println("Total travel time" + travelTimeDriverCost);
-
+this.sethomeCareStaffTravelTime(initialSol.getdrivingTime());
 		this.setdetourPromHomeCareStaff(detourhhc/homeCareStaff);
 		this.setdetourPromParamedics(detourParamedic/paramedic);
 		this.setDurationSolution(durationSolution);

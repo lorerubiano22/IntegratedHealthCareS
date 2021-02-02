@@ -14,6 +14,7 @@ public class Algorithm {
 	private final Test test;
 	private final Inputs input;
 	private WalkingRoutes subroutes;
+	private double[][] performance; // 1 objective function + 2 walking time + 3 cost driver + 4 cost home care staff + 5 travel time+ 6 waiting time
 	private LinkedList<SubRoute> walkingList;
 	private DrivingRoutes drivingRoute;
 	private Solution initialSolution=null;
@@ -32,15 +33,14 @@ public class Algorithm {
 		rn=r;
 		input = i;
 		walkingList = new LinkedList<SubRoute>();
+		performance=new double[(int) test.getTestTime()][7];
 		double objective=0;
 		subroutes = new WalkingRoutes(rn,input, t, i.getNodes()); // stage 1: Creation of walking routes
 
 		boolean diversification= false;
 		System.out.println("Stop " +test.getTestTime());
 		for(int iter=0;iter<test.getTestTime();iter++) {
-			if(iter==7) {
-				System.out.println("Stop");
-			}
+			
 			//if(solution== null ||diversification) {
 				walkingList = new LinkedList<SubRoute>();
 				if(subroutes.getWalkingRoutes()!=null) {
@@ -68,9 +68,11 @@ public class Algorithm {
 				}
 				setBestSolution(drivingRoute.getSol());
 				setInitialSolution(drivingRoute.getSol().getShift());
+				//savingData(iter,drivingRoute.getSol());
 				//solution=null;
 			}
 			else {
+				//savingData(iter,bestSolution);
 				if(newSolution.getobjectiveFunction()>objective) {// darle una oportunidad a la mala solución
 					//while(continueSearching) {
 					drivingRoute.assigningRoutesToDrivers(iter,new Solution(newSolution));
@@ -100,12 +102,24 @@ public class Algorithm {
 					diversification=true;
 				}
 			}
-
+			savingData(iter,bestSolution);
 
 		}
 
 
 
+	}
+
+	private void savingData(int iter, Solution sol) {
+		//performance=new double[(int) test.getTestTime()][7];
+		// 1 objective function + 2 walking time + 3 cost driver + 4 cost home care staff + 5 travel time+ 6 waiting time
+		performance[iter][0]=iter;
+		performance[iter][1]=sol.getobjectiveFunction();
+		performance[iter][2]=sol.getWalkingTime();
+		performance[iter][3]=sol.getdriverCost();
+		performance[iter][4]=sol.gethomeCareStaffCost();
+		performance[iter][5]=sol.getShift().getdrivingTime();
+		performance[iter][6]=sol.getWaitingTime();
 	}
 
 	private boolean correctCouple(HashMap<String, Couple> subJobsList2, LinkedList<SubRoute> walkingList2) {
@@ -293,7 +307,7 @@ public class Algorithm {
 		// Los pacientes estan vinculados con el centro médico // 1
 		ArrayList<Couple> coupleFromPatientsRequest= new ArrayList<Couple>();
 		for(Jobs j: input.getpatients().values()) {
-			if(j.getId()==54){
+			if(j.getId()==57){
 				System.out.println("error");
 			}
 			
@@ -311,6 +325,17 @@ public class Algorithm {
 			if(pairPatientMedicalCentre.getPresent().getstartServiceTime()>pairPatientMedicalCentre.getFuture().getstartServiceTime()) { // control
 				System.out.println("error");
 			}
+			
+			if(pairPatientMedicalCentre.getPresent().getSubJobKey().equals("D57")) {
+				if(pairPatientMedicalCentre.getPresent().isMedicalCentre()) {
+					System.out.println("Stop");
+				}
+			}
+			if(pairPatientMedicalCentre.getFuture().getSubJobKey().equals("D57")) {
+				if(pairPatientMedicalCentre.getFuture().isMedicalCentre()) {
+					System.out.println("Stop");
+				}
+			}
 			// patient medical centre ---- going ----> patient home
 
 			Couple pairMedicalCentrePatient= creatingPairMedicalCentrePatient(pairPatientMedicalCentre);
@@ -318,8 +343,28 @@ public class Algorithm {
 			coupleFromPatientsRequest.add(pairMedicalCentrePatient);
 			coupleFromPatientsRequest.add(pairPatientMedicalCentre);
 
+			if(pairMedicalCentrePatient.getFuture().getSubJobKey().equals("D57")) {
+				if(pairMedicalCentrePatient.getFuture().isMedicalCentre()) {
+					System.out.println(pairMedicalCentrePatient.getFuture().toString());
+				}
+			}
+			
+			if(pairMedicalCentrePatient.getPresent().getstartServiceTime()>pairMedicalCentrePatient.getFuture().getstartServiceTime()) { // control
+				System.out.println("error");
+			}
 			settingPeopleInSubJob(pairMedicalCentrePatient, +2,-1);
 
+			if(pairMedicalCentrePatient.getPresent().getSubJobKey().equals("D57")) {
+				if(pairPatientMedicalCentre.getPresent().isMedicalCentre()) {
+					System.out.println("Stop");
+				}
+			}
+			if(pairMedicalCentrePatient.getFuture().getSubJobKey().equals("D57")) {
+				if(pairMedicalCentrePatient.getFuture().isMedicalCentre()) {
+					System.out.println("Stop");
+				}
+			}
+			
 			if(pairMedicalCentrePatient.getPresent().getstartServiceTime()>pairMedicalCentrePatient.getFuture().getstartServiceTime()) { // control
 				System.out.println("error");
 			}
@@ -355,7 +400,10 @@ public class Algorithm {
 		pairPatientMedicalCentre.getFuture().setStartServiceTime(j.getEndTime()); // start time
 		pairPatientMedicalCentre.getFuture().setserviceTime(j.getReqTime()); // duration service
 		// set arrival at node drop off medical centre
-		pairPatientMedicalCentre.getFuture().setarrivalTime(pairPatientMedicalCentre.getFuture().getstartServiceTime()-(pairPatientMedicalCentre.getFuture().getloadUnloadRegistrationTime()+pairPatientMedicalCentre.getFuture().getloadUnloadTime()));
+		double late=j.getEndTime()-test.getRegistrationTime()-test.getloadTimePatient();// medical centre
+		double early=late-test.getCumulativeWaitingTime();//
+		
+		pairPatientMedicalCentre.getFuture().setarrivalTime(pairPatientMedicalCentre.getFuture().getstartServiceTime()-(pairPatientMedicalCentre.getFuture().getloadUnloadRegistrationTime()));
 		pairPatientMedicalCentre.getFuture().setEndServiceTime(pairPatientMedicalCentre.getFuture().getstartServiceTime()+pairPatientMedicalCentre.getFuture().getReqTime());
 
 		pairPatientMedicalCentre.getFuture().setdepartureTime(pairPatientMedicalCentre.getFuture().getendServiceTime());
@@ -363,10 +411,10 @@ public class Algorithm {
 
 		// changing TW
 
-		pairPatientMedicalCentre.getFuture().setStartTime(Math.max(0, j.getStartTime()-test.getCumulativeWaitingTime())); // earliest
+		pairPatientMedicalCentre.getFuture().setStartTime(early); // earliest
 		
 	//	pairPatientMedicalCentre.getFuture().setEndTime(j.getStartTime()); // latest
-		pairPatientMedicalCentre.getFuture().setEndTime(j.getEndTime()); // latest
+		pairPatientMedicalCentre.getFuture().setEndTime(late); // latest
 
 
 
@@ -414,16 +462,40 @@ public class Algorithm {
 	private Couple creatingCouplePatientHomeToMedicalCentre(Jobs j) {
 		// j- location: Patiente home
 		// j.getsubJobPair()- location: Medical centre
-		Jobs presentJob= new Jobs(j);// Patient home - pick up
-		presentJob.setPatient(true);
-		presentJob.setMedicalCentre(false);
-		presentJob.setloadUnloadTime(test.getloadTimePatient());
 		
-		Jobs futureJob= new Jobs(j.getsubJobPair().getId(), j.getStartTime(),j.getEndTime(), j.getReqQualification(), j.getReqTime()); // medical centre - drop-off 
+		
+		
+		double late=j.getEndTime()-test.getRegistrationTime()-test.getloadTimePatient();// medical centre
+		double early=late-test.getCumulativeWaitingTime();//
+		Jobs futureJob= new Jobs(j.getsubJobPair().getId(), early,late, j.getReqQualification(), j.getReqTime()); // medical centre - drop-off 
 		futureJob.setloadUnloadTime(test.getloadTimePatient());
 		futureJob.setloadUnloadRegistrationTime(test.getRegistrationTime());
 		futureJob.setMedicalCentre(true);
 		futureJob.setPatient(false);
+		futureJob.setSoftStartTime(j.getEndTime());
+		futureJob.setSoftEndTime(j.getEndTime());
+		
+		
+		Jobs presentJob= new Jobs(j);// Patient home - pick up
+		double tv=input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1);
+		presentJob.setStartTime(early-tv);
+		presentJob.setEndTime(late-tv);
+		presentJob.setSoftStartTime(presentJob.getStartTime());
+		presentJob.setSoftEndTime(presentJob.getEndTime());
+		presentJob.setPatient(true);
+		presentJob.setMedicalCentre(false);
+		presentJob.setloadUnloadTime(test.getloadTimePatient());
+		
+		if(presentJob.getSubJobKey().equals("D57")) {
+			if(presentJob.isMedicalCentre()) {
+				System.out.println("Stop");
+			}
+		}
+		if(futureJob.getSubJobKey().equals("D57")) {
+			if(futureJob.isMedicalCentre()) {
+				System.out.println("Stop");
+			}
+		}
 	
 		presentJob.setPair(futureJob);
 		int directConnectionDistance= input.getCarCost().getCost(presentJob.getId()-1, futureJob.getId()-1); // setting the time for picking up the patient at home patient
@@ -471,12 +543,24 @@ public class Algorithm {
 		future.setPatient(true);
 		future.setMedicalCentre(false);
 		settingInformationPatientDropOffHome(present,future);	
-
+		if(future.getSubJobKey().equals("D61")) {
+			System.out.print("D61");
+		}
 		double tv= input.getCarCost().getCost(present.getId()-1, future.getId()-1);
 		// DEFINITION OF A COUPLE
 		// 3. creation of the coupe
 		Couple presentCouple= new Couple(present,future, tv,test.getDetour());
 
+		if(present.getSubJobKey().equals("D57")) {
+			if(present.isMedicalCentre()) {
+				System.out.println("Stop");
+			}
+		}
+		if(future.getSubJobKey().equals("D57")) {
+			if(future.isMedicalCentre()) {
+				System.out.println("Stop");
+			}
+		}
 
 
 		// delta
@@ -504,8 +588,8 @@ public class Algorithm {
 
 	private void settingInformationPatientDropOffHome(Jobs present, Jobs dropOffPatientHome) {
 		dropOffPatientHome.setTotalPeople(-1);
-		dropOffPatientHome.setPatient(true);
-		dropOffPatientHome.setMedicalCentre(false);
+		//dropOffPatientHome.setPatient(true);
+		//dropOffPatientHome.setMedicalCentre(false);
 		dropOffPatientHome.setloadUnloadTime(test.getloadTimePatient());
 		// 1. Setting the start service time -- startServiceTime
 		//double travel=input.getCarCost().getCost(present.getId()-1, dropOffPatientHome.getId()-1)*test.getDetour(); // es necesario considerar el travel time porque involucra dos locaciones
@@ -527,11 +611,13 @@ public class Algorithm {
 
 	private void settingInformationPatientPickUpMC(Jobs pickUpMedicalCentre) {
 		pickUpMedicalCentre.setTotalPeople(2); // 5. Setting the total people (+) pick up   (-) drop-off
-		pickUpMedicalCentre.setMedicalCentre(true);
-		pickUpMedicalCentre.setPatient(false);
+		//pickUpMedicalCentre.setMedicalCentre(true);
+		//pickUpMedicalCentre.setPatient(false);
 		pickUpMedicalCentre.setloadUnloadTime(test.getloadTimePatient());
 		pickUpMedicalCentre.setStartTime(pickUpMedicalCentre.getendServiceTime());
 		pickUpMedicalCentre.setEndTime(pickUpMedicalCentre.getendServiceTime()+test.getCumulativeWaitingTime());
+		pickUpMedicalCentre.setSoftStartTime(pickUpMedicalCentre.getendServiceTime());
+		pickUpMedicalCentre.setSoftEndTime(pickUpMedicalCentre.getendServiceTime()+test.getCumulativeWaitingTime());
 		//pickUpMedicalCentre.setEndTime(pickUpMedicalCentre.getStartTime()+test.getCumulativeWaitingTime());
 		//pickUpMedicalCentre.setEndTime(Double.MAX_VALUE);
 		// 1. Setting the start service time -- startServiceTime
@@ -551,12 +637,12 @@ public class Algorithm {
 		// DEFINITION OF FUTURE TASK<- DROP-OFF PATIENT AND PARAMEDIC AT MEDICAL CENTRE
 		// the time for the future task is modified to consider the registration time
 		// start time= doctor appointment - registration time
-		futureJob.setTimeWindowsDropOffMedicalCentre(test.getRegistrationTime());
+		//futureJob.setTimeWindowsDropOffMedicalCentre(test.getRegistrationTime());
 		futureJob.setloadUnloadTime(test.getloadTimePatient());
 		futureJob.setloadUnloadRegistrationTime(test.getRegistrationTime());
 		// DEFINITION OF PRESENT TASK<- PICK UP PATIENT AT MEDICAL CENTRE
 		// 2. Set the time for pick up patient at the patient home = doctor appointment time  - max(detour, direct connection) - load time - tiempo de registro
-		presentJob.setTimeWindowsPickUpMedicalCentre(futureJob.getStartTime(),directConnectionDistance,test.getCumulativeWaitingTime());
+		//presentJob.setTimeWindowsPickUpMedicalCentre(futureJob.getStartTime(),directConnectionDistance,test.getCumulativeWaitingTime());
 
 
 		// DEFINITION OF A COUPLE
@@ -842,7 +928,7 @@ public class Algorithm {
 	public DrivingRoutes getRoutes() {return drivingRoute;}
 	public Solution getInitialSolution() {return initialSolution;}
 	public Solution getSolution() {return bestSolution;}
-
+	public double[][]  getPerformance() {return performance;}
 
 
 }

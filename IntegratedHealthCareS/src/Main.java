@@ -2,6 +2,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Random;
 
+
 public class Main {
 	final static String inputFolder = "inputs";
 	final static String outputFolder = "outputs";
@@ -45,7 +46,7 @@ public class Main {
 					currentTest.getInstanceName() + "_" + currentTest.getSeed() +"_"+objective+"_waiting "+currentTest.getCumulativeWaitingTime()+  sufixFileOutput;
 			// 2.2. USE THE MULTI-START ALGORITHM TO SOLVE THE INSTANCE
 			Algorithm algorithm = new Algorithm(currentTest, inputs, rng);
-			Outputs output = new Outputs(algorithm);
+			Outputs output = new Outputs(currentTest,algorithm);
 			Double endTime=(System.nanoTime() - t) / Math.pow(10, 6);
 			output.sendToFile(outputsFilePath,endTime);
 

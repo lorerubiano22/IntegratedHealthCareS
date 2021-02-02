@@ -380,8 +380,8 @@ public class Route {
 			if(j.isPatient()) {
 				type="p";
 			}
-			s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getStartTime()+";"+(int)j.getEndTime()+"]"+") \n");
-		}
+			s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getSoftStartTime()+";"+(int)j.getSoftEndTime()+"]"+") \n");
+			}
 		s = s.concat("\n\n");
 	}
 	return s;
@@ -468,51 +468,59 @@ public class Route {
 		double penalization=0;
 		double penalizationRoute=0;
 		double additionalWaitingRoute=0;
-		for(int p=1;p<this.getPartsRoute().size()-1;p++) {
-			for(SubJobs j:this.getPartsRoute().get(p).getListSubJobs()) { // se producen despues de terminar un servicio
-				System.out.println("Id "+j.getSubJobKey()+" Arrival "+ j.getArrivalTime()+ " Start service time " + j.getstartServiceTime());
-				System.out.println(" Calculated Start service time" + (j.getArrivalTime()+j.getdeltaArrivalStartServiceTime()));
-				if(j.getTotalPeople()<0) { // drop off 
-					// Home health care
-					if(j.isClient()) { // hard time window
-						if((j.getArrivalTime()+test.getloadTimeHomeCareStaff())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
-							penalization=j.getstartServiceTime()-(j.getArrivalTime()+test.getloadTimeHomeCareStaff());
-							penalizationRoute+=penalization;
-						}	
-					}
-					else {
-						if(j.isMedicalCentre()) { // fixed time
-							if((j.getArrivalTime()+test.getRegistrationTime()+test.getloadTimePatient())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
-								penalization=j.getstartServiceTime()-(j.getArrivalTime()+test.getRegistrationTime()+test.getloadTimePatient());
-								penalizationRoute+=penalization;
-							}	
-						}
-						else { // patient
-							if((j.getArrivalTime()+test.getloadTimePatient())<j.getstartServiceTime()) { // llega antes el personal tiene que esperar al cliente
-								penalization=j.getstartServiceTime()-(j.getArrivalTime()+test.getloadTimePatient());
-								penalizationRoute+=penalization;
-							}
-						}
-					}
-
-					j.setWaitingTime(Math.abs(penalization));
-					j.setAdditionalWaitingTime(Math.abs(additionalWaitingRoute));
-				}
-				else { // pick up
-					if(j.isClient() || j.isMedicalCentre()) {
-						if(j.getArrivalTime()>j.getStartTime()) {
-							penalization=j.getArrivalTime()-j.getStartTime();
-							penalizationRoute+=penalization;}}
-				}
-
+		for(SubJobs j:this.getSubJobsList()) {
+			double additionaltime=determineAdditionalTime(j,test);
+			
+			double delta=(j.getstartServiceTime()-(j.getArrivalTime()+additionaltime));
+			if(delta>test.getCumulativeWaitingTime()) {
+				additionalWaitingRoute+=delta;
 			}
-			if(penalization<0) {
-				System.out.println("penalization<0");
-			}	
+			if(delta>0) {
+				penalizationRoute+=delta;
+				System.out.println(j.toString());
+			}
+			
 		}
+
 		this.setWaitingTime(penalizationRoute);
 		this.setAdditionalWaitingTime(additionalWaitingRoute);
 		System.out.println(this.toString());
+	}
+
+
+
+
+	private double determineAdditionalTime(SubJobs j,Test test) {
+		double additionalTime=0;
+		if(j.getTotalPeople()<0) {
+			additionalTime=timeDropOffBeforeService(j,test); //medical centre, patient, client
+		}
+		else {
+			//additionalTime=timePickUpAfterService(j);
+		}
+		return additionalTime;
+	}
+
+
+
+
+	private double timeDropOffBeforeService(SubJobs j,Test test) {
+		double additionalTime=0;
+		//medical centre, patient, client
+		if(j.isMedicalCentre()) {// medical centre
+			//additionalTime=test.getRegistrationTime();
+			additionalTime=test.getloadTimePatient()+test.getRegistrationTime();
+		}
+		else {
+			if(j.isClient()) {// client
+				additionalTime=test.getloadTimeHomeCareStaff();
+			}
+			else {//patient
+				//	additionalTime=test.getloadTimePatient();
+				
+			}
+		}
+		return additionalTime;
 	}
 
 
@@ -757,8 +765,8 @@ public class Route {
 			factor=test.getloadTimeHomeCareStaff();
 		}
 		double loadUnloadTIme=factor*this.subJobsList.size();
-		this.setTravelTime(distance);
-		this.homeCareStaffCost=distance+loadUnloadTIme+this.getWaitingTime();
+		this.setTravelTime(distance+loadUnloadTIme);
+		this.homeCareStaffCost=this.getTravelTime()+this.getWaitingTime();
 	}
 
 

@@ -8,11 +8,41 @@ public class Outputs {
 	private Solution solution;
 
 
-	public Outputs(Algorithm algorithm) {
+	public Outputs(Test currentTest, Algorithm algorithm) {
 		subroutes=algorithm.getSolution().getWalkingRoute();
 		initialSolution=algorithm.getInitialSolution();
 		solution=algorithm.getSolution();
+		printSolST(currentTest,algorithm);
+		
 	}
+
+	private void printSolST(Test currentTest, Algorithm algorithm) {
+		try 
+		{   
+			PrintWriter out = new PrintWriter(currentTest.getInstanceName()+"_ResumeSols.txt");
+			// 1 objective function + 2 walking time + 3 cost driver + 4 cost home care staff + 5 travel time+ 6 waiting time
+			
+			out.printf("Iter	OF	   WalkingTime 	  driverCost   HHCcost   travelTime  	waitingTime");
+		//7 
+			for(int i=0;i<algorithm.getPerformance().length;i++) {
+				out.println();
+				out.printf("	%.2f",algorithm.getPerformance()[i][0]);
+				out.printf("	%.2f",algorithm.getPerformance()[i][1]);
+				out.printf("	%.2f", algorithm.getPerformance()[i][2]);
+				out.printf("	%.2f",algorithm.getPerformance()[i][3]);
+				out.printf("	%.2f",algorithm.getPerformance()[i][4]);
+				out.printf("	%.2f", algorithm.getPerformance()[i][5]);
+				out.printf("	%.2f",algorithm.getPerformance()[i][6]);
+			}
+		
+			out.close();
+		} 
+		catch (IOException exception) 
+		{   System.out.println("Error processing output file: " + exception);
+		}
+	}
+
+
 
 	/* AUXILIARY METHODS */
 	public void sendToFile(String outFile, Double endTime)
@@ -34,7 +64,7 @@ public class Outputs {
 			out.println("------------------ NA ---------------------");
 			out.println("--------------------------------------------");
 		}
-			
+
 		out.println("Driving Routes");
 		out.println("--------------------------------------------");
 		out.println("\n Initial solution \n");
@@ -45,26 +75,26 @@ public class Outputs {
 			if(!r.getSubJobsList().isEmpty()) {	
 				if(r.getAmountParamedic()>0) {
 					paramedic++;
-				out.println("\n Paramedic "+paramedic );
+					out.println("\n Paramedic "+paramedic );
 				}
 				else {
 					homeCareStaff++;
 					out.println("\n Home care Staff " + homeCareStaff );}
-				}
-					for(Parts p:r.getPartsRoute()) {
-					for(SubJobs j:p.getListSubJobs()) {
-						String type="";
-						if(j.isClient()) {
-							type="c";
-						}
-						if(j.isPatient()) {
-							type="p";
-						}
-						out.println(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getStartTime()+";"+(int)j.getEndTime()+"]"+") \n");
+			}
+			for(Parts p:r.getPartsRoute()) {
+				for(SubJobs j:p.getListSubJobs()) {
+					String type="";
+					if(j.isClient()) {
+						type="c";
 					}
-					//out.println("\n\n");
+					if(j.isPatient()) {
+						type="p";
+					}
+					out.println(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getStartTime()+";"+(int)j.getEndTime()+"]"+") \n");
 				}
-			}	
+				//out.println("\n\n");
+			}
+		}	
 		out.println("\n Best solution \n");
 		out.println(solution.toString() + "\r\n");
 
