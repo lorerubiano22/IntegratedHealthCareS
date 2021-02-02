@@ -364,7 +364,7 @@ public class Route {
 	{   String s = "";
 	s = s.concat("\nRute duration: " + (this.getDurationRoute()));
 	s = s.concat("\nRute waiting time: " + (this.getWaitingTime()));
-	s = s.concat("\nRute service time: " + (this.getServiceTime()));
+	//s = s.concat("\nRute service time: " + (this.getServiceTime()));
 	//s = s.concat("\nRute idle time: " + (this.getIdleTime()));
 	s = s.concat("\nAmount home care staff:" + this.getHomeCareStaff());
 	s = s.concat("\nAmount paramedic staff:" + this.getAmountParamedic());
