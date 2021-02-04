@@ -222,14 +222,11 @@ public class Solution {
 				}}
 			//
 			id++;
-			//	computeStartTimeRoute(r.getPartsRoute().get(1).getListSubJobs().get(0),r,inp,test);
-			//computeEndTimeRoute(r.getPartsRoute().get(r.getPartsRoute().size()-2).getListSubJobs().get(r.getPartsRoute().get(r.getPartsRoute().size()-2).getListSubJobs().size()-1),r,inp,test);
-			r.setIdRoute(id);
+				r.setIdRoute(id);
 			r.setDurationRoute(Math.abs(r.getPartsRoute().get(0).getListSubJobs().get(0).getArrivalTime()-r.getPartsRoute().get(r.getPartsRoute().size()-1).getListSubJobs().get(0).getArrivalTime()));
-			//r.setDurationRoute(r.getSubJobsList().getLast().getDepartureTime()-r.getSubJobsList().getFirst().getArrivalTime());
-			r.computeServiceTime(inp,jobsInWalkingRoute);
-			// revisar las ventanas de tiempo si se pueden mover
-			r.checkingTimeWindows(test,inp);
+				r.computeServiceTime(inp,jobsInWalkingRoute);
+			
+			r.checkingTimeWindows(test,inp); // revisar las ventanas de tiempo si se pueden mover
 			// revisar los tiempos de espera
 
 			// revisar los detours

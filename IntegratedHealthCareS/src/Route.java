@@ -60,7 +60,7 @@ public class Route {
 		copyEdges(r.edges); // edges list
 		copyCouples(r.jobsList); // subjobs list (pick up and delivary)
 		copySubJobs(r.subJobsList); // subjobs list (pick up and delivary)
-		copyDirectories(r.getJobsDirectory());
+		copyDirectories(this.subJobsList);
 		copyPart(r.getPartsRoute());
 		qualificationLevel=-1;
 		for(SubJobs j:this.subJobsList) {
@@ -109,17 +109,17 @@ public class Route {
 	private void copySubJobs( LinkedList<SubJobs>  SubJobs) {
 		subJobsList=new LinkedList<SubJobs>();
 		for(SubJobs j:SubJobs) {
-			subJobsList.add(j);
+			subJobsList.add(new SubJobs(j));
 		}
 	}
 
 
 
 
-	private void copyDirectories(HashMap<String, SubJobs> jobsDirectory) {
+	private void copyDirectories(LinkedList<SubJobs> subJobsList2) {
 		positionJobs=new HashMap<String, SubJobs>();
-		for(SubJobs j:jobsDirectory.values()) {
-			positionJobs.put(j.getSubJobKey(),new SubJobs(j));	
+		for(SubJobs j:subJobsList2) {
+			positionJobs.put(j.getSubJobKey(),j);	
 		}
 
 	}
@@ -764,8 +764,15 @@ public class Route {
 		else {
 			factor=test.getloadTimeHomeCareStaff();
 		}
+		
+		double workingTime =0;
+		for(SubJobs j:this.getSubJobsList()) {
+			workingTime+=j.getReqTime();
+		}
+		
 		double loadUnloadTIme=factor*this.subJobsList.size();
 		this.setTravelTime(distance+loadUnloadTIme);
+		this.setDurationRoute(this.getTravelTime()+workingTime);
 		this.homeCareStaffCost=this.getTravelTime()+this.getWaitingTime();
 	}
 
@@ -970,6 +977,21 @@ for(Parts p:this.getPartsRoute()) {
 
 
 	public void checkingConnectionsRoute(Test test, Inputs inp) {
+		// empty parts
+		boolean removing=true;
+		do {
+			removing=false;
+			for(Parts p:this.getPartsRoute()) {
+				if(p.getListSubJobs().isEmpty()) {
+					this.getPartsRoute().remove(p);
+					removing=true;
+					break;
+				}
+			}
+		}
+		while(removing);
+		
+		// connections
 		ArrayList<SubJobs> jobsList= new ArrayList<SubJobs>(); 
 		for(Parts p: this.getPartsRoute()) { // iterando por partes
 			for(SubJobs sj:p.getListSubJobs()) {

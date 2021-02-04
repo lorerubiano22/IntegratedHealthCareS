@@ -660,7 +660,7 @@ public class Algorithm {
 		// Individual client JOBS
 		if(!input.getclients().isEmpty()) {
 			for(Jobs j: input.getclients().values()) {
-				if(j.getId()==70) {
+				if(j.getId()==24) {
 					System.out.println("stop");
 				}
 				// Creating the request for picking up the nurse
@@ -799,7 +799,7 @@ public class Algorithm {
 					double walkingRouteLength=r.getDurationWalkingRoute();
 
 					// 0. creation of subjobs and fixing time windows 
-					if(r.getDropOffNode().getId()==3) {
+					if(r.getDropOffNode().getId()==24) {
 						System.out.println("couple ");
 					}
 					Jobs present=creatinngPresentJobFromWR(r.getDropOffNode(),walkingRouteLength);

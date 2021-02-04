@@ -44,26 +44,28 @@ public class Couple {
 	
 	
 	public Couple(SubJobs j, SubJobs j2) {
-		if(j.getstartServiceTime()<j2.getstartServiceTime()) {
-			present=j;
-			present.setPatient(j.isPatient());
-			present.setMedicalCentre(j.isMedicalCentre());
-			present.setClient(j.isClient());
-			future=j2;
-			future.setPatient(j2.isPatient());
-			future.setMedicalCentre(j2.isMedicalCentre());
-			future.setClient(j2.isClient());
-		}
-		else {
-			present=j2;
-			present.setPatient(j2.isPatient());
-			present.setMedicalCentre(j2.isMedicalCentre());
-			present.setClient(j2.isClient());
-			future=j;
-			future.setPatient(j.isPatient());
-			future.setMedicalCentre(j.isMedicalCentre());
-			future.setClient(j.isClient());
-		}
+		present=j;
+		future=j2;
+//		if(j.getstartServiceTime()<j2.getstartServiceTime()) {
+//			present=j;
+//			present.setPatient(j.isPatient());
+//			present.setMedicalCentre(j.isMedicalCentre());
+//			present.setClient(j.isClient());
+//			future=j2;
+//			future.setPatient(j2.isPatient());
+//			future.setMedicalCentre(j2.isMedicalCentre());
+//			future.setClient(j2.isClient());
+//		}
+//		else {
+//			present=j2;
+//			present.setPatient(j2.isPatient());
+//			present.setMedicalCentre(j2.isMedicalCentre());
+//			present.setClient(j2.isClient());
+//			future=j;
+//			future.setPatient(j.isPatient());
+//			future.setMedicalCentre(j.isMedicalCentre());
+//			future.setClient(j.isClient());
+//		}
 		directConnection=0;	
 		startEndNodes.add(j2);
 		startEndNodes.add(j);

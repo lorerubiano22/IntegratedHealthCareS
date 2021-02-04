@@ -75,11 +75,16 @@ public class Outputs {
 			if(!r.getSubJobsList().isEmpty()) {	
 				if(r.getAmountParamedic()>0) {
 					paramedic++;
-					out.println("\n Paramedic "+paramedic );
+					out.print("\n Paramedic "+paramedic );
+					out.print("    Working day: ");
+					out.println(r.getDurationRoute() + "\r\n");
 				}
 				else {
 					homeCareStaff++;
-					out.println("\n Home care Staff " + homeCareStaff );}
+					out.print("\n Home care Staff " + homeCareStaff );
+					out.print("    Working day: ");
+					out.println(r.getDurationRoute() + "\r\n");	
+				}
 			}
 			for(Parts p:r.getPartsRoute()) {
 				for(SubJobs j:p.getListSubJobs()) {

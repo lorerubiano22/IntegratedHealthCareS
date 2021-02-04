@@ -26,8 +26,8 @@ public class Parts {
 		driver=part.isDriver();
 		for(SubJobs n:part.getListSubJobs()) {
 			//Jobs formalJob=new Jobs(n);
-			listSubJobs.add(n);
-			directorySubjobs.put(n.getSubJobKey(), n);
+			listSubJobs.add(new SubJobs(n));
+			directorySubjobs.put(n.getSubJobKey(), new SubJobs(n));
 		}
 		for(Edge e:part.getDirectoryConnections().values()) {
 			Edge eNew= new Edge(e);

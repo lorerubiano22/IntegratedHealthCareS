@@ -157,11 +157,11 @@ public class Jobs {
 		deltaArrivalDeparture=i.deltaArrivalDeparture;
 		deltaArrivalStartServiceTime=i.deltaArrivalStartServiceTime;
 		deltarStartServiceTimeEndServiceTime=i.deltarStartServiceTimeEndServiceTime;
-		if(!i.getAssignedJobToMedicalCentre().isEmpty()) {
-			for(Jobs j:i.getAssignedJobToMedicalCentre()) {
-				this.assignedJob.add(j);
-			}
-		}
+//		if(!i.getAssignedJobToMedicalCentre().isEmpty()) {
+//			for(Jobs j:i.getAssignedJobToMedicalCentre()) {
+//				this.assignedJob.add(j);
+//			}
+//		}
 	}
 
 	

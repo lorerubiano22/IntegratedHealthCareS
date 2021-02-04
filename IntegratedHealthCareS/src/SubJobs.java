@@ -52,11 +52,11 @@ public class SubJobs extends Jobs {
 		this.setsortETWSizeCriterion(j.getsortETWSizeCriterion());
 		this.setsortLTWSizeCriterion(j.getsortLTWSizeCriterion());
 		
-		if(!j.getAssignedJobToMedicalCentre().isEmpty()) {
-			for(Jobs i:j.getAssignedJobToMedicalCentre()) {
-				this.getAssignedJobToMedicalCentre().add(i);
-			}
-		}
+//		if(!j.getAssignedJobToMedicalCentre().isEmpty()) {
+//			for(Jobs i:j.getAssignedJobToMedicalCentre()) {
+//				this.getAssignedJobToMedicalCentre().add(i);
+//			}
+//		}
 	}
 
 	// Getters
