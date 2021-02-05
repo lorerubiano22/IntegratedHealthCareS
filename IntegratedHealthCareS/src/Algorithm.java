@@ -40,6 +40,9 @@ public class Algorithm {
 		boolean diversification= false;
 		System.out.println("Stop " +test.getTestTime());
 		for(int iter=0;iter<test.getTestTime();iter++) {
+			if(iter==2) {
+				System.out.println("Stop " +test.getTestTime());
+			}
 			
 			//if(solution== null ||diversification) {
 				walkingList = new LinkedList<SubRoute>();
