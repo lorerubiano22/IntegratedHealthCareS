@@ -770,10 +770,11 @@ public class Route {
 			workingTime+=j.getReqTime();
 		}
 		
-		double loadUnloadTIme=factor*this.subJobsList.size();
-		this.setTravelTime(distance+loadUnloadTIme);
-		this.setDurationRoute(this.getTravelTime()+workingTime);
-		this.homeCareStaffCost=this.getTravelTime()+this.getWaitingTime();
+		//double loadUnloadTIme=factor*this.subJobsList.size();
+		this.setTravelTime(distance);
+		this.setDurationRoute(this.getSubJobsList().get(this.getSubJobsList().size()-1).getDepartureTime()-this.getSubJobsList().get(0).getArrivalTime());
+	//	this.homeCareStaffCost=this.getTravelTime()+this.getWaitingTime();
+		this.homeCareStaffCost=this.getDurationRoute();
 	}
 
 

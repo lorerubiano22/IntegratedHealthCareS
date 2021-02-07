@@ -1,4 +1,4 @@
 #instance name | max iter | seed      | working time driver| route length driver| walking duration 2 jobs | Detour between pickup and delivery (percentage)  |  Cumulative walking pickup and delivery  |  Cumulative waiting between each delivery and pickup |  load time for patient |  load time for home care Staff | registration Time at medical centre  | objectiveDriver   | objectiveHomeCareStaff 
 #S5-N125				1		1074999   	    480  	 1000000		10  					 0.15  								 20 												15
 #dummy				1		1074999   	    480  	 1000000		10  					 0.15  								 36 												500           2     1        15
-S5-N75	2		1074999   	    600  	     100000000						10  		  			  1 												 60 												5           2     1        15				1 					0
+S5-N75	2		1074999   	    480  	     100000000						10  		  			  1 												 60 												10           2     1        15				1 					1
