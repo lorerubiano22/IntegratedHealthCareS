@@ -174,8 +174,8 @@ public class Solution {
 	s= s.concat("\n detour average paramedic: "+ Math.ceil(detourPromParamedico));
 	s= s.concat("\n detour average home care staff: "+ Math.ceil(detourPromHomeCareStaff));
 //	s= s.concat("\n time window violation: "+ timeWindowViolation);
-	s= s.concat("\n waiting Time to penalize: "+ additionalWaitingTime);
-	s= s.concat(" Detour time to penalize: "+ detourViolation);
+	//s= s.concat("\n waiting Time to penalize: "+ additionalWaitingTime);
+	//s= s.concat(" Detour time to penalize: "+ detourViolation);
 	s = s.concat("\n List of jobs: ");
 	for(Route r:routes) {
 		if(!r.getSubJobsList().isEmpty()) {
@@ -283,34 +283,6 @@ public class Solution {
 	}
 
 
-	private void transferingInformation(Route shift) {
-		// TODO Auto-generated method stub
-
-	}
-
-
-	private Route selectionRoute(SubJobs origen, SubJobs end) {
-		Route r= null;
-		for(Route routeInRoute:this.getRoutes()) {
-			HashMap<String, SubJobs> subJobsList= new HashMap<String, SubJobs>();
-			if(routeInRoute.getPartsRoute().isEmpty()) {
-				System.out.print("Stop");
-			}
-			for(Parts p:routeInRoute.getPartsRoute()) {
-				if(p.getListSubJobs().isEmpty()) {
-					System.out.print("Stop");
-				}
-				for(SubJobs j:p.getListSubJobs()) {
-					subJobsList.put(j.getSubJobKey(), j);
-				}
-				if(subJobsList.containsKey(origen.getSubJobKey()) && subJobsList.containsKey(end.getSubJobKey())) {
-					r=routeInRoute;
-					break;
-				}
-			}
-		}
-		return r;
-	}
 
 
 
@@ -319,32 +291,6 @@ public class Solution {
 
 
 
-
-	private void computeEndTimeRoute(SubJobs lastJob, Route r, Inputs inp, Test test) {
-		// 1. Compute travel time
-		SubJobs depot=r.getPartsRoute().get(r.getPartsRoute().size()-1).getListSubJobs().get(0);
-		double tv=inp.getCarCost().getCost(lastJob.getId()-1, depot.getId()-1);
-		double arrivalTime=	lastJob.getDepartureTime()+tv;
-		depot.setarrivalTime(arrivalTime);
-		depot.setdepartureTime(arrivalTime);
-		depot.setdepartureTime(arrivalTime);
-		depot.setStartServiceTime(arrivalTime);
-		depot.setEndServiceTime(arrivalTime);
-		depot.setserviceTime(0);
-		System.out.println(r.toString());
-	}
-	private void computeStartTimeRoute(SubJobs firstJob, Route r, Inputs inp, Test test) {
-		// 1. Compute travel time
-		SubJobs depot=r.getPartsRoute().get(0).getListSubJobs().get(0);
-		double tv=inp.getCarCost().getCost(depot.getId()-1,firstJob.getId()-1);
-		double arrivalTime=	firstJob.getArrivalTime()-tv-test.getloadTimeHomeCareStaff();
-		depot.setarrivalTime(arrivalTime);
-		depot.setdepartureTime(arrivalTime);
-		depot.setStartServiceTime(arrivalTime);
-		depot.setEndServiceTime(arrivalTime);
-		depot.setserviceTime(0);
-		System.out.println(r.toString());
-	}
 
 
 

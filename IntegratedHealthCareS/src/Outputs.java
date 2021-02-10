@@ -94,13 +94,13 @@ public class Outputs {
 					paramedic++;
 					out.print("\n Paramedic "+paramedic );
 					out.print("    Working day: ");
-					out.println(r.getDurationRoute() + "\r\n");
+					out.println(r.getSubJobsList().get(r.getSubJobsList().size()-1).getArrivalTime()-r.getSubJobsList().get(0).getDepartureTime() + "\r\n");	
 				}
 				else {
 					homeCareStaff++;
 					out.print("\n Home care Staff " + homeCareStaff );
 					out.print("    Working day: ");
-					out.println(r.getDurationRoute() + "\r\n");	
+					out.println(r.getSubJobsList().get(r.getSubJobsList().size()-1).getArrivalTime()-r.getSubJobsList().get(0).getDepartureTime() + "\r\n");	
 				}
 			}
 			for(Parts p:r.getPartsRoute()) {

@@ -7,21 +7,5 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/xpressmp/bin"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/aec2-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/aec2.jar"/>
-	<classpathentry kind="lib" path="lib/bindrv-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/bindrv.jar"/>
-	<classpathentry kind="lib" path="lib/jsch-0.1.50.jar"/>
-	<classpathentry kind="lib" path="lib/mosjvm.jar"/>
-	<classpathentry kind="lib" path="lib/xprb-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/xprb.jar"/>
-	<classpathentry kind="lib" path="lib/xprd-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/xprd.jar"/>
-	<classpathentry kind="lib" path="lib/xprm-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/xprm.jar"/>
-	<classpathentry kind="lib" path="lib/xprs-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/xprs.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Lorena/Documents/wokspace_Java_BOKU2/Libraries/log4j-1.2.17.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Lorena/Documents/wokspace_Java_BOKU2/Libraries/ssj-2.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
