@@ -10,6 +10,8 @@ public class Route {
 	private int id=0;
 	private double travelTime = 0.0; // travel time
 	private double travelTimeDriver = 0.0; // travel time
+	private double travelTimeParamedic = 0.0; // travel time
+	private double travelTimeHHC = 0.0; // travel time
 	private double serviceTime = 0.0; // travel time
 	private double waitingTime = 0.0; // travel time
 	private double durationRoute = 0.0; // route total costs
@@ -57,20 +59,23 @@ public class Route {
 		detourPromHomeCareStaff=r.getdetourPromHomeCareStaff();// detour prom home care staff
 		timeWindowViolation=r.gettimeWindowViolation();
 		detourViolation=r.detourViolation;
+		travelTimeParamedic = r.travelTimeParamedic; // travel time
+		travelTimeHHC = r.travelTimeHHC; // travel time
 		copyEdges(r.edges); // edges list
 		copyCouples(r.jobsList); // subjobs list (pick up and delivary)
 		copySubJobs(r.subJobsList); // subjobs list (pick up and delivary)
 		copyDirectories(this.subJobsList);
 		copyPart(r.getPartsRoute());
+
 		qualificationLevel=-1;
 		for(SubJobs j:this.subJobsList) {
-	if(qualificationLevel<j.getReqQualification()) {
-		qualificationLevel=j.getReqQualification();
-	}		
+			if(qualificationLevel<j.getReqQualification()) {
+				qualificationLevel=j.getReqQualification();
+			}		
 		}
-	
-		
-		
+
+
+
 		if(r.schift!=null) {
 			schift= new Schift(r.getSchiftRoute());
 		}
@@ -98,6 +103,8 @@ public class Route {
 		durationRoute = 0.0; // route total costs
 		passengers = 0; // route total demand
 		idleTime=0;
+		travelTimeParamedic =0; // travel time
+		travelTimeHHC = 0; // travel time
 		loadUnloadRegistration=0;
 		edges=new HashMap<String,Edge>(); // edges list
 		jobsList= new LinkedList<Couple>(); // subjobs list (pick up and delivary)
@@ -177,6 +184,8 @@ public class Route {
 	public double getWaitingTime() {return (int)waitingTime;}
 	public double gettimeWindowViolation() {return timeWindowViolation;}
 	public double getTravelTime() {return travelTime;}
+	public double getTravelTimeParamedic() {return travelTimeParamedic;}
+	public double getTravelTimeHHC() {return travelTimeHHC;}
 	public int getIdRoute() {return id;}
 	public int getPassengers() {return passengers;}
 	public LinkedList<Couple> getJobsList() {return jobsList;}
@@ -214,7 +223,7 @@ public class Route {
 			travelTimeDuration+=e.getTime();
 		}
 		this.setTravelTime(travelTimeDuration);
-		
+
 	}
 
 	public void computeDriverTravelTime(Inputs inp) {
@@ -373,6 +382,7 @@ public class Route {
 	s = s.concat("\njobs: ");
 	for(Parts p:this.getPartsRoute()) {
 		for(SubJobs j:p.getListSubJobs()) {
+			//for(SubJobs j:this.getSubJobsList()) {
 			String type="";
 			if(j.isClient()) {
 				type="c";
@@ -381,7 +391,7 @@ public class Route {
 				type="p";
 			}
 			s = s.concat(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getSoftStartTime()+";"+(int)j.getSoftEndTime()+"]"+") \n");
-			}
+		}
 		s = s.concat("\n\n");
 	}
 	return s;
@@ -450,12 +460,11 @@ public class Route {
 			for(SubJobs j:this.getPartsRoute().get(p).getListSubJobs()) {
 				if(j.isClient() || j.isMedicalCentre()) {
 					if(j.getTotalPeople()<0) {// drop-off
-						if(j.getstartServiceTime()>j.getEndTime()) {
-							penalization+=Math.abs(j.getEndTime()-j.getstartServiceTime());
+						if(j.getstartServiceTime()>j.getSoftEndTime()) {
+							penalization+=Math.abs(j.getSoftEndTime()-j.getstartServiceTime());
 							penalizationRoute+=penalization;
 						}
 						j.setTimeWindowViolation(penalization);
-
 					}
 				}
 			}
@@ -466,23 +475,26 @@ public class Route {
 
 	public void checkingWaitingTimes(Test test, Inputs inp) {
 		double penalization=0;
-		double penalizationRoute=0;
+		double waitingTime=0;
 		double additionalWaitingRoute=0;
 		for(SubJobs j:this.getSubJobsList()) {
 			double additionaltime=determineAdditionalTime(j,test);
-			
+
 			double delta=(j.getstartServiceTime()-(j.getArrivalTime()+additionaltime));
 			if(delta>test.getCumulativeWaitingTime()) {
 				additionalWaitingRoute+=delta;
 			}
 			if(delta>0) {
-				penalizationRoute+=delta;
+				waitingTime+=delta;
 				System.out.println(j.toString());
 			}
-			
+			if(delta<0) {
+				System.out.println(j.toString());
+			}
+			j.setWaitingTime(delta);
 		}
 
-		this.setWaitingTime(penalizationRoute);
+		this.setWaitingTime(waitingTime);
 		this.setAdditionalWaitingTime(additionalWaitingRoute);
 		System.out.println(this.toString());
 	}
@@ -517,7 +529,7 @@ public class Route {
 			}
 			else {//patient
 				//	additionalTime=test.getloadTimePatient();
-				
+
 			}
 		}
 		return additionalTime;
@@ -530,54 +542,99 @@ public class Route {
 	public void checkingDetour(Test test, Inputs inp, Solution initialSol) {
 		double detour=0;
 		double detourToPenalize=0;
+		double dist=0;
+		double distRef=0;
 		for(Edge e: this.edges.values()) {
+			distRef=e.getTime();
 			SubJobs origen=e.getOrigin();
 			SubJobs end=e.getEnd();
-			if(origen.getSubJobKey().equals("D73") && end.getSubJobKey().equals("P57")) {
+			if(origen.getSubJobKey().equals("P10")) {
 				System.out.println(" Edge "+ e.toString());
 			}
-			Route r1=selectionRoute(origen,initialSol);
-			Route r2=selectionRoute(end,initialSol);
+			if(origen.getSubJobKey().equals("D52") && end.getSubJobKey().equals("P73")) {
+				System.out.println(" Edge "+ e.toString());
+			}
+			if(origen.getSubJobKey().equals("P70") && end.getSubJobKey().equals("D4770")) {
+				System.out.println(" Edge "+ e.toString());
+			}
+
+
+			Route r1=null;
+
+			Route r2=null;
+			if(origen.getId()!=1 && end.getId()!=1) {
+				r1=selectionRoute(origen,initialSol);
+				r2=selectionRoute(end,initialSol);
+			}
+			else {
+				if(origen.getId()==1 ) {
+					r1=selectionRoute(end,initialSol);
+
+					r2=selectionRoute(end,initialSol);
+				}
+				else {
+					r1=selectionRoute(origen,initialSol);
+					r2=selectionRoute(origen,initialSol);
+				}
+			}
 			if(r1==r2) { // there is a connection in the route
-				double travelTime=0;
+				dist=0;
 				boolean startCount=false;
+				boolean newStart=false;
+				ArrayList<SubJobs> copy= new ArrayList<SubJobs>();
 				for(Parts p:r1.getPartsRoute()) {
-					boolean breakCycle=false;
 					for(SubJobs j:p.getListSubJobs()) {
+						copy.add(j);
+					}
+				}
+				boolean breakCycle=false;
+				for(int i=1;i<copy.size();i++) {
+					SubJobs Ijob=copy.get(i-1);
+					SubJobs Jjob=copy.get(i);
+					if(Ijob.getSubJobKey().equals("P10") ) {
+						System.out.println(" Edge "+ e.toString());
+					}
+					if(Jjob.getSubJobKey().equals("P10") ) {
+						System.out.println(" Edge "+ e.toString());
+					}
+					if(Ijob.getSubJobKey().equals("P10") && origen.getSubJobKey().equals("P10")) {
+						System.out.println(" Edge "+ e.toString());
+					}
+					
+					
+					if(origen.getSubJobKey().equals(Ijob.getSubJobKey())) {
+						startCount=true;
+						dist=0;
+					}
+					if(Ijob.getSubJobKey().equals("P1") && startCount) { // cuando el personal pasa idle time en el depot
+						startCount=true;
+						newStart=true;
+						distRef=inp.getCarCost().getCost(Ijob.getId()-1, end.getId()-1);
+						dist=0;
+					}
+					if(startCount) {
+						dist+=inp.getCarCost().getCost(Ijob.getId()-1, Jjob.getId()-1);
+					}
 
-						if(origen.getSubJobKey().equals(j.getSubJobKey())) {
-							startCount=true;
-							travelTime=0;
-						}
-						if(origen.getSubJobKey().equals("P1") && startCount) { // cuando el personal pasa idle time en el depot
-							startCount=true;
-							travelTime=inp.getCarCost().getCost(0, end.getId()-1);
-							e.setTime(travelTime);
-							travelTime=0;
-						}
-						if(startCount) {
-							travelTime+=inp.getCarCost().getCost(origen.getId()-1, j.getId()-1);
-						}
-						if(j.getSubJobKey().equals(end.getSubJobKey())) {
-							breakCycle=true;
-							break;
-						}
-
+					if(Jjob.getSubJobKey().equals(end.getSubJobKey()) && startCount) {
+						breakCycle=true;
+						break;
 					}
 					if(breakCycle) {
 						break;
 					}
 				}
-				e.setTravelTimeInRoute(travelTime);
-				if(e.getTime()>e.gettravelTimeInRoute()) {
+
+
+				if(distRef>dist) {
 					System.out.println(" Edge "+ e.toString());
 				}
 			}
 
-			if(e.getTime()<e.gettravelTimeInRoute()) {
-				detour+=(e.gettravelTimeInRoute()-e.getTime());
-				if(e.gettravelTimeInRoute()>e.getDetour()) {
-					detourToPenalize=(e.gettravelTimeInRoute()-e.getDetour()); 
+			if(distRef<dist) {
+				detour+=(dist-distRef);
+				if(dist>distRef*test.getDetour()) {
+					detourToPenalize=(dist-distRef*test.getDetour()); 
 				}
 			}
 		}
@@ -630,7 +687,7 @@ public class Route {
 		}
 		return r;
 	}
-	
+
 	private Route selectionRoute1(SubJobs present, Solution diversifiedSolneighborhood) {
 		Route r=null;
 		String key="";
@@ -753,10 +810,16 @@ public class Route {
 
 
 	public void computeHomCareStaffCost(Test test, Inputs inp) {
+
+		// distance
 		double distance=0;
 		for(Edge e:this.edges.values()) {
+			if(e.gettravelTimeInRoute()==0) {
+				double workingTime =0;
+			}
 			distance+=e.gettravelTimeInRoute();
 		}
+		// load time
 		double factor=0;
 		if(this.amountParamedics>0) {
 			factor=test.getloadTimePatient();
@@ -764,16 +827,28 @@ public class Route {
 		else {
 			factor=test.getloadTimeHomeCareStaff();
 		}
-		
-		double workingTime =0;
+		double loadUnloadTIme=factor*this.subJobsList.size();
+
+		// time for registration and waiting time
+		double additional =0;
+		double waitingTime =0;
 		for(SubJobs j:this.getSubJobsList()) {
-			workingTime+=j.getReqTime();
+			additional+=j.getloadUnloadRegistrationTime();
+			waitingTime+=j.getWaitingTime();
 		}
-		
-		//double loadUnloadTIme=factor*this.subJobsList.size();
-		this.setTravelTime(distance);
-		this.setDurationRoute(this.getSubJobsList().get(this.getSubJobsList().size()-1).getDepartureTime()-this.getSubJobsList().get(0).getArrivalTime());
-	//	this.homeCareStaffCost=this.getTravelTime()+this.getWaitingTime();
+		double variableCost=0;
+		if(this.getHomeCareStaff()>0) {
+			variableCost=loadUnloadTIme;
+		}
+
+		this.setTravelTime(distance+loadUnloadTIme);
+		this.setDurationRoute(distance+variableCost+waitingTime);
+		if(this.amountParamedics>0) {
+			travelTimeParamedic=distance+loadUnloadTIme;
+		}
+		else {
+			travelTimeHHC=distance+loadUnloadTIme;
+		}
 		this.homeCareStaffCost=this.getDurationRoute();
 	}
 
@@ -878,14 +953,14 @@ public class Route {
 		this.getPartsRoute().add(partObject);
 		this.getSubJobsList().clear();
 		this.getJobsDirectory().clear();
-for(Parts p:this.getPartsRoute()) {
-	for(SubJobs j:p.getListSubJobs()) {
-		if(j.getId()!=1) {
-			this.getSubJobsList().add(j);
-			this.getJobsDirectory().put(j.getSubJobKey(), j);
+		for(Parts p:this.getPartsRoute()) {
+			for(SubJobs j:p.getListSubJobs()) {
+				if(j.getId()!=1) {
+					this.getSubJobsList().add(j);
+					this.getJobsDirectory().put(j.getSubJobKey(), j);
+				}
+			}
 		}
-	}
-}
 	}
 
 
@@ -991,7 +1066,7 @@ for(Parts p:this.getPartsRoute()) {
 			}
 		}
 		while(removing);
-		
+
 		// connections
 		ArrayList<SubJobs> jobsList= new ArrayList<SubJobs>(); 
 		for(Parts p: this.getPartsRoute()) { // iterando por partes
@@ -1007,11 +1082,12 @@ for(Parts p:this.getPartsRoute()) {
 			Edge newEdge= new Edge(iNode,jNode,inp,test);
 			edgesList.add(newEdge);
 			travelTimeDuration=newEdge.getTime();
+			newEdge.setTravelTimeInRoute(travelTimeDuration);
 		}
-this.getEdges().clear();
-for(Edge e:edgesList) {
-	this.getEdges().put(e.getEdgeKey(), e);
-}
+		this.getEdges().clear();
+		for(Edge e:edgesList) {
+			this.getEdges().put(e.getEdgeKey(), e);
+		}
 	}
 
 
@@ -1019,24 +1095,128 @@ for(Edge e:edgesList) {
 
 
 	public void computeDriverCost(Test test, Inputs inp) {
-	double driverCost=0; // considera los tiempos que el conductor tiene que esperar para el cargue y descarge de personas
-	double departureDepot=0;
-	double arrivalDepot=0;
-	for(Parts p:this.getPartsRoute()) {
-		
+		double driverCost=0; // considera los tiempos que el conductor tiene que esperar para el cargue y descarge de personas
+		double departureDepot=0;
+		double arrivalDepot=0;
+		for(Parts p:this.getPartsRoute()) {
+
 			if(p.getListSubJobs().size()==1 && p.getListSubJobs().get(0).getSubJobKey().equals("P1")) { // part 1
 				departureDepot= p.getListSubJobs().get(0).getArrivalTime();
-		}
+			}
 			if(p.getListSubJobs().size()==1 && p.getListSubJobs().get(0).getSubJobKey().equals("D1")) { // part 1
 				arrivalDepot= p.getListSubJobs().get(0).getArrivalTime();
-		}
+			}
 			if(departureDepot!=arrivalDepot && departureDepot!=0 && arrivalDepot!=0) {
 				driverCost+=(arrivalDepot-departureDepot);
 				arrivalDepot= 0;
 				departureDepot= 0;	
 			}
-	}
+		}
 		this.setdriverCost(driverCost);
+	}
+
+
+
+
+
+	public void settingConnections(Solution solution, Test test, Inputs inp) {
+		// setting las connexiones pick-drop 
+		this.edges.clear();
+
+		SubJobs originNode=this.getPartsRoute().get(0).getDirectorySubjobs().get("P1");
+		int i=1;
+		for(SubJobs j: this.subJobsList) {
+			if(j.getSubJobKey().equals("P10")) {
+				System.out.println("Sol");	
+			}
+			if(i>0) {
+				Edge e= new Edge(originNode,j,inp,test);
+				double distanceInRoute=computingDistance(e,inp,solution);
+				if(distanceInRoute>10) {
+					System.out.println("Sol");	
+				}
+				e.setTravelTimeInRoute(distanceInRoute);
+				this.edges.put(e.getEdgeKey(), e);
+			}
+			i+=j.getTotalPeople();
+			originNode=this.getJobsDirectory().get(j.getSubJobKey());
+			if(originNode.getSubJobKey().equals("P7")) {
+				System.out.println("Sol");	
+			}
+		}
+		SubJobs endNode=this.getPartsRoute().get(this.getPartsRoute().size()-1).getDirectorySubjobs().get("D1");
+		Edge e= new Edge(originNode,endNode,inp,test);
+		this.edges.put(e.getEdgeKey(), e);
+	}
+
+
+
+
+
+	private double computingDistance(Edge e, Inputs inp, Solution solution) {
+		double distance=0;
+		SubJobs end=e.getEnd();
+		Route r=selectionRoute(end,solution);
+		ArrayList<SubJobs> jobsList= new ArrayList<SubJobs>();
+
+		for(Parts p:r.getPartsRoute()) {
+			for(SubJobs j:p.getListSubJobs()) {
+				jobsList.add(j);
+			}	
+		}
+		boolean count=false;
+		for(int jindex=1;jindex<jobsList.size();jindex++) {
+			SubJobs j=jobsList.get(jindex-1);
+			SubJobs k=jobsList.get(jindex);
+			if(j.getSubJobKey().equals("D5")) {
+				System.out.println("Sol");
+			}
+			if(j.getSubJobKey().equals(e.getOrigin().getSubJobKey())) {
+				if(j.getSubJobKey().equals("D61")) {
+					System.out.println("Sol");
+				}
+				count=true;
+				distance=0;
+			}
+
+
+			if(count) {
+
+				distance+=inp.getCarCost().getCost(j.getId()-1, k.getId()-1);
+			}
+			if(distance>10) {
+				System.out.println("Sol");	
+			}
+			if(k.getSubJobKey().equals(e.getEnd().getSubJobKey())) {
+				break;
+			}
+		}
+
+		return distance;
+	}
+
+
+
+
+
+	public void checkingDetour() {
+		detour=0;
+		for(Edge e:this.getEdges().values()) {
+			if(e.gettravelTimeInRoute()>e.getTime()) {
+				detour+=(e.gettravelTimeInRoute()-e.getTime());
+				if(detour>15) {
+					System.out.println("Stop");
+				}
+			}
+
+		}
+		this.setDetour(detour);
+		if(this.amountParamedics>0) {
+			this.setdetourPromParamedic(detour);
+		}
+		else {
+			this.setdetourPromHomeCareStaff(detour);
+		}
 	}
 
 

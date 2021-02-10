@@ -40,18 +40,18 @@ public class Algorithm {
 		boolean diversification= false;
 		System.out.println("Stop " +test.getTestTime());
 		for(int iter=0;iter<test.getTestTime();iter++) {
-			if(iter==2) {
+			if(iter==19) {
 				System.out.println("Stop " +test.getTestTime());
 			}
 			
-			//if(solution== null ||diversification) {
+			if(solution== null ||diversification) {
 				walkingList = new LinkedList<SubRoute>();
 				if(subroutes.getWalkingRoutes()!=null) {
 					selectionWalkingRoutes(false);
 				}
 				updateListJobs();// jobs couple - class SubJobs // las couples sólo sirven para la lista de clients (como consequencia de las walking routes)
 				drivingRoute = new DrivingRoutes(input, r, t,subJobsList,walkingList); // stage 2: Creation of driving routes
-			//}
+			}
 			drivingRoute.generateAfeasibleSolution(iter,solution,diversification);
 			drivingRoute.getSol().setWalkingRoutes(walkingList);
 			newSolution= new Solution(drivingRoute.getSol());
@@ -75,35 +75,7 @@ public class Algorithm {
 				//solution=null;
 			}
 			else {
-				//savingData(iter,bestSolution);
-				if(newSolution.getobjectiveFunction()>objective) {// darle una oportunidad a la mala solución
-					//while(continueSearching) {
-					drivingRoute.assigningRoutesToDrivers(iter,new Solution(newSolution));
-					solution= new Solution(drivingRoute.getSol());
-					solution.getRoutes().sort(Route.SORT_BY_departureTimeDepot);
-					objective=0;
-					if(bestSolution==null) {
-						objective=Double.MAX_VALUE;
-					}
-					else {
-						objective=bestSolution.getobjectiveFunction();
-					}
-					if(solution.getobjectiveFunction()<newSolution.getobjectiveFunction()) {
-						newSolution=new Solution(solution);
-						if(newSolution.getobjectiveFunction()<objective) {
-							setBestSolution(drivingRoute.getSol());
-							setInitialSolution(drivingRoute.getSol().getShift());
-							diversification=false;
-						}
-					}
-					else {
-						diversification=true;
-					}
-					//}
-				}
-				else {
-					diversification=true;
-				}
+				diversification=true;
 			}
 			savingData(iter,bestSolution);
 

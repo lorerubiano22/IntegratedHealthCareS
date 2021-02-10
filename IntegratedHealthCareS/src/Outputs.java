@@ -19,7 +19,24 @@ public class Outputs {
 	private void printSolST(Test currentTest, Algorithm algorithm) {
 		try 
 		{   
-			PrintWriter out = new PrintWriter(currentTest.getInstanceName()+"_ResumeSols.txt");
+			///
+			String objective="";
+			if(currentTest.getdriverObjective()==1 && currentTest.gethomeCareStaffObjective()==0) {
+				objective="Driver";
+			}
+			else {
+				if(currentTest.getdriverObjective()==0 && currentTest.gethomeCareStaffObjective()==1) {
+					objective="Home_Care_Staff";	
+				}
+				else { // integrated
+					objective="Integrated";	
+				}
+			}
+			
+			
+			////
+			
+			PrintWriter out = new PrintWriter(currentTest.getInstanceName()+"_"+objective+"_ResumeSols.txt");
 			// 1 objective function + 2 walking time + 3 cost driver + 4 cost home care staff + 5 travel time+ 6 waiting time
 			
 			out.printf("Iter	OF	   WalkingTime 	  driverCost   HHCcost   travelTime  	waitingTime");
@@ -95,7 +112,7 @@ public class Outputs {
 					if(j.isPatient()) {
 						type="p";
 					}
-					out.println(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getStartTime()+";"+(int)j.getEndTime()+"]"+") \n");
+					out.println(" ( " + j.getSubJobKey()+type+" A  "+(int)j.getArrivalTime()+"  B  "+(int)j.getstartServiceTime()+ " end service "+ (int)j.getendServiceTime()+"   D  "+(int)j.getDepartureTime()+"  reqTime_"+j.getReqTime()+"  TW ["+(int)j.getSoftStartTime()+";"+(int)j.getSoftStartTime()+"]"+") \n");
 				}
 				//out.println("\n\n");
 			}
