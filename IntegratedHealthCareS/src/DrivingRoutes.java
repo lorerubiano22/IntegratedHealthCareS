@@ -417,10 +417,10 @@ public class DrivingRoutes {
 
 			for(Jobs j: insertionOrder) {
 
-				if(j.getSubJobKey().equals("P5167")) {
+				if(j.getSubJobKey().equals("D4961")) {
 					System.out.println("Stop");
 				}
-				if(j.getSubJobKey().equals("D67")) {
+				if(j.getSubJobKey().equals("D4770")) {
 					System.out.println("Stop");
 				}
 				boolean inserted= insertionJobSelectingRoute(poolParts,j,dropoffHomeCareStaff,dropoffpatientMedicalCentre,pickpatientMedicalCentre,pickupHomeCareStaff,toInsert,hardConstraints);
@@ -1694,10 +1694,14 @@ public class DrivingRoutes {
 		Parts changing=null;
 
 		for(Parts p: bestRoutes) {
-
+if(p.getDirectorySubjobs().containsKey("D4961")) {
+	System.out.println("Sol");
+}
 			inserted=inseringRoute(j,p,dropoffHomeCareStaff2,dropoffpatientMedicalCentre2,pickpatientMedicalCentre2,pickupHomeCareStaff,hardConstraints);
 			if(inserted) {
-
+				if(p.getDirectorySubjobs().containsKey("D4961")) {
+					System.out.println("Sol");
+				}
 				changing=p;
 				break;
 			}
@@ -2432,14 +2436,12 @@ public class DrivingRoutes {
 					// validation TW
 					if(b.isMedicalCentre() || b.isPatient()) {
 						boolean logic=sequenceLogic(a,b);
-						//if(b.getTotalPeople()<0) {
 						if(arrivalTime>=(b.getStartTime()) && arrivalTime<=b.getEndTime() && logic) {
 							feasible=true;
 						}
 						if(!feasible) {
 							break;	
 						}
-						//}
 					}
 					if(b.isClient() ) {
 						boolean logic=sequenceLogicClient(a,b);
@@ -2486,10 +2488,9 @@ public class DrivingRoutes {
 				if(a.getTotalPeople()<0 && b.getTotalPeople()>0) {
 					feasible =false;
 				}
-				if(a.getTotalPeople()>0 && b.getTotalPeople()<0) {
-					feasible =false;
-				}
-
+//				if(a.getTotalPeople()>0 && b.getTotalPeople()<0) {
+//					feasible =false;
+//				}
 			}
 		}
 		if(b.isPatient()) {
@@ -2530,13 +2531,6 @@ public class DrivingRoutes {
 				boolean inserted=false;
 				for(int i=0;i<list.size();i++) { //	r --- j
 					SubJobs j=list.get(i);
-					//					double tv=inp.getCarCost().getCost(r.getId()-1, j.getId()-1);
-					//					if(j.getArrivalTime()-tv<=r.getEndTime() && j.getArrivalTime()-tv>=r.getStartTime()) {
-					//						int index=list.indexOf(j);
-					//						list.add(index,r);
-					//						inserted=true;
-					//						break;
-					//					}
 					ArrayList<SubJobs> copy= new ArrayList<SubJobs>();
 
 					for(int aux=0;aux<i;aux++) {
@@ -3815,14 +3809,83 @@ public class DrivingRoutes {
 		}
 		for(Route r: shift.getRoutes()) {
 			r.settingConnections(diversifiedSolneighborhood,test,inp);
+		}
+		
+		checkingIntermediateStopsDepot(shift,diversifiedSolneighborhood);
+		
+		for(Route r: shift.getRoutes()) {
+			r.settingTimesRoute(diversifiedSolneighborhood,test,inp);
 			r.checkingWaitingTimes(test,inp);
 			//	r.checkingDetour();
 			r.checkingDetour(test,inp,diversifiedSolneighborhood);	
 			r.computeHomCareStaffCost(test,inp);
 		}
+		
+		
+
 
 		return shift;
 	}
+
+		private void checkingIntermediateStopsDepot(Solution shift, Solution diversifiedSolneighborhood) {
+		ArrayList<Parts> parts= new ArrayList<Parts>();
+		for(Route r:diversifiedSolneighborhood.getRoutes()) {
+			for(Parts p: r.getPartsRoute()) {
+					if(p.getListSubJobs().get(0).getId()!=1) {
+						parts.add(p);
+					}			
+			}
+		}
+		ArrayList<Parts> newShift= new ArrayList<Parts>();
+		SubJobs depotDropOff= new SubJobs(diversifiedSolneighborhood.getRoutes().get(0).getPartsRoute().get(diversifiedSolneighborhood.getRoutes().get(0).getPartsRoute().size()-1).getListSubJobs().get(0));
+		depotDropOff.setarrivalTime(0);
+		depotDropOff.setStartServiceTime(0);
+		depotDropOff.setEndServiceTime(0);
+		depotDropOff.setdepartureTime(0);
+		SubJobs depotPickUp= new SubJobs(diversifiedSolneighborhood.getRoutes().get(0).getPartsRoute().get(0).getListSubJobs().get(0));
+		depotPickUp.setarrivalTime(0);
+		depotPickUp.setStartServiceTime(0);
+		depotPickUp.setEndServiceTime(0);
+		depotPickUp.setdepartureTime(0);
+		for(Route r:shift.getRoutes()) {
+			ArrayList<Edge> edgesList= new ArrayList<Edge>(); 
+			ArrayList<SubJobs> list= new ArrayList<SubJobs>(); 
+			for(Edge e:r.getEdges().values()) {
+				SubJobs origin=e.getOrigin();
+				SubJobs end=e.getEnd();
+				if(origin.getId()!=1 && end.getId()!=1) {			
+				Parts p1=selectionParts(origin,parts);
+				Parts p2=selectionParts(end,parts);
+				if(p1!=p2) { // hay una parata en el depot	
+					Edge e1= new Edge(origin,depotDropOff,inp,test);
+					Edge e2= new Edge(depotPickUp,end,inp,test);
+					edgesList.add(e1);
+					edgesList.add(e2);
+														}
+				else {
+					edgesList.add(e);
+				}}
+				else {
+					edgesList.add(e);
+				}
+			}
+			r.getEdges().clear();
+			for(Edge e:edgesList) {
+				r.getEdges().put(e.getEdgeKey(), e);
+			}
+			System.out.println(newShift.toString());
+		}
+	}
+
+	private Parts selectionParts(SubJobs end, ArrayList<Parts> parts) {
+		Parts chain=null;	
+		for(Parts p: parts) {
+				if(p.getDirectorySubjobs().containsKey(end.getSubJobKey())) {
+					chain=p;	
+				}
+			}
+			return chain;
+		}
 
 	private Solution checkSolution(HashMap<String, Couple> dropoffHomeCareStaff2,
 			HashMap<String, Couple> dropoffpatientMedicalCentre2, HashMap<String, Couple> pickpatientMedicalCentre2) {

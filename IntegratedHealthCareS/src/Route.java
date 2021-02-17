@@ -1174,87 +1174,73 @@ public class Route {
 	}
 
 
-
-
-
-	private double computingDistance(Edge e, Inputs inp, Solution solution,Test test) {
-		double distance=0;
-		SubJobs end=null;
-		Route r=null;
-		SubJobs origin=null;
-		Route r2=null;
-		if(e.getOrigin().getId()!=1 && e.getEnd().getId()!=1) {
-			end=e.getEnd();
-			r=selectionRoute(end,solution);
-			origin=e.getOrigin();
-			r2=selectionRoute(origin,solution);
-		}
-		else {
-			if(e.getOrigin().getId()==1) {
-				r=selectionRoute(e.getEnd(),solution);
-				r2=r;
+	public void settingTimesRoute(Solution solution, Test test, Inputs inp) {
+		// setting las connexiones pick-drop 
+		for(Edge e: this.edges.values()) {
+			double distanceInRoute=computingDistance(e,inp,solution,test);
+			if(distanceInRoute>10) {
+				System.out.println(distanceInRoute);	
 			}
-			else {
-				r=selectionRoute(e.getOrigin(),solution);
-				r2=r;
+			if(distanceInRoute==0) {
+				System.out.println("Sol");	
 			}
+			e.setTravelTimeInRoute(distanceInRoute);			
 		}
-		if(r==r2) {
-			boolean start=false;
-			double partialDistance=0;
-			boolean destination=false;
-			ArrayList<SubJobs> jobsList= new ArrayList<SubJobs>();
-
-			for(Parts p:r.getPartsRoute()) {
-				for(SubJobs j:p.getListSubJobs()) {
-					jobsList.add(j);
-				}	
-			}
-			boolean count=false;
-			for(int jindex=1;jindex<jobsList.size();jindex++) {
-				SubJobs j=jobsList.get(jindex-1);
-				SubJobs k=jobsList.get(jindex);
-				if(j.getSubJobKey().equals("D5")) {
-					System.out.println("Sol");
-				}
-				if(j.getSubJobKey().equals(e.getOrigin().getSubJobKey())) {
-					start=true;
-					count=true;
-					distance=0;
-				}
-				if(j.getSubJobKey().equals("P1") && start && e.getOrigin().getId()!=1) {
-					count=true;
-					distance=0;
-				}
-
-				if(count) {
-
-					distance+=inp.getCarCost().getCost(j.getId()-1, k.getId()-1);
-				}
-				if(distance>10) {
-					System.out.println("Sol");	
-				}
-				if(k.getSubJobKey().equals(e.getEnd().getSubJobKey())) {
-					distance+=partialDistance;
-					break;
-				}
-				if(k.getSubJobKey().equals("D1") && start && e.getEnd().getId()!=1) {
-					partialDistance=distance;
-				}
-			}
-		}
-		else {
-			SubJobs startDepot=solution.getRoutes().get(0).getPartsRoute().get(0).getListSubJobs().get(0);
-			SubJobs endDepot=solution.getRoutes().get(0).getPartsRoute().get(solution.getRoutes().get(0).getPartsRoute().size()-1).getListSubJobs().get(solution.getRoutes().get(0).getPartsRoute().get(solution.getRoutes().get(0).getPartsRoute().size()-1).getListSubJobs().size()-1);
-			Edge eAux=new Edge(e.getOrigin(), endDepot,inp,test);
-			double dist1=computingDistance(eAux, inp, solution,test) ;
-			Edge eAux2=new Edge(startDepot,e.getEnd(),inp,test);
-			double dist2=computingDistance(eAux, inp, solution,test) ;
-			distance=dist1+dist2;
-		}
-		return distance;
 	}
 
+
+
+
+
+	private double computingDistance(Edge e, Inputs inp, Solution solution, Test test) {
+		double distance=0;
+		Route r=null;
+		if(e.getEnd().getId()==1 || e.getOrigin().getId()==1 ) {
+			if(e.getEnd().getId()==1) {
+				 r=selectionRoute(e.getOrigin(),solution);
+			}
+			else {
+				 r=selectionRoute(e.getEnd(),solution);
+			}
+		}
+		else{
+			 r=selectionRoute(e.getEnd(),solution);
+		}
+		
+		ArrayList<SubJobs> jobsList= new ArrayList<SubJobs>();
+
+		for(Parts p:r.getPartsRoute()) {
+			for(SubJobs j:p.getListSubJobs()) {
+				jobsList.add(j);
+			}	
+		}
+		boolean count=false;
+		for(int jindex=1;jindex<jobsList.size();jindex++) {
+			SubJobs j=jobsList.get(jindex-1);
+			SubJobs k=jobsList.get(jindex);
+			if(j.getSubJobKey().equals("D5")) {
+				System.out.println("Sol");
+			}
+			if(j.getSubJobKey().equals(e.getOrigin().getSubJobKey())) {
+				if(j.getSubJobKey().equals("D61")) {
+					System.out.println("Sol");
+				}
+				count=true;
+				distance=0;
+			}
+			if(count) {
+				distance+=inp.getCarCost().getCost(j.getId()-1, k.getId()-1);
+			}
+			if(distance>10) {
+				System.out.println("Sol");	
+			}
+			if(k.getSubJobKey().equals(e.getEnd().getSubJobKey()) && count) {
+				break;
+			}
+		}
+
+		return distance;
+	}
 
 
 

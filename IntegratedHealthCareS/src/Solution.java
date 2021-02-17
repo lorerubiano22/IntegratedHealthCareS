@@ -173,9 +173,9 @@ public class Solution {
 	s= s.concat("\n detour: "+ detourDuration);
 	s= s.concat("\n detour average paramedic: "+ Math.ceil(detourPromParamedico));
 	s= s.concat("\n detour average home care staff: "+ Math.ceil(detourPromHomeCareStaff));
-//	s= s.concat("\n time window violation: "+ timeWindowViolation);
-	//s= s.concat("\n waiting Time to penalize: "+ additionalWaitingTime);
-	//s= s.concat(" Detour time to penalize: "+ detourViolation);
+	s= s.concat("\n time window violation: "+ timeWindowViolation);
+	s= s.concat("\n waiting Time to penalize: "+ additionalWaitingTime);
+	s= s.concat(" Detour time to penalize: "+ detourViolation);
 	s = s.concat("\n List of jobs: ");
 	for(Route r:routes) {
 		if(!r.getSubJobsList().isEmpty()) {
