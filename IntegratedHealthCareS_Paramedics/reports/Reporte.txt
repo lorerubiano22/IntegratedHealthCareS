@@ -1,0 +1,1 @@
+Event(7)[affAgent=Agent [id=19, qualif=2, currentClock=964, estimatedEnd=1039], affVehicle=V(2 =[1/5]), EVENT_TYPE=PICKUP, affectedNode=(7), startTime=1046, timeWindow=1122 +  || P: 1042 Source: (84)]

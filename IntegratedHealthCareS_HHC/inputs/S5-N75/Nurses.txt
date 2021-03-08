@@ -1,0 +1,4 @@
+#Nurses Qualif
+11	1
+9	2
+6	3
